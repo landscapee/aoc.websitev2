@@ -1,0 +1,282 @@
+/* 修复input 背景不协调 和光标变色 */
+/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+$bg: #283443;
+$light_gray: #222;
+$cursor: #222;
+$dark_gray: #889aa4;
+
+@supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
+	.login-container .el-input input {
+		color: $cursor;
+	}
+}
+
+.languageBox {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	width: 120px;
+
+}
+
+/* reset element-ui css */
+.login-container {
+
+	.el-form-item {
+		// border: 1px solid rgba(255, 255, 255, 0.1);
+		background: #e9f4ff;
+		border-radius: 2px;
+
+		.el-input {
+			display: inline-block;
+			width: 280px;
+			height: 40px;
+
+			input {
+				width: 280px;
+				height: 40px;
+				line-height: 40px;
+				background: transparent;
+				border: 0px;
+				-webkit-appearance: none;
+				border-radius: 0px;
+				padding: 12px 35px 12px 35px;
+				color: $light_gray;
+				// height: 47px;
+				caret-color: $cursor;
+
+				&:-webkit-autofill {
+					// box-shadow: 0 0 0px 1000px $bg inset !important;
+					-webkit-text-fill-color: $cursor !important;
+				}
+
+				&::-webkit-input-placeholder {
+					color: #89A3B5;
+				}
+
+			}
+		}
+	}
+}
+
+.login-container {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+
+	.login-bg {
+		position: absolute;
+		top: -10px;
+		bottom: -10px;
+		left: -10px;
+		right: -10px;
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: center center;
+		z-index: -1;
+		transition: all 3s ease 0s;
+		-webkit-transition: all 3s ease 0s;
+	}
+
+	.loginPanle {
+		width: 880px;
+		height: 460px;
+		display: flex;
+		position: relative;
+
+		.loginTitle {
+			border-top-right-radius: 10px;
+			height: 40px;
+			width: 263px;
+			background-size: 263px 40px;
+			background: url('img/loginTitle.png') no-repeat;
+			position: absolute;
+			right: 0;
+			top: -40px;
+			color: #fff;
+			text-align: center;
+			line-height: 40px;
+			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.3);
+			z-index: 10;
+		}
+
+		.left {
+			border-radius: 10px 0 0 10px;
+			width: 50%;
+			height: 100%;
+			background-image: linear-gradient(to bottom, rgba(208, 224, 248, 1), rgba(208, 224, 248, 0.9));
+			display: flex;
+			justify-content: center;
+			align-items: center;
+
+			img {
+				width: 382px;
+			}
+		}
+
+		.right {
+			border-radius: 0 0px 10px 0;
+			width: 50%;
+			height: 100%;
+			background-image: linear-gradient(to bottom, RGBA(216, 229, 248, 1), RGBA(216, 229, 248, 0.9));
+			display: flex;
+			justify-content: center;
+
+			.login-log {
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+			}
+
+			.el-form-item {
+				position: relative;
+				height: 40px;
+				width: 280px;
+
+				.imgbox {
+					height: 40px;
+					width: 35px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					position: absolute;
+					z-index: 1;
+
+					img {
+						width: 15px;
+					}
+
+					.pwdicon {
+						width: 17px;
+					}
+				}
+
+				.el-form-item__content {
+					width: 280px;
+					height: 39px !important;
+					line-height: 39px !important;
+
+					.svg-container {
+						vertical-align: baseline;
+						height: 39px;
+						padding-top: 0;
+						padding-bottom: 0;
+					}
+
+					.el-input {
+						height: 40px !important;
+					}
+				}
+
+				&.input-panel-g::after,
+				&.input-panel-r::after {
+					position: absolute;
+					content: ' ';
+					width: 96%;
+					left: 6px;
+					height: 2px;
+				}
+
+				&.input-panel-g {
+					margin-bottom: 30px !important;
+
+					&::after {
+						background-color: #446ED6;
+					}
+				}
+
+				&.input-panel-r {
+					margin-bottom: 45px !important;
+
+					&::after {
+						background-color: #169F3E;
+					}
+				}
+			}
+
+			.loginBtn {
+				width: 280px;
+				height: 40px;
+				background-image: linear-gradient(to right, #0ACFFE, #495AFF);
+				border-radius: 5px;
+				border: none;
+				box-shadow: 0px 5px 15px rgba(73, 90, 255, 0.3);
+				position: relative;
+				color: #fff;
+
+				span {
+					font-weight: 400;
+					font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif;
+				}
+			}
+
+			.loginBtn:active {
+				box-shadow: 0 0 0 0 rgba(46, 103, 246, .5);
+			}
+		}
+
+		.el-row,
+		.el-col {
+			height: 100%;
+		}
+
+	}
+
+	.login-form {
+		position: relative;
+		width: 280px;
+		max-width: 100%;
+		margin: 132px auto 0;
+	}
+
+	.tips {
+		font-size: 14px;
+		color: #fff;
+		margin-bottom: 10px;
+
+		span {
+			&:first-of-type {
+				margin-right: 16px;
+			}
+		}
+	}
+
+	.svg-container {
+		padding: 6px 5px 6px 15px;
+		color: $dark_gray;
+		vertical-align: middle;
+		width: 30px;
+		display: inline-block;
+	}
+
+	.title-container {
+		position: relative;
+
+		.title {
+			font-size: 26px;
+			color: $light_gray;
+			margin: 0px auto 40px auto;
+			text-align: center;
+			font-weight: bold;
+		}
+	}
+
+	.show-pwd {
+		position: absolute;
+		right: 10px;
+		top: 7px;
+		font-size: 16px;
+		color: $dark_gray;
+		cursor: pointer;
+		user-select: none;
+	}
+}

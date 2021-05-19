@@ -1,0 +1,88 @@
+Arguments: 
+  /Users/fukuhiroshi/.nvm/versions/node/v8.11.0/bin/node /Users/fukuhiroshi/.nvm/versions/node/v8.11.0/bin/yarn dev
+
+PATH: 
+  /Users/fukuhiroshi/.nvm/versions/node/v8.11.0/bin:/Library/Frameworks/Python.framework/Versions/3.6/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public
+
+Yarn version: 
+  1.5.1
+
+Node version: 
+  8.11.0
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "fpms-website",
+    "version": "1.0.0",
+    "description": "",
+    "node-version": "10.9.0",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "dev": "webpack-dev-server --config webpack.config.js --Program fpms.dev",
+      "build": "webpack --config webpack.config.js --mode=development --Program fpms.build"
+    },
+    "repository": {
+      "type": "git",
+      "url": "http://173.100.1.40/scm/ghms-fpms/fpms-website.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+      "css-loader": "^3.4.2",
+      "extract-text-webpack-plugin": "^3.0.2",
+      "file-loader": "^5.1.0",
+      "fs": "^0.0.1-security",
+      "handlebars": "^4.7.3",
+      "handlebars-loader": "^1.7.1",
+      "html-webpack-plugin": "^3.2.0",
+      "node-sass": "^4.13.1",
+      "sass": "^1.26.3",
+      "sass-loader": "^8.0.2",
+      "style-loader": "^1.1.3",
+      "url-loader": "^3.0.0",
+      "vue-html-webpack-plugin": "^3.2.2",
+      "vue-loader": "^15.9.0",
+      "vue-template-compiler": "^2.6.11",
+      "webpack": "^4.41.6",
+      "webpack-cli": "^3.3.11",
+      "webpack-dev-server": "^3.10.3",
+      "worker-loader": "^2.0.0"
+    },
+    "dependencies": {
+      "bluebird": "^3.7.2",
+      "element-ui": "^2.13.0",
+      "lodash": "^4.17.15",
+      "lokijs": "^1.5.8",
+      "postal": "^2.0.5",
+      "socket.io": "^2.3.0",
+      "vue": "^2.6.11",
+      "vue-router": "^3.1.6",
+      "vuex": "^3.1.3"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: Command failed.
+  Exit code: 1
+  Command: sh
+  Arguments: -c webpack-dev-server --config webpack.config.js --Program fpms.dev
+  Directory: /Users/fukuhiroshi/Servers/GHMS-FPMS
+  Output:
+  
+      at ProcessTermError.MessageError (/Users/fukuhiroshi/.nvm/versions/node/v8.11.0/lib/node_modules/yarn/lib/cli.js:186:110)
+      at new ProcessTermError (/Users/fukuhiroshi/.nvm/versions/node/v8.11.0/lib/node_modules/yarn/lib/cli.js:226:113)
+      at ChildProcess.<anonymous> (/Users/fukuhiroshi/.nvm/versions/node/v8.11.0/lib/node_modules/yarn/lib/cli.js:30281:17)
+      at emitTwo (events.js:126:13)
+      at ChildProcess.emit (events.js:214:7)
+      at maybeClose (internal/child_process.js:925:16)
+      at Process.ChildProcess._handle.onexit (internal/child_process.js:209:5)
