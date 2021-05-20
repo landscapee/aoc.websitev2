@@ -5,7 +5,7 @@ class workerRegist{
     constructor(){}
     start(){
         this.worker = new Fpms();
-        const channel = postal.channel("worker.aoc");
+        const channel = postal.channel("Worker");
         channel.subscribe('#', (data, envelope) => {
             this.worker.postMessage({
                 channel: get(envelope, 'channel'),

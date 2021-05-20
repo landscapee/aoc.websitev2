@@ -1,35 +1,23 @@
 /*
  * @Descripttion: 数据ws链接模块
- * @version: 
+ * @version:
  * @Author: xdh.ss
  * @Date: 2020-04-02 17:30:40
  * @LastEditors: xdh.ss
  * @LastEditTime: 2020-04-03 16:31:57
  */
 import postal from 'postal';
-import socket from '../lib/socket';
 import {omit} from 'lodash'
 
 import {
     add_update_flight_data,
     get_flight_item,
 } from '../database/database';
-    
+
 let getDataSocket = null
 
 export const init = (data) => {
-    getDataSocket = new socket(data.origin,{
-        forceNew: true,
-        path: data.path,
-        query:{
-            Authorization:data.token,
-            remoteAddress:data.remoteAddress
-        },
-        transports: ['websocket']
-    });
 
-    getDataSocket.socket_start()
-    socket_on_fun()
 };
 
 // socket链接 channel
@@ -48,7 +36,7 @@ export const close_socket = ()=>{
         getDataSocket.socket_close()
     }
 }
-    
+
 
 function socket_on_fun(){
     getDataSocket.socket_on(ws_channel.flight_info, async data => {//航班信息
@@ -65,7 +53,7 @@ function socket_on_fun(){
             data.data.flight.map(async flight=>{
                 await add_update_flight_data(flight)
             })
-            
+
 
             postal.publish({
                 channel: 'web.aoc',

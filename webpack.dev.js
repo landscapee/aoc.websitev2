@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: xdh.ss
  * @Date: 2020-04-08 12:12:33
  * @LastEditors: xdh.ss
@@ -17,7 +17,20 @@ module.exports = merge(common, {
         port: 9000,
         open: false,
         progress: true, // 打包过程中的进度条
-        host:'0.0.0.0'
+        host:'127.0.0.1',
+        proxy:
+          [{
+              context: ['/api', '/api-login'],
+              // target: 'http://10.33.64.1:6077', // 天府
+              target: 'http://173.100.1.137', // 双流
+              // target: 'http://173.101.1.30:6075', // 双流测试
+              changeOrigin: true,
+              ws:true
+              // pathRewrite: {
+              //     '^/api': '/',
+              //     '^/api-login':'/',
+              // }
+          }]
     },
     plugins: [
         // 热更新插件

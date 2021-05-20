@@ -8,12 +8,12 @@ let loginFlag = 0;
 let hasIfm = self!=top//是否被镶嵌
 let socketInterfaceType = window.webConfig.socketInterfaceType
 router.beforeEach((to, from, next) => {
-    
+
     if(to.name=="login"){//登陆页清空信息
         loginFlag=0
         sessionStorage.clear()
 		store.commit("resetStore",null)
-        
+
 		postal.publish({
             channel: 'worker.aoc',
             topic: 'socket_close',
@@ -43,14 +43,14 @@ router.beforeEach((to, from, next) => {
                         next()
                     }
                 })
-                
+
             }else{
-                next({'name': 'login', 'query': {'redirect': to.fullPath}})
+                next()
             }
         }
-        
+
     }
-    
+
 })
 
 router.afterEach(()=>{

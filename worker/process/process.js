@@ -1,8 +1,9 @@
 import postal from 'postal';
 import {get} from 'lodash';
 import '../manage/manage';
+import '../manage/tf-init';
 
-const channel = postal.channel('web.aoc')
+const channel = postal.channel('Web')
 channel.subscribe('#', (data, envelope) => {
     self.postMessage({
         channel: get(envelope, 'channel'),

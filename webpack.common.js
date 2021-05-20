@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: xdh.ss
  * @Date: 2020-04-08 12:12:15
  * @LastEditors: xdh.ss
@@ -23,17 +23,17 @@ let indexJs = './index.js';
 
 const HtmlWebpackPluginConfig = {
     title: '',
-    template: path.resolve(__dirname, './index_tianfu.hbs'),
+    template: path.resolve(__dirname, './index.hbs'),
     filename: 'index.html',
     vue: true,
     hash: true
 }
 
-if(argv.type=='shuangliu'){
-    HtmlWebpackPluginConfig.template = path.resolve(__dirname, './index_shuangliu.hbs')
-}
+// if(argv.type=='shuangliu'){
+//     HtmlWebpackPluginConfig.template = path.resolve(__dirname, './index_shuangliu.hbs')
+// }
 
-if (argv.Program === 'fpms.dev' || argv.Program === 'fpms.website') {
+if (argv.type === 'tianfu') {
     html_webpack_plugin = new HtmlWebpackPlugin(_.extend(HtmlWebpackPluginConfig, {title:'天府机场A-CDM管理系统'}));
     indexJs = './index.js';
 }
@@ -93,7 +93,8 @@ module.exports = {
                         {
                             loader: 'sass-loader',
                             options: {
-                                sourceMap: true
+                                sourceMap: true,
+                                implementation: require('sass')
                             }
                         }
                     ]
@@ -124,7 +125,8 @@ module.exports = {
         ]
     },
     node:{
-        fs: "empty"
+        fs: "empty",
+        net: 'empty',
     },
     plugins: [
         new ExtractTextPlugin({
@@ -139,7 +141,7 @@ module.exports = {
                 ignore: ['.*']
             }
         ]),
-        
+
         new VueLoaderPlugin(),
         html_webpack_plugin,
         new webpack.DefinePlugin({
@@ -167,5 +169,7 @@ module.exports = {
             'vue$': 'vue/dist/vue.esm.js'
         }
     },
-    
+
+
+
 }
