@@ -15,6 +15,9 @@
       //   import(/*webpackChunkName:"com-globHead"*/ '../components/com-glob-head'),
     },
     mounted() {
+
+
+
       postal.publish({
         channel: 'Worker',
         topic: 'Page.Flight.Start',

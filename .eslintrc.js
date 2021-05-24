@@ -17,7 +17,8 @@ module.exports = {
         'require':true,
         'module':true,
         '__dirname':true,
-        'webConfig':true
+        'webConfig':true,
+        'DEBUG': true
     },
       /**
        * 每个规则有【3】个错误级别。
@@ -25,7 +26,7 @@ module.exports = {
        * warn或1: 开启规则，使用警告级别的错误，不会导致程序退出；
        * error或2: 开启规则，使用错误级别的错误，当被触发的时候，程序会退出。
        */
-    rules: { 
+    rules: {
         //不禁止console
         'no-console': 0,
         //生产环境禁止debugger
@@ -50,4 +51,3 @@ module.exports = {
         'no-unreachable':1
     }
   }
-  

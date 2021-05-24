@@ -2,6 +2,7 @@ import {each} from "lodash";
 import socket from '../lib/socket'
 import {init as flightInit} from '../connect/flight'
 import postal from 'postal';
+import {memoryStore} from "../lib/memoryStore";
 
 const channels = {
   Worker: postal.channel('Worker'),
@@ -46,6 +47,14 @@ postal.subscribe({
   callback: (data) => {
     let posWorker = myPostal('Worker');
     let mySockets = socket(data.servers);
-    flightInit(posWorker)
+    flightInit(posWorker, data.httpConfig)
+
+    postal.subscribe({
+      channel: 'Worker',
+      topic: 'LoginSuccess',
+      callback: (token)=>{
+        memoryStore.setItem('global',{token});
+      }
+    })
   }
 });

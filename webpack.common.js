@@ -13,6 +13,7 @@ const _ = require('lodash');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('vue-html-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
 const webpack = require('webpack');
@@ -75,30 +76,57 @@ module.exports = {
             },
             {
                 test: /\.scss|.css$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'vue-style-loader',
-                    use: [
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                sourceMap: true
-                            }
-                        },
-                        {
-                            loader: 'px2rem-loader',
-                            options: {
+                use:
+                  [
+                      // {
+                      //     loader: MiniCssExtractPlugin.loader,
+                      // },
+                    'vue-style-loader',
+                      {
+                          loader: 'css-loader',
+                          options: {
+                              sourceMap: true
+                          }
+                      },
+                      {
+                          loader: 'px2rem-loader',
+                          options: {
                               remUnit:100
-                            }
-                        },
-                        {
-                            loader: 'sass-loader',
-                            options: {
-                                sourceMap: true,
-                                implementation: require('sass')
-                            }
-                        }
-                    ]
-                })
+                          }
+                      },
+                      {
+                          loader: 'sass-loader',
+                          options: {
+                              sourceMap: true,
+                              implementation: require('sass')
+                          }
+                      }
+                  ]
+
+                //   ExtractTextPlugin.extract({
+                //     fallback: 'vue-style-loader',
+                //     use: [
+                //         {
+                //             loader: 'css-loader',
+                //             options: {
+                //                 sourceMap: true
+                //             }
+                //         },
+                //         {
+                //             loader: 'px2rem-loader',
+                //             options: {
+                //               remUnit:100
+                //             }
+                //         },
+                //         {
+                //             loader: 'sass-loader',
+                //             options: {
+                //                 sourceMap: true,
+                //                 implementation: require('sass')
+                //             }
+                //         }
+                //     ]
+                // })
             },
             {
                 test: /\.(png|jpg|jpeg|gif)$/,
@@ -129,9 +157,12 @@ module.exports = {
         net: 'empty',
     },
     plugins: [
-        new ExtractTextPlugin({
-            filename:'[name].styles.css',
-            allChunks:true
+        // new ExtractTextPlugin({
+        //     filename:'[name].styles.css',
+        //     allChunks:false
+        // }),
+        new MiniCssExtractPlugin({
+            filename: '[name].styles.css',
         }),
         // 添加静态资源打包
         new CopyWebpackPlugin([
@@ -145,7 +176,8 @@ module.exports = {
         new VueLoaderPlugin(),
         html_webpack_plugin,
         new webpack.DefinePlugin({
-            PROGRAM: JSON.stringify(argv.Program)
+            PROGRAM: JSON.stringify(argv.Program),
+            'ENVIROMENT': JSON.stringify(process.env.ENVIROMENT),
         }),
     ],
     optimization:{
@@ -163,6 +195,7 @@ module.exports = {
         ]
     },
     resolve: {
+        modules: ['node_modules', 'common', 'src', 'worker'],
         // modules: ['node_modules', 'src', 'static', 'worker'],
         extensions:['.js','.vue'], // 后缀省略设置
         alias: {

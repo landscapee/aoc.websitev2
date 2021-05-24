@@ -15,7 +15,7 @@ module.exports = merge(common, {
     devtool: 'inline-source-map',
     devServer: {
         port: 9000,
-        open: false,
+        open: true,
         progress: true, // 打包过程中的进度条
         host:'127.0.0.1',
         proxy:
@@ -35,5 +35,9 @@ module.exports = merge(common, {
     plugins: [
         // 热更新插件
         new webpack.HotModuleReplacementPlugin(),
+        new webpack.DefinePlugin(
+          {
+            'DEBUG': JSON.stringify(true)
+          }),
     ]
 })

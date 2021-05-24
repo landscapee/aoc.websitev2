@@ -69,6 +69,7 @@ import userimg from './assets/img/login-username.png'
 import pwdimg from './assets/img/login-password.png'
 import './assets/index.scss'
 import { encryptedData } from '../../lib/des-coder.js'
+import {memoryStore} from "../../../worker/lib/memoryStore";
 export default {
     name: 'login',
     data() {
@@ -201,7 +202,7 @@ export default {
                                     this.passwordObj.userData = res.data
                                     this.passwordObj.userToken = res.data.token
                                     sessionStorage.setItem('token', res.data.token)
-
+                                  memoryStore.setItem('global',{token});
                                     this.$alert(res.responseMessage, this.$t('message.prompt'), {
                                         type: 'warning',
                                         center: true,
@@ -213,6 +214,7 @@ export default {
                                 }
                                 if (res.responseCode == 1000 && res.data) {
                                     //登录成功
+                                    memoryStore.setItem('global',{token:res.data.token});
                                     this.$store.commit('setUserMsg', res.data)
                                     sessionStorage.setItem('token', res.data.token)
                                     sessionStorage.setItem(
