@@ -180,7 +180,8 @@ export default {
                             username: encryptedData(this.loginForm.username),
                             password: encryptedData(this.loginForm.password),
                         })
-                        .then((res) => {
+                        .then((res, resBody) => {
+                          console.log(resBody)
                             this.loading = false
                             if (res) {
                                 if (
