@@ -1,6 +1,5 @@
 import postal from 'postal';
 import {get} from 'lodash';
-import '../manage/manage';
 import '../manage/tf-init';
 
 const channel = postal.channel('Web')

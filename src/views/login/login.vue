@@ -175,21 +175,10 @@ export default {
             $(e.target).blur()
             this.$refs.loginForm.validate((valid) => {
                 if (valid) {
-                    let url = ''
-                    if (this.coder) {
-                        url = '/sso/login/loginWithRsa'
-                    } else {
-                        url = '/sso/login/login'
-                    }
-                    console.log(this.$axios)
-                    this.$axios
-                        .post(url, {
-                            username: this.coder
-                                ? encryptedData(this.loginForm.username)
-                                : this.loginForm.username,
-                            password: this.coder
-                                ? encryptedData(this.loginForm.password)
-                                : this.loginForm.password,
+                    this.$request
+                        .post('login', 'loginWithRsa', {
+                            username: encryptedData(this.loginForm.username),
+                            password: encryptedData(this.loginForm.password),
                         })
                         .then((res) => {
                             this.loading = false
@@ -201,8 +190,9 @@ export default {
                                 ) {
                                     this.passwordObj.userData = res.data
                                     this.passwordObj.userToken = res.data.token
+                                    this.$pub('Worker','LoginSuccess', {token:res.data.token});
                                     sessionStorage.setItem('token', res.data.token)
-                                  memoryStore.setItem('global',{token});
+                                    memoryStore.setItem('global',{token:res.data.token});
                                     this.$alert(res.responseMessage, this.$t('message.prompt'), {
                                         type: 'warning',
                                         center: true,
@@ -214,6 +204,7 @@ export default {
                                 }
                                 if (res.responseCode == 1000 && res.data) {
                                     //登录成功
+                                  this.$pub('Worker','LoginSuccess', {token:res.data.token});
                                     memoryStore.setItem('global',{token:res.data.token});
                                     this.$store.commit('setUserMsg', res.data)
                                     sessionStorage.setItem('token', res.data.token)

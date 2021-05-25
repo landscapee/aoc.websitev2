@@ -1,3 +1,6 @@
+import postal from 'postal'
+import {isObject, isString, has, isFunction} from 'lodash';
+
 /**
  * @describe 去抖函数
  * @param { Function } [action] 抖动执行函数
@@ -50,7 +53,7 @@ export const throttle = function (action, wait) {
  * @describe 正则验证函数
  * @param { String } [type] 验证类型
  * @param { Number|String } [value] 验证值
- * @return { Boolean } [valid] 
+ * @return { Boolean } [valid]
 **/
 export const regularValid = function (type, value) {
     let valid = false
@@ -99,3 +102,65 @@ export const getUrlParam = function (name) {
     return null != n ? unescape(n[2]) : null
 }
 
+export const sub = (...args) => {
+    let params = null;
+    switch (args.length) {
+        case 1: //{channel,topic,callback}
+            if (isObject(args[0]) && has('channel', args[0]) && has('topic', args[0]) && has('callback', args[0])) {
+                params = args[0];
+            }
+            break;
+        case 2: //topic, callback
+            if (isString(args[0]) && isFunction(args[1])) {
+                params = {
+                    channel: 'Web',
+                    topic: args[0],
+                    callback: args[1],
+                };
+            }
+            break;
+        case 3: //channel,topic,callback
+            params = {
+                channel: args[0],
+                topic: args[1],
+                callback: args[2],
+            };
+            break;
+    }
+    if (params === null) {
+        throw new Error(`bad paramters for subscribe`);
+    }
+
+    postal.subscribe(params);
+}
+
+export const pub = (...args) => {
+    let params = null;
+    switch (args.length) {
+        case 1: //{channel,topic,data}
+            if (isObject(args[0]) && has('channel', args[0]) && has('topic', args[0]) && has('data', args[0])) {
+                params = args[0];
+            }
+            break;
+        case 2: //topic, data
+            if (isString(args[0])) {
+                params = {
+                    channel: 'Web',
+                    topic: args[0],
+                    data: args[1],
+                };
+            }
+            break;
+        case 3: //channel,topic,data
+            params = {
+                channel: args[0],
+                topic: args[1],
+                data: args[2],
+            };
+            break;
+    }
+    if (params === null) {
+        throw new Error(`bad paramters for publish`);
+    }
+    postal.publish(params);
+}

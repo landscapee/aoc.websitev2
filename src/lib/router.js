@@ -4,6 +4,7 @@ import router from '../router'
 import store from '../store'
 import postal from 'postal';
 import axios from "axios";
+import {httpConfig} from "../../index";
 let loginFlag = 0;
 let hasIfm = self!=top//是否被镶嵌
 let socketInterfaceType = window.webConfig.socketInterfaceType
@@ -30,7 +31,8 @@ router.beforeEach((to, from, next) => {
             if(sessionStorage.token&&sessionStorage.token!=undefined){
                 axios({
                     method:"post",
-                    url:'/sso/login/authorizeToken',
+                    // url:httpConfig['login'] 'api-login/sso/login/authorizeToken',
+                    url:`${httpConfig['login'].path}/authorizeToken`,
                     dataType:"text",
                     data:sessionStorage.token,
                     async:false,

@@ -12,10 +12,3 @@ export const checkClient = (c) => {
   });
 };
 
-
-export const socketWrapprer = (clientList,client,topic, cb) => {
-  clientList.add(topic);
-  client.sub(topic, (data) => {
-    cb && cb(data)
-  });
-};

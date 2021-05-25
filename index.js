@@ -12,34 +12,13 @@ import './src/styles/elementReset.scss';//element样式重置
 import i18n from './src/i18n'//中英双语
 
 import router from './src/lib/router'
-import axios from './src/lib/axios'
+import HttpRequest from './common/axios'
 
-import moment from 'moment';//日期插件
-moment.locale('zh-cn')
-
-Vue.use(ElementUI,{locale});
-
-Vue.prototype.postal = postal
-Vue.prototype.$axios = axios
-Vue.prototype.$moment = moment
-Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
+import moment from 'moment';
+import {pub, sub} from "lib/common";
+import {memoryStore} from "./worker/lib/memoryStore";
 
 
-postal.subscribe({//系统时间更新
-    channel: 'web.aoc',
-    topic: 'sys_time',
-    callback:data => {
-        store.commit('setServerTime',new Date(data))
-    }
-})
-
-if(localStorage.lang){//设置语言
-    store.commit('setLanguage',localStorage.lang)
-}
-
-if(sessionStorage.userData){//刷新或者丢失用户信息，使用token获取用户信息
-    store.commit('setUserMsg',JSON.parse(sessionStorage.userData))
-}
 
 /***************************拆分server 测试环境********************************/
 // let locationHost = '173.101.1.30'; // 双流测试
@@ -98,7 +77,7 @@ const servers = [
     },
 ];
 
-const httpConfig = {
+export const httpConfig = {
     flight: {
         host: locationHost,
         port: port,
@@ -161,6 +140,37 @@ const httpConfig = {
     },
 };
 
+//日期插件
+moment.locale('zh-cn')
+// let request = new HttpRequest(httpConfig);
+Vue.use(ElementUI,{locale});
+
+Vue.prototype.postal = postal
+Vue.prototype.$pub = pub
+Vue.prototype.$sub = sub
+// Vue.prototype.$axios = axios
+Vue.prototype.$request = new HttpRequest(httpConfig);
+Vue.prototype.$moment = moment
+Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
+
+
+postal.subscribe({//系统时间更新
+    channel: 'web.aoc',
+    topic: 'sys_time',
+    callback:data => {
+        store.commit('setServerTime',new Date(data))
+    }
+})
+
+if(localStorage.lang){//设置语言
+    store.commit('setLanguage',localStorage.lang)
+}
+
+if(sessionStorage.userData){//刷新或者丢失用户信息，使用token获取用户信息
+    store.commit('setUserMsg',JSON.parse(sessionStorage.userData))
+}
+
+
 
 new Vue({
     el: '#app',
@@ -176,12 +186,15 @@ new Vue({
         // if (!myWorker){
         //     myWorker = new Worker();
         // }
+        let token = sessionStorage.token;
+        memoryStore.setItem('global',{token});
         postal.publish({
             channel: 'Worker',
             topic: 'init',
             data: {
                 servers,
                 httpConfig,
+                token
             },
         });
     }

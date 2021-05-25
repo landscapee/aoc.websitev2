@@ -70,6 +70,7 @@
     "lodash": "^4.17.15",
     "lokijs": "^1.5.8",
     "postal": "^2.0.5",
+    "qs": "^6.10.1",
     "socket.io": "^2.3.0",
     "sockjs-client": "^1.5.1",
     "stompjs": "^2.3.3",

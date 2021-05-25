@@ -1,10 +1,9 @@
 import {memoryStore} from '../lib/memoryStore'
 import {flightStart, flightStop} from "../model/flight";
 import {saveToFlightDB} from "../lib/storage";
-import {socketWrapprer} from "../lib/utils";
 import Logger from "../../common/logger";
-import {values, extend} from 'lodash';
-import axios from 'lib/axios';
+import {values, extend, forEach} from 'lodash';
+import SocketWrapper from "../lib/socketWrapper";
 
 let worker;
 let clientObj = {};
@@ -24,10 +23,11 @@ export const checkClient = (clientField) => {
 };
 
 // 长时间连接的ws 不管页面是否存续
-const subLongWs = () => {
+const subRetainWs = () => {
+  let client = clientObj.flightClient;
 
   let changes = {};
-  clientObj.flightClient.sub('/Flight/Change', (data) => {
+  client.sub('/Flight/Change', (data) => {
     log.verbose(`received Flight/Change`);
     if (changes[data.flightId]) {
       extend(changes[data.flightId], data);
@@ -50,26 +50,18 @@ const subLongWs = () => {
       }
     }
   }, 1000);
+
 };
 
 // flight服务的连接
-let flightClientList = new Set();
 const subWSEvent = () => {
-  // flightClientList.add('/Flight/Change');
-  // clientObj.flightClient.sub('/Flight/Change',(data)=>{
-  //   console.log(data)
-  // })
+
 };
 
 // delay服务的连接
-let delayClientList = new Set();
 const subDelayWSEvent = () => {
-  //可执行积压
-  // delayClientList.add('/Flight/delay/executableFlight');
-  // clientObj.delaysClient.sub('/Flight/delay/executableFlight', (data) => {
-  //
-  // });
-  socketWrapprer(delayClientList, clientObj.delaysClient,'/Flight/delay/executableFlight',(data)=>{
+  let client = clientObj.delaysClient;
+  client.sub('/Flight/delay/executableFlight',()=>{
     // let flights = {};
     // map(data, (flightId) => {
     //   flights[flightId] = true;
@@ -77,22 +69,21 @@ const subDelayWSEvent = () => {
     // memoryStore.setItem('ExecutableFlights', flights, true);
   })
 };
-export const init = (worker_, httpConfig) => {
+export const init = (worker_) => {
   worker = worker_;
   worker.subscribe('Flight.Network.Connected', (c) => {
-    clientObj.flightClient = c;
-    subLongWs()
+    clientObj.flightClient = new SocketWrapper(c);
+    subRetainWs()
   });
   worker.subscribe('Delays.Network.Connected', (c) => {
-    clientObj.delaysClient = c;
+    clientObj.delaysClient = new SocketWrapper(c);
     // subWidespreadWSEvent();
   });
 
 
+
+
   worker.subscribe('Page.Flight.Start',()=>{
-    axios.get(`${httpConfig['situation']}runningState/delayCode`).then(res=>{
-      console.log(res)
-    })
     flightStart(worker);
     checkClient('flightClient').then(()=>{
       subWSEvent();
@@ -107,15 +98,9 @@ export const init = (worker_, httpConfig) => {
 
   worker.subscribe('Page.Flight.Stop',()=>{
     flightStop(worker);
-    // 航班动态的sock服务取消订阅
-    flightClientList.forEach((item)=>{
-      clientObj.flightClient && clientObj.flightClient.unSub(item)
-    });
-
-    // 大面积延误的sock服务取消订阅
-    delayClientList.forEach((item)=>{
-      clientObj.delaysClient && clientObj.delaysClient.unSub(item)
+    forEach(clientObj,item=>{
+      console.log(item)
+      item.unSubAll()
     })
-
   })
 };

@@ -3,6 +3,8 @@ import socket from '../lib/socket'
 import {init as flightInit} from '../connect/flight'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
+import HttpRequest from "../../common/axios";
+import {flightHttp} from "../http/flight";
 
 const channels = {
   Worker: postal.channel('Worker'),
@@ -47,13 +49,15 @@ postal.subscribe({
   callback: (data) => {
     let posWorker = myPostal('Worker');
     let mySockets = socket(data.servers);
-    flightInit(posWorker, data.httpConfig)
-
+    let httpRequest = new HttpRequest(data.httpConfig);
+    flightInit(posWorker, httpRequest);
+    flightHttp(posWorker, httpRequest);
+    memoryStore.setItem('global',{token:data.token});
     postal.subscribe({
       channel: 'Worker',
       topic: 'LoginSuccess',
-      callback: (token)=>{
-        memoryStore.setItem('global',{token});
+      callback: (data)=>{
+        memoryStore.setItem('global',{token: data.token});
       }
     })
   }

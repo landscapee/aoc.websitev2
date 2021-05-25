@@ -1,11 +1,13 @@
 <template>
     <div>
-        <el-button>22222</el-button>
+        <el-button @click="testClick">22222</el-button>
     </div>
 </template>
 
 <script>
     import postal from 'postal';
+    import PostalStore from "../../lib/postalStore";
+    let postalStore = new PostalStore();
   export default {
     data() {
       return {}
@@ -15,7 +17,9 @@
       //   import(/*webpackChunkName:"com-globHead"*/ '../components/com-glob-head'),
     },
     mounted() {
-
+      postalStore.sub('Test',a=>{
+        console.log('------', a)
+      });
 
 
       postal.publish({
@@ -30,7 +34,14 @@
         topic: 'Page.Flight.Stop',
         data: ''
       })
+
+      postalStore.unsubAll()
     },
-    methods: {},
+    methods: {
+      testClick(){
+        console.log('asdasdas')
+        this.$pub('Worker','Test','')
+      }
+    },
   }
 </script>

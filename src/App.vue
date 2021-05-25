@@ -4,6 +4,8 @@
     </div>
 </template>
 <script>
+    import router from './router'
+    import Vue from 'vue';
 export default {
     data() {
         return {
@@ -21,6 +23,19 @@ export default {
         clearTimeout(this.handleTimer)
         clearTimeout(this.outrTimer)
     },
+  mounted(){
+    this.$sub('Web','Login.Out',()=>{
+      Vue.prototype.$alert('用户已过期，请重新登录！', '提示', {
+        type: 'warning',
+        center: true
+      }).then(() => {
+        router.replace("/")
+      })
+    });
+    this.$sub('Web','Global.Alert',(opts)=>{
+      Vue.prototype.$alert(...opts)
+    })
+  },
     methods: {
         async reload() {
             this.isRouterShow = false

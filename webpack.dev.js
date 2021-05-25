@@ -12,7 +12,7 @@ const webpack = require('webpack');
 
 
 module.exports = merge(common, {
-    devtool: 'inline-source-map',
+    devtool: 'cheap-module-eval-source-map',
     devServer: {
         port: 9000,
         open: true,
