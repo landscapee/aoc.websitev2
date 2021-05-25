@@ -1,0 +1,633 @@
+{
+  "base": [
+    {
+      "id": "bb89d577-9d23-48c1-a066-47c2968beaf0",
+      "modelCode": "default",
+      "milestoneCode": "PreTakeOff",
+      "milestoneName": "前站起飞",
+      "displayOrder": 1,
+      "importantFlag": 1
+    },
+    {
+      "id": "c7919656-a5fe-4d81-bec7-059b736a3d0e",
+      "modelCode": "default",
+      "milestoneCode": "AligningRunway",
+      "milestoneName": "对准跑道",
+      "displayOrder": 2,
+      "importantFlag": 1
+    },
+    {
+      "id": "97db8442-5aa5-41aa-81dc-4cedf098619a",
+      "modelCode": "default",
+      "milestoneCode": "Aldt",
+      "milestoneName": "落地",
+      "displayOrder": 3,
+      "importantFlag": 1
+    },
+    {
+      "id": "3ed4e388-fbd8-4548-827e-e3520d204259",
+      "modelCode": "default",
+      "milestoneCode": "ArriveFlightDelive",
+      "milestoneName": "进港航班地面移交",
+      "displayOrder": 4,
+      "importantFlag": 1
+    },
+    {
+      "id": "8c85f3cd-f0cd-439c-b79b-2460d15b4918",
+      "modelCode": "default",
+      "milestoneCode": "Inn",
+      "milestoneName": "入位",
+      "displayOrder": 5,
+      "importantFlag": 1
+    },
+    {
+      "id": "8ab0a6eb-0588-46cb-aa00-aeb3bc09dfd5",
+      "modelCode": "default",
+      "milestoneCode": "AllowBoarding",
+      "milestoneName": "允许登机",
+      "displayOrder": 6,
+      "importantFlag": 1
+    },
+    {
+      "id": "36108235-67e5-4584-bc8b-a2144e890cd8",
+      "modelCode": "default",
+      "milestoneCode": "AircrewArrived",
+      "milestoneName": "机组到位",
+      "displayOrder": 7,
+      "importantFlag": 1
+    },
+    {
+      "id": "367e3dac-65f9-4a97-92f0-fc839ad6e31f",
+      "modelCode": "default",
+      "milestoneCode": "DepartureFlightDelive",
+      "milestoneName": "离港航班地面移交",
+      "displayOrder": 8,
+      "importantFlag": 1
+    },
+    {
+      "id": "43a069a8-d780-49ac-b906-b591cf59a556",
+      "modelCode": "default",
+      "milestoneCode": "ProtectionEnd",
+      "milestoneName": "保障结束",
+      "displayOrder": 9,
+      "importantFlag": 1
+    },
+    {
+      "id": "1a17d48f-16af-4262-b0d6-e43fa4a3fbd7",
+      "modelCode": "default",
+      "milestoneCode": "TakeOff",
+      "milestoneName": "起飞",
+      "displayOrder": 10,
+      "importantFlag": 1
+    },
+    {
+      "id": "35c4e9f8-b3d2-42c8-9378-dd7f5122128c",
+      "modelCode": "default",
+      "milestoneCode": "MarshallingStart",
+      "milestoneName": "勤务接机开始",
+      "displayOrder": 11,
+      "importantFlag": 1
+    },
+    {
+      "id": "b4af7a60-68b3-4642-88a8-1bc58a643742",
+      "modelCode": "default",
+      "milestoneCode": "MarshallingEnd",
+      "milestoneName": "勤务接机结束",
+      "displayOrder": 12,
+      "importantFlag": 1
+    },
+    {
+      "id": "a63da96d-953a-48b1-af2c-3ae3a30cd4b0",
+      "modelCode": "default",
+      "milestoneCode": "InBlock",
+      "milestoneName": "挡轮挡",
+      "displayOrder": 13,
+      "importantFlag": 1
+    },
+    {
+      "id": "aed9f873-bd1c-4ba9-a524-544dc4991427",
+      "modelCode": "default",
+      "milestoneCode": "PassengerBridgeAttach",
+      "milestoneName": "靠桥",
+      "displayOrder": 14,
+      "importantFlag": 1
+    },
+    {
+      "id": "941d9e20-4c84-4cc4-95f4-7deb8e754f0e",
+      "modelCode": "default",
+      "milestoneCode": "MobileStairsAttach",
+      "milestoneName": "客梯车对接/进港客梯车",
+      "displayOrder": 15,
+      "importantFlag": 1
+    },
+    {
+      "id": "bf131e08-c487-4d9d-9b7e-1488e5dacecd",
+      "modelCode": "default",
+      "milestoneCode": "ArriveLoaderUnitStart",
+      "milestoneName": "进港平台车",
+      "displayOrder": 16,
+      "importantFlag": 1
+    },
+    {
+      "id": "d1b1f4b8-6d54-4c2b-a437-dda93c7d2e2e",
+      "modelCode": "default",
+      "milestoneCode": "ArriveTransferUnitStart",
+      "milestoneName": "进港传送车",
+      "displayOrder": 17,
+      "importantFlag": 1
+    },
+    {
+      "id": "48d2685c-5fac-4b35-996a-a964e6503f18",
+      "modelCode": "default",
+      "milestoneCode": "ArriveShuttleUnitStart",
+      "milestoneName": "进港摆渡车",
+      "displayOrder": 18,
+      "importantFlag": 1
+    },
+    {
+      "id": "556ca932-67e9-4df3-af67-451edd62fe6d",
+      "modelCode": "default",
+      "milestoneCode": "CabinDoorOpenEnd",
+      "milestoneName": "开客舱门",
+      "displayOrder": 19,
+      "importantFlag": 1
+    },
+    {
+      "id": "8c2a9944-977b-43ff-8c89-745020b33fbb",
+      "modelCode": "default",
+      "milestoneCode": "CargoDoorOpenEnd",
+      "milestoneName": "开货舱门",
+      "displayOrder": 20,
+      "importantFlag": 1
+    },
+    {
+      "id": "7d3ff7a2-c3b4-44a2-ab36-4775634b3150",
+      "modelCode": "default",
+      "milestoneCode": "NextGuestEnd",
+      "milestoneName": "下客完成",
+      "displayOrder": 21,
+      "importantFlag": 1
+    },
+    {
+      "id": "31484344-d5bd-44d4-966d-81ab25611994",
+      "modelCode": "default",
+      "milestoneCode": "BaggageDeliveryStart",
+      "milestoneName": "首件行李交付",
+      "displayOrder": 22,
+      "importantFlag": 1
+    },
+    {
+      "id": "47c6bd2f-5ba8-49b0-a246-ae6cf8216c7a",
+      "modelCode": "default",
+      "milestoneCode": "CabinServiceStart",
+      "milestoneName": "开始保洁",
+      "displayOrder": 23,
+      "importantFlag": 1
+    },
+    {
+      "id": "28e24d31-17cc-40b5-ae03-ee3c94846342",
+      "modelCode": "default",
+      "milestoneCode": "CabinServiceEnd",
+      "milestoneName": "完成保洁",
+      "displayOrder": 24,
+      "importantFlag": 1
+    },
+    {
+      "id": "3e7ff6c7-4d8d-46e4-bb15-04ed8b6fdd74",
+      "modelCode": "default",
+      "milestoneCode": "WaterUnitEnd",
+      "milestoneName": "加清水",
+      "displayOrder": 25,
+      "importantFlag": 1
+    },
+    {
+      "id": "c110e22d-34a4-401f-933f-8aaf056e9a78",
+      "modelCode": "default",
+      "milestoneCode": "SewageUnitEnd",
+      "milestoneName": "排污水",
+      "displayOrder": 26,
+      "importantFlag": 1
+    },
+    {
+      "id": "15572002-4a52-48f8-9ede-7826e247c94a",
+      "modelCode": "default",
+      "milestoneCode": "GarbageCollectionUnitEnd",
+      "milestoneName": "收垃圾",
+      "displayOrder": 27,
+      "importantFlag": 1
+    },
+    {
+      "id": "0db3d445-c3e0-40de-b7b2-82845cf854c6",
+      "modelCode": "default",
+      "milestoneCode": "DeiceStart",
+      "milestoneName": "开始除冰",
+      "displayOrder": 28,
+      "importantFlag": 1
+    },
+    {
+      "id": "f3b3b7d3-f429-45da-a47f-bf49e996dbff",
+      "modelCode": "default",
+      "milestoneCode": "DeiceEnd",
+      "milestoneName": "完成除冰",
+      "displayOrder": 29,
+      "importantFlag": 1
+    },
+    {
+      "id": "c51d713f-d87b-4a8e-ad07-a05ef22e363d",
+      "modelCode": "default",
+      "milestoneCode": "RefuelStart",
+      "milestoneName": "开始加油",
+      "displayOrder": 30,
+      "importantFlag": 1
+    },
+    {
+      "id": "16188bcd-1273-424b-8e02-908e3cadae5d",
+      "modelCode": "default",
+      "milestoneCode": "RefuelEnd",
+      "milestoneName": "完成加油",
+      "displayOrder": 31,
+      "importantFlag": 1
+    },
+    {
+      "id": "6522cf6d-83b0-4dac-ba63-20cd64d38db1",
+      "modelCode": "default",
+      "milestoneCode": "CateringStart",
+      "milestoneName": "开始配餐",
+      "displayOrder": 32,
+      "importantFlag": 1
+    },
+    {
+      "id": "0f317eed-38a0-4c19-87d9-faf8aa88ead5",
+      "modelCode": "default",
+      "milestoneCode": "CateringEnd",
+      "milestoneName": "完成配餐",
+      "displayOrder": 33,
+      "importantFlag": 1
+    },
+    {
+      "id": "43195ecd-3233-4c6a-938a-fa810f81c1ee",
+      "modelCode": "default",
+      "milestoneCode": "DepartureShuttleUnitEnd",
+      "milestoneName": "离港摆渡车",
+      "displayOrder": 34,
+      "importantFlag": 1
+    },
+    {
+      "id": "c4c82420-46f3-4aba-a1f6-28e78f8f1237",
+      "modelCode": "default",
+      "milestoneCode": "DepartureLoaderUnitEnd",
+      "milestoneName": "撤平台车",
+      "displayOrder": 35,
+      "importantFlag": 1
+    },
+    {
+      "id": "da117263-cdb1-4754-9d9a-263d8d9e9992",
+      "modelCode": "default",
+      "milestoneCode": "DepartureTransferUnitEnd",
+      "milestoneName": "撤传送车",
+      "displayOrder": 36,
+      "importantFlag": 1
+    },
+    {
+      "id": "c575157b-8e18-44a4-b897-f0efb32962ce",
+      "modelCode": "default",
+      "milestoneCode": "BoardingStart",
+      "milestoneName": "开始登机",
+      "displayOrder": 37,
+      "importantFlag": 1
+    },
+    {
+      "id": "e230a2c3-a638-44e0-b009-6770b155eb52",
+      "modelCode": "default",
+      "milestoneCode": "BoardingEnd",
+      "milestoneName": "完成登机",
+      "displayOrder": 38,
+      "importantFlag": 1
+    },
+    {
+      "id": "d2375e6b-c7aa-4603-bf41-278a6972b811",
+      "modelCode": "default",
+      "milestoneCode": "CargoManifestDeliveryEnd",
+      "milestoneName": "舱单送达",
+      "displayOrder": 39,
+      "importantFlag": 1
+    },
+    {
+      "id": "4101658d-2261-4b35-b80f-e41b3b560556",
+      "modelCode": "default",
+      "milestoneCode": "MailListDeliveryEnd",
+      "milestoneName": "货邮单送达",
+      "displayOrder": 40,
+      "importantFlag": 1
+    },
+    {
+      "id": "9d816a4b-dbca-4c0b-b53c-c79ed133c6d6",
+      "modelCode": "default",
+      "milestoneCode": "CabinDoorCloseEnd",
+      "milestoneName": "关客舱门",
+      "displayOrder": 41,
+      "importantFlag": 1
+    },
+    {
+      "id": "22108907-b92c-44c8-89f0-fde92907e4d2",
+      "modelCode": "default",
+      "milestoneCode": "CargoDoorCloseEnd",
+      "milestoneName": "关货舱门",
+      "displayOrder": 42,
+      "importantFlag": 1
+    },
+    {
+      "id": "3898daea-47dd-44e1-909e-78129ad95f6b",
+      "modelCode": "default",
+      "milestoneCode": "SignedReleaseEnd",
+      "milestoneName": "机务放行",
+      "displayOrder": 43,
+      "importantFlag": 1
+    },
+    {
+      "id": "22c0b2ab-9def-4401-93d5-0eba070dbd11",
+      "modelCode": "default",
+      "milestoneCode": "PassengerBridgeOffEnd",
+      "milestoneName": "离桥",
+      "displayOrder": 44,
+      "importantFlag": 1
+    },
+    {
+      "id": "c6a15120-6fde-4ec1-a8ab-ea141f162c9f",
+      "modelCode": "default",
+      "milestoneCode": "PassengerSatirsOnEnd",
+      "milestoneName": "客梯车撤离",
+      "displayOrder": 45,
+      "importantFlag": 1
+    },
+    {
+      "id": "6012f6ac-96e0-4961-b532-b805d8c5194a",
+      "modelCode": "default",
+      "milestoneCode": "BlockOffEnd",
+      "milestoneName": "撤轮挡",
+      "displayOrder": 46,
+      "importantFlag": 1
+    },
+    {
+      "id": "90160fae-5256-4e3f-9f3c-bba9fb7ac942",
+      "modelCode": "default",
+      "milestoneCode": "TracktorUnitArrived",
+      "milestoneName": "牵引车到位",
+      "displayOrder": 47,
+      "importantFlag": 1
+    },
+    {
+      "id": "2513fb43-bebd-49eb-8666-a568397c1720",
+      "modelCode": "default",
+      "milestoneCode": "TracktorUnitEnd",
+      "milestoneName": "飞机推出完成",
+      "displayOrder": 48,
+      "importantFlag": 1
+    },
+    {
+      "id": "7326dd1d-56a3-44fd-9c2a-ff3547586375",
+      "modelCode": "default",
+      "milestoneCode": "DropOffEnd",
+      "milestoneName": "送机完成",
+      "displayOrder": 49,
+      "importantFlag": 1
+    }
+  ],
+  "mileStoneList": [
+    {
+      "actualTime": 1539357932962,
+      "createTime": 1539358058902,
+      "estimatedTime": 1539360900000,
+      "flightId": 11287305,
+      "id": "4af56117-1b1e-4c44-a5c7-22afa194abfe",
+      "milestoneCode": "SewageUnitEnd",
+      "userId": "aa06b1a5d46842e9a1e99372ccf75691",
+      "userName": "肖潼"
+    },
+    {
+      "actualTime": 1539294480000,
+      "createTime": 1539314311263,
+      "flightId": 11287305,
+      "id": "01071229-ca9e-477b-a301-a43ba624405a",
+      "milestoneCode": "PreTakeOff"
+    },
+    {
+      "actualTime": 1539302160000,
+      "createTime": 1539314328755,
+      "flightId": 11287305,
+      "id": "a51431f0-f579-4251-84dd-6077d3e9e031",
+      "milestoneCode": "Aldt"
+    },
+    {
+      "actualTime": 1539358814896,
+      "createTime": 1539358940845,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "83c0ed66-3a38-4c2e-88bc-58101c8f2dd5",
+      "milestoneCode": "MobileStairsAttach",
+      "userId": "d9029020becd4414b8199f3f19b7b086",
+      "userName": "李良"
+    },
+    {
+      "actualTime": 1539361949322,
+      "createTime": 1539362075304,
+      "estimatedTime": 1539360900000,
+      "flightId": 11287073,
+      "id": "5d8d69fd-f0d9-45f9-9b57-9685e3b00927",
+      "milestoneCode": "ArriveLoaderUnitStart",
+      "userId": "a4c54834a2474d84b1b0d6e9c1dc9a1c",
+      "userName": "安秀伍"
+    },
+    {
+      "actualTime": 1539364493000,
+      "createTime": 1539364619606,
+      "flightId": 11287073,
+      "id": "584abd43-7467-4f8d-8db4-e2b0c2b45780",
+      "milestoneCode": "ProtectionEnd"
+    },
+    {
+      "actualTime": 1539365460000,
+      "createTime": 1539365687550,
+      "flightId": 11287073,
+      "id": "9143f7af-c83c-4ef4-98e5-aa513ee26d47",
+      "milestoneCode": "TakeOff"
+    },
+    {
+      "createTime": 1539365600070,
+      "estimatedTime": 1539365340000,
+      "flightId": 11287073,
+      "id": "62e8d3ec-a8a4-4590-a482-47a4b58f5095",
+      "milestoneCode": "MailListDeliveryEnd"
+    },
+    {
+      "createTime": 1539365600087,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "4cfa6937-cdf3-46b1-b22c-fd23de95ad78",
+      "milestoneCode": "PassengerBridgeOffEnd"
+    },
+    {
+      "createTime": 1539365600103,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "8e077a22-aac4-4d92-9c61-b516d9132f56",
+      "milestoneCode": "PassengerSatirsOnEnd"
+    },
+    {
+      "createTime": 1539365600134,
+      "estimatedTime": 1539365100000,
+      "flightId": 11287073,
+      "id": "8edce2a5-d457-4cbc-836a-f3525926a330",
+      "milestoneCode": "MarshallingEnd"
+    },
+    {
+      "createTime": 1539365600166,
+      "estimatedTime": 1539365400000,
+      "flightId": 11287073,
+      "id": "d24c9f39-fca3-4366-a46b-c99fca730631",
+      "milestoneCode": "CabinDoorCloseEnd"
+    },
+    {
+      "createTime": 1539365600198,
+      "estimatedTime": 1539365100000,
+      "flightId": 11287073,
+      "id": "6deffcab-5720-43d7-9cbe-f051c1777862",
+      "milestoneCode": "CargoManifestDeliveryEnd"
+    },
+    {
+      "createTime": 1539365600214,
+      "estimatedTime": 1539366060000,
+      "flightId": 11287073,
+      "id": "c03f8ab6-b8c3-403d-8918-d06e12c4baad",
+      "milestoneCode": "BlockOffEnd"
+    },
+    {
+      "createTime": 1539365600150,
+      "estimatedTime": 1539365400000,
+      "flightId": 11287073,
+      "id": "301870ee-c312-48e1-990c-19a950c82b3c",
+      "milestoneCode": "BoardingEnd"
+    },
+    {
+      "createTime": 1539365600245,
+      "estimatedTime": 1539363900000,
+      "flightId": 11287073,
+      "id": "45d5a2ec-1957-4342-8f73-7f1497db1859",
+      "milestoneCode": "WaterUnitEnd"
+    },
+    {
+      "createTime": 1539365600261,
+      "estimatedTime": 1539365700000,
+      "flightId": 11287073,
+      "id": "89e49612-7406-4063-9149-fa8633ea41e4",
+      "milestoneCode": "ArriveShuttleUnitStart"
+    },
+    {
+      "createTime": 1539365600277,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "94fb8857-95c4-4892-bc88-433c1d402099",
+      "milestoneCode": "DepartureTransferUnitEnd"
+    },
+    {
+      "createTime": 1539365600293,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "ecdf5bb7-a925-4c1a-87fb-d1f538e20945",
+      "milestoneCode": "DepartureShuttleUnitEnd"
+    },
+    {
+      "createTime": 1539365600308,
+      "estimatedTime": 1539366060000,
+      "flightId": 11287073,
+      "id": "816244e6-d08d-4848-865d-5e37d6ce92ef",
+      "milestoneCode": "DropOffEnd"
+    },
+    {
+      "createTime": 1539365600325,
+      "estimatedTime": 1539360900000,
+      "flightId": 11287073,
+      "id": "7572c873-a60e-4162-b3d0-1edf37c68d56",
+      "milestoneCode": "ArriveTransferUnitStart"
+    },
+    {
+      "createTime": 1539365600340,
+      "estimatedTime": 1539364500000,
+      "flightId": 11287073,
+      "id": "e1c54935-a339-423a-a08c-9da9238b40a5",
+      "milestoneCode": "BoardingStart"
+    },
+    {
+      "createTime": 1539365600363,
+      "estimatedTime": 1539365400000,
+      "flightId": 11287073,
+      "id": "58088a7c-fd64-479c-9bd7-681470f3d5fd",
+      "milestoneCode": "TracktorUnitEnd"
+    },
+    {
+      "createTime": 1539365600385,
+      "estimatedTime": 1539365100000,
+      "flightId": 11287073,
+      "id": "1b107a9e-1319-4c0e-b72b-d7758481c916",
+      "milestoneCode": "SignedReleaseEnd"
+    },
+    {
+      "createTime": 1539365600429,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "0e278c36-7fae-4ff0-9f61-8500d7a4b9b3",
+      "milestoneCode": "PassengerBridgeAttach"
+    },
+    {
+      "createTime": 1539365600452,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "1ee4401c-ed9c-4de0-b90e-501d91552552",
+      "milestoneCode": "MarshallingStart"
+    },
+    {
+      "actualTime": 1539364068301,
+      "createTime": 1539364194271,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "b44ea993-fef1-49ff-a223-0d2b602dc6f7",
+      "milestoneCode": "DepartureLoaderUnitEnd",
+      "userId": "a4c54834a2474d84b1b0d6e9c1dc9a1c",
+      "userName": "安秀伍"
+    },
+    {
+      "actualTime": 1539361696880,
+      "createTime": 1539361822861,
+      "estimatedTime": 1539365400000,
+      "flightId": 11287073,
+      "id": "6e5762a6-bbaf-4362-8d18-b44721ab0b77",
+      "milestoneCode": "CargoDoorOpenEnd",
+      "userId": "629417bc407c4b539f4d28958dee4247",
+      "userName": "安东-监装员"
+    },
+    {
+      "createTime": 1539365600519,
+      "estimatedTime": 1539364800000,
+      "flightId": 11287073,
+      "id": "559ebb92-19c0-4765-aecf-757831c9ec4c",
+      "milestoneCode": "TracktorUnitArrived"
+    },
+    {
+      "actualTime": 1539363790128,
+      "createTime": 1539363916112,
+      "estimatedTime": 1539365400000,
+      "flightId": 11287073,
+      "id": "92b5f118-1407-4db8-9c75-3d098824b336",
+      "milestoneCode": "CargoDoorCloseEnd",
+      "userId": "629417bc407c4b539f4d28958dee4247",
+      "userName": "安东-监装员"
+    },
+    {
+      "actualTime": 1539361024000,
+      "createTime": 1539315206070,
+      "flightId": 11287073,
+      "id": "a9fd2528-507e-4cde-ae25-2ee6e24be2b5",
+      "milestoneCode": "RefuelEnd"
+    }
+  ]
+}

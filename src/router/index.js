@@ -16,7 +16,8 @@ const menu = () => import(/*webpackChunkName:"menu"*/ '../views/menu/menu')
 
 //首页
 const index = () => import(/*webpackChunkName:"index"*/ '../views/index')
-
+//运行态势
+const home = () => import(/*webpackChunkName:"home"*/ '../views/home/home')
 //航班动态
 const flight = () => import(/*webpackChunkName:"flight"*/ '../views/flight/flight')
 
@@ -27,6 +28,7 @@ var routes = [
   { path: '/menu', name: 'menu', component:menu},
   {
     path: '/index', name: 'index', component: index, children: [
+      { path: '/home', name: 'home', component:home},
       { path: '/flight', name: 'flight', component:flight},
     ]
   },
