@@ -69,7 +69,7 @@ import userimg from './assets/img/login-username.png'
 import pwdimg from './assets/img/login-password.png'
 import './assets/index.scss'
 import { encryptedData } from '../../lib/des-coder.js'
-import {memoryStore} from "../../../worker/lib/memoryStore";
+import { memoryStore } from '../../../worker/lib/memoryStore'
 export default {
     name: 'login',
     data() {
@@ -183,29 +183,33 @@ export default {
                         .then((res) => {
                             this.loading = false
                             if (res) {
+                                // if (
+                                //     res.responseCode == 30002 ||
+                                //     res.responseCode == 30003 ||
+                                //     res.responseCode == 30010
+                                // ) {
+                                //     this.passwordObj.userData = res.data
+                                //     this.passwordObj.userToken = res.data.token
+                                //     this.$pub('Worker', 'LoginSuccess', { token: res.data.token })
+                                //     sessionStorage.setItem('token', res.data.token)
+                                //     memoryStore.setItem('global', { token: res.data.token })
+                                //     this.$alert(res.responseMessage, this.$t('message.prompt'), {
+                                //         type: 'warning',
+                                //         center: true,
+                                //         callback: () => {
+                                //             this.changePasswordShow = true
+                                //         },
+                                //     })
+                                //     return false
+                                // }
+
                                 if (
-                                    res.responseCode == 30002 ||
-                                    res.responseCode == 30003 ||
-                                    res.responseCode == 30010
+                                    (res.responseCode == 30003 || res.responseCode == 1000) &&
+                                    res.data
                                 ) {
-                                    this.passwordObj.userData = res.data
-                                    this.passwordObj.userToken = res.data.token
-                                    this.$pub('Worker','LoginSuccess', {token:res.data.token});
-                                    sessionStorage.setItem('token', res.data.token)
-                                    memoryStore.setItem('global',{token:res.data.token});
-                                    this.$alert(res.responseMessage, this.$t('message.prompt'), {
-                                        type: 'warning',
-                                        center: true,
-                                        callback: () => {
-                                            this.changePasswordShow = true
-                                        },
-                                    })
-                                    return false
-                                }
-                                if (res.responseCode == 1000 && res.data) {
                                     //登录成功
-                                  this.$pub('Worker','LoginSuccess', {token:res.data.token});
-                                    memoryStore.setItem('global',{token:res.data.token});
+                                    this.$pub('Worker', 'LoginSuccess', { token: res.data.token })
+                                    memoryStore.setItem('global', { token: res.data.token })
                                     this.$store.commit('setUserMsg', res.data)
                                     sessionStorage.setItem('token', res.data.token)
                                     sessionStorage.setItem(

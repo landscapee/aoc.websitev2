@@ -59,7 +59,6 @@ axios.interceptors.response.use(
     // if(response.data.date){
     //   store.commit('setServerTime',new Date(response.data.date))
     // }
-
     if(response.data.code==200
       ||response.data.responseCode==1000
       ||response.data.responseCode==30002
@@ -131,7 +130,7 @@ export default class HttpRequest {
         headers: { 'Content-Type': 'application/json' },
         data: params,
       }).then(response => {
-        resolve( response.data )
+        resolve( response )
       }).catch(err => {
         reject( err )
       })
@@ -145,8 +144,7 @@ export default class HttpRequest {
         url:`${serverPath}/${url}`,
         method: 'GET',
       }).then(response => {
-        console.log(response)
-        resolve(response.data || response.responseData)
+        resolve(response)
       }).catch(err=>reject(err))
     })
   }
