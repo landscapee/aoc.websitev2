@@ -7,13 +7,13 @@ export const getNaturalDate = (time) => {
 };
 /**
  * 计算运营日
- * @param  {[int]} time [数字型timestamp]
+ * @param  {[int]} time [数字型timestamp]  overFour 四点 true false
  * @param  {[string]} time [字符串timestamp]
  * @param  {[moment]} time [moment对象]
  * @param  {[Date]} time [日期对象]
  * @return {[int]}      [YYYYMMDD]
  */
-export const getOperationDate = (time) => {
+export const getOperationDate = (time, overFour) => {
 	let scheduleTime;
 	//数字, 识别为 timestamp
 	if (time == null) {
@@ -26,7 +26,9 @@ export const getOperationDate = (time) => {
 	if (!scheduleTime.isValid()) {
 		throw new Error('not support time format');
 	}
-	scheduleTime = scheduleTime.hour() < 4 ? scheduleTime.add(-1, 'days') : scheduleTime;
+	if (overFour) {
+		scheduleTime = scheduleTime.hour() < 4 ? scheduleTime.add(-1, 'days') : scheduleTime;
+	}
 	return parseInt(scheduleTime.format('YYYYMMDD'));
 };
 /**
@@ -34,7 +36,7 @@ export const getOperationDate = (time) => {
  * @param time
  * @returns {*}
  */
-export const getLastOperationDate = (time) => {
+export const getLastOperationDate = (time, overFour) => {
 	let scheduleTime = moment(time);
 	let lastScheduleTime = scheduleTime.add(-1, 'days');
 	return getOperationDate(lastScheduleTime);
@@ -44,7 +46,7 @@ export const getLastOperationDate = (time) => {
  * @param time
  * @returns {*}
  */
-export const getNextOperationDate = (time) => {
+export const getNextOperationDate = (time, overFour) => {
 	let scheduleTime = moment(time);
 	let nextScheduleTime = scheduleTime.add(1, 'days');
 	return getOperationDate(nextScheduleTime);

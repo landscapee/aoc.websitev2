@@ -1,12 +1,32 @@
 import Promise from 'bluebird';
 import moment from 'moment';
-import { map, each, set, get, filter, has, extend, flow, keys, pick, omit, every, some, indexOf, toLower, toUpper, upperFirst, concat, compact, reduce, orderBy, drop, dropRight, isArray, differenceWith, isEqual, merge } from 'lodash';
+import { map, each, set, get, filter, has, extend, flow, keys, pick, omit, every, some, indexOf, toLower, toUpper, upperFirst, concat, compact, reduce, orderBy, drop, dropRight, isArray, isObject, isEqual, merge } from 'lodash';
 import { getNaturalDate, getOperationDate, formatDate, getTime } from 'helper/date';
 import Airports from 'data/airports.json';
 import Logger from 'logger';
+import { flightDB } from '../../website/worker-java/lib/storage';
+import { addSerialNumber } from '../../website/worker-java/page/flights/flights';
+import { remote } from '../electron';
+import { memoryStore } from '../../website/worker-java/lib/localStore';
 
 const log = new Logger('helper:flight');
 
+export const flightStateColor = {
+	前方起飞: '#9E72FF',
+	到达: '#1D93F2',
+	登机: '#2a42ff',
+	催促登机: '#BC1D1D',
+	关闭: '#00950C',
+	取消: '#7B97AD',
+	延误: '#EE4469',
+	起飞: '#B3C0D6',
+	到下站: '#B3C0D6',
+	正常: '#ffffff',
+	备降: '#F89401',
+	返航: '#F89401',
+	其他: '#878684',
+};
+const takeOffNormalStatus = { 0: '正常', 1: '不正常', 2: '不计算' };
 /**
  * 只有这些航班类型的数据才纳入各种正常率的统计(航班正常率, 始发正常率, 放行正常率, 早高峰正常率)
  * @type {Array}
@@ -45,7 +65,7 @@ export const addDisplayField = (flight) => {
 	if (!flight) {
 		return flight;
 	}
-	let displayUpperFields = map(['sta', 'eta', 'eti', 'ata', 'std', 'etd', 'atd', 'ctot', 'cobt', 'tobt', 'ttot'], (fieldKey) => {
+	let displayUpperFields = map(['sta', 'eta', 'eti', 'ata', 'std', 'etd', 'atd', 'ctot', 'cobt', 'tobt', 'ttot', 'delayTime', 'dsgt', 'tsgt', 'dstt', 'tstt'], (fieldKey) => {
 		if (has(flight, fieldKey)) {
 			return {
 				[`display${toUpper(fieldKey)}`]: formatDate(get(flight, fieldKey), 'HHmm'),
@@ -55,15 +75,56 @@ export const addDisplayField = (flight) => {
 		return null;
 	});
 
-	let displayUpperFirstFields = map(['mixEta', 'estimateTime', 'acdmEta', 'preEtd', 'preAtd', 'preStd', 'acdmEta', 'variflightEta', 'variflightEtd', 'variflightAta', 'variflightAtd', 'closeDoorTime', 'maintainTime', 'vehicleArriveIn', 'pushOutTime'], (fieldKey) => {
-		if (has(flight, fieldKey)) {
-			return {
-				[`display${upperFirst(fieldKey)}`]: formatDate(get(flight, fieldKey), 'HHmm'),
-				[`display${upperFirst(fieldKey)}WithDate`]: formatDate(get(flight, fieldKey), 'HHmm(DD)'),
-			};
-		}
-		return null;
-	});
+	let displayUpperFirstFields = map(
+		[
+			'mixEta',
+			'amisEta',
+			'scheduleTime',
+			'actualTime',
+			'estimateTime',
+			'acdmEta',
+			'preEtd',
+			'preAtd',
+			'out',
+			'in',
+			'preStd',
+			'acdmEta',
+			'variflightEta',
+			'variflightEtd',
+			'variflightAta',
+			'variflightAtd',
+			'closeDoorTime',
+			'maintainTime',
+			'vehicleArriveIn',
+			'pushOutTime',
+			'elecPublishTime',
+			'maintainTime',
+			'takeOffTime',
+			'preOrNxtPlanTime',
+			'preOrNxtActualTime',
+			'blockOnStart',
+			'blockOffEnd',
+			'standardTakeOffTime',
+			'firstLuggageEstimateArriveTime',
+			'estimateGuaranteeCompleteTime',
+			'firstLuggageActualArriveTime',
+			'overStationMinTime',
+			'overStationScheduleTime',
+			'actualStartTime',
+			'actualEndTime',
+			'estimateStartTime',
+			'estimateEndTime',
+		],
+		(fieldKey) => {
+			if (has(flight, fieldKey)) {
+				return {
+					[`display${upperFirst(fieldKey)}`]: formatDate(get(flight, fieldKey), 'HHmm'),
+					[`display${upperFirst(fieldKey)}WithDate`]: formatDate(get(flight, fieldKey), 'HHmm(DD)'),
+				};
+			}
+			return null;
+		},
+	);
 
 	let displayTimeFields = map(['updateTime'], (fieldKey) => {
 		if (has(flight, fieldKey)) {
@@ -78,6 +139,21 @@ export const addDisplayField = (flight) => {
 	mergedFields = compact(mergedFields);
 	let result = extend.apply(null, mergedFields);
 	return extend({}, flight, result);
+};
+export const fixTakeOffNormalStatus = (flight) => {
+	if (!flight) {
+		return flight;
+	}
+	let result = { takeOffNormalStatus: takeOffNormalStatus[flight.takeOffNormalStatus] };
+	return extend({}, flight, result);
+};
+
+export const fixDelayReasonMerge = (f) => {
+	if (!f) {
+		return f;
+	}
+	let result = { delayReasonMerge: f.delaySubReason ? f.delayMainReason + ',' + f.delaySubReason : '' };
+	return extend({}, f, result);
 };
 /**
  * 构建航线显示字段
@@ -854,4 +930,55 @@ export const addExtendDisplayFiled = (flights) => {
 		return data;
 	});
 	return Promise.resolve(result);
+};
+
+export const filterFlightsByRole = (flights, role = {}) => {
+	let { reversal, data = [] } = role;
+	// reversal为真就排除data里面的航班 为假就筛选data里面的航班
+	let filterFlights;
+	if (reversal) {
+		filterFlights = filter(flights, (item) => data.indexOf(item.airlineCode) <= -1);
+	} else {
+		filterFlights = filter(flights, (item) => data.indexOf(item.airlineCode) > -1);
+	}
+	// 处理过滤了权限之后 序号变更的问题
+	return map(filterFlights, (item, index) => ({ ...item, flightIndex: index + 1 }));
+};
+
+// 通过后端返回的权限过滤航班
+export const filterRoleFlights = (flights) => {
+	let roleFlight = remote.getGlobal('roleFlights');
+	return filterFlightsByRole(flights, roleFlight);
+};
+
+// 其他的模块 比如除冰里面用到了航班动态的字段转换功能
+export const fixField = (oFlights) => {
+	let flights = map(oFlights, (item) => {
+		let isItemObj = isObject(item);
+		let f = flightDB.by('flightId', isItemObj ? item.flightId : item);
+		return extend(f, item);
+	});
+	return flow([filterRoleFlights, addSerialNumber])(flights);
+};
+
+// 其他的模块 比如除冰里面用到了航班动态的字段转换功能
+export const getFlightByIds = (oFlights) => {
+	let flights = map(oFlights, (item) => {
+		let isItemObj = isObject(item);
+		let f = flightDB.by('flightId', isItemObj ? item.flightId : item);
+		let flight = { ...f };
+		return extend(flight, item);
+	});
+	return flow([addSerialNumber])(flights);
+};
+
+// 实时检测WebsocketResponseData是否完成; 某些依赖于航班动态的数据可能会先加载出来
+export const checkWebsocketResponseDataFinish = () => {
+	return new Promise((resolve) => {
+		setInterval(() => {
+			if (memoryStore.getItem('global').websocketDataFinish === true) {
+				resolve();
+			}
+		}, 300);
+	});
 };

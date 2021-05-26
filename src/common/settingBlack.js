@@ -19,7 +19,7 @@ const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0,
 const chartColor1 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#0566FF'], [1, '#0C9FFF']] };
 const chartColorRed = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#BF0B23'], [1, '#ff0002']] };
 const chartColorOrg = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#ff7300'], [1, '#ffa517']] };
-const chartColorYellow = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#FFE300'], [1, '#fff200']] };
+const chartColorYellow = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#d99c00'], [1, '#ffd700']] };
 const chartColor2 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#00CD49'], [1, '#009F23']] };
 // #0576E3 0% hex
 // #00CD48 100% hex
@@ -112,17 +112,17 @@ const chartOptionsByHour = {
 	},
 	//colors: ['#049175', '#074e7a', '#049175', '#074e7a'],
 	tooltip: {
-		//split: true,
 		crosshairs: [true],
-		valueSuffix: '架次',
+		// valueSuffix: '架次',
 		shared: true,
-		//pointFormat: '{series.name}: <b>{point.y}</b>',
 		formatter: function() {
 			let s = `<b>${this.x}点</b>`;
 			let self = this;
 			map(self.points, function(point) {
 				if (point.series.name.indexOf('计划') > -1) {
 					s += `<br/><div><span style="color:${point.color}">- </span><span style="color:#666;">${point.series.name}</span> : <span style="font-family:'Fjalla One';color:${point.color}">${Math.abs(point.y)}</span><span style="color:#666;">架次</span></div>`;
+				} else if (point.series.name.indexOf('率') > -1) {
+					s += `<br/><div><span style="color:${point.color}">● </span><span style="color:#666;">${point.series.name}</span> : <span style="font-family:'Fjalla One';color:${point.color}">${Math.abs(point.y)}(${point.point.name})</span><span style="color:#666;">%</span></div>`;
 				} else {
 					s += `<br/><div><span style="color:${point.color}">● </span><span style="color:#666;">${point.series.name}</span> : <span style="font-family:'Fjalla One';color:${point.color}">${Math.abs(point.y)}</span><span style="color:#666;">架次</span></div>`;
 				}
@@ -133,14 +133,16 @@ const chartOptionsByHour = {
 	//title: { text: '今日航班实时运行情况', align: 'left' },
 	title: false,
 	xAxis: {
-		categories: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, ' 4 '],
+		//categories: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, ' 4 '],
+		categories: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0],
+
 		//tickmarkPlacement: 'on',
 		title: {
 			enabled: false,
 		},
 
 		gridLineWidth: 1,
-		gridLineColor: '#d8d6d6', //Dot
+		gridLineColor: ' #828080', //Dot
 		gridLineDashStyle: 'Dot',
 		// minorTickInterval: 'auto',
 		// minorTicks: true,
@@ -152,24 +154,40 @@ const chartOptionsByHour = {
 			align: 'center',
 		},
 	},
-	yAxis: {
-		title: {
-			enabled: false,
-		},
-		gridLineWidth: 1,
-		gridLineColor: '#d8d6d6', //Dot
-		gridLineDashStyle: 'Dot',
-		startOnTick: false,
-		endOnTick: false,
-		minorTickWidth: 0,
-		lineWidth: 0,
-		tickInterval: 20,
-		labels: {
-			formatter: function() {
-				return Math.abs(this.value);
+	yAxis: [
+		{
+			title: {
+				enabled: false,
+			},
+			gridLineWidth: 1,
+			gridLineColor: '#828080', //Dot
+			gridLineDashStyle: 'Dot',
+			startOnTick: false,
+			endOnTick: false,
+			minorTickWidth: 0,
+			lineWidth: 0,
+			tickInterval: 20,
+			labels: {
+				formatter: function() {
+					return Math.abs(this.value);
+				},
 			},
 		},
-	},
+		{
+			title: {
+				text: '',
+			},
+			gridLineWidth: 0,
+			minPadding: 0,
+			maxPadding: 0,
+			max: 100,
+			min: 0,
+			opposite: true,
+			labels: {
+				format: '{value}%',
+			},
+		},
+	],
 	plotOptions: {
 		column: {
 			//pointPlacement: 0.5,
@@ -231,13 +249,14 @@ const chartOptionsByHour = {
 		verticalAlign: 'top',
 		enabled: true,
 		itemStyle: {
-			color: '#666666',
+			// color: '#666666',
+			color: '#fff',
 			fontSize: '0.75rem',
 			fontWeight: 'light',
 		},
-		// itemHoverStyle: {
-		// 	color: '#666666',
-		// },
+		itemHoverStyle: {
+			color: '#00e7ee',
+		},
 		// itemHiddenStyle: {
 		// 	color: '#6b6b6b',
 		// },
@@ -294,6 +313,13 @@ export const settings = {
 		},
 		title: '离港',
 	},
+	passengerTransport: {
+		type: 'number',
+		value: (data) => {
+			return `${get(data, 'summary.completedPassengerFlightsCount', '')} / ${get(data, 'summary.passengerFlightsCount', '')}`;
+		},
+		title: '客运',
+	},
 	'yesterday-departure-passenger': {
 		type: 'number',
 		value: (data) => {
@@ -308,12 +334,19 @@ export const settings = {
 		},
 		title: '返航',
 	},
-	alternate: {
+	alternateInner: {
 		type: 'number2',
 		value: (data) => {
 			return `${get(data, 'summary.alternate', '')}`;
 		},
-		title: '备降',
+		title: '备降本场',
+	},
+	alternateOuter: {
+		type: 'number2',
+		value: (data) => {
+			return `${get(data, 'summary.alternateOtherCity', '')}`;
+		},
+		title: '备降外场',
 	},
 	cancel: {
 		type: 'number2',
@@ -578,6 +611,9 @@ export const settings = {
 				title: 'ETA',
 			},
 		],
+	},
+	direction: {
+		type: 'mixinZone',
 	},
 	'delay-30min': {
 		hide: true,
@@ -984,6 +1020,58 @@ export const settings = {
 							}) || [],
 						className: 'shadowBlue',
 					},
+					{
+						// type: 'scatter',
+						type: 'spline',
+						name: '航班放行正常率',
+						yAxis: 1,
+						// color: '#ff9f00',
+						lineColor: chartColor3,
+						lineWidth: 0,
+
+						// fillOpacity: 0.05,
+						dataLabels: {
+							enabled: true,
+							verticalAlign: 'top',
+							// format: '{y}%',
+							format: '<span>{y}<span style="font-size:8px">%</span><span>',
+							allowOverlap: true,
+							//x: 0.5,
+							// y: 5,
+							style: {
+								textOutline: '0px 0px rgba(0,161,37,0.1)',
+								// textOutline: '1px 0px #999',
+								fontSize: 11,
+								fontFamily: 'Fjalla One',
+								// color: '#444',
+								color: '#fff',
+							},
+							//borderColor: 'rgba(0, 205, 73, 0.1)',
+						},
+						data:
+							map(data.byHours.today.takeOffRate, (v) => {
+								let value = Math.round((v[0] / v[1]) * 1000) / 10;
+								let color = 'rgba(251, 0, 0, 0.7)';
+								if (value >= 80) color = 'rgba(251, 156, 0, 0.7)';
+								if (value >= 85) color = 'rgba(1, 189, 42, 0.7)';
+								if (value >= 90) color = 'rgba(2, 107, 254, 0.7)';
+								return {
+									y: value || null,
+									color: color,
+									name: v[0] + '/' + v[1],
+								};
+							}) || [],
+						marker: {
+							radius: 3,
+							// radius: 4,
+							lineColor: 'rgba(102,102,102,0.5)',
+							lineWidth: 1,
+							// symbol: 'diamond',
+						},
+						// tooltip: {
+						// 	valueSuffix: '%',
+						// },
+					},
 				];
 				return result;
 			},
@@ -1076,13 +1164,13 @@ export const settings = {
 					enabled: false,
 				},
 				gridLineWidth: 1,
-				gridLineColor: '#d8d6d6', //Dot
+				gridLineColor: ' #828080', //Dot
 				gridLineDashStyle: 'Dot',
 				startOnTick: false,
 				endOnTick: false,
 				minorTickWidth: 0,
 				lineWidth: 0,
-				tickInterval: 25,
+				tickInterval: 10,
 				labels: {
 					formatter: function() {
 						return Math.abs(this.value);
@@ -1095,19 +1183,64 @@ export const settings = {
 				}
 				let prediction = get(data, 'byHours.backlog.prediction', []);
 				let actual = get(data, 'byHours.backlog.actual', []);
-				let timeCfg = ['04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '00', '01', '02', '03'];
+				let executable = get(data, 'byHours.backlog.executable', []);
+				//let timeCfg = ['04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '00', '01', '02', '03'];
+				let timeCfg = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
+
 				let result = [
 					{
 						type: 'column',
+						name: '可执行积压',
+						color: chartColor1,
+						// dataLabels: {
+						// 	verticalAlign: 'top',
+						// 	//x: 0.5,
+						// 	y: 5,
+						// 	style: {
+						// 		textOutline: '1px 1px rgba(0,161,37,0.6)',
+						// 	},
+						// 	//borderColor: 'rgba(0, 205, 73, 0.1)',
+						// },
+						data: map(timeCfg, (time) => {
+							let v = executable[time];
+							return {
+								y: v,
+								className: 'roundTop',
+							};
+						}),
+						className: 'shadowBlue',
+					},
+					// {
+					// 	type: 'areaspline',
+					// 	name: '预计积压',
+					// 	color: '#0566FF',
+					// 	lineColor: chartColor4,
+					// 	fillOpacity: 0.05,
+					// 	data: map(timeCfg, (v) => {
+					// 		return prediction[v] || 0;
+					// 	}),
+					// },
+					{
+						type: 'column',
 						name: '积压航班',
+						color: chartColor2,
+						dataLabels: {
+							verticalAlign: 'top',
+							//x: 0.5,
+							y: 5,
+							style: {
+								textOutline: '1px 1px rgba(0,161,37,0.6)',
+							},
+							//borderColor: 'rgba(0, 205, 73, 0.1)',
+						},
 
 						//borderColor: 'rgba(12, 159, 255, 0.1)',
 						data:
 							map(timeCfg, (v) => {
 								let res = {
-									y: actual[v] || 0,
-									className: 'roundTop',
-									color: chartColor1,
+									y: -actual[v] || 0,
+									className: 'roundBottom',
+									color: chartColor2,
 								};
 								if (actual[v] >= 150) {
 									return extend(res, { color: chartColorRed });
@@ -1122,16 +1255,6 @@ export const settings = {
 								return res;
 							}) || [],
 						className: 'shadowBlue',
-					},
-					{
-						type: 'areaspline',
-						name: '预计积压',
-						color: '#0566FF',
-						lineColor: chartColor4,
-						fillOpacity: 0.05,
-						data: map(timeCfg, (v) => {
-							return prediction[v] || 0;
-						}),
 					},
 				];
 				return result;

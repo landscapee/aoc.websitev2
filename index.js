@@ -18,8 +18,10 @@ import moment from 'moment';
 import {pub, sub} from "lib/common";
 import {memoryStore} from "./worker/lib/memoryStore";
 
+import IconSvg from './src/components/Icon-svg';// svg组件
 
 
+Vue.component('icon-svg', IconSvg);
 /***************************拆分server 测试环境********************************/
 // let locationHost = '173.101.1.30'; // 双流测试
 let locationHost = location.hostname;

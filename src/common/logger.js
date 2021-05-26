@@ -60,7 +60,7 @@ export default class Logger {
 	}
 	verbose(...args) {
 		let logger = getLogger('verbose:' + this._tag, 'verbose');
-		logger.apply(this, args);
+		// logger.apply(this, args);
 	}
 	trace(...args) {
 		let logger = getLogger('trace:' + this._tag, 'trace');

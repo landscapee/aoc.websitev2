@@ -1,6 +1,5 @@
 import { get, set, filter, orderBy, countBy, take, map, each, has, toUpper, size, extend } from 'lodash';
-
-import Airports from 'data/airports.json';
+import Airports from './data/airports.json';
 
 const getMinus = (v) => {
 	return {
@@ -15,8 +14,11 @@ const getValue = (v) => {
 	};
 };
 
-const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#0C9FFF'], [1, '#0566FF']] };
+const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#00DFFF'], [1, '#004EFF']] };
 const chartColor1 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#0566FF'], [1, '#0C9FFF']] };
+const chartColorRed = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#BF0B23'], [1, '#ff0002']] };
+const chartColorOrg = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#ff7300'], [1, '#ffa517']] };
+const chartColorYellow = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#d99c00'], [1, '#ffd700']] };
 const chartColor2 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#00CD49'], [1, '#009F23']] };
 // #0576E3 0% hex
 // #00CD48 100% hex
@@ -70,8 +72,8 @@ const chartOptions = {
 		endAngle: 360,
 		background: [
 			{
-				outerRadius: '104%',
-				innerRadius: '89%',
+				outerRadius: '102%',
+				innerRadius: '91%',
 				backgroundColor: '#eef2f9',
 				borderWidth: 0,
 			},
@@ -109,17 +111,17 @@ const chartOptionsByHour = {
 	},
 	//colors: ['#049175', '#074e7a', '#049175', '#074e7a'],
 	tooltip: {
-		//split: true,
 		crosshairs: [true],
-		valueSuffix: '架次',
+		// valueSuffix: '架次',
 		shared: true,
-		//pointFormat: '{series.name}: <b>{point.y}</b>',
 		formatter: function() {
 			let s = `<b>${this.x}点</b>`;
 			let self = this;
 			map(self.points, function(point) {
 				if (point.series.name.indexOf('计划') > -1) {
 					s += `<br/><div><span style="color:${point.color}">- </span><span style="color:#666;">${point.series.name}</span> : <span style="font-family:'Fjalla One';color:${point.color}">${Math.abs(point.y)}</span><span style="color:#666;">架次</span></div>`;
+				} else if (point.series.name.indexOf('率') > -1) {
+					s += `<br/><div><span style="color:${point.color}">● </span><span style="color:#666;">${point.series.name}</span> : <span style="font-family:'Fjalla One';color:${point.color}">${Math.abs(point.y)}(${point.point.name})</span><span style="color:#666;">%</span></div>`;
 				} else {
 					s += `<br/><div><span style="color:${point.color}">● </span><span style="color:#666;">${point.series.name}</span> : <span style="font-family:'Fjalla One';color:${point.color}">${Math.abs(point.y)}</span><span style="color:#666;">架次</span></div>`;
 				}
@@ -130,7 +132,8 @@ const chartOptionsByHour = {
 	//title: { text: '今日航班实时运行情况', align: 'left' },
 	title: false,
 	xAxis: {
-		categories: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, ' 4 '],
+		//categories: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, ' 4 '],
+		categories: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 0],
 		//tickmarkPlacement: 'on',
 		title: {
 			enabled: false,
@@ -149,24 +152,39 @@ const chartOptionsByHour = {
 			align: 'center',
 		},
 	},
-	yAxis: {
-		title: {
-			enabled: false,
-		},
-		gridLineWidth: 1,
-		gridLineColor: '#d8d6d6', //Dot
-		gridLineDashStyle: 'Dot',
-		startOnTick: false,
-		endOnTick: false,
-		minorTickWidth: 0,
-		lineWidth: 0,
-		tickInterval: 20,
-		labels: {
-			formatter: function() {
-				return Math.abs(this.value);
+	yAxis: [
+		{
+			title: {
+				enabled: false,
+			},
+			gridLineWidth: 1,
+			gridLineColor: '#d8d6d6', //Dot
+			gridLineDashStyle: 'Dot',
+			startOnTick: false,
+			endOnTick: false,
+			minorTickWidth: 0,
+			lineWidth: 0,
+			tickInterval: 20,
+			labels: {
+				formatter: function() {
+					return Math.abs(this.value);
+				},
 			},
 		},
-	},
+		{
+			title: {
+				text: '',
+			},
+			minPadding: 0,
+			maxPadding: 0,
+			max: 100,
+			min: 0,
+			opposite: true,
+			labels: {
+				format: '{value}%',
+			},
+		},
+	],
 	plotOptions: {
 		column: {
 			//pointPlacement: 0.5,
@@ -265,15 +283,33 @@ const chartOptionsByHour = {
 export const settings = {
 	totalPlan: {
 		type: 'number',
-		value: (data) => {
-			return `${get(data, 'summary.completedPlan', '')} / ${get(data, 'summary.totalPlan', '')}`;
+		key: 'schedule',
+		value: (data, type) => {
+			return `${get(data, ['statType', type, 'schedule', 0], '')} / ${get(data, ['statType', type, 'schedule', 1], '')}`;
 		},
 		title: '今日计划',
 	},
+	passengerTransport: {
+		type: 'number',
+		key: 'passenger',
+		value: (data, type) => {
+			return `${get(data, ['statType', type, 'passenger', 0], '')} / ${get(data, ['statType', type, 'passenger', 1], '')}`;
+		},
+		title: '客运',
+	},
+	cargo: {
+		type: 'number',
+		key: 'cargo',
+		value: (data, type) => {
+			return `${get(data, ['statType', type, 'cargo', 0], '')} / ${get(data, ['statType', type, 'cargo', 1], '')}`;
+		},
+		title: '货运',
+	},
 	arrival: {
 		type: 'number',
-		value: (data) => {
-			return `${get(data, 'summary.completedArrivalPlan', '')} / ${get(data, 'summary.arrivalPlan', '')}`;
+		key: 'in',
+		value: (data, type) => {
+			return `${get(data, ['statType', type, 'in', 0], '')} / ${get(data, ['statType', type, 'in', 1], '')}`;
 		},
 		title: '进港',
 	},
@@ -286,11 +322,13 @@ export const settings = {
 	},
 	departure: {
 		type: 'number',
-		value: (data) => {
-			return `${get(data, 'summary.completedDeparturePlan', '')} / ${get(data, 'summary.departurePlan', '')}`;
+		key: 'out',
+		value: (data, type) => {
+			return `${get(data, ['statType', type, 'out', 0], '')} / ${get(data, ['statType', type, 'out', 1], '')}`;
 		},
 		title: '离港',
 	},
+
 	'yesterday-departure-passenger': {
 		type: 'number',
 		value: (data) => {
@@ -305,12 +343,19 @@ export const settings = {
 		},
 		title: '返航',
 	},
-	alternate: {
+	alternateInner: {
 		type: 'number2',
 		value: (data) => {
 			return `${get(data, 'summary.alternate', '')}`;
 		},
-		title: '备降',
+		title: '备降本场',
+	},
+	alternateOuter: {
+		type: 'number2',
+		value: (data) => {
+			return `${get(data, 'summary.alternateOtherCity', '')}`;
+		},
+		title: '备降外场',
 	},
 	cancel: {
 		type: 'number2',
@@ -376,6 +421,7 @@ export const settings = {
 					{
 						name: '航班正常率',
 						dataLabels: {
+							enabled: false,
 							format: `<div class="percentLabel"> {y}<span class="symbol">%</span> <div class="detail">{point.name}</div></div>`,
 						},
 						data: [
@@ -397,7 +443,7 @@ export const settings = {
 		type: 'chart',
 		title: '放行正常率',
 		options: extend({}, chartOptions, {
-			series: (data) => {
+			series: (data, isEditing) => {
 				let count = get(data, 'percent.takeOffNormal', 0);
 				let total = get(data, 'percent.takeOffTotal', 0);
 				let value = null;
@@ -411,6 +457,80 @@ export const settings = {
 				return [
 					{
 						name: '放行正常率',
+						dataLabels: {
+							enabled: false,
+							// format: `<div class="percentLabel"> {y}<span class="symbol">%</span> <div class="detail">{point.name}</div></div>`,
+						},
+						data: [
+							{
+								color: chartColor,
+								radius: '106%',
+								innerRadius: '89%',
+								name: `${count}/${total}`,
+								y: value,
+								className: 'shadowBlue',
+							},
+						],
+					},
+				];
+			},
+		}),
+	},
+	arriveNormal: {
+		type: 'chart',
+		title: '进港正常率',
+		options: extend({}, chartOptions, {
+			series: (data) => {
+				let count = get(data, 'percent.arriveNormalNormal', 0);
+				let total = get(data, 'percent.arriveNormalTotal', 0);
+				let value = null;
+				if (count > 0 && total > 0 && count == total) {
+					value = 100;
+				} else if (total == 0) {
+					value = 100;
+				} else {
+					value = Math.round((count * 10000) / total) / 100;
+				}
+				return [
+					{
+						name: '进港正常率',
+						dataLabels: {
+							format: `<div class="percentLabel"> {y}<span class="symbol">%</span> <div class="detail">{point.name}</div></div>`,
+						},
+						data: [
+							{
+								color: chartColor,
+								radius: '106%',
+								innerRadius: '89%',
+								name: `${count}/${total}`,
+								y: value,
+								className: 'shadowBlue',
+							},
+						],
+					},
+				];
+			},
+		}),
+	},
+	// 放行正常率*70%+起飞正常率*30%
+	departureNormal: {
+		type: 'chart',
+		title: '航班考核正常率',
+		options: extend({}, chartOptions, {
+			series: (data) => {
+				let count = get(data, 'percent.departureNormalNormal', 0);
+				let total = get(data, 'percent.departureNormalTotal', 0);
+				let value = null;
+				if (count > 0 && total > 0 && count == total) {
+					value = 100;
+				} else if (total == 0) {
+					value = 100;
+				} else {
+					value = Math.round((count * 10000) / total) / 100;
+				}
+				return [
+					{
+						name: '航班考核正常率',
 						dataLabels: {
 							format: `<div class="percentLabel"> {y}<span class="symbol">%</span> <div class="detail">{point.name}</div></div>`,
 						},
@@ -506,7 +626,7 @@ export const settings = {
 		title: 'ETA 30min',
 		icon: 'fa-calendar-check-o',
 		collection: (data) => {
-			return get(data, 'eta30');
+			return get(data, 'eta30', []);
 		},
 		columns: [
 			{
@@ -536,6 +656,51 @@ export const settings = {
 				title: '跑道',
 			},
 		],
+	},
+	etaSelect: {
+		type: 'dataRowsWithSelect',
+		key: 'etaSelect',
+		isSelect: true,
+		checkedIndex: 2,
+		// title: ['ETA 10min', 'ETA 20min', 'ETA 30min'],
+		title: {
+			'ETA 10min': 'eta10',
+			'ETA 20min': 'eta20',
+			'ETA 30min': 'eta30',
+		},
+		subtitle: ['test1', 'test2', 'test3'],
+		options: ['eta10', 'eta20', 'eta30'],
+		icon: 'fa-calendar-check-o',
+		collection: (data, key) => {
+			return get(data, key, []);
+		},
+		columns: [
+			{
+				name: 'index',
+				title: '序号',
+				font: 'font-One',
+				width: '5rem',
+			},
+			{
+				name: 'flightNo',
+				title: '航班号',
+				font: 'font-One',
+			},
+			{
+				name: 'seat',
+				title: '停机位',
+			},
+			{
+				name: 'displayMixEtaWithDate',
+				title: 'ETA',
+			},
+		],
+	},
+	direction: {
+		type: 'mixinZone',
+	},
+	rate: {
+		type: 'rate',
 	},
 	'delay-30min': {
 		hide: true,
@@ -609,6 +774,97 @@ export const settings = {
 			{
 				name: 'displayGroundServicePlanLimit',
 				title: '标准保障',
+			},
+		],
+	},
+	totalDelayCity: {
+		type: 'dataRowWith2Title',
+		title: '到港延误城市|离港延误城市',
+		collection: (data) => {
+			return get(data, 'totalDelayCity', []);
+		},
+		columns: [
+			{
+				name: 'index',
+				title: '序号',
+				font: 'font-One',
+				width: '10%',
+			},
+			{
+				name: 'arrive',
+				title: '城市',
+				width: '30%',
+			},
+			{
+				name: 'arriveNumber',
+				title: '数量',
+				width: '15%',
+			},
+			{
+				name: 'departure',
+				title: '城市',
+				width: '30%',
+			},
+			{
+				name: 'departureNumber',
+				title: '数量',
+				width: '15%',
+			},
+		],
+	},
+	'flight-courseReversal': {
+		type: 'dataRows',
+		title: '返航',
+		collection: (data) => {
+			return get(data, 'courseReversal', []);
+		},
+		columns: [
+			{
+				name: 'index',
+				title: '序号',
+				font: 'font-One',
+				width: '5rem',
+			},
+			{
+				name: 'flightNo',
+				title: '航班号',
+				font: 'font-One',
+			},
+			{
+				name: 'seat',
+				title: '停机位',
+			},
+			{
+				name: 'displayMixEtaWithDate',
+				title: '预计落地时间',
+			},
+		],
+	},
+	'flight-preparation': {
+		type: 'dataRows',
+		title: '备降',
+		collection: (data) => {
+			return get(data, 'preparation', []);
+		},
+		columns: [
+			{
+				name: 'index',
+				title: '序号',
+				font: 'font-One',
+				width: '5rem',
+			},
+			{
+				name: 'flightNo',
+				title: '航班号',
+				font: 'font-One',
+			},
+			{
+				name: 'seat',
+				title: '停机位',
+			},
+			{
+				name: 'displayMixEtaWithDate',
+				title: '预计落地时间',
 			},
 		],
 	},
@@ -783,7 +1039,41 @@ export const settings = {
 		type: 'chart',
 		title: '今日航班实时运行情况',
 		options: extend({}, chartOptionsByHour, {
-			series: (data) => {
+			yAxis: [
+				{
+					title: {
+						enabled: false,
+					},
+					gridLineWidth: 1,
+					gridLineColor: '#d8d6d6', //Dot
+					gridLineDashStyle: 'Dot',
+					startOnTick: false,
+					endOnTick: false,
+					minorTickWidth: 0,
+					lineWidth: 0,
+					tickInterval: 20,
+					labels: {
+						formatter: function() {
+							return Math.abs(this.value);
+						},
+					},
+				},
+				{
+					title: {
+						text: '',
+					},
+					minPadding: 0,
+					maxPadding: 0,
+					max: 100,
+					min: 0,
+					opposite: true,
+					gridLineColor: 'rgba(216,214,214,0.24)', //Dot
+					labels: {
+						format: '{value}%',
+					},
+				},
+			],
+			series: (data, cb) => {
 				if (!data.byHours.today) {
 					return [];
 				}
@@ -809,6 +1099,11 @@ export const settings = {
 								};
 							}) || [],
 						className: 'shadowBlue',
+						events: {
+							click: function(e) {
+								cb && cb(e.point.category, 'D', true);
+							},
+						},
 					},
 					{
 						type: 'areaspline',
@@ -843,13 +1138,72 @@ export const settings = {
 							//borderColor: 'rgba(0, 205, 73, 0.1)',
 						},
 						data:
-							map(data.byHours.today.arrivalActual, (v) => {
+							get(data, 'byHours.today.arrivalActual.length') === 0
+								? []
+								: map(data.byHours.today.arrivalActual, (v) => {
+										return {
+											y: v === 0 ? v : -v,
+											className: 'roundBottom',
+										};
+								  }) || [],
+						className: 'shadowBlue',
+						events: {
+							click: function(e) {
+								cb && cb(e.point.category, 'A', true);
+							},
+						},
+					},
+					{
+						// type: 'scatter',
+						type: 'spline',
+						name: '航班放行正常率',
+						yAxis: 1,
+						// color: '#ff9f00',
+						lineColor: chartColor3,
+						lineWidth: 0,
+
+						// fillOpacity: 0.05,
+						dataLabels: {
+							enabled: true,
+							verticalAlign: 'top',
+							// format: '{y}%',
+							format: '<span>{y}<span style="font-size:8px">%</span><span>',
+							allowOverlap: true,
+							//x: 0.5,
+							// y: 5,
+							style: {
+								textOutline: '0px 0px rgba(0,161,37,0.1)',
+								// textOutline: '1px 0px #999',
+								fontSize: 11,
+								fontFamily: 'Fjalla One',
+								color: '#fff',
+								// color: '#fff',
+							},
+							//borderColor: 'rgba(0, 205, 73, 0.1)',
+						},
+						data:
+							map(data.byHours.today.takeOffRate, (v) => {
+								let value = Math.round((v[0] / v[1]) * 1000) / 10;
+								let color = 'rgba(251, 0, 0, 0.7)';
+								if (value >= 80) color = 'rgba(251, 156, 0, 0.7)';
+								if (value >= 85) color = 'rgba(1, 189, 42, 0.7)';
+								if (value >= 90) color = 'rgba(2, 107, 254, 0.7)';
 								return {
-									y: v === 0 ? v : -v,
-									className: 'roundBottom',
+									y: value || null,
+									color: color,
+									name: v[0] + '/' + v[1],
 								};
 							}) || [],
-						className: 'shadowBlue',
+						marker: {
+							radius: 3,
+							// radius: 4,
+							lineColor: 'rgba(102,102,102,0.5)',
+							lineWidth: 1,
+							// symbol: 'diamond',
+						},
+						// tooltip: {
+						// 	valueSuffix: '%',
+						// },
 					},
 				];
 				return result;
@@ -859,8 +1213,45 @@ export const settings = {
 	'summary-by-hour-yesterday': {
 		type: 'chart',
 		title: '昨日航班实时运行情况',
+		checkInCounters: (data) => {
+			return get(data, 'checkInCounters');
+		},
 		options: extend({}, chartOptionsByHour, {
-			series: (data) => {
+			yAxis: [
+				{
+					title: {
+						enabled: false,
+					},
+					gridLineWidth: 1,
+					gridLineColor: '#d8d6d6', //Dot
+					gridLineDashStyle: 'Dot',
+					startOnTick: false,
+					endOnTick: false,
+					minorTickWidth: 0,
+					lineWidth: 0,
+					tickInterval: 20,
+					labels: {
+						formatter: function() {
+							return Math.abs(this.value);
+						},
+					},
+				},
+				{
+					title: {
+						text: '',
+					},
+					minPadding: 0,
+					maxPadding: 0,
+					max: 100,
+					min: 0,
+					opposite: true,
+					gridLineColor: 'rgba(216,214,214,0.24)', //Dot
+					labels: {
+						format: '{value}%',
+					},
+				},
+			],
+			series: (data, cb) => {
 				if (!data.byHours.yesterday) {
 					return [];
 				}
@@ -886,6 +1277,11 @@ export const settings = {
 								};
 							}) || [],
 						className: 'shadowBlue',
+						events: {
+							click: function(e) {
+								cb && cb(e.point.category, 'D');
+							},
+						},
 					},
 					{
 						type: 'areaspline',
@@ -918,13 +1314,20 @@ export const settings = {
 							},
 						},
 						data:
-							map(data.byHours.yesterday.arrivalActual, (v) => {
-								return {
-									y: v === 0 ? v : -v,
-									className: 'roundBottom',
-								};
-							}) || [],
+							get(data, 'byHours.yesterday.arrivalActual.length') === 0
+								? []
+								: map(data.byHours.yesterday.arrivalActual, (v) => {
+										return {
+											y: v === 0 ? v : -v,
+											className: 'roundBottom',
+										};
+								  }) || [],
 						className: 'shadowBlue',
+						events: {
+							click: function(e) {
+								cb && cb(e.point.category, 'A');
+							},
+						},
 					},
 				];
 				return result;
@@ -935,23 +1338,102 @@ export const settings = {
 		type: 'chart',
 		title: '今日航班实时积压情况',
 		options: extend({}, chartOptionsByHour, {
+			yAxis: {
+				title: {
+					enabled: false,
+				},
+				gridLineWidth: 1,
+				gridLineColor: '#d8d6d6', //Dot
+				gridLineDashStyle: 'Dot',
+				startOnTick: false,
+				endOnTick: false,
+				minorTickWidth: 0,
+				lineWidth: 0,
+				tickInterval: 10,
+				labels: {
+					formatter: function() {
+						return Math.abs(this.value);
+					},
+				},
+			},
 			series: (data) => {
 				if (!data.byHours.backlog) {
 					return [];
 				}
+				let prediction = get(data, 'byHours.backlog.prediction', []);
+				let actual = get(data, 'byHours.backlog.actual', {});
+				let executable = get(data, 'byHours.backlog.executable', []);
+				//let timeCfg = ['04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '00', '01', '02', '03'];
+				let timeCfg = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
 				let result = [
 					{
 						type: 'column',
-						name: '积压航班',
+						name: '可执行积压',
 						color: chartColor1,
+						// dataLabels: {
+						// 	verticalAlign: 'top',
+						// 	//x: 0.5,
+						// 	y: 5,
+						// 	style: {
+						// 		textOutline: '1px 1px rgba(0,161,37,0.6)',
+						// 	},
+						// 	//borderColor: 'rgba(0, 205, 73, 0.1)',
+						// },
+						data: map(timeCfg, (time) => {
+							let v = executable[time];
+							return {
+								y: v,
+								className: 'roundTop',
+							};
+						}),
+						className: 'shadowBlue',
+					},
+					// {
+					// 	type: 'areaspline',
+					// 	name: '预计积压',
+					// 	color: '#0566FF',
+					// 	lineColor: chartColor4,
+					// 	fillOpacity: 0.05,
+					// 	data: map(timeCfg, (v) => {
+					// 		return prediction[v] || 0;
+					// 	}),
+					// },
+					{
+						type: 'column',
+						name: '积压航班',
+						color: chartColor2,
+						dataLabels: {
+							verticalAlign: 'top',
+							//x: 0.5,
+							y: 5,
+							style: {
+								textOutline: '1px 1px rgba(0,161,37,0.6)',
+							},
+							//borderColor: 'rgba(0, 205, 73, 0.1)',
+						},
+
 						//borderColor: 'rgba(12, 159, 255, 0.1)',
 						data:
-							map(data.byHours.backlog, (v) => {
-								return {
-									y: v,
-									className: 'roundTop',
-								};
-							}) || [],
+							JSON.stringify(actual) === '{}'
+								? []
+								: map(timeCfg, (v) => {
+										let res = {
+											y: -actual[v] || 0,
+											className: 'roundBottom',
+											color: chartColor2,
+										};
+										if (actual[v] >= 150) {
+											return extend(res, { color: chartColorRed });
+										}
+										if (actual[v] >= 100) {
+											return extend(res, { color: chartColorOrg });
+										}
+										if (actual[v] >= 50) {
+											return extend(res, { color: chartColorYellow });
+										}
+
+										return res;
+								  }) || [],
 						className: 'shadowBlue',
 					},
 				];
@@ -967,7 +1449,6 @@ export const settings = {
 			},
 			colors: ['#049175', '#049175', '#074e7a', '#074e7a'],
 			tooltip: {
-				split: true,
 				crosshairs: [true],
 				valueSuffix: '架次',
 				split: true,

@@ -4,7 +4,7 @@ import {memoryStore} from "../lib/memoryStore";
 export const flightHttp = (worker,httpRequest) => {
   const getTodayFLight = () => {
     httpRequest.get('flight', 'getWebSocketResponseData').then(response => {
-      saveToFlightDB(response).then(() => {
+      saveToFlightDB(response.data).then(() => {
         memoryStore.setItem('global', { websocketDataFinish: true });
         worker.publish('Worker','Flight.Change.Sync',response)
       });
@@ -15,7 +15,7 @@ export const flightHttp = (worker,httpRequest) => {
 
   worker.subscribe('Test',()=>{
     httpRequest.get('situation','runningState/delayCode').then(res=>{
-      worker.publish('Web','Test',res)
+      worker.publish('Web','Test',res.data)
     });
   })
 
