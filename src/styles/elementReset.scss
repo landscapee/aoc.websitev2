@@ -1,13 +1,5 @@
-.el-select {
-    input {
-        background-color: rgba(238, 238, 238, .1);
-        border: none;
-        color: #fff
-    }
-}
-
 .el-select-dropdown {
-    background-color: rgba(238, 238, 238, .1);
+    background-color: #25395c;
     border: none;
 
     li {
@@ -17,20 +9,8 @@
     li:hover,
     li.selected,
     li.hover {
-        background-color: rgba(238, 238, 238, .4);
-
-    }
-}
-
-.homeSelect {
-    li {
-        height: 20px;
-        line-height: 20px;
-        padding: 0 5px;
-
-        span {
-            font-size: 12px;
-        }
+        background-color: #4181e9;
+        color: #fff;
     }
 }
  .el-dialog{

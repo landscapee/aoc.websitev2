@@ -94,6 +94,10 @@ a {
   background-color: transparent;
 }
 
+ul {
+  padding: 0;
+}
+
 /**
  * 1. Remove the bottom border in Chrome 57-
  * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.

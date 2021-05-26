@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 <div class="right">
-                    <i class="iconfont" :class="data.icon"></i>
+                    <icon-svg :iconClass="data.icon" />
                 </div>
 
             </div>
@@ -47,37 +47,74 @@ export default {
 
 <style scoped lang='scss'>
 .home_number {
-    height: 10%;
-    width: 10%;
     padding: 4px;
     position: absolute;
     .box_content {
         height: 100%;
         width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         background: linear-gradient(
             134deg,
             rgba(26, 39, 64, 0.5) 0,
             rgba(29, 47, 67, 0.5) 30%,
             rgba(29, 47, 67, 0.5) 100%
         ) !important;
-        padding: 5px;
-    }
-    .title {
-        // input {
-        //     font-size: 12px;
-        //     height: 20px;
-        // }
+        padding: 5px 10px 0;
+        .top {
+            display: flex;
+            justify-content: space-between;
+            .pre {
+                color: #fff;
+                font-weight: 600;
+                font-size: 12px;
+            }
+        }
+        .mid {
+            display: flex;
+            justify-content: space-between;
+            .left {
+                display: flex;
+                flex-direction: column;
+            }
+            .num {
+                color: #fff;
+                margin-bottom: 4px;
+                .actual {
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+                .plan {
+                    font-size: 12px;
+                }
+            }
+            .name {
+                color: #fff;
+                font-size: 12px;
+            }
+            .right {
+                svg,
+                use {
+                    font-size: 40px;
+                }
+            }
+        }
+        .footer {
+            width: 100%;
+            height: 5px;
+            .bar {
+                height: 100%;
+                border-radius: 0 5px 5px 0;
+                width: 20%;
+            }
+        }
     }
 }
 </style>
 <style lang='scss'>
-.box_content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+.home_number {
     .top {
-        display: flex;
-        justify-content: space-between;
         .el-select {
             width: 50px;
         }
@@ -90,48 +127,6 @@ export default {
             width: auto;
             line-height: 16px;
             font-size: 12px;
-        }
-        .pre {
-            color: #fff;
-            font-weight: 600;
-            font-size: 12px;
-        }
-    }
-    .mid {
-        display: flex;
-        justify-content: space-between;
-        .left {
-            display: flex;
-            flex-direction: column;
-        }
-        .num {
-            color: #fff;
-            margin-bottom: 4px;
-            .actual {
-                font-size: 14px;
-                font-weight: 600;
-            }
-            .plan {
-                font-size: 12px;
-            }
-        }
-        .name {
-            color: #fff;
-            font-size: 12px;
-        }
-        .right {
-            i {
-                font-size: 26px;
-            }
-        }
-    }
-    .footer {
-        width: 100%;
-        height: 5px;
-        .bar {
-            height: 100%;
-            border-radius: 0 5px 5px 0;
-            width: 20%;
         }
     }
 }
