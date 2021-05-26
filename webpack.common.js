@@ -199,7 +199,9 @@ module.exports = {
         // modules: ['node_modules', 'src', 'static', 'worker'],
         extensions:['.js','.vue'], // 后缀省略设置
         alias: {
-            'vue$': 'vue/dist/vue.esm.js'
+            'vue$': 'vue/dist/vue.esm.js',
+            '@': path.join(__dirname, 'src'),
+            '@components': path.join(__dirname, 'src/components'),
         }
     },
 

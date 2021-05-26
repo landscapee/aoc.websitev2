@@ -1,6 +1,7 @@
 import {each} from "lodash";
 import socket from '../lib/socket'
 import {init as flightInit} from '../connect/flight'
+import {init as monitorInit} from '../connect/runMonitor'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
 import HttpRequest from "../../common/axios";
@@ -51,6 +52,7 @@ postal.subscribe({
     let mySockets = socket(data.servers);
     let httpRequest = new HttpRequest(data.httpConfig);
     flightInit(posWorker, httpRequest);
+    monitorInit(posWorker, httpRequest);
     flightHttp(posWorker, httpRequest);
     memoryStore.setItem('global',{token:data.token});
     postal.subscribe({
