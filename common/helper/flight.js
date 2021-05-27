@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import moment from 'moment';
 import { map, each, set, get, filter, has, extend, flow, keys, pick, omit, every, some, indexOf, toLower, toUpper, upperFirst, concat, compact, reduce, orderBy, drop, dropRight, isArray, isObject, isEqual, merge } from 'lodash';
-import { getNaturalDate, getOperationDate, formatDate } from 'helper/date';
+import { getNaturalDate, getOperationDate, formatDate ,getTime} from 'helper/date';
 import Airports from 'data/airports.json';
 import Logger from 'logger';
 import { flightDB } from 'lib/storage';
@@ -714,4 +714,61 @@ export const checkWebsocketResponseDataFinish = () => {
 			}
 		}, 300);
 	});
+};
+export const calcDelayTime = (flight) => {
+    let now = getTime();
+    let movement = get(flight, 'movement');
+    if (movement === 'A') {
+        let ata = get(flight, 'ata');
+        let sta = get(flight, 'sta');
+        let staLimit = sta - 10 * 60 * 1000;
+        if (ata && ata > staLimit) {
+            return parseInt((ata - staLimit) / 60 / 1000);
+        } else if (!ata && now > staLimit) {
+            return parseInt((now - staLimit) / 60 / 1000);
+        } else {
+            return null;
+        }
+    } else if (movement === 'D') {
+        let atd = get(flight, 'atd');
+        let std = get(flight, 'std');
+        let stdLimit = std + 30 * 60 * 1000;
+        if (atd && atd > stdLimit) {
+            return parseInt((atd - stdLimit) / 60 / 1000);
+        } else if (!atd && now > stdLimit) {
+            return parseInt((now - stdLimit) / 60 / 1000);
+        } else {
+            return null;
+        }
+    }
+};
+export const calcMaintainTime = (flight) => {
+    if (get(flight, 'movement') === 'A') {
+        return flight;
+    }
+    let maintainTime = null;
+    let takeOffDeadline = null;
+    let offBlockDeadline = null;
+    if (get(flight, 'originated')) {
+        maintainTime = get(flight, 'std') + 30 * 60 * 1000;
+        takeOffDeadline = get(flight, 'std') + 30 * 60 * 1000;
+        offBlockDeadline = get(flight, 'std');
+    } else if (get(flight, 'arriveFlight.ata')) {
+        if (calcDelay(get(flight, 'arriveFlight'))) {
+            let planTime = get(flight, 'std') - get(flight, 'arriveFlight.sta');
+            maintainTime = get(flight, 'arriveFlight.ata') + planTime + (10 + 30) * 60 * 1000;
+            takeOffDeadline = get(flight, 'arriveFlight.ata') + planTime + (10 + 30) * 60 * 1000;
+            offBlockDeadline = get(flight, 'arriveFlight.ata') + planTime + 10 * 60 * 1000;
+        } else {
+            maintainTime = get(flight, 'std') + 30 * 60 * 1000;
+            takeOffDeadline = get(flight, 'std') + 30 * 60 * 1000;
+            offBlockDeadline = get(flight, 'std');
+        }
+    }
+    // log.info(`maintain time ${moment(maintainTime).format('HHmm')}`);
+    return extend({}, flight, {
+        maintainTime: maintainTime,
+        takeOffDeadline: takeOffDeadline,
+        offBlockDeadline: offBlockDeadline,
+    });
 };

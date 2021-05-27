@@ -1,5 +1,4 @@
-import {getFlightDetail} from '../lib/storage'
-import {situationStart, situationStop} from "../model/runMonitor";
+import {situationStart, situationStop,getFlightDatas} from "../model/runMonitor";
  import Logger from "../../common/logger";
 import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
@@ -27,16 +26,7 @@ export const checkClient = (clientField) => {
 const subWSEvent = () => {
     let client = clientObj.situationClient;
     //批量关注池
-    function getFlightDatas(data){
-        let arr=[]
-        data.map((k,l)=>{
-            if(getFlightDetail(k.flightId)){
-                arr.push(getFlightDetail(k.flightId))
-            }
 
-        })
-        return arr
-    };
     client.sub('Flight/monitor/batchConcern',(res)=>{
         let data=getFlightDatas(res)
         worker.publish('Web','batchConcern',data)

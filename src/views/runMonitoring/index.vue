@@ -1,12 +1,12 @@
 <template>
 	<div class="runMonitoringIndex">
-		<div class="listMonitor">
+ 		<div class="listMonitor">
 			<el-dropdown class="positionDropdown" trigger="click" :hide-on-click="false">
       			<span class="el-dropdown-link">
         			<i class="el-icon-setting el-icon--right"></i>自定义
 				</span>
 				<el-dropdown-menu slot="dropdown">
-					<el-dropdown-item   v-for="(opt,index) in pageList" :key="index">
+					<el-dropdown-item   v-for="(opt) in pageList" :key="opt.key">
 						<el-checkbox v-model="opt.show" :label="opt.name"></el-checkbox>
 
 					</el-dropdown-item>
@@ -30,6 +30,8 @@
 
 <script>
     import postal from 'postal';
+    import {map,keyBy} from 'lodash';
+    import {setting} from './help';
     import PostalStore from "../../lib/postalStore";
     let postalStore = new PostalStore();
 	import Setting from "./setting"
@@ -39,17 +41,35 @@
         components: {Setting,Ftable},
         data() {
             return {
-                pageList: [
-                    {name: '批量航班关注池', data: [{name:'ddd',xx:'qqq'},{name:'ddd',xx:'qqq'},{name:'ddd',xx:'qqq'}], show: true, tableConfig: [{prop: 'name', label: '证书名称', align: 'center',},{prop: 'xx', label: '证书名称', align: 'center',}]},
-                    {name: '提前落地航班', data: [], show: true, tableConfig: []},
-                    {name: '地面保障告警池', data: [], show: true, tableConfig: []},
-                    {name: '要客航班池', data: [], show: true, tableConfig: []},
-                ],
+                pageListObj: {
+                    batchConcern: {name: '批量航班关注池',key:'batchConcern', data: [ ], show: true, tableConfig: [ ]},
+                    advanceArrive:{name: '提前落地航班',key:'advanceArrive', data: [], show: true, tableConfig: []},
+                    guaranteeWarn:{name: '地面保障告警池',key:'guaranteeWarn', data: [], show: true, tableConfig: []},
+                    vvpFlights:{name: '要客航班池',key:'vvpFlights', data: [], show: true, tableConfig: []},
+			},
 
             }
         },
+		computed:{
+            pageList(){
+                return map(this.pageListObj,(k,l)=>{
+                    console.log(11111,k, l);
+                    return k
+                })
 
+			} ,
+		},
 		created() {
+            console.log(222,this.pageListObj);
+            map(this.pageListObj,(k,l)=>{
+                k.tableConfig=[];
+                map(setting[l],(k1,l)=>{
+                    let obj={...k1}
+                    !k1.reference&&k.tableConfig.push(obj)
+
+				})
+			})
+            console.log(222,this.pageListObj);
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Start',
@@ -58,18 +78,31 @@
 		mounted(){
             //批量关注池
             postalStore.sub( 'batchConcern',(data)=>{
+                let length=Object.keys(data[0]).length
+                console.log('length',length);
+                length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 console.log('batchConcern',data);
             });
             //提前落地池
             postalStore.sub( 'advanceArrive',(data)=>{
+                let length=Object.keys(data[0]).length
+                length&&this.$set(this.pageListObj.advanceArrive,'data',data)
+
+                console.log('length',length);
                 console.log('advanceArrive',data);
             });
             //地面保障池
             postalStore.sub( 'guaranteeWarn',(data)=>{
+                let length=Object.keys(data[0]).length
+                length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
+                console.log('length',length);
                 console.log('guaranteeWarn',data);
             });
             //要客航班池
             postalStore.sub( 'vvpFlights',(data)=>{
+                let length=Object.keys(data[0]).length
+                length&&this.$set(this.pageListObj.vvpFlights,'data',data)
+                console.log('length',length);
                 console.log('vvpFlights',data);
             });
 		},
@@ -81,8 +114,8 @@
             postalStore.unsubAll()
         },
         methods: {
-            openSetting({name}){
-              this.$refs.Setting.open({name})
+            openSetting({name,batchConcern,tableConfig, }){
+              this.$refs.Setting.open({name,batchConcern,tableConfig})
 			},
 		},
 

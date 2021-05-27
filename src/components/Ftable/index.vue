@@ -18,11 +18,8 @@
 				<el-table-column v-else-if="colConfig.type==='selection'" :show-overflow-tooltip="true" v-bind="colConfig" :key="index1 + '1'">
 				</el-table-column>
 				<el-table-column v-else :show-overflow-tooltip="true" v-bind="colConfig" :key="index1 + '3'" :reserve-selection="true">
-					<span v-if="colConfig.formatter" slot-scope="{ row }"> {{colConfig.formatter(row,null,row[colConfig.prop])}}</span>
-					<span v-else-if="colConfig.prop.split('.').length===3" slot-scope="{ row }">{{row[colConfig.prop.split('.')[0]][colConfig.prop.split('.')[1]][colConfig.prop.split('.')[2]]?row[colConfig.prop.split('.')[0]][colConfig.prop.split('.')[1]][colConfig.prop.split('.')[2]]:"--"}}</span>
-					<span v-else-if="colConfig.prop.split('.').length===2"  slot-scope="{ row }"> {{row[colConfig.prop.split('.')[0]][colConfig.prop.split('.')[1]]?row[colConfig.prop.split('.')[0]][colConfig.prop.split('.')[1]]:'--'}}</span>
-					
-					<span v-else-if="colConfig.prop.split('.').length===1" slot-scope='{row}'>{{row[colConfig.prop]?row[colConfig.prop]:'--'}}</span>
+
+					<span   slot-scope='{row}'> {{ row[colConfig.prop]||'--'}}</span>
 				</el-table-column>
 			</template>
 		</el-table>
@@ -152,6 +149,7 @@ import { cloneDeep } from 'lodash';
 			height: 0!important;
 		}
 .searchTableWrapper {
+	::-webkit-scrollbar {display: none !important }
 	  .el-pagination {
 		text-align: center;
 		margin-top: 20px;
