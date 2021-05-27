@@ -70,6 +70,8 @@ import pwdimg from './assets/img/login-password.png'
 import './assets/index.scss'
 import { encryptedData } from '../../lib/des-coder.js'
 import { memoryStore } from '../../../worker/lib/memoryStore'
+import PostalStore from 'lib/postalStore'
+let postalStore = new PostalStore();
 export default {
     name: 'login',
     data() {
@@ -209,7 +211,7 @@ export default {
                                     res.data
                                 ) {
                                     //登录成功
-                                    this.$pub('Worker', 'LoginSuccess', { token: res.data.token })
+                                    postalStore.pub('Worker', 'LoginSuccess', { token: res.data.token })
                                     memoryStore.setItem('global', { token: res.data.token })
                                     this.$store.commit('setUserMsg', res.data)
                                     sessionStorage.setItem('token', res.data.token)

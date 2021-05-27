@@ -1149,7 +1149,6 @@ export const settings = {
 				split: true,
 				crosshairs: [true],
 				valueSuffix: '架次',
-				split: true,
 				shared: true,
 			},
 			title: {

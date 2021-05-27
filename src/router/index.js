@@ -20,6 +20,8 @@ const index = () => import(/*webpackChunkName:"index"*/ '../views/index')
 const home = () => import(/*webpackChunkName:"home"*/ '../views/home/home')
 //航班动态
 const flight = () => import(/*webpackChunkName:"flight"*/ '../views/flight/flight')
+//运行监控
+const runMonitoring = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonitoring/index')
 
 
 
@@ -30,6 +32,7 @@ var routes = [
     path: '/index', name: 'index', component: index, children: [
       { path: '/home', name: 'home', component:home},
       { path: '/flight', name: 'flight', component:flight},
+      { path: '/runMonitoring', name: 'runMonitoring', component:runMonitoring},
     ]
   },
   
