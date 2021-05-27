@@ -162,11 +162,12 @@ export const saveToFlightDBOriginal = (flights) => {
 export const saveToFlightDB = (flights) => {
   let newFlights = [];
   map(flights, (f) => {
-    let preFlight = flightDB.by('flightId', f.flightId + '');
+    let flightId = f.flightId + '';
+    let preFlight = flightDB.by('flightId', flightId);
     if (preFlight) {
-      newFlights.push(extend(omit(preFlight, ['$loki', 'meta']), { ...f, flightId: f.flightId + '' }));
+      newFlights.push(extend(omit(preFlight, ['$loki', 'meta']), { ...f, flightId: flightId }));
     } else {
-      newFlights.push({ ...f, flightId: f.flightId + '' });
+      newFlights.push({ ...f, flightId: flightId });
     }
   });
   return saveToFlightDBOriginal(processFlight(newFlights));
@@ -477,7 +478,7 @@ export const saveToIntelligenceDB = (msg, convert) => {
   return Promise.resolve(msg);
 };
 export const getFlightDetail = (flightId) => {
-    let f = flightDB.by('flightId', flightId);
+    let f = flightDB.by('flightId', flightId + '') || {};
     if (f.relatedId) {
         let relatedF = flightDB.by('flightId', f.relatedId);
         if (f.movement == 'A') {
