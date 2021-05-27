@@ -1,16 +1,16 @@
 <template>
-    <div class="home_number2" :class="data.position">
+    <div class="home_number2" :class="options.position">
         <div class="box_content">
             <div class="left">
                 <div class="top">
-                    0
+                    {{activeData}}
                 </div>
                 <div class="footer">
-                    {{data.title}}
+                    {{options.title}}
                 </div>
             </div>
             <div class="right">
-                <icon-svg :iconClass="data.icon" />
+                <icon-svg :iconClass="options.icon" />
             </div>
         </div>
     </div>
@@ -18,15 +18,25 @@
 
 <script>
 export default {
-    props: ['data'],
+    props: ['options', 'data'],
     data() {
         return {
             select: 0,
+            activeData: 0,
         }
     },
     created() {},
     mounted() {},
-    methods: {},
+    watch: {
+        data: function () {
+            this.loadActiveData()
+        },
+    },
+    methods: {
+        loadActiveData() {
+            this.activeData = this.options.value(this.data)
+        },
+    },
 }
 </script>
 

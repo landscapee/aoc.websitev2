@@ -1,31 +1,31 @@
 <template>
-    <div class="home_number" :class="data.position">
+    <div class="home_number" :class="options.position">
         <div class="box_content">
             <div class="top">
-                <el-select v-model="select" placeholder="请选择" size="mini" popper-class="homeSelect">
-                    <el-option label="全场" :value="0"></el-option>
-                    <el-option label="国内" :value="1"></el-option>
-                    <el-option label="国际" :value="2"></el-option>
+                <el-select v-model="select" placeholder="请选择" size="mini" popper-class="homeSelect" @change="loadActiveData">
+                    <el-option label="全场" value="all"></el-option>
+                    <el-option label="国内" value="domestic"></el-option>
+                    <el-option label="国际" value="international"></el-option>
                 </el-select>
-                <span class="pre">58.96%</span>
+                <span class="pre">{{percentage}}%</span>
             </div>
             <div class="mid">
                 <div class="left">
                     <div class="num">
-                        <span class="actual">651</span>
-                        <span class="plan">/1055</span>
+                        <span class="actual">{{activeData[0]}}</span>
+                        <span class="plan">/{{activeData[1]}}</span>
                     </div>
                     <div class="name">
-                        {{data.title}}
+                        {{options.title}}
                     </div>
                 </div>
                 <div class="right">
-                    <icon-svg :iconClass="data.icon" />
+                    <icon-svg :iconClass="options.icon" />
                 </div>
 
             </div>
-            <div class="footer" :style="{'background-color':data.barBg}">
-                <div class="bar" :style="{'background':data.barColor}"></div>
+            <div class="footer" :style="{'background-color':options.barBg}">
+                <div class="bar" :style="{'background':options.barColor}"></div>
             </div>
         </div>
     </div>
@@ -33,15 +33,31 @@
 
 <script>
 export default {
-    props: ['data'],
+    props: ['options', 'data'],
     data() {
         return {
-            select: 0,
+            select: 'all',
+            activeData: [0, 0],
+            percentage: '0',
         }
     },
     created() {},
     mounted() {},
-    methods: {},
+    watch: {
+        data: function () {
+            this.loadActiveData()
+        },
+    },
+    methods: {
+        loadActiveData() {
+            this.activeData = this.options.value(this.data, this.select)
+
+            this.percentage =
+                this.activeData[1] == 0
+                    ? 0
+                    : Math.ceil((this.activeData[0] / this.activeData[1]) * 10000) / 100
+        },
+    },
 }
 </script>
 

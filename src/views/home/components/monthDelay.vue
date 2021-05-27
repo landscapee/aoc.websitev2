@@ -1,5 +1,5 @@
 <template>
-    <div class="monthDelay p-0x20 s-50x40">
+    <div class="monthDelay" :class="options.position">
         <div class="box_content">
             <div class="left">
                 <div class="top">
@@ -21,7 +21,7 @@
                     <div class="top">
                         <icon-svg iconClass="monthtitle" />
                         <span class="name">延误航班统计：</span>
-                        <el-select v-model="select" placeholder="请选择" size="mini">
+                        <el-select v-model="select" placeholder="请选择" size="mini" @change="loadActiveData">
                             <el-option v-for="item in selectArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
                         </el-select>
                     </div>
@@ -37,10 +37,10 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>0</td>
-                                    <td>0</td>
-                                    <td>0</td>
-                                    <td>0</td>
+                                    <td>{{activeData.ltHalfHour}}</td>
+                                    <td>{{activeData.ltOneHour}}</td>
+                                    <td>{{activeData.ltTwoHour}}</td>
+                                    <td>{{activeData.gtTwoHour}}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -96,23 +96,45 @@
 
 <script>
 export default {
-    props: ['data'],
+    props: ['options', 'data'],
     data() {
         return {
-            select: 0,
+            select: 'arriveNormal',
             selectArr: [
-                { name: '落地正常率', value: 0 },
-                { name: '起飞正常率', value: 1 },
-                { name: '航班正常率', value: 2 },
-                { name: '始发正常率', value: 3 },
-                { name: '早高峰正常率', value: 4 },
-                { name: '放行正常率', value: 5 },
+                { name: '落地正常率', value: 'arriveNormal' },
+                { name: '起飞正常率', value: 'departureNormal' },
+                { name: '航班正常率', value: 'normal' },
+                { name: '始发正常率', value: 'originalAllowTakeOff' },
+                { name: '早高峰正常率', value: 'originalInMorning' },
+                { name: '放行正常率', value: 'takeOffNormal' },
             ],
+            activeData: {
+                gtTwoHour: 0,
+                ltHalfHour: 0,
+                ltOneHour: 0,
+                ltTwoHour: 0,
+            },
         }
     },
     created() {},
     mounted() {},
-    methods: {},
+    watch: {
+        data: function () {
+            this.loadActiveData()
+        },
+    },
+    methods: {
+        loadActiveData() {
+            this.activeData = this.data.rateDelay
+                ? this.data.rateDelay[this.select]
+                : {
+                      gtTwoHour: 0,
+                      ltHalfHour: 0,
+                      ltOneHour: 0,
+                      ltTwoHour: 0,
+                  }
+        },
+    },
 }
 </script>
 
