@@ -15,7 +15,6 @@ import router from './src/lib/router'
 import HttpRequest from './common/axios'
 
 import moment from 'moment';
-import {pub, sub} from "lib/common";
 import {memoryStore} from "./worker/lib/memoryStore";
 
 import IconSvg from './src/components/Icon-svg';// svg组件
@@ -148,8 +147,6 @@ moment.locale('zh-cn')
 Vue.use(ElementUI,{locale});
 
 Vue.prototype.postal = postal
-Vue.prototype.$pub = pub
-Vue.prototype.$sub = sub
 // Vue.prototype.$axios = axios
 Vue.prototype.$request = new HttpRequest(httpConfig);
 Vue.prototype.$moment = moment
