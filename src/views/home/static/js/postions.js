@@ -50,40 +50,64 @@ export const postions = {
 		toolTip: 'getCancelFlight',
 	},
 	monthStatistics: {//月度统计
-		position: 'p-9x1 s-3x1',
+		position: 'p-0x2 s-12x4',
+	},
+
+	
+
+	'summary-by-hour-backlog': {//积压
+		position: 'p-0x6 s-12x4',
+	},
+
+
+
+	show24Hours: {
+		position: 'p-0x6 s-12x4',
 	},
 
 
 
 
-	originatedDeparturePercent: {
-		position: 'p-12x0 s-4x2',
-	},
-	departurePercent: {
-		position: 'p-16x0 s-4x2',
-	},
-	takeOffPercent: {
-		position: 'p-20x0 s-4x2',
-	},
-	morningBusyHourPercent: {
-		position: 'p-24x0 s-4x2',
-	},
-	eta30min: {
-		position: 'p-0x2 s-12x5',
-	},
 
-	'arrival-delay-city': {
-		position: 'p-0x7 s-6x3',
+	// originatedDeparturePercent: {
+	// 	position: 'p-0x0 s-2x2',
+	// },
+	// departurePercent: {
+	// 	position: 'p-2x0 s-2x2',
+	// },
+	// takeOffPercent: {
+	// 	position: 'p-4x0 s-2x2',
+	// },
+	// morningBusyHourPercent: {
+	// 	position: 'p-6x0 s-2x2',
+	// },
+	// arriveNormal: {
+	// 	position: 'p-8x0 s-2x2',
+	// },
+	// departureNormal: {
+	// 	position: 'p-10x0 s-2x2',
+	// },
+	rate: {
+		position: 'p-12x0 s-12x3',
 	},
+	direction: {
+		position: 'p-12x3 s-12x7',
+	},
+	// eta30min: {
+	// 	position: 'p-0x2 s-12x5',
+	// },
 
-	'departure-delay-city': {
-		position: 'p-6x7 s-6x3',
-	},
+	// 'arrival-delay-city': {
+	// 	position: 'p-0x7 s-6x3',
+	// },
 
-	'summary-by-hour-today': {
-		position: 'p-12x2 s-16x4',
-	},
-	'summary-by-hour-yesterday': {
-		position: 'p-12x6 s-16x4',
-	},
+	// 'departure-delay-city': {
+	// 	position: 'p-6x7 s-6x3',
+	// },
+
+	// 'summary-by-hour-today': {
+	// 	position: 'p-0x6 s-12x4',
+	// },
+	
+	
 };

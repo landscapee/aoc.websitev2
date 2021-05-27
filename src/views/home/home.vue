@@ -1,9 +1,12 @@
 <template>
     <div id="home">
         <div class="home_left">
-            <number v-for="(item,index) in numbersArr" :key="item.type+index" :data="item" />
-            <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :data="item" />
-            <month-delay />
+            <div class="p-0x0 s-12x1 numberBox">
+                <number v-for="(item,index) in numbersArr" :key="item.type+index" :options="item" :data="data" />
+            </div>
+            <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :options="item" :data="data" />
+            <month-delay :options="monthData" :data="data" />
+            <flight-chart :data="chartData" />
 
         </div>
         <div class="home_right">
@@ -15,13 +18,14 @@
 </template>
 
 <script>
-import { postions } from './static/postions.js'
-import { settings as settingsCfg } from '../../common/settingHome'
+import { postions } from './static/js/postions.js'
+import { settings as settingsCfg } from './static/js/settingHome'
 import Number from './components/number'
 import Number2 from './components/number2'
 import MonthDelay from './components/monthDelay'
 import Topflight from './components/topflight'
 import Runway from './components/runway'
+import FlightChart from './components/FlightChart'
 
 export default {
     data() {
@@ -29,8 +33,11 @@ export default {
             settings: {},
             numbersArr: [],
             numbers2Arr: [],
+            monthData: {},
+
             dataRowsArr: [],
-            chartArr: [],
+            chartData: {},
+            data: {},
         }
     },
     components: {
@@ -39,12 +46,26 @@ export default {
         'month-delay': MonthDelay,
         'top-flight': Topflight,
         runway: Runway,
+        'flight-chart': FlightChart,
     },
     created() {
         this.loadSetting()
+
+        this.$pub('Worker', 'Page.Home.Start', '')
+
+        this.$sub('Web', 'home.init.data', (data) => {
+            console.log(data)
+            this.loadData(data)
+        })
+        // this.$sub('Web', 'Home.Situation.response', (response) => {
+        //     console.log(response)
+        // })
     },
     mounted() {},
     methods: {
+        loadData(data) {
+            this.data = data
+        },
         loadSetting() {
             this.settings = {}
             _.each(settingsCfg, (item, k) => {
@@ -57,11 +78,14 @@ export default {
                         if (item.type == 'number2') {
                             this.numbers2Arr.push(_.assign({}, item, postions[k]))
                         }
+                        if (item.type == 'month') {
+                            this.monthData = _.assign({}, item, postions[k])
+                        }
                         if (item.type == 'dataRows') {
                             this.dataRowsArr.push(_.assign({}, item, postions[k]))
                         }
                         if (item.type == 'chart') {
-                            this.chartArr.push(_.assign({}, item, postions[k]))
+                            this.chartData = _.assign({}, item, postions[k])
                         }
                     }
                 }
@@ -69,8 +93,9 @@ export default {
             console.log({
                 number: this.numbersArr,
                 number2: this.numbers2Arr,
+                month: this.monthData,
+                chart: this.chartData,
                 dataRows: this.dataRowsArr,
-                chart: this.chartArr,
             })
         },
     },
@@ -91,64 +116,27 @@ export default {
     .home_right {
         width: 265px;
     }
-
-    .p-0x0 {
-        left: 0;
-        top: 0;
-    }
-    .p-10x0 {
-        left: 10%;
-        top: 0;
-    }
-    .p-20x0 {
-        left: 20%;
-        top: 0;
-    }
-    .p-30x0 {
-        left: 30%;
-        top: 0;
-    }
-    .p-40x0 {
-        left: 40%;
-        top: 0;
-    }
-    .p-0x10 {
-        left: 0;
-        top: 10%;
-    }
-    .p-0x10 {
-        left: 0;
-        top: 10%;
-    }
-    .p-12_5x10 {
-        left: 12.5%;
-        top: 10%;
-    }
-    .p-25x10 {
-        left: 25%;
-        top: 10%;
-    }
-    .p-37_5x10 {
-        left: 37.5%;
-        top: 10%;
-    }
-    .p-0x20 {
-        left: 0;
-        top: 20%;
+    .numberBox {
+        position: absolute;
     }
 
-    .s-10x10 {
-        width: 10%;
-        height: 10%;
-    }
-    .s-12_5x10 {
-        width: 12.5%;
-        height: 10%;
-    }
+    $columnTotal: 25;
+    $rowTotal: 10;
+    $unitWidth: 100% / $columnTotal;
+    $unitHeight: 100% / $rowTotal;
 
-    .s-50x40 {
-        width: 50%;
-        height: 40%;
+    @for $row from 0 through 10 {
+        @for $col from 0 through 25 {
+            .p-#{$col}x#{$row} {
+                left: $col * $unitWidth;
+                top: $row * $unitHeight;
+            }
+
+            .s-#{$col}x#{$row} {
+                width: $unitWidth * $col;
+                height: $unitHeight * $row;
+            }
+        }
     }
 }
 </style>
@@ -162,15 +150,15 @@ export default {
             color: #fff;
         }
     }
-    .homeSelect {
-        li {
-            height: 20px;
-            line-height: 20px;
-            padding: 0 5px;
+}
+.homeSelect {
+    li {
+        height: 20px;
+        line-height: 20px;
+        padding: 0 5px;
 
-            span {
-                font-size: 12px;
-            }
+        span {
+            font-size: 12px;
         }
     }
 }
