@@ -29,6 +29,9 @@
 </template>
 
 <script>
+    import postal from 'postal';
+    import PostalStore from "../../lib/postalStore";
+    let postalStore = new PostalStore();
 	import Setting from "./setting"
 	import Ftable from "@components/Ftable/index"
     export default {
@@ -45,7 +48,37 @@
 
             }
         },
+
 		created() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.RunMonitor.Start',
+             })
+        },
+		mounted(){
+            //批量关注池
+            postalStore.sub( 'batchConcern',(data)=>{
+                console.log('batchConcern',data);
+            });
+            //提前落地池
+            postalStore.sub( 'advanceArrive',(data)=>{
+                console.log('advanceArrive',data);
+            });
+            //地面保障池
+            postalStore.sub( 'guaranteeWarn',(data)=>{
+                console.log('guaranteeWarn',data);
+            });
+            //要客航班池
+            postalStore.sub( 'vvpFlights',(data)=>{
+                console.log('vvpFlights',data);
+            });
+		},
+        beforeDestroy() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.RunMonitor.Stop',
+             })
+            postalStore.unsubAll()
         },
         methods: {
             openSetting({name}){

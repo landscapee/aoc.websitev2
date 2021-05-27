@@ -1,7 +1,7 @@
 import {getFlightDetail} from '../lib/storage'
 import {situationStart, situationStop} from "../model/runMonitor";
  import Logger from "../../common/logger";
-import {values, extend, forEach} from 'lodash';
+import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 
 let worker;
@@ -26,12 +26,35 @@ export const checkClient = (clientField) => {
 // situation 服务的连接
 const subWSEvent = () => {
     let client = clientObj.situationClient;
-    client.sub('/Flight/delay/executableFlight',(data)=>{
-        // let flights = {};
-        // map(data, (flightId) => {
-        //   flights[flightId] = true;
-        // });
-        // memoryStore.setItem('ExecutableFlights', flights, true);
+    //批量关注池
+    function getFlightDatas(data){
+        let arr=[]
+        data.map((k,l)=>{
+            if(getFlightDetail(k.flightId)){
+                arr.push(getFlightDetail(k.flightId))
+            }
+
+        })
+        return arr
+    };
+    client.sub('Flight/monitor/batchConcern',(res)=>{
+        let data=getFlightDatas(res)
+        worker.publish('Web','batchConcern',data)
+    });
+    //提前落地池
+    client.sub('/Flight/monitor/advanceArrive',(res)=>{
+        let data=getFlightDatas(res)
+        worker.publish('Web','advanceArrive',data)
+    });
+    //地面保障池
+    client.sub('Flight/monitor/guaranteeWarn',(res)=>{
+        let data=getFlightDatas(res)
+        worker.publish('Web','guaranteeWarn',data)
+    });
+    //要客航班池
+    client.sub('Flight/monitor/vvpFlights',(res)=>{
+        let data=getFlightDatas(res)
+        worker.publish('Web','vvpFlights',data)
     })
 };
 
@@ -42,7 +65,7 @@ export const init = (worker_) => {
         clientObj.situationClient = new SocketWrapper(c);
      });
 
-    worker.subscribe('Page.Situation.Start',()=>{
+    worker.subscribe('Page.RunMonitor.Start',()=>{
         situationStart(worker);
         checkClient('situationClient').then(()=>{
             subWSEvent();
@@ -50,7 +73,7 @@ export const init = (worker_) => {
         });
     });
 
-    worker.subscribe('Page.Situation.Stop',()=>{
+    worker.subscribe('Page.RunMonitor.Stop',()=>{
         situationStop(worker);
         forEach(clientObj,item=>{
             console.log(item)
