@@ -40,7 +40,7 @@
     methods: {
       testClick(){
         console.log('asdasdas')
-        this.$pub('Worker','Test','')
+        // this.$pub('Worker','Test','')
       }
     },
   }

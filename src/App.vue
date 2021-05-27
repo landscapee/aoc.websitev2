@@ -6,6 +6,8 @@
 <script>
     import router from './router'
     import Vue from 'vue';
+    import PostalStore from "./lib/postalStore";
+    let postalStore = new PostalStore();
 export default {
     data() {
         return {
@@ -24,7 +26,7 @@ export default {
         clearTimeout(this.outrTimer)
     },
   mounted(){
-    this.$sub('Web','Login.Out',()=>{
+    postalStore.sub('Web','Login.Out',()=>{
       Vue.prototype.$alert('用户已过期，请重新登录！', '提示', {
         type: 'warning',
         center: true
@@ -32,7 +34,7 @@ export default {
         router.replace("/")
       })
     });
-    this.$sub('Web','Global.Alert',(opts)=>{
+    postalStore.sub('Web','Global.Alert',(opts)=>{
       Vue.prototype.$alert(...opts)
     })
   },
