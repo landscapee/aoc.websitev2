@@ -19,7 +19,7 @@
 						<i class="el-icon-setting"></i>
 					</div>
 				</div>
-				<Ftable :data="opt.data" :tableConfig="opt.tableConfig" ></Ftable>
+				<AdvTable :data="opt.data" :tableConfig="opt.tableConfig" ></AdvTable>
 			</div>
 		</div>
 		<Setting ref="Setting" @getCol="getCol"></Setting>
@@ -33,10 +33,10 @@
     import PostalStore from "../../lib/postalStore";
     let postalStore = new PostalStore();
 	import Setting from "./setting"
-	import Ftable from "@components/Ftable/index"
+	import AdvTable from "@components/advTable.vue"
     export default {
         name: "runMonitoringIndex",
-        components: {Setting,Ftable},
+        components: {Setting,AdvTable},
         data() {
             return {
                 pageListObj: {

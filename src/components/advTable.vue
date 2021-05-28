@@ -701,7 +701,7 @@
                 type: Object,
             },
             columnConfig: {
-                type:Object
+                type:Array
             },
             checkedRow: {
                 type: Number
@@ -1551,7 +1551,7 @@
                     return this.$store.getters.getTabColumns(this.id);
                 }
                 if(this.columnConfig) {
-                    return this.columnConfig.columns;
+                    return this.columnConfig;
                 }
                 return [];
             },
@@ -1661,7 +1661,7 @@
                         config = this.$store.getters.getTabConfig(this.id)
                     }
                     if(this.columnConfig) {
-                        config= this.columnConfig.columns;
+                        config= this.columnConfig;
                     }
                     if(!config) {
                         return {};
@@ -1699,7 +1699,7 @@
                         config = this.$store.getters.getTabConfig(this.id)
                     }
                     if(this.columnConfig) {
-                        config= this.columnConfig.columns;
+                        config= this.columnConfig;
                     }
                     if(config.switch) {
                         return config.switch(row, this.outParams);
@@ -1713,7 +1713,7 @@
                     config = this.$store.getters.getTabConfig(this.id)
                 }
                 if(this.columnConfig) {
-                    config= this.columnConfig.columns;
+                    config= this.columnConfig;
                 }
                 if(!config) {
                     return {};
