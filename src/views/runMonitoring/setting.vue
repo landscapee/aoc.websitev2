@@ -46,14 +46,15 @@
     import {map, compact, get} from 'lodash'
     import {allField} from "../../../common/flightAllFields";
     import draggable from "vuedraggable";
+    import {setting} from './help';
 
     export default {
         name: "setting",
         components: {draggable},
         data() {
             return {
-                list1: [],
-                hideFields: [],
+                list1: [],//要显示的列
+                hideFields: [],  //所有列
                 item: {},
                 dialogFormVisible: false,
                 falgs: 'article',
@@ -63,43 +64,47 @@
         },
         methods: {
 			save(){
-
+				this.$emit('getCol',this.list1,this.item.key)
+				this.dialogFormVisible=false
 			},
 			reset(){
-
-			},
+				this.list1=setting[this.item.key]
+                //重置 hideFields
+                this.gethideFields()
+            },
             close() {
                 this.item={}
                 this.hideFields=[]
                 this.list1=[]
                 this.dialogFormVisible = false
             },
+			gethideFields(){
+                let topListobj ={};
+                map(this.list1,(k,l)=>{
+                    if(k.type==='index'){
+                        this.hideFields=[{type:'index',label:'序号',flag:true,selectColor:true}]
+                    }else{
+                        topListobj[k.prop||k.solt]=1
+                    }
+                })
+                map(allField, (item, key) => {
+                    if (  !item.reference && !item.unConfigurable) {
+                        let obj={prop:key,label:item.text}
+                        if(item.slot){
+                            obj={slot:key,label:item.text}
+                        }
+                        if(topListobj[key]){
+                            obj={...obj,flag:true,selectColor:true}
+                        }
+                        this.hideFields.push(obj);
+                    }
+                });
+			},
             open(item) {
                 this.dialogFormVisible = true
                 this.item = item
                 this.list1 = [...item.tableConfig]
-                 let topListobj ={};
-                map(this.list1,(k,l)=>{
-                    if(k.type==='index'){
-                        this.hideFields=[{type:'index',label:'序号',flag:true,selectColor:true}]
-					}else{
-                        topListobj[k.prop||k.solt]=1
-					}
-				})
-
-                 map(allField, (item, key) => {
-                     if (  !item.reference && !item.unConfigurable) {
-                         let obj={prop:key,label:item.text}
-                          if(item.slot){
-                             obj={slot:key,label:item.text}
-						 }
-						 if(topListobj[key]){
-                             obj={...obj,flag:true,selectColor:true}
-						 }
-
-                        this.hideFields.push(obj);
-                    }
-                });
+				this.gethideFields()
 
             },
             getRightOption() {
@@ -152,6 +157,26 @@
 			padding: 15px 20px;
 			max-height: 80vh;
 			overflow-y: auto;
+			.footer{
+				text-align: right;
+				border-top:1px #cacaca solid;
+				padding-top: 10px;
+				span{
+					cursor:pointer;
+					color:#fff;
+					display: inline-block;
+					padding:4px 10px;
+					border-radius: 2px;
+				}
+				span:hover{
+					opacity: .6;
+				}
+				span:last-child{
+					color: #fff;
+					background-color: #28a745;
+					border-color: #28a745;
+				}
+			}
 		}
 	}
 	.drag-box{
@@ -162,7 +187,7 @@
 			font-size: 14px;
 			padding: 3px 5px;
 			display: inline-block;
-			margin: 0 12px 10px 0;
+			margin: 0 8px 8px 0;
 			border: 1px solid #6c757d;
 			border-radius: 1px;
 			color:#6c757d;

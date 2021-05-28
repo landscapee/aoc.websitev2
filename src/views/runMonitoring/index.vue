@@ -8,9 +8,8 @@
 				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item   v-for="(opt) in pageList" :key="opt.key">
 						<el-checkbox v-model="opt.show" :label="opt.name"></el-checkbox>
-
 					</el-dropdown-item>
-
+					<div @click="resetPageList" class="resetPage">重置</div>
 				</el-dropdown-menu>
 			</el-dropdown>
 			<div class="itemMonitor" v-if="opt.show" v-for="(opt,index) in pageList" :key="index">
@@ -19,12 +18,11 @@
 					<div @click="openSetting(opt)">
 						<i class="el-icon-setting"></i>
 					</div>
-
 				</div>
 				<Ftable :data="opt.data" :tableConfig="opt.tableConfig" ></Ftable>
 			</div>
 		</div>
-		<Setting ref="Setting"></Setting>
+		<Setting ref="Setting" @getCol="getCol"></Setting>
 	</div>
 </template>
 
@@ -53,14 +51,11 @@
 		computed:{
             pageList(){
                 return map(this.pageListObj,(k,l)=>{
-                    console.log(11111,k, l);
                     return k
                 })
-
 			} ,
 		},
 		created() {
-            console.log(222,this.pageListObj);
             map(this.pageListObj,(k,l)=>{
                 k.tableConfig=[];
                 map(setting[l],(k1,l)=>{
@@ -69,7 +64,6 @@
 
 				})
 			})
-            console.log(222,this.pageListObj);
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Start',
@@ -114,8 +108,16 @@
             postalStore.unsubAll()
         },
         methods: {
-            openSetting({name,batchConcern,tableConfig, }){
-              this.$refs.Setting.open({name,batchConcern,tableConfig})
+            getCol(cols,key){
+				this.pageListObj[key].tableConfig=[...cols]
+			},
+            resetPageList(){
+				map(this.pageListObj,(k,l)=>{
+				    k.show=true
+				})
+			},
+            openSetting({name,key,tableConfig, }){
+              this.$refs.Setting.open({name,key,tableConfig})
 			},
 		},
 
@@ -123,13 +125,25 @@
 </script>
 
 <style lang="scss" scoped>
+	 .el-dropdown-menu{
+		padding:15px!important;
+	}
+	::v-deep .el-dropdown-menu__item{
+		padding: 0px;
+		border-bottom: 1px #ddd solid!important;
+	}
+	 .resetPage{
+		 color:#28a745;
+		 cursor: pointer;
+		 text-align: center;
+		 padding-top: 10px ;
+	 }
+	 .resetPage:hover{
+		 opacity: .6;
+	 }
 	.runMonitoringIndex {
 		position: relative;
-		 ::v-deep .el-dropdown-menu{
-			  .el-dropdown-menu__item{
-				border-bottom: 1px red solid!important;
-			}
-		}
+
 		.positionDropdown{
 			cursor: pointer;
 			color:#fff;
@@ -154,6 +168,7 @@
 				height: calc(50vh - 39px);
  				width: 33.333333%;
 				padding: 5px;
+
 				.itemTitle {
 					width: 100%;
 					height: 37px;
