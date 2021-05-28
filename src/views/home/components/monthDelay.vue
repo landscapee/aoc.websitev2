@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { matchPercentNum } from '/common/helper/utility'
+import { matchPercentNum } from 'helper/utility'
 export default {
     props: [
         'options',

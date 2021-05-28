@@ -1,5 +1,5 @@
 import { get, set, filter, orderBy, countBy, take, map, each, has, toUpper, size, extend } from 'lodash';
-import Airports from '/common/data/airports.json';
+import Airports from 'data/airports.json';
 
 const getMinus = (v) => {
 	return {

@@ -342,14 +342,14 @@ export default {
 
 <style lang="scss" scoped>
 #com_glob_head {
-    height: 48px;
+    height: 40px;
     width: 100%;
     background: linear-gradient(90deg, #183d71 0%, #0172cf 100%);
     display: flex;
     align-items: center;
     justify-content: space-between;
     .logo_left {
-        height: 48px;
+        height: 40px;
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -433,8 +433,8 @@ export default {
 
         .logoutBox,
         .setBox {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             background: rgba(14, 52, 113, 1);
             opacity: 0.6;
             cursor: pointer;
