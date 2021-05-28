@@ -4,24 +4,25 @@
             <div class="left">
                 <div class="top">
                     <icon-svg iconClass="monthdelay" />
-                    <span class="name">月度放行正常率目标： 90%</span>
-                    <i class="iconfont icon-bianji"></i>
+                    <span class="name">月度放行正常率目标:{{flight_monthClearance.targetRate}}%</span>
+                    <el-input v-model="monthRate" size="mini" v-show="monthDRateInput" @keyup.enter.native="editMonthRateHandle"></el-input>
+                    <i class="iconfont icon-bianji" @click="monthDRateInput = true" v-show="!monthDRateInput"></i>
                 </div>
                 <div class="mid">
                     <div>
-                        <p>当月累计放行正常率： 92%</p>
-                        <p>后续每日放行正常率最低目标：XX %</p>
+                        <p>当月累计放行正常率:{{flight_monthClearance.value?flight_monthClearance.value.average:0}}%</p>
+                        <p>后续每日放行正常率最低目标:{{flight_monthClearance.value?flight_monthClearance.value.lowest:0}} %</p>
                     </div>
                     <div>
-                        <p>今天限制延误架次： 50</p>
-                        <p>今日已延误架次：60</p>
+                        <p>今天限制延误架次:{{flight_monthClearance.value?flight_monthClearance.value.limitDelay:0}}</p>
+                        <p>今日已延误架次:{{flight_monthClearance.value?flight_monthClearance.value.delay:0}}</p>
                     </div>
                 </div>
                 <div class="footer">
                     <div class="top">
                         <icon-svg iconClass="monthtitle" />
-                        <span class="name">延误航班统计：</span>
-                        <el-select v-model="select" placeholder="请选择" size="mini" @change="loadActiveData">
+                        <span class="name">延误航班统计</span>
+                        <el-select v-model="select" placeholder="请选择" size="mini" @change="load_flight_home">
                             <el-option v-for="item in selectArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
                         </el-select>
                     </div>
@@ -55,15 +56,10 @@
                     </div>
                     <div>
                         <table>
-                            <tr>
-                                <td>MU5846</td>
-                                <td>20L</td>
-                                <td>14:24 </td>
-                            </tr>
-                            <tr>
-                                <td>MU5846</td>
-                                <td>20L</td>
-                                <td>14:24 </td>
+                            <tr v-for="flight in flight_lastestAta" :key="flight.flightId">
+                                <td>{{flight.flightNo}}</td>
+                                <td>{{flight.runway}}</td>
+                                <td>{{$moment(flight.actualTime).format('mm:ss')}} </td>
                             </tr>
                         </table>
                     </div>
@@ -75,15 +71,10 @@
                     </div>
                     <div>
                         <table>
-                            <tr>
-                                <td>MU5846</td>
-                                <td>20L</td>
-                                <td>14:24 </td>
-                            </tr>
-                            <tr>
-                                <td>MU5846</td>
-                                <td>20L</td>
-                                <td>14:24 </td>
+                            <tr v-for="flight in flight_lastestAtd" :key="flight.flightId">
+                                <td>{{flight.flightNo}}</td>
+                                <td>{{flight.runway}}</td>
+                                <td>{{$moment(flight.actualTime).format('mm:ss')}} </td>
                             </tr>
                         </table>
                     </div>
@@ -95,8 +86,15 @@
 </template>
 
 <script>
+import { matchPercentNum } from '/common/helper/utility'
 export default {
-    props: ['options', 'data'],
+    props: [
+        'options',
+        'flight_home',
+        'flight_monthClearance',
+        'flight_lastestAta',
+        'flight_lastestAtd',
+    ],
     data() {
         return {
             select: 'arriveNormal',
@@ -114,25 +112,33 @@ export default {
                 ltOneHour: 0,
                 ltTwoHour: 0,
             },
+            monthDRateInput: false,
+            monthRate: '',
         }
     },
     created() {},
     mounted() {},
     watch: {
-        data: function () {
-            this.loadActiveData()
+        flight_home: function () {
+            this.load_flight_home()
         },
     },
     methods: {
-        loadActiveData() {
-            this.activeData = this.data.rateDelay
-                ? this.data.rateDelay[this.select]
+        load_flight_home() {
+            this.activeData = this.flight_home.rateDelay
+                ? this.flight_home.rateDelay[this.select]
                 : {
                       gtTwoHour: 0,
                       ltHalfHour: 0,
                       ltOneHour: 0,
                       ltTwoHour: 0,
                   }
+        },
+        editMonthRateHandle() {
+            console.log(matchPercentNum)
+            matchPercentNum(this.monthRate, (data) => {
+                // this.postalStore.pub('Home.SetMonthRate', this.monthRate)
+            })
         },
     },
 }
@@ -177,6 +183,9 @@ export default {
                     flex: 1;
                     margin-left: 10px;
                     color: #fff;
+                }
+                .el-input {
+                    width: auto;
                 }
             }
             .mid {
@@ -237,7 +246,7 @@ export default {
                     tr {
                         td {
                             color: #fff;
-                            height: 30px;
+                            height: 20px;
                         }
                     }
                 }

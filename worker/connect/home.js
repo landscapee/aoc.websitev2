@@ -1,5 +1,5 @@
 import {memoryStore} from '../lib/memoryStore'
-import {start, stop,initData} from "../model/home";
+import {start, stop,flight_home,flight_monthClearance,flight_lastestAta,flight_lastestAtd,flight_FlightStatistic} from "../model/home";
 import {saveToFlightDB} from "../lib/storage";
 import Logger from "../../common/logger";
 import {values, extend, forEach} from 'lodash';
@@ -35,10 +35,35 @@ const subRetainWs = () => {
 };
 
 
-const subWSEvent = (worker) => {
+const subWSEvent = () => {
+  //总数据
   clientObj.homeClient.sub('/Flight/Home/Operation', (data) => {
-    initData(worker,data)
+    flight_home(worker,data)
   })
+  // 月度放行正常率目标
+  clientObj.homeClient.sub('/Flight/monthClearance/stat', (data) => {
+    flight_monthClearance(worker,data)
+  });
+  // 最近实际落地航班
+  clientObj.homeClient.sub('/Flight/lastestAta', (data) => {
+    flight_lastestAta(worker,data)
+  });
+  // 最近实际起飞航班
+  clientObj.homeClient.sub('/Flight/lastestAtd', (data) => {
+    flight_lastestAtd(worker,data)
+  });
+  //积压
+  clientObj.homeClient.sub('/Flight/delay/backPool', (data) => {
+    // flight_delay_backStatus(worker, data)
+    console.log(data)
+  });
+  
+  //运行
+  clientObj.homeClient.sub('/Flight/Flight/FlightStatistic', (data) => {
+    flight_FlightStatistic(worker,data)
+  });
+
+
 };
 
 export const init = (worker_) => {
@@ -48,10 +73,10 @@ export const init = (worker_) => {
     subRetainWs()
   });
   worker.subscribe('Page.Home.Start', () => {
-    // start(worker);
+    start(worker);
     checkClient('homeClient').then(() => {
       console.log('home连接成功')
-      subWSEvent(worker);
+      subWSEvent();
     });
   });
   worker.subscribe('Page.Home.Stop',()=>{

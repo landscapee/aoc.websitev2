@@ -2,11 +2,11 @@
     <div id="home">
         <div class="home_left">
             <div class="p-0x0 s-12x1 numberBox">
-                <number v-for="(item,index) in numbersArr" :key="item.type+index" :options="item" :data="data" />
+                <number v-for="(item,index) in numbersArr" :key="item.type+index" :options="item" :flight_home="flight_home" />
             </div>
-            <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :options="item" :data="data" />
-            <month-delay :options="monthData" :data="data" />
-            <flight-chart :data="chartData" />
+            <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :options="item" :flight_home="flight_home" />
+            <month-delay :options="monthData" :flight_home="flight_home" :flight_monthClearance="flight_monthClearance" :flight_lastestAta="flight_lastestAta" :flight_lastestAtd="flight_lastestAtd" />
+            <flight-chart :options="chartData" :flight_FlightStatistic="flight_FlightStatistic" :flight_delay_backStatus="flight_delay_backStatus" @set-settingcfg="setSettingcfg" />
 
         </div>
         <div class="home_right">
@@ -20,13 +20,15 @@
 <script>
 import { postions } from './static/js/postions.js'
 import { settings as settingsCfg } from './static/js/settingHome'
+import PostalStore from '../../lib/postalStore'
+
 import Number from './components/number'
 import Number2 from './components/number2'
 import MonthDelay from './components/monthDelay'
 import Topflight from './components/topflight'
 import Runway from './components/runway'
 import FlightChart from './components/FlightChart'
-
+let postalStore = new PostalStore()
 export default {
     data() {
         return {
@@ -37,7 +39,12 @@ export default {
 
             dataRowsArr: [],
             chartData: {},
-            data: {},
+            flight_home: {},
+            flight_monthClearance: {},
+            flight_lastestAta: [],
+            flight_lastestAtd: [],
+            flight_FlightStatistic: {},
+            flight_delay_backStatus: {},
         }
     },
     components: {
@@ -51,21 +58,44 @@ export default {
     created() {
         this.loadSetting()
 
-        this.$pub('Worker', 'Page.Home.Start', '')
+        postalStore.pub('Worker', 'Page.Home.Start', '')
 
-        this.$sub('Web', 'home.init.data', (data) => {
+        postalStore.sub('flight.home', (data) => {
             console.log(data)
-            this.loadData(data)
+            this.flight_home = data
         })
-        // this.$sub('Web', 'Home.Situation.response', (response) => {
-        //     console.log(response)
-        // })
+        // 月度放行正常率目标
+        postalStore.sub('flight.monthClearance', (data) => {
+            console.log('月度放行正常率目标', data)
+            this.flight_monthClearance = data
+        })
+        // 最近实际落地航班
+        postalStore.sub('flight.lastestAta', (data) => {
+            console.log('最近实际落地航班', data)
+            this.flight_lastestAta = data
+        })
+        // 最近实际起飞航班
+        postalStore.sub('flight.lastestAtd', (data) => {
+            console.log('最近实际起飞航班', data)
+            this.flight_lastestAtd = data
+        })
+
+        //积压运行
+        postalStore.sub('flight.FlightStatistic', (data) => {
+            console.log('运行', data)
+            this.flight_FlightStatistic = data
+        })
+
+        postalStore.pub('Worker', 'Page.Delays.Start', '')
+        // Network.Connected.Widespread
+
+        postalStore.sub('flight.delay.backStatus', (data) => {
+            console.log('积压', data)
+            this.flight_delay_backStatus = data
+        })
     },
     mounted() {},
     methods: {
-        loadData(data) {
-            this.data = data
-        },
         loadSetting() {
             this.settings = {}
             _.each(settingsCfg, (item, k) => {
@@ -98,11 +128,15 @@ export default {
                 dataRows: this.dataRowsArr,
             })
         },
+        setSettingcfg(key) {
+            this.chartData = _.get(settingsCfg, key)
+        },
     },
 }
 </script>
 
 <style scoped lang='scss'>
+//
 #home {
     display: flex;
     .home_left {
@@ -142,6 +176,7 @@ export default {
 </style>
 
 <style lang='scss'>
+@import './static/css/chart.scss';
 .home_left {
     .el-select {
         input {

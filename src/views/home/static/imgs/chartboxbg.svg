@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="161px" height="161px" viewBox="0 0 161 161" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 150</title>
+    <defs>
+        <linearGradient x1="2.60857253%" y1="0%" x2="97.3914275%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#9EE1FF" stop-opacity="0" offset="0.038243007%"></stop>
+            <stop stop-color="#65BFFF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="2.60857253%" y1="0%" x2="97.3914275%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#65BFFF" offset="0%"></stop>
+            <stop stop-color="#9EE1FF" stop-opacity="0" offset="99.961757%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="运行态势" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(-866.000000, -122.000000)" id="编组-150">
+            <g transform="translate(866.000000, 122.000000)">
+                <circle id="椭圆形" stroke="#1A66DE" opacity="0.5" cx="80.5" cy="80.5" r="80"></circle>
+                <path d="M155.075939,52.2037 C147.236575,31.0996296 130.746394,14.2006902 109.914086,5.81557121" id="路径" stroke="url(#linearGradient-1)" stroke-width="3" stroke-linecap="round"></path>
+                <path d="M155.075939,155.733112 C147.236575,134.629041 130.746394,117.730102 109.914086,109.344983" id="路径" stroke="url(#linearGradient-2)" stroke-width="3" stroke-linecap="round" transform="translate(132.495012, 132.539047) scale(1, -1) translate(-132.495012, -132.539047) "></path>
+                <path d="M51.5465269,52.2037 C43.7071629,31.0996296 27.2169822,14.2006902 6.38467448,5.81557121" id="路径" stroke="url(#linearGradient-2)" stroke-width="3" stroke-linecap="round" transform="translate(28.965601, 29.009636) scale(-1, 1) translate(-28.965601, -29.009636) "></path>
+                <path d="M51.5465269,155.733112 C43.7071629,134.629041 27.2169822,117.730102 6.38467448,109.344983" id="路径" stroke="url(#linearGradient-1)" stroke-width="3" stroke-linecap="round" transform="translate(28.965601, 132.539047) scale(-1, -1) translate(-28.965601, -132.539047) "></path>
+            </g>
+        </g>
+    </g>
+</svg>

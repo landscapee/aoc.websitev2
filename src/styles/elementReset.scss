@@ -13,52 +13,61 @@
         color: #fff;
     }
 }
- .el-dialog{
-     background: #233147;
-     border-radius: 10px;
-     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.50);
-    .el-dialog__headerbtn{
-        top:14px;
+
+.el-dialog {
+    background: #233147;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.50);
+
+    .el-dialog__headerbtn {
+        top: 14px;
     }
-    .el-dialog__close{
+
+    .el-dialog__close {
         padding: 3px;
         border-radius: 50px;
         background: white;
     }
 
-    .el-dialog__close:before{
+    .el-dialog__close:before {
         font-size: 16px;
         content: "\E6DB";
         font-weight: bold;
     }
-    .el-dialog__header{
+
+    .el-dialog__header {
         padding: 0;
         height: 50px;
         text-align: center;
         line-height: 50px;
         background: #234479;
         border-radius: 5px 5px 0px 0px;
+
         .el-dialog__title {
 
             font-size: 18px;
             color: #ffffff;
         }
     }
-    .Qfooter{
-        text-align:center;
-        .el-button{
-            padding:0!important;
+
+    .Qfooter {
+        text-align: center;
+
+        .el-button {
+            padding: 0 !important;
             text-align: center;
             border: 1px solid #b9b9b9;
             border-radius: 5px;
-            span{
+
+            span {
                 display: inline-block;
                 width: 100px;
-                height: 36px!important;
+                height: 36px !important;
                 line-height: 36px;
             }
         }
-        .el-button:last-child{
+
+        .el-button:last-child {
             border: 0;
         }
     }

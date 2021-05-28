@@ -1,0 +1,111 @@
+.sp-chart {
+  .chart-container-rotate {
+    @keyframes rotate {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    background: url(./static/imgs/chartboxbg.svg) no-repeat center;
+    width: 200px;
+    margin: 0 auto;
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    top: 50px;
+    bottom: -2px;
+    animation: rotate infinite 6s linear;
+  }
+
+  .chart-container {
+    width: 200px;
+    padding: 15px;
+    margin: 0 auto;
+    position: absolute;
+  }
+}
+
+.chart {
+  .title-text {
+    background: url("./static/imgs/chartbg.svg") no-repeat;
+    display: inline-block;
+    width: 110px;
+    text-align: center;
+    color: #fff;
+  }
+
+  .title {
+    height: 30px !important;
+    line-height: 30px !important;
+    color: #fff;
+    font-weight: 700;
+    font-size: .875rem;
+    position: absolute;
+    left: 10px;
+    right: 0;
+    top: 10px;
+
+    .sum-none {
+      display: none;
+    }
+
+    .sum-people {
+      display: inline-block;
+      height: 30px !important;
+      line-height: 30px !important;
+      font-weight: 700;
+      font-size: .875rem;
+      padding-left: 20px;
+    }
+  }
+
+
+  .chart-container {}
+
+  .highcharts-label {
+    .percentLabel {
+      font-family: 'Fjalla One';
+      font-size: 23px;
+      color: #477BFF;
+      font-weight: lighter;
+      text-align: center;
+
+      .symbol {
+        font-size: 16px;
+      }
+    }
+
+    .detail {
+      font-size: 15px;
+      color: #477BFF;
+      font-family: 'MicrosoftYaHei-Bold';
+    }
+  }
+
+  .shadowBlue {
+    //filter: url(#blur-filter);
+    // filter: url(#blur-filter);
+  }
+
+  .roundTop {
+    clip-path: inset(0 round 7.5px 7.5px 0 0);
+  }
+
+  .roundBottom {
+    clip-path: inset(0 round 0 0 7.5px 7.5px);
+  }
+
+  .highcharts-text-outline {
+    // font-size: 0.625rem;
+    // font-size: 1rem;
+    // paint-order: stroke;
+    // stroke: #0568FF;
+    // stroke-width: 1px;
+    // stroke-linecap: butt;
+    // stroke-linejoin: miter;
+  }
+}
