@@ -8,7 +8,12 @@
  -->
 <template>
 	<div class="about">
-		<AdvTable  :columnConfig="columnConfig" :tab-data="tabData" :pagination="pagination" @viewsRow="viewsRow" @submit="submit"></AdvTable>
+		<AdvTable  :columnConfig="columnConfig" :tab-data="tabData" :pagination="pagination" @viewsRow="viewsRow" @submit="submit">
+			<template slot="danjia" slot-scope="{row,index}" >
+				<div  > 11{{index}}</div>
+
+			</template>
+		</AdvTable>
 	</div>
 </template>
 <script>
@@ -18,11 +23,10 @@
         data(){
             return {
                 columnConfig: {
-
                     columns: [
                         {key: 'ind', label: '序号', width: '40px', type: 'index'},
                         {key: 'waybillCode', label: '运单号', width: '200px', type: 'simple'},
-                        {key: 'danjia', label: '运单号',  type: 'slot',width:'200px'},
+                        {key: 'danjia', label: '运单号1',  type: 'slot',width:'200px'},
                         {key: 'des', label: '目的地', width: '200px', type: 'simple'},
                         {key: 'number', label: '件数', width: '70px', type: 'simple'},
                         {key: 'weight', label: '重量', width: '70px', type: 'simple'},
