@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { matchPercentNum } from '/common/helper/utility'
+import { matchPercentNum } from 'helper/utility'
 export default {
     props: [
         'options',
@@ -149,14 +149,6 @@ export default {
     padding: 4px;
     position: absolute;
     .box_content {
-        height: 100%;
-        width: 100%;
-        background: linear-gradient(
-            134deg,
-            rgba(26, 39, 64, 0.5) 0,
-            rgba(29, 47, 67, 0.5) 30%,
-            rgba(29, 47, 67, 0.5) 100%
-        ) !important;
         display: flex;
         justify-content: space-between;
         .left {

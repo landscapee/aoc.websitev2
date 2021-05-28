@@ -247,7 +247,7 @@ const chartOptionsByHour = {
 		enabled: true,
 		itemStyle: {
 			color: '#666666',
-			fontSize: '0.75rem',
+			fontSize: '0.12rem',
 			fontWeight: 'light',
 		},
 		// itemHoverStyle: {
@@ -452,8 +452,8 @@ export const settings = {
 		title: '放行正常率',
 		options: extend({}, chartOptions, {
 			series: (data, isEditing) => {
-				let count = get(data, 'percent.takeOffNormal', 0);
-				let total = get(data, 'percent.takeOffTotal', 0);
+				let count = get(data, 'numerator', 0);
+				let total = get(data, 'denominator', 0);
 				let value = null;
 				if (count > 0 && total > 0 && count == total) {
 					value = 100;

@@ -7,7 +7,7 @@
             <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :options="item" :flight_home="flight_home" />
             <month-delay :options="monthData" :flight_home="flight_home" :flight_monthClearance="flight_monthClearance" :flight_lastestAta="flight_lastestAta" :flight_lastestAtd="flight_lastestAtd" />
             <flight-chart :options="chartData" :flight_FlightStatistic="flight_FlightStatistic" :flight_delay_backStatus="flight_delay_backStatus" @set-settingcfg="setSettingcfg" />
-
+            <rate :options="rateData" :rate_data="flight_home.rate" />
         </div>
         <div class="home_right">
             <top-flight />
@@ -28,17 +28,18 @@ import MonthDelay from './components/monthDelay'
 import Topflight from './components/topflight'
 import Runway from './components/runway'
 import FlightChart from './components/FlightChart'
+import Rate from './components/rate'
 let postalStore = new PostalStore()
 export default {
     data() {
         return {
-            settings: {},
             numbersArr: [],
             numbers2Arr: [],
             monthData: {},
-
             dataRowsArr: [],
             chartData: {},
+            rateData: {},
+
             flight_home: {},
             flight_monthClearance: {},
             flight_lastestAta: [],
@@ -54,6 +55,7 @@ export default {
         'top-flight': Topflight,
         runway: Runway,
         'flight-chart': FlightChart,
+        rate: Rate,
     },
     created() {
         this.loadSetting()
@@ -97,10 +99,8 @@ export default {
     mounted() {},
     methods: {
         loadSetting() {
-            this.settings = {}
             _.each(settingsCfg, (item, k) => {
                 if (postions[k]) {
-                    this.settings[k] = _.assign({}, item, postions[k])
                     if (postions[k]) {
                         if (item.type == 'number') {
                             this.numbersArr.push(_.assign({}, item, postions[k]))
@@ -115,7 +115,24 @@ export default {
                             this.dataRowsArr.push(_.assign({}, item, postions[k]))
                         }
                         if (item.type == 'chart') {
-                            this.chartData = _.assign({}, item, postions[k])
+                            if (k == 'summary-by-hour-backlog') {
+                                this.chartData = _.assign({}, item, postions[k])
+                            }
+                            if (k == 'takeOffPercent') {
+                                //放行正常率
+                                this.rateData.takeOffPercent = _.assign({}, item, postions[k])
+                            }
+                            if (k == 'originatedDeparturePercent') {
+                                //始发正常率
+                                this.rateData.originatedDeparturePercent = _.assign(
+                                    {},
+                                    item,
+                                    postions[k]
+                                )
+                            }
+                        }
+                        if (item.type == 'rate') {
+                            this.rateData.rate = _.assign({}, item, postions[k])
                         }
                     }
                 }
@@ -126,6 +143,7 @@ export default {
                 month: this.monthData,
                 chart: this.chartData,
                 dataRows: this.dataRowsArr,
+                rate: this.rateData,
             })
         },
         setSettingcfg(key) {
@@ -136,7 +154,6 @@ export default {
 </script>
 
 <style scoped lang='scss'>
-//
 #home {
     display: flex;
     .home_left {
@@ -177,6 +194,18 @@ export default {
 
 <style lang='scss'>
 @import './static/css/chart.scss';
+.box_content {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+        134deg,
+        rgba(26, 39, 64, 0.5) 0,
+        rgba(29, 47, 67, 0.5) 30%,
+        rgba(29, 47, 67, 0.5) 100%
+    ) !important;
+    overflow: hidden;
+    padding: 5px 10px 0;
+}
 .home_left {
     .el-select {
         input {
@@ -205,6 +234,11 @@ export default {
             color: #fff;
             height: 30px;
         }
+    }
+}
+.home_rate {
+    .el-select {
+        width: 80px;
     }
 }
 .selectGroup {
