@@ -1,7 +1,8 @@
 import {each} from "lodash";
 import socket from '../lib/socket'
 import {init as flightInit} from '../connect/flight'
-import {init as homeInit} from '../connect/home'
+import { init as homeInit } from '../connect/home'
+import { init as delaysInit } from '../connect/delays'
 import {init as monitorInit} from '../connect/runMonitor'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
@@ -57,6 +58,7 @@ postal.subscribe({
     monitorInit(posWorker, httpRequest);
     flightHttp(posWorker, httpRequest);
     homeInit(posWorker, httpRequest)
+    delaysInit(posWorker, httpRequest)
     memoryStore.setItem('global',{token:data.token});
     postal.subscribe({
       channel: 'Worker',

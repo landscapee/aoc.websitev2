@@ -1046,6 +1046,7 @@ export const settings = {
 	'summary-by-hour-today': {
 		type: 'chart',
 		title: '今日航班实时运行情况',
+		position: 'p-0x6 s-12x4',
 		options: extend({}, chartOptionsByHour, {
 			yAxis: [
 				{
@@ -1082,9 +1083,6 @@ export const settings = {
 				},
 			],
 			series: (data, cb) => {
-				if (!data.byHours.today) {
-					return [];
-				}
 				let result = [
 					{
 						type: 'areaspline',
@@ -1092,7 +1090,7 @@ export const settings = {
 						color: '#0566FF',
 						lineColor: chartColor4,
 						fillOpacity: 0.05,
-						data: get(data, 'byHours.today.departurePlan', []),
+						data: get(data, 'today.departurePlan', []),
 					},
 					{
 						type: 'column',
@@ -1100,7 +1098,7 @@ export const settings = {
 						color: chartColor1,
 						//borderColor: 'rgba(12, 159, 255, 0.1)',
 						data:
-							map(data.byHours.today.departureActual, (v) => {
+							map(data.today.departureActual, (v) => {
 								return {
 									y: v,
 									className: 'roundTop',
@@ -1120,7 +1118,7 @@ export const settings = {
 						lineColor: chartColor3,
 						fillOpacity: 0.05,
 						data:
-							map(data.byHours.today.arrivalPlan, (v) => {
+							map(data.today.arrivalPlan, (v) => {
 								return {
 									y: v === 0 ? v : -v,
 								};
@@ -1129,7 +1127,6 @@ export const settings = {
 							lineColor: 'rgba(0, 159, 35, 0.2)',
 						},
 					},
-
 					{
 						type: 'column',
 						name: '实际进港',
@@ -1146,9 +1143,9 @@ export const settings = {
 							//borderColor: 'rgba(0, 205, 73, 0.1)',
 						},
 						data:
-							get(data, 'byHours.today.arrivalActual.length') === 0
+							get(data, 'today.arrivalActual.length') === 0
 								? []
-								: map(data.byHours.today.arrivalActual, (v) => {
+								: map(data.today.arrivalActual, (v) => {
 										return {
 											y: v === 0 ? v : -v,
 											className: 'roundBottom',
@@ -1190,7 +1187,7 @@ export const settings = {
 							//borderColor: 'rgba(0, 205, 73, 0.1)',
 						},
 						data:
-							map(data.byHours.today.takeOffRate, (v) => {
+							map(data.today.takeOffRate, (v) => {
 								let value = Math.round((v[0] / v[1]) * 1000) / 10;
 								let color = 'rgba(251, 0, 0, 0.7)';
 								if (value >= 80) color = 'rgba(251, 156, 0, 0.7)';
@@ -1221,6 +1218,7 @@ export const settings = {
 	'summary-by-hour-yesterday': {
 		type: 'chart',
 		title: '昨日航班实时运行情况',
+		position: 'p-0x6 s-12x4',
 		checkInCounters: (data) => {
 			return get(data, 'checkInCounters');
 		},
@@ -1260,9 +1258,6 @@ export const settings = {
 				},
 			],
 			series: (data, cb) => {
-				if (!data.byHours.yesterday) {
-					return [];
-				}
 				let result = [
 					{
 						type: 'areaspline',
@@ -1270,7 +1265,7 @@ export const settings = {
 						color: '#0566FF',
 						lineColor: chartColor4,
 						fillOpacity: 0.05,
-						data: get(data, 'byHours.yesterday.departurePlan', []),
+						data: get(data, 'yesterday.departurePlan', []),
 					},
 					{
 						type: 'column',
@@ -1278,7 +1273,7 @@ export const settings = {
 						color: chartColor1,
 						//borderColor: 'rgba(12, 159, 255, 0.1)',
 						data:
-							map(data.byHours.yesterday.departureActual, (v) => {
+							map(data.yesterday.departureActual, (v) => {
 								return {
 									y: v,
 									className: 'roundTop',
@@ -1298,7 +1293,7 @@ export const settings = {
 						lineColor: chartColor3,
 						fillOpacity: 0.05,
 						data:
-							map(data.byHours.yesterday.arrivalPlan, (v) => {
+							map(data.yesterday.arrivalPlan, (v) => {
 								return {
 									y: v === 0 ? v : -v,
 								};
@@ -1322,9 +1317,9 @@ export const settings = {
 							},
 						},
 						data:
-							get(data, 'byHours.yesterday.arrivalActual.length') === 0
+							get(data, 'yesterday.arrivalActual.length') === 0
 								? []
-								: map(data.byHours.yesterday.arrivalActual, (v) => {
+								: map(data.yesterday.arrivalActual, (v) => {
 										return {
 											y: v === 0 ? v : -v,
 											className: 'roundBottom',
@@ -1345,6 +1340,7 @@ export const settings = {
 	'summary-by-hour-backlog': {
 		type: 'chart',
 		title: '今日航班实时积压情况',
+		position: 'p-0x6 s-12x4',
 		options: extend({}, chartOptionsByHour, {
 			yAxis: {
 				title: {
@@ -1365,12 +1361,9 @@ export const settings = {
 				},
 			},
 			series: (data) => {
-				if (!data.byHours.backlog) {
-					return [];
-				}
-				let prediction = get(data, 'byHours.backlog.prediction', []);
-				let actual = get(data, 'byHours.backlog.actual', {});
-				let executable = get(data, 'byHours.backlog.executable', []);
+				let prediction = get(data, 'prediction', []);
+				let actual = get(data, 'actual', {});
+				let executable = get(data, 'executable', []);
 				//let timeCfg = ['04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '00', '01', '02', '03'];
 				let timeCfg = ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
 				let result = [

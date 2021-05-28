@@ -2,7 +2,7 @@
     <div class="home_number" :class="options.position">
         <div class="box_content">
             <div class="top">
-                <el-select v-model="select" placeholder="请选择" size="mini" popper-class="homeSelect" @change="loadActiveData">
+                <el-select v-model="select" placeholder="请选择" size="mini" popper-class="homeSelect" @change="load_flight_home">
                     <el-option label="全场" value="all"></el-option>
                     <el-option label="国内" value="domestic"></el-option>
                     <el-option label="国际" value="international"></el-option>
@@ -33,7 +33,7 @@
 
 <script>
 export default {
-    props: ['options', 'data'],
+    props: ['options', 'flight_home'],
     data() {
         return {
             select: 'all',
@@ -44,13 +44,13 @@ export default {
     created() {},
     mounted() {},
     watch: {
-        data: function () {
-            this.loadActiveData()
+        flight_home: function () {
+            this.load_flight_home()
         },
     },
     methods: {
-        loadActiveData() {
-            this.activeData = this.options.value(this.data, this.select)
+        load_flight_home() {
+            this.activeData = this.options.value(this.flight_home, this.select)
 
             this.percentage =
                 this.activeData[1] == 0

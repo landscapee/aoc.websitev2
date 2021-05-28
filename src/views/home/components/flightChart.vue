@@ -1,16 +1,16 @@
 <template>
-    <div class="flightChart" :class="data.position">
+    <div class="flightChart" :class="options.position">
         <div class="box_content">
             <div class="title">
                 <span class="name">
-                    {{navLists[navFalg].name}}
+                    {{navLists[select].name}}
                 </span>
-                <i class="iconfont icon-qiehuan" v-if="navFalg==1"></i>
+                <i class="iconfont icon-qiehuan" v-if="select==1" @click="runTypeToday=!runTypeToday"></i>
                 <ul class="radioBox">
-                    <li class="li1" :class="navFalg==0?'active':''" @click="navFalg=0">积压</li>
-                    <li class="li2" :class="navFalg==1?'active':''" @click="navFalg=1">允许</li>
+                    <li class="li1" :class="select==0?'active':''" @click="navHandle(0)">积压</li>
+                    <li class="li2" :class="select==1?'active':''" @click="navHandle(1)">运行</li>
                 </ul>
-                <div class="det" v-if="navFalg==0">
+                <div class="det" v-if="select==0">
                     <div>
                         <div class="iconBox box1">
                             <i class="iconfont icon-jiantou1"></i>
@@ -26,7 +26,7 @@
 
                 </div>
             </div>
-            <div id="flight_chart_box">
+            <div id="flight_chart_box" class="chart">
 
             </div>
         </div>
@@ -36,7 +36,7 @@
 <script>
 import Highcharts from 'highcharts/highstock'
 export default {
-    props: ['data'],
+    props: ['options', 'flight_FlightStatistic', 'flight_delay_backStatus'],
     data() {
         return {
             select: 0,
@@ -44,19 +44,67 @@ export default {
                 { name: '今日航班实时积压情况', value: 0 },
                 { name: '今日航班实时运行情况', value: 1 },
             ],
-            navFalg: 0,
+            runTypeToday: true,
+            chart: null,
+            loading: false,
         }
     },
     created() {},
-    mounted() {
-        this.loadChart()
+    mounted() {},
+    watch: {
+        flight_delay_backStatus: function (val) {
+            if (this.select === 0 && !this.loading) {
+                this.loadChart()
+            }
+        },
+        flight_FlightStatistic: function (val) {
+            if (this.select === 1) {
+                this.loadChart()
+            }
+        },
+        runTypeToday: function (val) {
+            this.setOption()
+        },
     },
     methods: {
+        navHandle(index) {
+            console.log(index)
+            this.runTypeToday = true
+            this.select = index
+            this.loading = false
+            this.setOption()
+        },
+        setOption() {
+            if (this.select == 1) {
+                if (this.runTypeToday) {
+                    this.$emit('set-settingcfg', 'summary-by-hour-today')
+                } else {
+                    this.$emit('set-settingcfg', 'summary-by-hour-yesterday')
+                }
+            } else {
+                this.$emit('set-settingcfg', 'summary-by-hour-backlog')
+            }
+            this.$nextTick(function () {
+                this.loadChart()
+            })
+        },
         loadChart() {
-            console.log(this.data.options)
-
             // 图表初始化函数
-            // var chart = Highcharts.chart('flight_chart_box',this.data. options)
+
+            let options = _.cloneDeep(this.options.options)
+            let series = this.options.options.series(
+                this.select == 1 ? this.flight_FlightStatistic : this.flight_delay_backStatus
+            )
+            options.series = series
+
+            if (this.loading) {
+                this.chart.update({
+                    series: options.series,
+                })
+            } else {
+                this.loading = true
+                this.chart = Highcharts.chart('flight_chart_box', options)
+            }
         },
     },
 }
@@ -86,6 +134,7 @@ export default {
             position: absolute;
             top: 5px;
             left: 10px;
+            z-index: 10;
             .name {
                 color: #fff;
             }

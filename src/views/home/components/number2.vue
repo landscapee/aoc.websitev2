@@ -18,7 +18,7 @@
 
 <script>
 export default {
-    props: ['options', 'data'],
+    props: ['options', 'flight_home'],
     data() {
         return {
             select: 0,
@@ -28,13 +28,13 @@ export default {
     created() {},
     mounted() {},
     watch: {
-        data: function () {
-            this.loadActiveData()
+        flight_home: function () {
+            this.load_flight_home()
         },
     },
     methods: {
-        loadActiveData() {
-            this.activeData = this.options.value(this.data)
+        load_flight_home() {
+            this.activeData = this.options.value(this.flight_home)
         },
     },
 }
