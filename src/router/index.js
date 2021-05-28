@@ -22,6 +22,7 @@ const home = () => import(/*webpackChunkName:"home"*/ '../views/home/home')
 const flight = () => import(/*webpackChunkName:"flight"*/ '../views/flight/flight')
 //运行监控
 const runMonitoring = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonitoring/index')
+const adv = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonitoring/adv')
 
 
 
@@ -33,6 +34,7 @@ var routes = [
       { path: '/home', name: 'home', component:home},
       { path: '/flight', name: 'flight', component:flight},
       { path: '/runMonitoring', name: 'runMonitoring', component:runMonitoring},
+      { path: '/adv', name: 'adv', component:adv},
     ]
   },
   
