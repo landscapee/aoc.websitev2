@@ -66,18 +66,9 @@ export default {
     padding: 4px;
     position: absolute;
     .box_content {
-        height: 100%;
-        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        background: linear-gradient(
-            134deg,
-            rgba(26, 39, 64, 0.5) 0,
-            rgba(29, 47, 67, 0.5) 30%,
-            rgba(29, 47, 67, 0.5) 100%
-        ) !important;
-        padding: 5px 10px 0;
         .top {
             display: flex;
             justify-content: space-between;
