@@ -2,153 +2,179 @@
 export const setting = {
 	advanceArrive:  [
 			{
+				key: 'ind',
                 type: 'index',
-				label: '序号',
-				font: 'font-One',
+				width: '30px',label: '序号',
+
 			},
 			{
-				prop: 'flightNo',
-				label: '航班号',
+
+				key: 'flightNo',
+				width: '50px',label: '航班号',
+                type: 'simple'
  			},
 			{
-				prop: 'aircraftNo',
-				label: '机号',
+
+				key: 'aircraftNo',
+				width: '50px',label: '机号',
+                type: 'simple'
  			},
 			{
-				prop: 'displayScheduleTime',
-				label: '计划时间',
+
+				key: 'displayScheduleTime',
+				width: '50px',label: '计划时间',
+                type: 'simple'
 			},
 			{
-				prop: 'displayETA',
-				label: '预计时间',
+
+				key: 'displayETA',
+				width: '50px',label: '预计时间',
+                type: 'simple'
 			},
 		],
 
 	batchConcern: [
 			{
                 type: 'index',
-				label: '序号',
+				width: '30px',label: '序号',
+                key:'ind'
  			},
 			{
-				prop: 'flightNo',
-				label: '航班号',
-				font: 'font-One',
+				key: 'flightNo',
+				width: '50px',label: '航班号',
+                type: 'simple'
 			},
 			{
-				prop: 'movement',
-				label: '进/离',
-				font: 'font-One',
+				key: 'movement',
+				width: '50px',label: '进/离',
+                type: 'simple'
 			},
 			{
-				prop: 'displayScheduleTime',
-				label: '计划时间',
+				key: 'displayScheduleTime',
+				width: '50px',label: '计划时间',
+                type: 'simple'
 			},
 			{
-				prop: 'eta-ctot',
-				label: '预计时间',
+				key: 'eta-ctot',
+				width: '50px',label: '预计时间',
+                type: 'simple'
 			},
 			{
-				prop: 'ata-atd',
-				label: '实际时间',
+				key: 'ata-atd',
+				width: '50px',label: '实际时间',
+                type: 'simple'
 			},
 			{
-				prop: 'reasonType',
+				key: 'reasonType',
+				reference: true,
+                type: 'simple'
+			},
+			{
+				key: 'concernReason',
 				reference: true,
 			},
 			{
-				prop: 'concernReason',
+				key: 'hightLightStatus',
 				reference: true,
 			},
 			{
-				prop: 'hightLightStatus',
-				reference: true,
+				key: 'batchSet',
+				width: '50px',label: '批量预警',
+                type: 'simple'
 			},
 			{
-				prop: 'batchSet',
-				label: '批量预警',
-
+				key: 'warnDetail',
+				width: '50px',label: '取消预警',
+                type: 'simple'
 			},
 			{
-				prop: 'warnDetail',
-				label: '取消预警',
-
-			},
-			{
-				prop: 'cancel',
-				label: '取消关注',
+				key: 'cancel',
+				width: '50px',label: '取消关注',
+                type: 'simple'
 			},
 		],
 	guaranteeWarn: [
 			{
                 type: 'index',
-				label: '序号',
+				width: '30px',label: '序号',
+				key:'ind'
  			},
 			{
-				prop: 'flightNo',
-				label: '航班号',
+				key: 'flightNo',
+				width: '50px',label: '航班号',
+                type: 'simple'
  			},
 			{
-				prop: 'seat',
-				label: '机位',
+				key: 'seat',
+				width: '50px',label: '机位',
+                type: 'simple'
 			},
 			{
-				prop: 'movement',
-				label: '进/离',
+				key: 'movement',
+				width: '50px',label: '进/离',
+                type: 'simple'
  			},
 			{
-				prop: 'ata-atd',
-				label: '实际时间',
+				key: 'ata-atd',
+				width: '50px',label: '实际时间',
+                type: 'simple'
 			},
 			{
-				prop: 'stepCode',
-				label: '预警节点',
+				key: 'stepCode',
+				width: '50px',label: '预警节点',
+                type: 'simple'
 			},
 		],
 
 	vvpFlights: [
         {
             type: 'index',
-            label: '序号',
-			width:49,
+            width: '30px',label: '序号',
+			key:'ind'
          },
         {
-            prop: 'flightNo',
-            label: '航班号',
+            key: 'flightNo',
+            width: '50px',label: '航班号',
+            type: 'simple'
          },
         {
-            prop: 'movement',
-            label: '进/离',
+            key: 'movement',
+            width: '50px',label: '进/离',
+            type: 'simple'
          },
         {
-            prop: 'displayScheduleTime',
-            label: '计划时间',
+            key: 'displayScheduleTime',
+            width: '50px',label: '计划时间',
+            type: 'simple'
 
         },
         {
-            prop: 'milestoneStatusCn',
-            label: '空地里程碑状态',
+            key: 'milestoneStatusCn',
+            width: '80px',label: '空地里程碑状态',
+            type: 'simple'
         },
         {
-            prop: 'reasonType',
+            key: 'reasonType',
             reference: true,
         },
         {
-            prop: 'concernReason',
+            key: 'concernReason',
             reference: true,
         },
         {
-            prop: 'hightLightStatus',
+            key: 'hightLightStatus',
             reference: true,
         },
         {
-            prop: 'batchSet',
-            label: '批量预警',
+            key: 'batchSet',
+            width: '50px',label: '批量预警',
+            type: 'simple'
+        },
 
-        },
-
         {
-            prop: 'warnDetail',
-            label: '取消预警',
+            key: 'warnDetail',
+            width: '50px',label: '取消预警',
+            type: 'simple'
         },
     ],
 };

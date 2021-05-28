@@ -58,6 +58,15 @@ export const postions = {
 	'summary-by-hour-backlog': {//积压
 		position: 'p-0x6 s-12x4',
 	},
+	rate: {//正常率
+		position: 'p-12x0 s-13x3',
+	},
+	takeOffPercent: {//放行正常率
+		
+	},
+	originatedDeparturePercent: {//始发正常率
+		
+	},
 
 
 
@@ -87,9 +96,7 @@ export const postions = {
 	// departureNormal: {
 	// 	position: 'p-10x0 s-2x2',
 	// },
-	rate: {
-		position: 'p-12x0 s-12x3',
-	},
+	
 	direction: {
 		position: 'p-12x3 s-12x7',
 	},

@@ -148,13 +148,19 @@ import { cloneDeep } from 'lodash';
   .el-table::before{
 			height: 0!important;
 		}
+   .el-table--scrollable ::-webkit-scrollbar {
+			 display: none;
+		 }
+
+
 .searchTableWrapper {
-	::-webkit-scrollbar {display: none !important }
-	  .el-pagination {
+
+ 	  .el-pagination {
 		text-align: center;
 		margin-top: 20px;
 	}
 	::v-deep .el-table {
+		width: 100%;
  		border: none;
 		margin: 0 auto;
 		  .cell {
@@ -192,7 +198,7 @@ import { cloneDeep } from 'lodash';
 	}
 	::v-deep .mainTable {
 		background: #0c1b2b;
-			
+		width: 100%;
 		  .el-table__header {
 			.tab-header-row {
 				th {

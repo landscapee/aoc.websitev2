@@ -15,11 +15,17 @@
 			<div class="itemMonitor" v-if="opt.show" v-for="(opt,index) in pageList" :key="index">
 				<div class="itemTitle">
 					<div>{{opt.name}}（{{(opt.data||[]).length}}）</div>
+					<div @click="openWaring(opt)">
+						<i class="el-icon-setting"></i>
+					</div>
 					<div @click="openSetting(opt)">
 						<i class="el-icon-setting"></i>
 					</div>
 				</div>
-				<Ftable :data="opt.data" :tableConfig="opt.tableConfig" ></Ftable>
+				<div class="tablediv">
+					<AdvTable :tab-data="opt.data" :columnConfig="opt.tableConfig" ></AdvTable>
+
+				</div>
 			</div>
 		</div>
 		<Setting ref="Setting" @getCol="getCol"></Setting>
@@ -33,10 +39,10 @@
     import PostalStore from "../../lib/postalStore";
     let postalStore = new PostalStore();
 	import Setting from "./setting"
-	import Ftable from "@components/Ftable/index"
+	import AdvTable from "@components/advTable.vue"
     export default {
         name: "runMonitoringIndex",
-        components: {Setting,Ftable},
+        components: {Setting,AdvTable},
         data() {
             return {
                 pageListObj: {
@@ -119,6 +125,9 @@
             openSetting({name,key,tableConfig, }){
               this.$refs.Setting.open({name,key,tableConfig})
 			},
+			openWaring({name,key,tableConfig, }){
+              this.$refs.Setting.open({name,key,tableConfig})
+			},
 		},
 
     }
@@ -166,9 +175,17 @@
 			flex-wrap: wrap;
 			.itemMonitor {
 				height: calc(50vh - 39px);
- 				width: 33.333333%;
+ 				width: 33.333333%!important;
 				padding: 5px;
-
+				.tablediv{
+					margin-top: -1px;
+					position: relative;
+					width: 100%;
+					height: calc(100% - 37px);
+				}
+				.adv-table-container {
+					width: 100%;
+				}
 				.itemTitle {
 					width: 100%;
 					height: 37px;

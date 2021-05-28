@@ -27,9 +27,14 @@ export const flight_lastestAta = (posWorker, data) => {
 export const flight_lastestAtd = (posWorker, data) => {
   posWorker.publish('Web','flight.lastestAtd',data)
 }
-// 积压运行
+// 运行
 export const flight_FlightStatistic = (posWorker, data) => {
   posWorker.publish('Web','flight.FlightStatistic',data)
+}
+
+//积压
+export const flight_delay_backStatus = (posWorker, data) => {
+  posWorker.publish('Web','flight.delay.backStatus',data)
 }
 
 
