@@ -51,7 +51,7 @@
                                     <td v-for="(col, ci) in columns"  :style="tdColStyle(col, row)" :ref="`${row.id}_${ci}`" :key="ci">
                                         <el-tooltip v-if="dynamicDisplay(row, ci) && col.toggle ? col.toggle($route, outParams) : true" :content="col.tip?col.tip(row):''" placement="top" :disabled="!(col.tip && col.tip(row))" transition="none" :open-delay="300">
                                             <div class="adv-body-col" :data-px="ci" :data-py="ri" :class="editPointClass(ci, ri)" @click="handlePointSet(row, col, ci, ri)" :title="col.tip?col.tip(row):''">
-                                                <span v-if="col.type == 'index'" :style="{color:'#426c86'}"> {{ ri + 1 }} </span>
+                                                <span v-if="col.type == 'index'" > {{ ri + 1 }} </span>
                                                 <span v-if="col.type == 'simple'" class="cell-simple" :style="col.wordStyle ? col.wordStyle(row, outParams):{}" >
                                                     <template v-if="col.simpleContent">
                                                         <div style="display:flex;flex-flow:row;align-items: center;justify-content: space-between;padding:0 10px;">
@@ -1966,7 +1966,7 @@
                             font-size: 14px;
                             font-weight: 400;
                             border-right:solid 1px #45547c;
-                            border-bottom:solid 1px #45547c;
+                            border-bottom:solid 1px #45547c!important;
                             height: 40px;
                             padding: 0!important;
 
@@ -2307,7 +2307,7 @@
 
                         }
                         td:last-child {
-                            border:none;
+                            border-right:none;
                          }
                     }
                     tr:nth-child(odd) {

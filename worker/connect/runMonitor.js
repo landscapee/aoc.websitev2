@@ -26,7 +26,6 @@ export const checkClient = (clientField) => {
 const subWSEvent = () => {
     let client = clientObj.situationClient;
     //批量关注池
-
     client.sub('Flight/monitor/batchConcern',(res)=>{
         let data=getFlightDatas(res)
         worker.publish('Web','batchConcern',data)

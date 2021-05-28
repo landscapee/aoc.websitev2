@@ -82,16 +82,16 @@
                 let topListobj ={};
                 map(this.list1,(k,l)=>{
                     if(k.type==='index'){
-                        this.hideFields=[{type:'index',label:'序号',flag:true,selectColor:true}]
+                        this.hideFields=[{key:'ind',type:'index',label:'序号',flag:true,selectColor:true}]
                     }else{
-                        topListobj[k.prop||k.solt]=1
+                        topListobj[k.key||k.solt]=1
                     }
                 })
                 map(allField, (item, key) => {
                     if (  !item.reference && !item.unConfigurable) {
-                        let obj={prop:key,label:item.text}
+                        let obj={key:key,label:item.text,type:'simple'}
                         if(item.slot){
-                            obj={slot:key,label:item.text}
+                            obj={key:key,label:item.text,type:'slot'}
                         }
                         if(topListobj[key]){
                             obj={...obj,flag:true,selectColor:true}
@@ -134,10 +134,10 @@
             },
             handleDel(index, item) {
                 console.log('handleDel');
-                let prop=item.prop||item.slot
+                let key=item.key
                 this.list1.splice(index, 1)
                 let q = this.hideFields.find((value, index, arr) => {
-                    return value.prop === prop||value.solt===prop
+                    return value.key === key
                 })
                 this.$set(q, 'flag', false)
                 this.$set(q, 'selectColor', false)

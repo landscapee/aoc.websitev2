@@ -22,7 +22,7 @@
         components:{AdvTable},
         data(){
             return {
-
+                // width太宽会被隐藏   宽度不够按比例分配
                 columnConfig: [
                     {key: 'ind', label: '序号', width: '40px', type: 'index'},
                     {key: 'waybillCode', label: '运单号', width: '200px', type: 'simple'},
@@ -144,7 +144,10 @@
 <style lang="scss" scoped>
 	.about{
 		position: relative;
-		height: 600px;
-		width: 100%;
+		height: 300px!important;
+		width: 300px!important;
+		.adv-table-container {
+			width: 100%;
+		}
 	}
 </style>
