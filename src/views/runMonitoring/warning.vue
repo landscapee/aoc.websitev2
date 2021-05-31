@@ -3,7 +3,7 @@
 		<el-dialog title="批量设置" :close-on-click-modal="false" center
 				   :visible.sync="dialogFormVisible"
 				   :before-close="close">
-			<div>已设置预警状态:</div>
+			<div>已设置预警状态：</div>
 			<div>
 				<span > 状态</span>
 				<el-select v-model="status" multiple clearable  placeholder="请选择状态">
@@ -39,6 +39,7 @@
     import {map, compact, get} from 'lodash'
     import PostalStore from "../../lib/postalStore";
     let postalStore = new PostalStore();
+
     export default {
         name: "warning",
         data() {
@@ -61,12 +62,15 @@
                 this.dialogFormVisible = false
             },
 
-            open(item) {
+            open(item,options) {
                 this.dialogFormVisible = true
                 this.item = item
-                postalStore.sub( 'RunMonitor.BatchConcernStatusDetail.Response',(data)=>{
-                         console.log('Response',data);
-                });
+                this.$request.post('situation', 'batchConcernStatus/edit', { flightids: options.join(',') },true).then((res)=>{
+                    console.log('edit',res);
+                })
+				this.$request.post('situation', 'batchConcernStatus/list', null,true).then((res)=>{
+                    console.log('list',res);
+				})
 
             },
 

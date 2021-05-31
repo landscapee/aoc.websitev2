@@ -35,10 +35,10 @@
 						<template slot="warnDetail" slot-scope="{row,index}">
 							<!--<div>取消预警</div>-->
 							<span @click="resetWaring(row) " >
-							<icon-svg  iconClass="huifu"  :class="{infoSvg:row.hightLightStatus}"></icon-svg>
+							<icon-svg  iconClass="huifu"  :class="{infoSvg:!row.hightLightStatus}"></icon-svg>
 						</span>
 						</template>
- 
+
 					</AdvTable>
 
 				</div>
@@ -98,7 +98,8 @@
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Start',
-             })
+             }) ;
+
         },
 		mounted(){
             //批量关注池
@@ -131,6 +132,7 @@
                 this.allCheckWarn.batchConcern=[]
 				console.log('vvpFlights',data);
             });
+
 		},
         beforeDestroy() {
             postal.publish({
@@ -161,12 +163,7 @@
                 if(!this.getMoreWarnLength(key)){
                     return
 				}
-                 postal.publish({
-                    channel: 'Worker',
-                    topic: 'RunMonitor.BatchConcernStatusDetail',
-					data: this.allCheckWarn[key]
-                })
-                this.$refs.Warning.open({name,key,tableConfig})
+                this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key])
 			},
 		},
 

@@ -42,12 +42,6 @@ const subWSEvent = () => {
         worker.publish('Web','vvpFlights',data)
     })
 };
-export const batchConcernStatusDetail = (options) => {
-    console.log(options);
-    ajax.post('situation', 'batchConcernStatus/edit', { flightids: options.join(',') }).then((response, body) => {
-        worker.publish('Web', 'RunMonitor.BatchConcernStatusDetail.Response', response);
-    });
-};
 
 export const init = (worker_,httpRequest_) => {
     worker = worker_;
@@ -63,7 +57,6 @@ export const init = (worker_,httpRequest_) => {
             console.log('situation连接成功')
         });
     });
-    worker.subscribe('RunMonitor.BatchConcernStatusDetail', batchConcernStatusDetail);
 
     worker.subscribe('Page.RunMonitor.Stop',()=>{
         situationStop(worker);
