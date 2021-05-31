@@ -22,7 +22,16 @@
         <el-radio-button label="Tomorrow">明天</el-radio-button>
       </el-radio-group>
       <div class="search">
-
+        <div>
+          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
+            <el-select v-model="searchType" slot="prepend" placeholder="请选择">
+              <el-option label="餐厅名" value="1"></el-option>
+              <el-option label="订单号" value="2"></el-option>
+              <el-option label="用户电话" value="3"></el-option>
+            </el-select>
+            <el-button slot="append" icon="el-icon-search"></el-button>
+          </el-input>
+        </div>
       </div>
     </div>
 
@@ -51,6 +60,7 @@ export default {
       tabBarOptions,
       operationType:'',
       timeType:'',
+      searchType: ''
     }
   },
   components: {
@@ -97,11 +107,15 @@ export default {
      display: flex;
      align-items: center;
      .search{
-       //width: 0p;
-       padding: 8px 10px;
+       width: 228px;
+       height: 34px;
        color: #fff;
        background: #2b3645;
        border-color: #2b3645;
+       .el-input-group__prepend{
+         height: 34px;
+         background: transparent;
+       }
      }
    }
  }
