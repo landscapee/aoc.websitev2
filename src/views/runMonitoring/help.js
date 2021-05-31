@@ -80,17 +80,17 @@ export const setting = {
 			{
 				key: 'batchSet',
 				width: '50px',label: '批量预警',
-                type: 'simple'
+                type: 'slot'
 			},
 			{
 				key: 'warnDetail',
 				width: '50px',label: '取消预警',
-                type: 'simple'
+                type: 'slot'
 			},
 			{
 				key: 'cancel',
 				width: '50px',label: '取消关注',
-                type: 'simple'
+                type: 'slot'
 			},
 		],
 	guaranteeWarn: [
@@ -168,13 +168,13 @@ export const setting = {
         {
             key: 'batchSet',
             width: '50px',label: '批量预警',
-            type: 'simple'
+            type: 'slot'
         },
 
         {
             key: 'warnDetail',
             width: '50px',label: '取消预警',
-            type: 'simple'
+            type: 'slot'
         },
     ],
 };

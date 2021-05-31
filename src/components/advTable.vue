@@ -1920,7 +1920,7 @@
                 border-bottom:solid 1px #45547c;
 
                 z-index:1;
-                /*普通表头*/
+                /* 普通 表头 header */
                 table {
                     tr {
                         th {
@@ -2146,7 +2146,7 @@
                     }
                 }
             }
-            /* 普通表格 body */
+            /* 普通 表格 body */
             .adv-table_body-container {
                 position:relative;
                 flex-grow:1;
