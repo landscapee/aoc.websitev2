@@ -67,6 +67,12 @@ export const postions = {
 	originatedDeparturePercent: {//始发正常率
 		
 	},
+	direction: {
+		position: 'p-12x3 s-13x7',
+	},
+	'direction-map': {
+		
+	},
 
 
 
@@ -97,9 +103,7 @@ export const postions = {
 	// 	position: 'p-10x0 s-2x2',
 	// },
 	
-	direction: {
-		position: 'p-12x3 s-12x7',
-	},
+	
 	// eta30min: {
 	// 	position: 'p-0x2 s-12x5',
 	// },

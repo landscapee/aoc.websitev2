@@ -31,6 +31,13 @@ export const flight_lastestAtd = (posWorker, data) => {
 export const flight_FlightStatistic = (posWorker, data) => {
   posWorker.publish('Web','flight.FlightStatistic',data)
 }
+// 走廊口方向放行率
+export const flight_direction = (posWorker, data) => {
+  posWorker.publish('Web','flight.direction',data)
+}
+
+
+
 
 //积压
 export const flight_delay_backStatus = (posWorker, data) => {

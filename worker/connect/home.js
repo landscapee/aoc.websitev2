@@ -1,5 +1,5 @@
 import {memoryStore} from '../lib/memoryStore'
-import {start, stop,flight_home,flight_monthClearance,flight_lastestAta,flight_lastestAtd,flight_FlightStatistic,flight_delay_backStatus} from "../model/home";
+import {start, stop,flight_home,flight_monthClearance,flight_lastestAta,flight_lastestAtd,flight_FlightStatistic,flight_delay_backStatus,flight_direction} from "../model/home";
 import Logger from "../../common/logger";
 import { forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
@@ -42,6 +42,10 @@ const subWSEvent = () => {
   clientObj.homeClient.sub('/Flight/lastestAtd', (data) => {
     flight_lastestAtd(worker,data)
   });
+  //走廊口方向放行率
+	clientObj.homeClient.sub('/Flight/direction', (data) => {
+		flight_direction(worker,data)
+	});
   
   
   //运行

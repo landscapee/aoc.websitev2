@@ -8,6 +8,7 @@
             <month-delay :options="monthData" :flight_home="flight_home" :flight_monthClearance="flight_monthClearance" :flight_lastestAta="flight_lastestAta" :flight_lastestAtd="flight_lastestAtd" />
             <flight-chart :options="chartData" :flight_FlightStatistic="flight_FlightStatistic" :flight_delay_backStatus="flight_delay_backStatus" @set-settingcfg="setSettingcfg" />
             <rate :options="rateData" :rate_data="flight_home.rate" />
+            <direction :options="directionData" :flight_direction="flight_direction" />
         </div>
         <div class="home_right">
             <top-flight />
@@ -29,6 +30,7 @@ import Topflight from './components/topflight'
 import Runway from './components/runway'
 import FlightChart from './components/FlightChart'
 import Rate from './components/rate'
+import Direction from './components/direction'
 let postalStore = new PostalStore()
 export default {
     data() {
@@ -39,6 +41,7 @@ export default {
             dataRowsArr: [],
             chartData: {},
             rateData: {},
+            directionData: {},
 
             flight_home: {},
             flight_monthClearance: {},
@@ -46,6 +49,7 @@ export default {
             flight_lastestAtd: [],
             flight_FlightStatistic: {},
             flight_delay_backStatus: {},
+            flight_direction: {},
         }
     },
     components: {
@@ -56,6 +60,7 @@ export default {
         runway: Runway,
         'flight-chart': FlightChart,
         rate: Rate,
+        direction: Direction,
     },
     created() {
         this.loadSetting()
@@ -87,6 +92,11 @@ export default {
             console.log('运行', data)
             this.flight_FlightStatistic = data
         })
+        //走廊口方向放行率
+        postalStore.sub('flight.direction', (data) => {
+            console.log('走廊口方向放行率', data)
+            this.flight_direction = data
+        })
 
         postalStore.pub('Worker', 'Page.Delays.Start', '')
         // Network.Connected.Widespread
@@ -109,12 +119,14 @@ export default {
                             this.numbers2Arr.push(_.assign({}, item, postions[k]))
                         }
                         if (item.type == 'month') {
+                            //月度统计
                             this.monthData = _.assign({}, item, postions[k])
                         }
-                        if (item.type == 'dataRows') {
-                            this.dataRowsArr.push(_.assign({}, item, postions[k]))
-                        }
+                        // if (item.type == 'dataRows') {//
+                        //     this.dataRowsArr.push(_.assign({}, item, postions[k]))
+                        // }
                         if (item.type == 'chart') {
+                            //积压
                             if (k == 'summary-by-hour-backlog') {
                                 this.chartData = _.assign({}, item, postions[k])
                             }
@@ -132,7 +144,16 @@ export default {
                             }
                         }
                         if (item.type == 'rate') {
+                            //正常率
                             this.rateData.rate = _.assign({}, item, postions[k])
+                        }
+                        if (item.type == 'mixinZone') {
+                            //正常率
+                            this.directionData.direction = _.assign({}, item, postions[k])
+                        }
+                        if (item.type == 'Map') {
+                            //地图配置
+                            this.directionData.map = _.assign({}, item, postions[k])
                         }
                     }
                 }
@@ -144,6 +165,7 @@ export default {
                 chart: this.chartData,
                 dataRows: this.dataRowsArr,
                 rate: this.rateData,
+                direction: this.directionData,
             })
         },
         setSettingcfg(key) {

@@ -1,5 +1,8 @@
-import { get, set, filter, orderBy, countBy, take, map, each, has, toUpper, size, extend } from 'lodash';
+import { get, set, filter, orderBy, countBy, take, map, each, has, toUpper, size, extend,keyBy } from 'lodash';
 import Airports from '/common/data/airports.json';
+import China from '/common/data/cn-all-sar-taiwan.geo.json';
+import Citys from '/common/data/cities.json';
+// import { fixPx, pxtorem } from '/common/helper/viewSize';
 
 const getMinus = (v) => {
 	return {
@@ -14,6 +17,25 @@ const getValue = (v) => {
 	};
 };
 
+
+function pointsToPath(from, to, invertArc) {
+	// var arcPointX = (from.x + to.x) / (invertArc ? 2.4 : 1.6),
+	// 	arcPointY = (-from.y + -to.y) / (invertArc ? 2.4 : 1.6);
+	var arcPointX = (from.x + to.x) / invertArc,
+		arcPointY = (-from.y + -to.y) / invertArc;
+	return 'M' + from.x + ',' + -from.y + 'Q' + arcPointX + ' ' + arcPointY + ',' + to.x + ' ' + -to.y;
+}
+var chengduPoint = Citys['成都'];
+let getCityRoutes = (chinaCity) => {
+	let invertArc = [2, 1.8, 2.1, 2.1, 1.8, 1.9];
+	return map(['重庆', '西安', '昆明', '贵阳', '拉萨', '兰州'], (cityName, index) => {
+		let city = chinaCity[cityName];
+		return {
+			id: 'chengdu-' + cityName,
+			path: pointsToPath(chengduPoint, city, invertArc[index]),
+		};
+	});
+};
 const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#00DFFF'], [1, '#004EFF']] };
 const chartColor1 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#0566FF'], [1, '#0C9FFF']] };
 const chartColorRed = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#BF0B23'], [1, '#ff0002']] };
@@ -1533,6 +1555,238 @@ export const settings = {
 				result[1].data.push(null);
 				result[2].data.push(null);
 				result[3].data.push(null);
+				return result;
+			},
+		},
+	},
+	'direction-map': {
+		type: 'Map',
+		title: '方向放行率',
+		options: {
+			chart: {
+				height: 400,
+				backgroundColor: 'transparent',
+				// marginLeft: -20,
+				// marginRight: -20,
+				spacing: [0, 0, 0, 0],
+				animation: false,
+			},
+			exporting: {
+				enabled: false,
+			},
+			title: {
+				text: '',
+			},
+			credits: {
+				enabled: false,
+			},
+			mapNavigation: {
+				enabled: false,
+				buttonOptions: {
+					verticalAlign: 'bottom',
+				},
+			},
+			tooltip: {
+				// useHTML: true,
+				// formatter: function() {
+				// 	return this.point.name;
+				// },
+				enabled: false,
+			},
+			legend: {
+				enabled: false,
+			},
+			plotOptions: {
+				series: {
+					// dataLabels: {
+					// 	color: 'white',
+					// 	borderWidth: 0,
+					// 	style: { color: 'contrast', fontSize: '16px', fontWeight: 'light', textOutline: '0px 0px contrast' },
+					// },
+					marker: {
+						fillColor: 'rgba(255, 227, 0, 0.8)',
+						lineWidth: 3,
+						lineColor: 'rgba(255, 227, 0, 0.3)',
+						radius: 2,
+					},
+				},
+			},
+			series: (data) => {
+				const mapdata = China;
+				let directions = keyBy(data, 'hallway');
+				let renderColor = function(arr, data) {
+					let normal = get(data, 'normal', 0);
+					let total = get(data, 'total', 0);
+					let percent = total == 0 ? 1 : normal / total;
+					percent = Math.round(percent * 1000) / 10;
+					let color;
+					if (percent <= 100 && percent >= 90) {
+						color = '#14264A';
+					} else if (percent < 90 && percent >= 80) {
+						color = '#1F4D78';
+					} else if (percent < 80) {
+						color = '#661748';
+					}
+					return map(arr, (item) => ({ name: item, color: color, dataLabels: { enabled: false } }));
+				};
+				let taiwanOrigin = map(China['features'], (item) => {
+					if (item['properties']['country'] === 'Taiwan') {
+						return item['properties']['name'];
+					}
+				});
+				let taiwan = filter(taiwanOrigin, (item) => item);
+				let lanzhou = renderColor(['Qinghai', 'Xinjiang', 'Gansu'], directions[2]);
+				let xian = renderColor(['Inner Mongol', 'Heilongjiang', 'Jilin', 'Liaoning', 'Hebei', 'Beijing', 'Tianjin', 'Hebei', 'Shandong', 'Shanxi', 'Henan', 'Hubei', 'Shaanxi', 'Ningxia'], directions[3]);
+				let chongqing = renderColor(['Chongqing', 'Hubei', 'Anhui', 'Shanghai', 'Jiangsu', 'Zhejiang', 'Fujian', 'Jiangxi', 'Hunan', 'Hsinchu', ...taiwan], directions[4]);
+				let guiyang = renderColor(['Guizhou', 'Guangxi', 'Guangdong', 'Hainan'], directions[5]);
+				let kunming = renderColor(['Yunnan', 'Sichuan'], directions[6]);
+				let lasa = renderColor(['Xizang'], directions[1]);
+
+				let result = [
+					{
+						colorByPoint: true,
+						data: [...lanzhou, ...xian, ...chongqing, ...guiyang, ...kunming, ...lasa],
+						mapData: mapdata,
+						// keys: ['region', 'value', 'color'],
+						dataLabels: {
+							enabled: true,
+							format: '{point.name}',
+						},
+						states: {
+							hover: {
+								enabled: false,
+								borderWidth: 0,
+								borderColor: 'rgba(0,0,0,0)',
+							},
+						},
+						joinBy: 'name',
+						name: '中国地图',
+						borderWidth: 1,
+						borderColor: 'rgba(0,158,241,0.4)',
+						nullColor: 'rgba(0, 147, 230, 0.3)',
+					},
+					{
+						type: 'mappoint',
+						name: '通过经纬度描点',
+						color: '#FFE300',
+						dataLabels: {
+							//format: '{point.name}',
+							useHTML: true,
+							formatter: function() {
+								let self = this;
+								let data = self.point.id.split('-');
+								let normal = parseInt(data[1]);
+								let total = parseInt(data[2]);
+								let percent = total == 0 ? '1' : normal / total;
+								percent = Math.round(percent * 1000) / 10;
+								if (data) {
+									return `<div class="direction">
+                                        <div class="percent"  style="color:#fff">${percent}%</div>
+										<div class="cityname"  style="color:#fff">${self.point.name}
+										<span>
+											${normal}/${total}
+										</span>
+										</div>
+									</div>`;
+								} else {
+									return self.point.name;
+								}
+							},
+						},
+						data: [
+							{
+								id: 'chengdu',
+								x: Citys['成都'].x,
+								y: -Citys['成都'].y,
+								name: '成都方向',
+								dataLabels: {
+									enabled: false,
+								},
+								marker: {
+									fillColor: '#FFE300',
+									radius: 3,
+									lineWidth: 4,
+									lineColor: 'rgba(255, 227, 0, 0.5)',
+								},
+							},
+							{
+								id: `chongqing-${get(directions, [4, 'normal'], 0)}-${get(directions, [4, 'total'], 0)}`,
+								x: Citys['重庆'].x,
+								y: -Citys['重庆'].y,
+								name: '重庆方向',
+								dataLabels: {
+									align: 'left',
+									x: 5,
+									verticalAlign: 'middle',
+								},
+							},
+							{
+								id: `xian-${get(directions, [3, 'normal'], 0)}-${get(directions, [3, 'total'], 0)}`,
+								x: Citys['西安'].x,
+								y: -Citys['西安'].y,
+								name: '西安方向',
+								dataLabels: {
+									align: 'left',
+									x: 10,
+									y: -12,
+									verticalAlign: 'middle',
+								},
+							},
+							{
+								id: `guiyang-${get(directions, [5, 'normal'], 0)}-${get(directions, [5, 'total'], 0)}`,
+								x: Citys['贵阳'].x,
+								y: -Citys['贵阳'].y,
+								name: '贵阳方向',
+								dataLabels: {
+									align: 'left',
+									x: 12,
+									y: 27,
+									verticalAlign: 'middle',
+								},
+							},
+							{
+								id: `kunming-${get(directions, [6, 'normal'], 0)}-${get(directions, [6, 'total'], 0)}`,
+								x: Citys['昆明'].x,
+								y: -Citys['昆明'].y,
+								name: '昆明方向',
+								dataLabels: {
+									align: 'center',
+									y: 20,
+									x: -20,
+									verticalAlign: 'middle',
+								},
+							},
+							{
+								id: `lanzhou-${get(directions, [2, 'normal'], 0)}-${get(directions, [2, 'total'], 0)}`,
+								x: Citys['兰州'].x,
+								y: -Citys['兰州'].y,
+								name: '兰州方向',
+								dataLabels: {
+									align: 'center',
+									y: -30,
+									x: -10,
+									verticalAlign: 'middle',
+								},
+							},
+							{
+								id: `lanzhou-${get(directions, [1, 'normal'], 0)}-${get(directions, [1, 'total'], 0)}`,
+								x: Citys['拉萨'].x,
+								y: -Citys['拉萨'].y,
+								name: '拉萨方向',
+								dataLabels: {
+									align: 'right',
+								},
+							},
+						],
+					},
+					{
+						name: 'chengdu flight routes',
+						type: 'mapline',
+						lineWidth: 1,
+						color: '#FFE300',
+						data: getCityRoutes(Citys),
+					},
+				];
 				return result;
 			},
 		},
