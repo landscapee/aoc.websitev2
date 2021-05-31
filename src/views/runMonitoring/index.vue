@@ -35,14 +35,10 @@
 						<template slot="warnDetail" slot-scope="{row,index}">
 							<!--<div>取消预警</div>-->
 							<span @click="resetWaring(row) " >
-							<icon-svg  iconClass="cehui"  :class="{infoSvg:row.hightLightStatus}"></icon-svg>
+							<icon-svg  iconClass="huifu"  :class="{infoSvg:row.hightLightStatus}"></icon-svg>
 						</span>
 						</template>
-						<!--取消关注-->
-						<template slot="cancel" slot-scope="{row,index}">
-							<!--<div>取消关注</div>-->
-							<i class="el-icon-delete" @click="cancelAttention(row)"></i>
-						</template>
+ 
 					</AdvTable>
 
 				</div>

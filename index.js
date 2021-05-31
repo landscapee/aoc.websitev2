@@ -11,22 +11,20 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './src/styles/elementReset.scss';//element样式重置
 import i18n from './src/i18n'//中英双语
 
-import "./src/icons";
-
 import router from './src/lib/router'
 import HttpRequest from './common/axios'
 
 import moment from 'moment';
 import {memoryStore} from "./worker/lib/memoryStore";
 
-// import IconSvg from './src/components/Icon-svg';// svg组件
+import IconSvg from './src/components/Icon-svg';// svg组件
 import Logger from "./common/logger";
 
 import {v4 as uuidv4} from "uuid";
 Vue.prototype.$uuid = uuidv4;
 Vue.prototype.$logger = Logger;
 
-// Vue.component('icon-svg', IconSvg);
+Vue.component('icon-svg', IconSvg);
 /***************************拆分server 测试环境********************************/
 // let locationHost = '173.101.1.30'; // 双流测试
 let locationHost = location.hostname;
