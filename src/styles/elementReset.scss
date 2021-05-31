@@ -94,13 +94,16 @@
     }
 }
 
+// tabs
 .el-radio-group{
     .el-radio-button__inner{
-        padding: 8px 10px;
+        height: 34px;
+        padding: 0 10px;
         color: #fff;
         background: #2b3645;
         border-color: #2b3645;
         font-weight: normal;
+        line-height: 34px;
         &:hover{
             background: #3e5b82;
         }
