@@ -1,8 +1,8 @@
 
 import { get, set, filter, orderBy, countBy, take, map, each, has, toUpper, size, extend,keyBy } from 'lodash';
-import Airports from '/common/data/airports.json';
-import China from '/common/data/cn-all-sar-taiwan.geo.json';
-import Citys from '/common/data/cities.json';
+import Airports from 'data/airports.json';
+import China from 'data/cn-all-sar-taiwan.geo.json';
+import Citys from 'data/cities.json';
 // import { fixPx, pxtorem } from '/common/helper/viewSize';
 
 const getMinus = (v) => {

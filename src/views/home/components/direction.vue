@@ -226,6 +226,7 @@ export default {
                         height: 40px;
                         display: flex;
                         align-items: center;
+                        justify-content: space-between;
                         .nameBox {
                             width: 140px;
                             display: flex;
@@ -233,12 +234,14 @@ export default {
                             align-items: center;
                         }
                         .dataBox {
-                            width: calc(100% - 140px);
+                            width: calc(100% - 120px);
                             overflow: hidden;
+                            height: 100%;
                         }
                         ul {
                             display: flex;
                             height: 100%;
+                            overflow: auto;
 
                             li {
                                 height: 100%;
