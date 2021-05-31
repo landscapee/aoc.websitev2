@@ -121,14 +121,14 @@ export default class HttpRequest {
   constructor(httpConfig) {
     this.httpConfig = httpConfig
   }
-  post(channel, url, params, method){
+  post(channel, url, params, isFormData, method){
     let serverPath = this.httpConfig[channel].path;
     return new Promise((resolve, reject) => {
       axios({
         url:`${serverPath}/${url}`,
         method: method || 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        data: params,
+        headers: isFormData ? {} : { 'Content-Type': 'application/json' },
+        data: isFormData ? qs.stringify(params) : params,
       }).then(response => {
         resolve( response )
       }).catch(err => {

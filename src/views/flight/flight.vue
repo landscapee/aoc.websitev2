@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <el-button @click="testClick">22222</el-button>
+    <div id="flight">
+      <toolBar/>
     </div>
 </template>
 
@@ -13,8 +13,8 @@
       return {}
     },
     components: {
-      // 'com-glob-head': () =>
-      //   import(/*webpackChunkName:"com-globHead"*/ '../components/com-glob-head'),
+      'toolBar': () =>
+        import(/*webpackChunkName:"com-globHead"*/ './components/toolBar'),
     },
     mounted() {
       postalStore.sub('Test',a=>{
@@ -45,3 +45,9 @@
     },
   }
 </script>
+
+<style>
+  #flight{
+    padding-left: 15px;
+  }
+</style>
