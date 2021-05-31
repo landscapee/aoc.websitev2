@@ -18,6 +18,7 @@ module.exports = merge(common, {
         open: true,
         progress: true, // 打包过程中的进度条
         host:'127.0.0.1',
+        hot: true,
         proxy:
           [{
               context: ['/api', '/api-login'],
