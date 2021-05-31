@@ -101,8 +101,14 @@
         background: #2b3645;
         border-color: #2b3645;
         font-weight: normal;
+        &:hover{
+            background: #3e5b82;
+        }
     }
-    .el-radio-button:first-child .el-radio-button__inner{
+    //.el-radio-button:first-child.is-focus{
+    //    border-left-color: #2b3645;
+    //}
+    .el-radio-button:first-child:not(.is-focus) .el-radio-button__inner{
         border-radius: 0.02rem 0 0 0.02rem;
         border-left-color: #2b3645;
     }

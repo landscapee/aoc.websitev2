@@ -12,12 +12,18 @@
     </div>
 
     <div class="right-box">
-      <el-radio-group v-model="timeType">
-        <el-radio-button label="top">All</el-radio-button>
-        <el-radio-button label="right">昨天</el-radio-button>
-        <el-radio-button label="bottom">bottom</el-radio-button>
-        <el-radio-button label="left">left</el-radio-button>
+      <el-radio-group v-model="operationType" style="margin-right: 5px">
+        <el-radio-button label="OperationDay">运营日</el-radio-button>
+        <el-radio-button label="naturalDay">自然日</el-radio-button>
       </el-radio-group>
+      <el-radio-group v-model="timeType" style="margin-right: 5px">
+        <el-radio-button label="Yesterday">昨天</el-radio-button>
+        <el-radio-button label="Today">今天</el-radio-button>
+        <el-radio-button label="Tomorrow">明天</el-radio-button>
+      </el-radio-group>
+      <div class="search">
+
+      </div>
     </div>
 
   </div>
@@ -43,6 +49,7 @@ export default {
   data() {
     return {
       tabBarOptions,
+      operationType:'',
       timeType:'',
     }
   },
@@ -89,6 +96,13 @@ export default {
      height: 50px;
      display: flex;
      align-items: center;
+     .search{
+       //width: 0p;
+       padding: 8px 10px;
+       color: #fff;
+       background: #2b3645;
+       border-color: #2b3645;
+     }
    }
  }
 </style>
