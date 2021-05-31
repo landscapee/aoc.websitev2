@@ -1,24 +1,24 @@
 import Vue from 'vue';
-import App from './src/App.vue';
+import App from '@/ui/App.vue';
 import WorkerRegist from './workerRegist.js';//注册worker
-import store from './src/store'//vuex
+import store from './src/ui/store'//vuex
 import postal from 'postal';//广播
 // import Worker from 'worker/manage/tf-init';
 //引入全套element
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css';
-import './src/styles/elementReset.scss';//element样式重置
-import i18n from './src/i18n'//中英双语
+import './src/ui/styles/elementReset.scss';//element样式重置
+import i18n from './src/ui/i18n'//中英双语
 
-import router from './src/lib/router'
-import HttpRequest from './common/axios'
+import router from './src/ui/lib/router'
+import HttpRequest from '@/lib/axios'
 
 import moment from 'moment';
-import {memoryStore} from "./worker/lib/memoryStore";
+import {memoryStore} from "./src/worker/lib/memoryStore";
 
-import IconSvg from './src/components/Icon-svg';// svg组件
-import Logger from "./common/logger";
+import IconSvg from './src/ui/components/Icon-svg';// svg组件
+import Logger from "@/lib/logger";
 
 import {v4 as uuidv4} from "uuid";
 Vue.prototype.$uuid = uuidv4;

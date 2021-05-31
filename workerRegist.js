@@ -1,6 +1,6 @@
 import postal from 'postal';
 import {get} from 'lodash';
-import Fpms from 'worker-loader!./worker/process/process.js';
+import Fpms from 'worker-loader!./src/worker/process/process.js';
 class workerRegist{
     constructor(){}
     start(){
