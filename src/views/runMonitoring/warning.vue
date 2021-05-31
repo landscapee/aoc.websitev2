@@ -44,6 +44,7 @@
         name: "warning",
         data() {
             return {
+                statusDetail:{},
                 timeOptions:[],
                 statusOptions:[],
                 time:[],
@@ -67,9 +68,15 @@
                 this.item = item
                 this.$request.post('situation', 'batchConcernStatus/edit', { flightids: options.join(',') },true).then((res)=>{
                     console.log('edit',res);
+                    this.statusDetail=res||{}
                 })
 				this.$request.post('situation', 'batchConcernStatus/list', null,true).then((res)=>{
-                    console.log('list',res);
+                     this.statusOptions=map(res.data.statusType,(k,l)=>{
+                         return {value:l,label:k}
+                    });
+                    this.timeOptions=map(res.data.timeType,(k,l)=>{
+                         return {value:l,label:k}
+                    })
 				})
 
             },

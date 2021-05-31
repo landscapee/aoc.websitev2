@@ -49,7 +49,10 @@ export const init = (worker_,httpRequest_) => {
     worker.subscribe('Situation.Network.Connected', (c) => {
         clientObj.situationClient = new SocketWrapper(c);
      });
-
+    worker.subscribe( 'getadvanceArrive',(flight)=>{
+        let data=getFlightDatas(flight)
+         worker.publish('Web','advanceArrive',[data,flight])
+    })
     worker.subscribe('Page.RunMonitor.Start',()=>{
         situationStart(worker);
         checkClient('situationClient').then(()=>{

@@ -116,3 +116,11 @@
         border-radius: 0.02rem 0 0 0.02rem;
     }
 }
+
+// form 表单 元素
+.el-select{
+    .el-select__tags{
+        border: 1px solid #37455c;
+        background: #101c2f;
+    }
+}

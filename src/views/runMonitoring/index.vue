@@ -99,13 +99,22 @@
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Start',
              }) ;
+            let flight=JSON.parse( localStorage.getItem('runmonitor'))
+
+            postal.publish({
+                channel: 'Worker',
+                topic: 'getadvanceArrive',
+				data:flight
+             }) ;
 
         },
 		mounted(){
             //批量关注池
-            postalStore.sub( 'batchConcern',(data)=>{
+            postalStore.sub( 'batchConcern',([data,flight])=>{
                 let length=Object.keys(data[0]||{}).length
-                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
+                localStorage.setItem('runmonitor',JSON.stringify(flight))
+
+                length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 this.allCheckWarn.batchConcern=[]
 				console.log('batchConcern',data);
             });
