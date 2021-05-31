@@ -11,7 +11,6 @@ import 'element-ui/lib/theme-chalk/index.css';
 import './src/styles/elementReset.scss';//element样式重置
 import i18n from './src/i18n'//中英双语
 
-
 import router from './src/lib/router'
 import HttpRequest from './common/axios'
 

@@ -1,6 +1,7 @@
 <template>
 	<div class="runMonitoringIndex">
- 		<div class="listMonitor">
+
+		<div class="listMonitor">
 			<el-dropdown class="positionDropdown" trigger="click" :hide-on-click="false">
       			<span class="el-dropdown-link">
         			<i class="el-icon-setting el-icon--right"></i>自定义
@@ -15,14 +16,36 @@
 			<div class="itemMonitor" v-if="opt.show" v-for="(opt,index) in pageList" :key="index">
 				<div class="itemTitle">
 					<div>{{opt.name}}（{{(opt.data||[]).length}}）</div>
-					<div @click="openSetting(opt)">
-						<i class="el-icon-setting"></i>
+					<div >
+						<span v-if="index==0||index==3" @click="openWaring(opt) " :class="{infoSvg:!getMoreWarnLength(opt.key)}">
+							<icon-svg  iconClass="warning" ></icon-svg>
+						</span>
+ 						<i @click="openSetting(opt)" class="el-icon-setting"></i>
 					</div>
+
 				</div>
-				<AdvTable :data="opt.data" :tableConfig="opt.tableConfig" ></AdvTable>
+				<div class="tablediv">
+					<AdvTable :tab-data="opt.data" :columnConfig="opt.tableConfig" >
+ 						<template slot="batchSet" slot-scope="{row,index}">
+							<!--<div>批量预警</div>-->
+							<el-checkbox class="labelNone" v-model="allCheckWarn[opt.key]" :label="row.flightId">
+								<span  >1</span>
+							</el-checkbox>
+						</template>
+						<template slot="warnDetail" slot-scope="{row,index}">
+							<!--<div>取消预警</div>-->
+							<span @click="resetWaring(row) " >
+							<icon-svg  iconClass="huifu"  :class="{infoSvg:!row.hightLightStatus}"></icon-svg>
+						</span>
+						</template>
+
+					</AdvTable>
+
+				</div>
 			</div>
 		</div>
 		<Setting ref="Setting" @getCol="getCol"></Setting>
+		<Warning ref="Warning" ></Warning>
 	</div>
 </template>
 
@@ -33,12 +56,17 @@
     import PostalStore from "../../lib/postalStore";
     let postalStore = new PostalStore();
 	import Setting from "./setting"
+	import Warning from "./warning"
 	import AdvTable from "@components/advTable.vue"
     export default {
         name: "runMonitoringIndex",
-        components: {Setting,AdvTable},
+        components: {Setting,AdvTable,Warning},
         data() {
             return {
+                allCheckWarn:{
+                    batchConcern:[],
+                    vvpFlights:[],
+				},
                 pageListObj: {
                     batchConcern: {name: '批量航班关注池',key:'batchConcern', data: [ ], show: true, tableConfig: [ ]},
                     advanceArrive:{name: '提前落地航班',key:'advanceArrive', data: [], show: true, tableConfig: []},
@@ -54,6 +82,9 @@
                     return k
                 })
 			} ,
+            getMoreWarnLength(){
+              return (key)=>this.allCheckWarn[key].length
+			},
 		},
 		created() {
             map(this.pageListObj,(k,l)=>{
@@ -67,38 +98,41 @@
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Start',
-             })
+             }) ;
+
         },
 		mounted(){
             //批量关注池
             postalStore.sub( 'batchConcern',(data)=>{
-                let length=Object.keys(data[0]).length
-                console.log('length',length);
-                length&&this.$set(this.pageListObj.batchConcern,'data',data)
-                console.log('batchConcern',data);
+                let length=Object.keys(data[0]||{}).length
+                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
+                this.allCheckWarn.batchConcern=[]
+				console.log('batchConcern',data);
             });
             //提前落地池
             postalStore.sub( 'advanceArrive',(data)=>{
-                let length=Object.keys(data[0]).length
+                let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.advanceArrive,'data',data)
+                length&&this.$set(this.pageListObj.batchConcern,'data',data)
+                length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
+                length&&this.$set(this.pageListObj.vvpFlights,'data',data)
 
-                console.log('length',length);
                 console.log('advanceArrive',data);
             });
             //地面保障池
             postalStore.sub( 'guaranteeWarn',(data)=>{
-                let length=Object.keys(data[0]).length
+                let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
-                console.log('length',length);
                 console.log('guaranteeWarn',data);
             });
             //要客航班池
             postalStore.sub( 'vvpFlights',(data)=>{
-                let length=Object.keys(data[0]).length
+                let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.vvpFlights,'data',data)
-                console.log('length',length);
-                console.log('vvpFlights',data);
+                this.allCheckWarn.batchConcern=[]
+				console.log('vvpFlights',data);
             });
+
 		},
         beforeDestroy() {
             postal.publish({
@@ -108,6 +142,12 @@
             postalStore.unsubAll()
         },
         methods: {
+            cancelAttention(row){
+
+			},
+			resetWaring(row){
+
+			},
             getCol(cols,key){
 				this.pageListObj[key].tableConfig=[...cols]
 			},
@@ -118,6 +158,12 @@
 			},
             openSetting({name,key,tableConfig, }){
               this.$refs.Setting.open({name,key,tableConfig})
+			},
+			openWaring({name,key,tableConfig, }){
+                if(!this.getMoreWarnLength(key)){
+                    return
+				}
+                this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key])
 			},
 		},
 
@@ -132,6 +178,17 @@
 		padding: 0px;
 		border-bottom: 1px #ddd solid!important;
 	}
+	.labelNone{
+		::v-deep .el-checkbox__label{
+			display: none;
+		}
+	}
+	 .infoSvg{
+		 fill:#6c757d;
+		 svg{
+			 fill:#6c757d;
+		 }
+	 }
 	 .resetPage{
 		 color:#28a745;
 		 cursor: pointer;
@@ -166,9 +223,17 @@
 			flex-wrap: wrap;
 			.itemMonitor {
 				height: calc(50vh - 39px);
- 				width: 33.333333%;
+ 				width: 33.333333%!important;
 				padding: 5px;
-
+				.tablediv{
+					margin-top: -1px;
+					position: relative;
+					width: 100%;
+					height: calc(100% - 37px);
+				}
+				.adv-table-container {
+					width: 100%;
+				}
 				.itemTitle {
 					width: 100%;
 					height: 37px;
@@ -178,6 +243,7 @@
 					display: flex;
 					padding: 0 15px;
 					justify-content: space-between;
+
 				}
 			}
 		}

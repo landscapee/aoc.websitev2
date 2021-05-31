@@ -2,10 +2,9 @@ import {situationStart, situationStop,getFlightDatas} from "../model/runMonitor"
  import Logger from "../../common/logger";
 import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
-
-let worker;
-let clientObj = {};
+ let clientObj = {};
 const log = new Logger('connect.flight');
+let   worker, client, ajax;
 
 /*
 * 检查服务是否在线
@@ -19,14 +18,10 @@ export const checkClient = (clientField) => {
         }, 50);
     });
 };
-
-
-
 // situation 服务的连接
 const subWSEvent = () => {
     let client = clientObj.situationClient;
     //批量关注池
-
     client.sub('Flight/monitor/batchConcern',(res)=>{
         let data=getFlightDatas(res)
         worker.publish('Web','batchConcern',data)
@@ -48,9 +43,9 @@ const subWSEvent = () => {
     })
 };
 
-
-export const init = (worker_) => {
+export const init = (worker_,httpRequest_) => {
     worker = worker_;
+    ajax = httpRequest_;
     worker.subscribe('Situation.Network.Connected', (c) => {
         clientObj.situationClient = new SocketWrapper(c);
      });
