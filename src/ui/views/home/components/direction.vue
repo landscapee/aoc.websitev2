@@ -28,16 +28,22 @@
 
                     </div>
                     <div class="content">
-                        <div v-for="item in showTable" :key="item.hallway" class="li_content">
+                        <div v-for="(item,index) in showTable" :key="item.hallway" class="li_content">
 
                             <div class="nameBox" :style="{color:getPercentColor(activeData[item])}"><span>{{activeData[item].displayHallway}}方向</span><span>{{activeData[item].delay}}</span><span>{{getPercent(activeData[item])}}%</span></div>
-                            <div class="dataBox">
-                                <ul>
-                                    <li v-for="list in activeData[item].citys" :key="list.cityCode">
-                                        <div>{{list.cityName}}<span>{{list.count}}</span></div>
 
-                                    </li>
-                                </ul>
+                            <div class="dataBox" :class="'dataBox'+index">
+                                <div style="width:8000px;height:100%;">
+                                    <ul :class="'dataBox'+index+'_1'">
+                                        <li v-for="list in activeData[item].citys" :key="list.cityCode">
+                                            <div>{{list.cityName}}<span>{{list.count}}</span></div>
+
+                                        </li>
+                                    </ul>
+                                    <ul :class="'dataBox'+index+'_2'">
+                                    </ul>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -151,6 +157,39 @@ export default {
                 ? _.keyBy(this.flight_direction.key[this.select], 'hallway')
                 : _.keyBy(this.flight_direction.value[this.select], 'hallway')
             console.log(this.activeData)
+
+            this.$nextTick(() => {
+                for (var i = 0; i <= 5; i++) {
+                    this.loadDataBoxAni(i)
+                }
+            })
+        },
+        loadDataBoxAni(idx) {
+            var obj = document.getElementsByClassName('dataBox' + idx)[0]
+            var obj1 = document.getElementsByClassName('dataBox' + idx + '_1')[0]
+            var obj2 = document.getElementsByClassName('dataBox' + idx + '_2')[0]
+            if (obj1.clientWidth > obj.clientWidth) {
+                obj2.innerHTML = obj1.innerHTML
+                var marqueeVar = setInterval(() => {
+                    if (obj2.offsetWidth - obj.scrollLeft <= 0) {
+                        obj.scrollLeft -= obj1.offsetWidth
+                    } else {
+                        obj.scrollLeft++
+                    }
+                }, 30)
+                obj.onmouseover = function () {
+                    clearInterval(marqueeVar)
+                }
+                obj.onmouseout = () => {
+                    marqueeVar = setInterval(() => {
+                        if (obj2.offsetWidth - obj.scrollLeft <= 0) {
+                            obj.scrollLeft -= obj1.offsetWidth
+                        } else {
+                            obj.scrollLeft++
+                        }
+                    }, 30)
+                }
+            }
         },
     },
 }
@@ -237,17 +276,18 @@ export default {
                             width: calc(100% - 120px);
                             overflow: hidden;
                             height: 100%;
+                            position: relative;
                         }
                         ul {
-                            display: flex;
                             height: 100%;
-                            overflow: auto;
+                            white-space: nowrap;
+                            float: left;
 
                             li {
                                 height: 100%;
                                 width: 120px;
-
                                 padding: 1px;
+                                display: inline-block;
                                 div {
                                     height: 100%;
                                     background: rgba(42, 58, 95, 0.6);
@@ -255,6 +295,7 @@ export default {
                                     align-items: center;
                                     justify-content: center;
                                     color: #fff;
+                                    padding: 5px;
                                 }
                             }
                         }
