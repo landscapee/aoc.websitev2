@@ -1,8 +1,9 @@
 import {getFlightDetail} from "../lib/storage";
+import { map} from 'lodash';
 
 export const getFlightDatas = (data) => {
     let arr=[];
-    data.map&&data.map((k,l)=>{
+    map(data,(k,l)=>{
         if(getFlightDetail(k.flightId)){
             arr.push(getFlightDetail(k.flightId))
         }

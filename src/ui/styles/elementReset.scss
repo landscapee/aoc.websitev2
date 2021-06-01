@@ -119,3 +119,36 @@
         border-radius: 0.02rem 0 0 0.02rem;
     }
 }
+
+// form 表单 元素
+.el-select{
+     .el-select__tags{
+        color: #ffffff;
+        background: #101c2f;
+        left: 2px;
+        .el-tag{
+            background: #101c2f;
+            border: 1px solid #37455c;
+            .el-tag__close {
+                background: #37455c;
+            }
+        }
+    }
+    .el-input__inner{
+        border: 1px solid #37455c;
+        background: #101c2f;
+    }
+    .el-input__inner:hover{
+        border: 1px solid #37455c;
+    }
+}
+.el-select-dropdown__item.selected{
+    background: #224167 !important;
+}
+.el-select-dropdown{
+
+}
+.el-checkbox__inner{
+    background:#101c2f!important;
+    border: 1px #101c2f solid;
+}

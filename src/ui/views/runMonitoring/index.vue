@@ -1,4 +1,9 @@
-<template>
+
+
+
+
+
+ <template>
 	<div class="runMonitoringIndex">
 
 		<div class="listMonitor">
@@ -66,48 +71,57 @@
                 allCheckWarn:{
                     batchConcern:[],
                     vvpFlights:[],
-				},
+                },
                 pageListObj: {
                     batchConcern: {name: '批量航班关注池',key:'batchConcern', data: [ ], show: true, tableConfig: [ ]},
                     advanceArrive:{name: '提前落地航班',key:'advanceArrive', data: [], show: true, tableConfig: []},
                     guaranteeWarn:{name: '地面保障告警池',key:'guaranteeWarn', data: [], show: true, tableConfig: []},
                     vvpFlights:{name: '要客航班池',key:'vvpFlights', data: [], show: true, tableConfig: []},
-			},
+                },
 
             }
         },
-		computed:{
+        computed:{
             pageList(){
                 return map(this.pageListObj,(k,l)=>{
                     return k
                 })
-			} ,
+            } ,
             getMoreWarnLength(){
-              return (key)=>this.allCheckWarn[key].length
-			},
-		},
-		created() {
+                return (key)=>this.allCheckWarn[key].length
+            },
+        },
+        created() {
             map(this.pageListObj,(k,l)=>{
                 k.tableConfig=[];
                 map(setting[l],(k1,l)=>{
                     let obj={...k1}
                     !k1.reference&&k.tableConfig.push(obj)
 
-				})
-			})
+                })
+            })
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Start',
-             }) ;
+            }) ;
+            let flight=JSON.parse( localStorage.getItem('runmonitor'))
+
+            postal.publish({
+                channel: 'Worker',
+                topic: 'getadvanceArrive',
+                data:flight
+            }) ;
 
         },
-		mounted(){
+        mounted(){
             //批量关注池
-            postalStore.sub( 'batchConcern',(data)=>{
+            postalStore.sub( 'batchConcern',([data,flight])=>{
                 let length=Object.keys(data[0]||{}).length
-                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
+                localStorage.setItem('runmonitor',JSON.stringify(flight))
+
+                length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 this.allCheckWarn.batchConcern=[]
-				console.log('batchConcern',data);
+                console.log('batchConcern',data);
             });
             //提前落地池
             postalStore.sub( 'advanceArrive',(data)=>{
@@ -130,42 +144,42 @@
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.vvpFlights,'data',data)
                 this.allCheckWarn.batchConcern=[]
-				console.log('vvpFlights',data);
+                console.log('vvpFlights',data);
             });
 
-		},
+        },
         beforeDestroy() {
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Stop',
-             })
+            })
             postalStore.unsubAll()
         },
         methods: {
             cancelAttention(row){
 
-			},
-			resetWaring(row){
+            },
+            resetWaring(row){
 
-			},
+            },
             getCol(cols,key){
-				this.pageListObj[key].tableConfig=[...cols]
-			},
+                this.pageListObj[key].tableConfig=[...cols]
+            },
             resetPageList(){
-				map(this.pageListObj,(k,l)=>{
-				    k.show=true
-				})
-			},
+                map(this.pageListObj,(k,l)=>{
+                    k.show=true
+                })
+            },
             openSetting({name,key,tableConfig, }){
-              this.$refs.Setting.open({name,key,tableConfig})
-			},
-			openWaring({name,key,tableConfig, }){
+                this.$refs.Setting.open({name,key,tableConfig})
+            },
+            openWaring({name,key,tableConfig, }){
                 if(!this.getMoreWarnLength(key)){
                     return
-				}
+                }
                 this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key])
-			},
-		},
+            },
+        },
 
     }
 </script>
