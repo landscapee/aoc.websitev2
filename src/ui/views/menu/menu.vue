@@ -27,11 +27,15 @@ export default {
             //     if(list.code=='home')
             // })
             this.navBox = [
-                { name: '运行控制', src: '/static/img/menu/runcontrol.png', path: '/home' },
-                { name: '运行保障KPI', src: '/static/img/menu/operation.png', path: '/home' },
-                { name: '综合统计', src: '/static/img/menu/statistics.png', path: '/home' },
-                { name: 'ASOMS', src: '/static/img/menu/flightRout.png', path: '/home' },
-                { name: '拖机系统', src: '/static/img/menu/drag.png', path: '/home' },
+                { name: '运行控制', src: '/src/ui/assets/img/menu/runcontrol.png', path: '/home' },
+                {
+                    name: '运行保障KPI',
+                    src: '/src/ui/assets/img/menu/operation.png',
+                    path: '/home',
+                },
+                { name: '综合统计', src: '/src/ui/assets/img/menu/statistics.png', path: '/home' },
+                { name: 'ASOMS', src: '/src/ui/assets/img/menu/flightRout.png', path: '/home' },
+                { name: '拖机系统', src: '/src/ui/assets/img/menu/drag.png', path: '/home' },
             ]
         },
         toPage(nav) {
