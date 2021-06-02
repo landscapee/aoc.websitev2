@@ -1,5 +1,5 @@
 
-import {situationStart, situationStop} from "../manage/poolMonitorWithRunway";
+import {situationStart, situationStop,grounpStatus} from "../manage/poolMonitorWithRunway";
 import Logger from "../../lib/logger";
 import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
@@ -29,40 +29,12 @@ const subWSEvent = () => {
     });
     //快速过站池
     client.sub('/Flight/monitor/overStation',(res)=>{
-        
-
-        let fastEnterNoRequested = [];
-        let fastEnterRequested = [];
-        forEach(res, (item) => {
-            // status 0:未协调 1:已协调 2:已拒绝
-            if (!item.overStationStatus && item.overStationStatus !== 0) {
-                fastEnterNoRequested.push(item);
-            } else {
-                fastEnterRequested.push(item);
-            }
-        });
-        let data={
-            fastEnter_noRequested:fastEnterNoRequested,
-            fastEnter_requested:fastEnterRequested,
-        }
+        let data=grounpStatus(res)
         worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'fastEnter'})
     });
     //临界延误池
     client.sub('Flight/monitor/criticalDelay',(res)=>{
-        let criticalNoRequested = [];
-        let criticalRequested = [];
-        forEach(res, (item) => {
-            // status 0:未协调 1:已协调 2:已拒绝
-            if (!item.overStationStatus && item.overStationStatus !== 0) {
-                criticalNoRequested.push(item);
-            } else {
-                criticalRequested.push(item);
-            }
-        });
-        let data={
-            critical_noRequested:criticalNoRequested,
-            critical_requested:criticalRequested,
-        }
+        let data=grounpStatus(res)
         worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'critical'})
     });
     //始发航班池
@@ -72,12 +44,10 @@ const subWSEvent = () => {
     })
     //长期延误池
     client.sub('Flight/monitor/alwaysDelay',(res)=>{
-        
         worker.publish('Web','poolMonitorWithRunway.channel',{data:res,key:'alwaysDelay'})
     })
     //起飞保障池
     client.sub('Flight/monitor/departureGuarantee',(res)=>{
-        
         worker.publish('Web','poolMonitorWithRunway.channel',{data:res,key:'departureGuarantee'})
     })
 };

@@ -243,6 +243,13 @@
 		text-align: center;
 		padding-top: 10px;
 	}
+	 .el-dropdown-menu {
+		padding: 15px !important;
+	}
+	::v-deep .el-dropdown-menu__item {
+		padding: 0px;
+		border-bottom: 1px #ddd solid !important;
+	}
 	$border:1px #565c67 solid;
 	::v-deep .adv-table-container {
 		.adv-table_main-container{
@@ -273,13 +280,7 @@
 		height: calc(100vh - 40px);
 		overflow: hidden;
 		padding: 15px 15px 0px 15px ;
- 		.el-dropdown-menu {
-			padding: 15px !important;
-		}
-		::v-deep .el-dropdown-menu__item {
-			padding: 0px;
-			border-bottom: 1px #ddd solid !important;
-		}
+
 
 		.positionDropdown {
 			cursor: pointer;
@@ -405,7 +406,7 @@
 						text-align: center;
 						border-bottom: $border;
 						position: relative;
-						z-index: 100000;
+						z-index: 10;
 					}
 					.tabledivItem{
 						width: 50% !important;
