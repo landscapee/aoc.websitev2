@@ -4,6 +4,11 @@
 				   :visible.sync="dialogFormVisible"
 				   :before-close="close">
 			<div class="info">已设置预警状态：</div>
+			<div class="info">
+				<p v-for="(opt,index) in  statusDetail" :key="index">
+					{{opt.name}}：{{opt.value}}
+				</p>
+			</div>
 			<div class="row">
 				<span > 状态：</span>
 				<el-select v-model="status" multiple clearable  placeholder="请选择状态">
@@ -44,7 +49,8 @@
         name: "warning",
         data() {
             return {
-                statusDetail:{},
+                infoObj:{},
+                statusDetail:[],
                 options:[],
                 timeOptions:[],
                 statusOptions:[],
@@ -55,45 +61,59 @@
         },
         methods: {
             save() {
+                if(this.time.length||this.status.length){
+                    let arr=[...this.time,...this.status]
+                    let obj={}
+                     map(this.options,(k,l)=>{
+                        console.log(k, l);
+                        obj[k]=[...arr]
+                    })
+                    this.$request.post('situation', 'batchConcernStatus/add', obj,false).then((res)=>{
+                        console.log('edit',res);
+                        if(res.code==200){
+                            this.$message.success('操作成功')
+                        }
+                    })
+                    this.close()
+				}else{
+                    this.$message.warning('请至少选择一项')
+				}
 
-                let arr=[...this.time,...this.status]
-				let obj={}
-                console.log(this.options,arr);
-				map(this.options,(k,l)=>{
-					console.log(k, l);
-                    obj[k]=[...arr]
-				})
-                this.$request.post('situation', 'batchConcernStatus/add', obj,false).then((res)=>{
-                    console.log('edit',res);
-					if(res.code==200){
-					    this.$message.success('操作成功')
-					}
-                })
-                 this.dialogFormVisible = false
             },
 
             close() {
-
+					this.infoObj={};
+					this.statusDetail=[];
+					this.options=[];
+					this.timeOptions=[];
+					this.statusOptions=[];
+					this.time=[];
+					this.status=[];
                 this.dialogFormVisible = false
             },
 
-            open(item,options) {
+
+            open(item,options,statusOptions,timeOptions,infoObj) {
                 this.options=options
                 this.dialogFormVisible = true
                 this.item = item
-                this.$request.post('situation', 'batchConcernStatus/edit', { flightids: options.join(',') },true).then((res)=>{
-                    console.log('edit',res);
-                    this.statusDetail=res||{}
-                })
-				this.$request.post('situation', 'batchConcernStatus/list', null,true).then((res)=>{
-                     this.statusOptions=map(res.data.statusType,(k,l)=>{
-                         return {value:l,label:k}
-                    });
-                    this.timeOptions=map(res.data.timeType,(k,l)=>{
-                         return {value:l,label:k}
-                    })
-				})
+                this.timeOptions=timeOptions
+                this.statusOptions=statusOptions
+                this.infoObj=infoObj
+                this.$request.post('situation', 'batchConcernStatus/edit', {flightids:options.join(',')},true).then((res)=>{
+                    if(res.code!=200||!res.data){
+                        return
+                    }
+                    map(res.data,(k,l)=>{
+                        if(k){
+                            let arr=map(k,(item)=>{
+                                return this.infoObj[item]
+                            })
+                            this.statusDetail.push({name:l,value:arr.join(',')})
+						}
 
+                    })
+                })
             },
 
 
@@ -106,7 +126,7 @@
 
 <style lang="scss" scoped>
 	::v-deep .el-dialog {
-		width: 450px !important;
+		width: 500px !important;
 		.el-dialog__body {
 
 			padding: 15px 20px;
