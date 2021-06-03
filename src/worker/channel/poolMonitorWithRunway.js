@@ -27,13 +27,15 @@ const subWSEvent = () => {
 
     client.sub('/Flight/normalMonitor/delayFlight',(res)=>{
         
-        let data=getFlightDatas(res.unNormal)
+        let data=getFlightDatas(res,true)
         worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'delayFlights2'})
     });
     //快速过站池
     client.sub('/Flight/monitor/overStation',(res)=>{
-        let data=grounpStatus(res,'fastEnter')
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'fastEnter'})
+        checkWebsocketResponseDataFinish().then((d)=>{
+            let data=grounpStatus(res,'fastEnter')
+            worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'fastEnter'})
+        })
     });
     //临界延误池
     client.sub('/Flight/monitor/criticalDelay',(res)=>{

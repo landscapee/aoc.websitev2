@@ -1,12 +1,26 @@
 import {getFlightDetail} from "../lib/storage";
 import { forEach,map} from 'lodash';
-export const getFlightDatas = (data) => {
+export const getFlightDatas = (data,blo) => {
     let arr=[];
-    map(data,(k,l)=>{
-        if(getFlightDetail(k.flightId)){
-            arr.push(getFlightDetail(JSON.stringify(k.flightId)))
-        }
-    })
+
+    if(blo){
+        arr={}
+        map(data,(k,l)=>{
+
+                arr[l]=[]
+            map(k,(item)=>{
+                if(getFlightDetail(item.flightId)){
+                    arr[l].push(getFlightDetail(JSON.stringify(item.flightId)))
+                }
+            })
+        })
+    }else{
+        map(data,(k,l)=>{
+            if(getFlightDetail(k.flightId)){
+                arr.push(getFlightDetail(JSON.stringify(k.flightId)))
+            }
+        })
+    }
     return arr
 }
 export const grounpStatus = (res,key) => {
