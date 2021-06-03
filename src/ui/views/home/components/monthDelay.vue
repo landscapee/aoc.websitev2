@@ -5,7 +5,7 @@
                 <div class="top">
                     <icon-svg iconClass="monthdelay" />
                     <span class="name">月度放行正常率目标:{{flight_monthClearance.targetRate}}%</span>
-                    <el-input v-model="monthRate" size="mini" v-show="monthDRateInput" @keyup.enter.native="editMonthRateHandle"></el-input>
+                    <el-input class="iconshowInput" v-model="monthRate" size="mini" v-show="monthDRateInput" @keyup.enter.native="editMonthRateHandle"></el-input>
                     <i class="iconfont icon-bianji" @click="monthDRateInput = true" v-show="!monthDRateInput"></i>
                 </div>
                 <div class="mid">
@@ -135,10 +135,7 @@ export default {
                   }
         },
         editMonthRateHandle() {
-            // console.log(matchPercentNum)
-            // matchPercentNum(this.monthRate, (data) => {
-            //     // this.postalStore.pub('Home.SetMonthRate', this.monthRate)
-            // })
+            this.$request.get('situation', 'runningState/monthClearance/' + this.monthRate)
         },
     },
 }
@@ -177,7 +174,11 @@ export default {
                     color: #fff;
                 }
                 .el-input {
-                    width: auto;
+                    width: 60px;
+
+                    input {
+                        background: #39404b;
+                    }
                 }
             }
             .mid {
@@ -243,6 +244,19 @@ export default {
                     }
                 }
             }
+        }
+    }
+}
+</style>
+<style lang='scss'>
+.monthDelay {
+    .iconshowInput {
+        width: 60px;
+
+        input {
+            background: #39404b;
+            border: none;
+            color: #fff;
         }
     }
 }

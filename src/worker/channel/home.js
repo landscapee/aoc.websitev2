@@ -1,13 +1,25 @@
 import {memoryStore} from '../lib/memoryStore'
-import {start, stop,flight_home,flight_monthClearance,flight_lastestAta,flight_lastestAtd,flight_FlightStatistic,flight_delay_backStatus,flight_direction} from "../manage/home";
+import {
+  start,
+  stop,
+  flight_home,
+  flight_monthClearance,
+  flight_lastestAta,
+  flight_lastestAtd,
+  flight_FlightStatistic,
+  flight_delay_backStatus,
+  flight_direction,
+  flight_traffic,
+  flight_estimateCtotRelease,
+  flight_runwayTraffic
+} from "../manage/home";
 import Logger from "../../lib/logger";
 import { forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 
 let worker;
 let clientObj = {};
-let delays_clientObj = {}
-let delays_worker = {}
+
 const log = new Logger('connect.home');
 
 /*
@@ -26,25 +38,38 @@ export const checkClient = (clientField) => {
 
 
 const subWSEvent = () => {
+  let homeClient = clientObj.homeClient
   //总数据
-  clientObj.homeClient.sub('/Flight/Home/Operation', (data) => {
+  homeClient.sub('/Flight/Home/Operation', (data) => {
     flight_home(worker,data)
   })
   // 月度放行正常率目标
-  clientObj.homeClient.sub('/Flight/monthClearance/stat', (data) => {
+  homeClient.sub('/Flight/monthClearance/stat', (data) => {
     flight_monthClearance(worker,data)
   });
   // 最近实际落地航班
-  clientObj.homeClient.sub('/Flight/lastestAta', (data) => {
+  homeClient.sub('/Flight/lastestAta', (data) => {
     flight_lastestAta(worker,data)
   });
   // 最近实际起飞航班
-  clientObj.homeClient.sub('/Flight/lastestAtd', (data) => {
+  homeClient.sub('/Flight/lastestAtd', (data) => {
     flight_lastestAtd(worker,data)
   });
   //走廊口方向放行率
-	clientObj.homeClient.sub('/Flight/direction', (data) => {
+	homeClient.sub('/Flight/direction', (data) => {
 		flight_direction(worker,data)
+  });
+  //流量信息
+  homeClient.sub('/Flight/traffic', (data) => {
+    flight_traffic(worker,data)
+  });
+  //下小时预计放行
+  homeClient.sub('/Flight/estimateCtotRelease', (data) => {
+    flight_estimateCtotRelease(worker,data)
+  });
+  //综合速率
+  homeClient.sub('/Flight/runwayTraffic', (data) => {
+    flight_runwayTraffic(worker,data)
 	});
 
 
@@ -79,6 +104,9 @@ export const init = (worker_) => {
 
 
 
+
+let delays_clientObj = {}
+let delays_worker = {}
 
 /*
 * 检查服务是否在线

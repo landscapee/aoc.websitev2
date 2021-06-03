@@ -5,56 +5,110 @@
                 跑道运行模式
             </div>
             <div class="direction">
-                <el-select v-model="select" placeholder="请选择">
-                    <el-option label="南" :value="0"></el-option>
-                    <el-option label="北" :value="1"></el-option>
+                <el-select v-model="selectDirection" placeholder="请选择" @change="loadSelectObj">
+                    <el-option label="北" value="north"></el-option>
+                    <el-option label="南" value="south"></el-option>
                 </el-select>
             </div>
             <div>
-                <div class="selectGroup">
-                    <div class="label">
-                        10
-                    </div>
-                    <el-select v-model="select" placeholder="请选择">
-                        <el-option label="南" :value="0"></el-option>
-                        <el-option label="北" :value="1"></el-option>
+                <div class="selectGroup" v-for="(item,idx) in selectArr" :key="idx">
+                    <div class="label">{{item.label}}</div>
+                    <el-select v-model="item.select" placeholder="请选择">
+                        <el-option :label="value" :value="key" v-for="(value,key) in item.value" :key="key"></el-option>
                     </el-select>
                 </div>
-                <div class="selectGroup">
-                    <div class="label">
-                        10
-                    </div>
-                    <el-select v-model="select" placeholder="请选择">
-                        <el-option label="南" :value="0"></el-option>
-                        <el-option label="北" :value="1"></el-option>
-                    </el-select>
-                </div>
-                <div class="selectGroup">
-                    <div class="label">
-                        10
-                    </div>
-                    <el-select v-model="select" placeholder="请选择">
-                        <el-option label="南" :value="0"></el-option>
-                        <el-option label="北" :value="1"></el-option>
-                    </el-select>
-                </div>
-                <button>提 交</button>
+                <button @click="runwayHandle">提 交</button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+// const runwayNorth = ['01', '02', '11'];
+// const runwaySouth = ['19', '20', '11'];
+// const runwayNull = ['', '', ''];
+// export const oOptions = { 0: '落地', 1: '起飞', 2: '起飞+落地', 3: '暂停使用' };
+// const specialOOptions = { 1: '起飞', 3: '暂停使用' };
 export default {
     props: ['data'],
     data() {
         return {
-            select: 0,
+            selectDirection: 'north',
+            selectArr: [],
+            runwayNorth: [
+                {
+                    label: '01',
+                    value: { 0: '落地', 1: '起飞', 2: '起飞+落地', 3: '暂停使用' },
+                    select: '',
+                },
+                {
+                    label: '02',
+                    value: { 0: '落地', 1: '起飞', 2: '起飞+落地', 3: '暂停使用' },
+                    select: '',
+                },
+                { label: '11', value: { 1: '起飞', 3: '暂停使用' }, select: '' },
+            ],
+            runwaySouth: [
+                {
+                    label: '19',
+                    value: { 0: '落地', 1: '起飞', 2: '起飞+落地', 3: '暂停使用' },
+                    select: '',
+                },
+                {
+                    label: '20',
+                    value: { 0: '落地', 1: '起飞', 2: '起飞+落地', 3: '暂停使用' },
+                    select: '',
+                },
+                { label: '11', value: { 1: '起飞', 3: '暂停使用' }, select: '' },
+            ],
+            lists: [],
         }
     },
-    created() {},
+    created() {
+        this.getLists()
+    },
     mounted() {},
-    methods: {},
+    methods: {
+        loadSelectObj() {
+            let selectArr = this.selectDirection == 'north' ? this.runwayNorth : this.runwaySouth
+            if (this.lists.length > 0) {
+                selectArr.map((arr) => {
+                    let list = _.find(this.lists, {
+                        runway: arr.label,
+                        direction: this.selectDirection,
+                    })
+                    arr.select = list ? list.usage : ''
+                })
+            }
+            this.selectArr = selectArr
+        },
+        runwayHandle() {
+            console.log(this.selectArr)
+            let data = {
+                direction: this.selectDirection,
+            }
+
+            this.selectArr.map((list) => {
+                data[list.label] = list.select
+            })
+            this.$request.post('situation', 'runwayModels/save', data).then((res) => {
+                if (res.data) {
+                    this.getLists()
+                }
+            })
+        },
+        getLists() {
+            this.$request.post('situation', 'runwayModels/list').then((res) => {
+                if (res.data) {
+                    this.lists = res.data
+                    if (this.lists.length > 0) {
+                        this.selectDirection = this.lists[0].direction
+                    }
+                }
+                this.loadSelectObj()
+            })
+        },
+    },
 }
 </script>
 

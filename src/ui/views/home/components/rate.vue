@@ -20,8 +20,15 @@
                 </div>
                 <div class="content">
                     <div class="rotateBox"></div>
-                    <div id="takeOffBox" class="chartBox">
-
+                    <div id="takeOffBox" class="chartBox"></div>
+                    <div class="center">
+                        <div class="top" :style="{color:getPercentColor(rate1)}">
+                            {{getPercent(rate1)}}%
+                        </div>
+                        <div class="line" :style="{background:getPercentColor(rate1)}"></div>
+                        <div class="bottom" :style="{color:getPercentColor(rate1)}">
+                            {{rate1.numerator}}/{{rate1.denominator}}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -31,13 +38,20 @@
                 </div>
                 <div class="content">
                     <div class="rotateBox"></div>
-                    <div id="originatedBox" class="chartBox">
-
+                    <div id="originatedBox" class="chartBox"></div>
+                    <div class="center">
+                        <div class="top" :style="{color:getPercentColor(rate2)}">
+                            {{getPercent(rate2)}}%
+                        </div>
+                        <div class="line" :style="{background:getPercentColor(rate1)}"></div>
+                        <div class="bottom" :style="{color:getPercentColor(rate2)}">
+                            {{rate2.numerator}}/{{rate2.denominator}}
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="rateBox">
-                <div v-for="item in rateLists" :key="item.rateType">
+                <div v-for="item in rateLists" :key="item.rateType" v-show="item.show">
                     <div class="title">
                         <span>{{rateTypeName[item.rateType]}}</span>
                         <span class="span1" :style="{color:getPercentColor(item)}">{{getPercent(item)}}%</span>
@@ -51,8 +65,9 @@
 
 <script>
 import Highcharts from 'highcharts/highstock'
+import highchartsMore from 'highcharts/highcharts-more'
 import solidgauge from 'highcharts/modules/solid-gauge'
-
+highchartsMore(Highcharts)
 solidgauge(Highcharts)
 export default {
     props: ['options', 'rate_data'],
@@ -66,13 +81,15 @@ export default {
                 { color: '#e8419b', percentage: 80 },
             ],
             rateLists: [
-                { rateType: 8, numerator: 0, denominator: 0 },
-                { rateType: 1, numerator: 0, denominator: 0 },
-                { rateType: 7, numerator: 0, denominator: 0 },
-                { rateType: 6, numerator: 0, denominator: 0 },
-                { rateType: 4, numerator: 0, denominator: 0 },
-                { rateType: 5, numerator: 0, denominator: 0 },
-                { rateType: 9, numerator: 0, denominator: 0 },
+                { rateType: 8, numerator: 0, denominator: 0, show: true },
+                { rateType: 1, numerator: 0, denominator: 0, show: true },
+                { rateType: 7, numerator: 0, denominator: 0, show: true },
+                { rateType: 6, numerator: 0, denominator: 0, show: true },
+                { rateType: 4, numerator: 0, denominator: 0, show: true },
+                { rateType: 5, numerator: 0, denominator: 0, show: true },
+                { rateType: 2, numerator: 0, denominator: 0, show: false },
+                { rateType: 3, numerator: 0, denominator: 0, show: false },
+                { rateType: 9, numerator: 0, denominator: 0, show: true },
             ],
             rateTypeName: {
                 1: '航班正常率',
@@ -86,6 +103,8 @@ export default {
                 9: '预计当天最高放行正常率',
             },
             loading: false,
+            rate1: {},
+            rate2: {},
         }
     },
     created() {},
@@ -98,7 +117,7 @@ export default {
     watch: {
         rate_data: function (val) {
             if (!this.loading) {
-                this.loadRate(val)
+                this.loadRate()
             }
         },
     },
@@ -143,13 +162,9 @@ export default {
             // "regular": 2 定期航班
             // "passenger": 3 客运航班
             // 这里用rateType做了groupBy
-
-            // this.rate_data.
             let arrs = _.filter(this.rate_data, (list) => {
                 return list.timeType == this.timeSelect && list.statType == this.stateTypeSelect
             })
-            console.log(arrs)
-
             this.rateLists.map((list) => {
                 arrs.map((arr) => {
                     if (arr.rateType == list.rateType) {
@@ -158,19 +173,20 @@ export default {
                     }
                 })
             })
-
-            this.loadTakeOff(arrs)
+            this.$nextTick(() => {
+                this.loadTakeOff(arrs, 2, 'takeOffPercent', 'takeOffBox', 1)
+                this.loadTakeOff(arrs, 3, 'originatedDeparturePercent', 'originatedBox', 2)
+            })
         },
-        loadTakeOff(arrs) {
-            let arr = _.filter(arrs, { rateType: 2 })
+        loadTakeOff(arrs, rateType, percent, box, num) {
+            let arr = _.find(arrs, { rateType })
 
-            let options = _.cloneDeep(this.options.takeOffPercent.options)
-            let series = this.options.takeOffPercent.options.series(arr[0])
+            this['rate' + num] = arr
+            let options = _.cloneDeep(this.options[percent].options)
+            let series = this.options.takeOffPercent.options.series(arr)
             options.series = series
-            console.log(options)
-
             this.loading = true
-            this.chart = Highcharts.chart('takeOffBox', options)
+            this.chart = Highcharts.chart(box, options)
         },
     },
 }
@@ -205,7 +221,7 @@ export default {
                 margin: 10px 0 0;
             }
             .content {
-                padding: 15px;
+                padding: 10px;
                 flex: 1;
                 width: 100%;
                 height: calc(100% - 30px);
@@ -218,9 +234,9 @@ export default {
                     position: absolute;
                     top: 50%;
                     left: 50%;
-                    margin: -70px 0 0 -70px;
-                    width: 140px;
-                    height: 140px;
+                    margin: -80px 0 0 -80px;
+                    width: 160px;
+                    height: 160px;
                     background: url(../static/imgs/aniBg.png);
                     background-repeat: no-repeat;
                     background-size: contain;
@@ -236,8 +252,30 @@ export default {
                     }
                 }
                 .chartBox {
-                    width: 120px;
-                    height: 120px;
+                    width: 140px;
+                    height: 140px;
+                }
+                .center {
+                    height: 70px;
+                    width: 70px;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    margin: -35px 0 0 -35px;
+                    color: #fff;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex-direction: column;
+                    .line {
+                        height: 1px;
+                        width: 100%;
+                        background: #fff;
+                        margin: 5px 0;
+                    }
+                    .top {
+                        font-size: 20px;
+                    }
                 }
             }
         }

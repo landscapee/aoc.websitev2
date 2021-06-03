@@ -11,7 +11,7 @@
             <direction :options="directionData" :flight_direction="flight_direction" />
         </div>
         <div class="home_right">
-            <top-flight />
+            <top-flight :flight_traffic="flight_traffic" :flight_estimateCtotRelease="flight_estimateCtotRelease" :flight_runwayTraffic="flight_runwayTraffic" />
             <runway />
         </div>
 
@@ -50,6 +50,9 @@ export default {
             flight_FlightStatistic: {},
             flight_delay_backStatus: {},
             flight_direction: {},
+            flight_traffic: {},
+            flight_estimateCtotRelease: {},
+            flight_runwayTraffic: {},
         }
     },
     components: {
@@ -96,6 +99,21 @@ export default {
         postalStore.sub('flight.direction', (data) => {
             console.log('走廊口方向放行率', data)
             this.flight_direction = data
+        })
+        // 流量信息
+        postalStore.sub('flight.traffic', (data) => {
+            console.log('流量信息', data)
+            this.flight_traffic = data
+        })
+        //下小时预计放行
+        postalStore.sub('flight.estimateCtotRelease', (data) => {
+            console.log('下小时预计放行', data)
+            this.flight_estimateCtotRelease = data
+        })
+        //综合速率
+        postalStore.sub('flight.runwayTraffic', (data) => {
+            console.log('综合速率', data)
+            this.flight_runwayTraffic = data
         })
 
         postalStore.pub('Worker', 'Page.Delays.Start', '')

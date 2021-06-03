@@ -8,69 +8,72 @@
             </div>
             <ul class="ulAD1">
                 <li class="moveA">
-                    <div><span>20</span>架次</div>
+                    <div><span>{{get(flight_traffic, [ 'A', 'numeric'])}}</span>架次</div>
                     <div>1小时内落地架次</div>
                 </li>
                 <li class="moveD">
-                    <div><span>20</span>架次</div>
+                    <div><span>{{get(flight_traffic, [ 'D', 'numeric'])}}</span>架次</div>
                     <div>1小时内起飞架次</div>
                 </li>
                 <li class="moveA">
-                    <div><span>20</span>分/架次</div>
+                    <div><span>{{get(flight_traffic, [ 'A', 'rate'])}}</span>分/架次</div>
                     <div>1小时内落地速率</div>
                 </li>
                 <li class="moveD">
-                    <div><span>20</span>分/架次</div>
+                    <div><span>{{get(flight_traffic, [ 'D', 'rate'])}}</span>分/架次</div>
                     <div>1小时内起飞速率</div>
                 </li>
                 <li class="moveA">
-                    <div><span>20</span>架次</div>
+                    <div><span>{{flight_estimateCtotRelease.estimateInFlight}}</span>架次</div>
                     <div>预计下小时段落地</div>
                 </li>
                 <li class="moveD">
-                    <div><span>20</span>架次</div>
+                    <div><span>{{flight_estimateCtotRelease.estimateReleaseFlight}}</span>架次</div>
                     <div>预计下小时段起飞</div>
                 </li>
                 <li class="moveA nobottom">
-                    <div><span>20</span>分</div>
+                    <div><span>{{get(flight_traffic, [ 'A', 'spacing'])}}</span>分</div>
                     <div>落地间隔</div>
                 </li>
                 <li class="moveD nobottom">
-                    <div><span>20</span>分</div>
+                    <div><span>{{get(flight_traffic, [ 'D', 'spacing'])}}</span>分</div>
                     <div>起飞间隔</div>
                 </li>
             </ul>
-            <div class="lineText">
-                <div class="line"></div>
-                <div class="text text1">
-                    10
+            <div v-for="(value,key) in flight_runwayTraffic" :key="key" class="trafficBox">
+                <div class="lineText">
+                    <div class="line"></div>
+                    <div class="text text1">
+                        {{key}}
+                    </div>
+                    <div class="line"></div>
                 </div>
-                <div class="line"></div>
+                <ul class="ulAD2">
+                    <div>
+                        <div>
+                            <span>{{value.departure?value.departure:0}}</span>
+                            分/架
+                        </div>
+                        <div>起飞速率</div>
+                    </div>
+                    <div>
+                        <div>
+                            <span>{{value.arrive?value.arrive:0}}</span>
+                            分/架
+                        </div>
+                        <div>落地速率</div>
+                    </div>
+                    <div>
+                        <div>
+                            <span>{{value.arriveAndDeparture?value.arriveAndDeparture:0}}</span>
+                            分/架
+                        </div>
+                        <div>综合速率</div>
+                    </div>
+                </ul>
             </div>
-            <ul class="ulAD2">
-                <div>
-                    <div>
-                        <span>12</span>
-                        分/架
-                    </div>
-                    <div>起飞速率</div>
-                </div>
-                <div>
-                    <div>
-                        <span>12</span>
-                        分/架
-                    </div>
-                    <div>落地速率</div>
-                </div>
-                <div>
-                    <div>
-                        <span>12</span>
-                        分/架
-                    </div>
-                    <div>综合速率</div>
-                </div>
-            </ul>
-            <div class="lineText">
+
+            <!-- <div class="lineText">
                 <div class="line"></div>
                 <div class="text text2">
                     10
@@ -99,7 +102,7 @@
                     </div>
                     <div>综合速率</div>
                 </div>
-            </ul>
+            </ul> -->
 
         </div>
     </div>
@@ -107,10 +110,11 @@
 
 <script>
 export default {
-    props: ['data'],
+    props: ['flight_traffic', 'flight_estimateCtotRelease', 'flight_runwayTraffic'],
     data() {
         return {
             select: 0,
+            get: _.get,
         }
     },
     created() {},
@@ -128,7 +132,7 @@ export default {
         .lineText {
             display: flex;
             align-items: center;
-            height: 30px;
+            padding: 5px 0;
             .line {
                 height: 2px;
                 background: #b3bddc;
@@ -140,20 +144,13 @@ export default {
                 margin: 0 10px;
                 height: 30px;
                 width: 30px;
-                line-height: 30px;
-                text-align: center;
                 background-size: 100% 100%;
                 background-repeat: no-repeat;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
-            .text1 {
-                background: url(../static/mbg1.png);
-            }
-            .text2 {
-                background: url(../static/mbg2.png);
-            }
-            .text3 {
-                background: url(../static/mbg3.png);
-            }
+
             .rus {
             }
         }
@@ -195,6 +192,21 @@ export default {
                 border-bottom: none;
             }
         }
+        .trafficBox:nth-child(3) {
+            .text {
+                background-image: url(../static/imgs/mbg1.png);
+            }
+        }
+        .trafficBox:nth-child(4) {
+            .text {
+                background-image: url(../static/imgs/mbg2.png);
+            }
+        }
+        .trafficBox:nth-child(5) {
+            .text {
+                background-image: url(../static/imgs/mbg3.png);
+            }
+        }
         .ulAD2 {
             display: flex;
             justify-content: space-between;
@@ -206,7 +218,7 @@ export default {
                     color: #fff;
                     span {
                         font-size: 20px;
-                        margin-right: 5px;
+                        margin-right: 2px;
                     }
                 }
                 div:nth-child(2) {

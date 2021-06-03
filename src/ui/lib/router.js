@@ -4,7 +4,7 @@ import router from '../router'
 import store from '../store'
 import postal from 'postal';
 import axios from "axios";
-import {httpConfig} from "../../../index";
+import {httpConfig} from "@/lib/interfaces";
 let loginFlag = 0;
 let hasIfm = self!=top//是否被镶嵌
 let socketInterfaceType = window.webConfig.socketInterfaceType
