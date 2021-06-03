@@ -1,22 +1,3 @@
-.el-select-dropdown {
-    background-color: #25395c;
-    border: none;
-
-    li {
-        color: #fff;
-    }
-
-    li:hover,
-    li.selected,
-    li.hover {
-        background-color: #4181e9;
-        color: #fff;
-    }
-}
-
-
-
-
 .el-dialog {
     background: #233147;
     border-radius: 10px;
@@ -144,6 +125,9 @@
 }
 
 // form 表单 元素
+
+
+//select
 .el-select {
     .el-select__tags {
         color: #ffffff;
@@ -176,6 +160,31 @@
 
 .el-select-dropdown {}
 
+
+.el-select-dropdown {
+    background-color: #25395c;
+    border: none;
+
+    li {
+        color: #fff;
+    }
+
+    li:hover,
+    li.selected,
+    li.hover {
+        background-color: #4181e9;
+        color: #fff;
+    }
+
+    .popper__arrow {
+        border-bottom-color: #25395c !important;
+    }
+
+    .popper__arrow::after {
+        border-bottom-color: #25395c !important;
+    }
+}
+
 .el-checkbox__inner {
     background: #101c2f !important;
     border: 1px #101c2f solid;
@@ -183,6 +192,8 @@
 
 
 
+
+//弹窗table样式
 .el-table.layerTable {
     background-color: transparent;
     border-color: #45547c;
