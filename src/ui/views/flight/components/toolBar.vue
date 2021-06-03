@@ -23,7 +23,7 @@
       </el-radio-group>
       <div class="search">
         <div>
-          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
+          <el-input placeholder="请输入内容" v-model="searchValue" class="input-with-search">
             <el-select v-model="searchType" slot="prepend" placeholder="请选择">
               <el-option label="餐厅名" value="1"></el-option>
               <el-option label="订单号" value="2"></el-option>
@@ -60,7 +60,8 @@ export default {
       tabBarOptions,
       operationType:'',
       timeType:'',
-      searchType: ''
+      searchType: '',
+      searchValue: ''
     }
   },
   components: {
@@ -107,15 +108,12 @@ export default {
      display: flex;
      align-items: center;
      .search{
-       width: 228px;
+       //width: 228px;
        height: 34px;
        color: #fff;
        background: #2b3645;
        border-color: #2b3645;
-       .el-input-group__prepend{
-         height: 34px;
-         background: transparent;
-       }
+
      }
    }
  }

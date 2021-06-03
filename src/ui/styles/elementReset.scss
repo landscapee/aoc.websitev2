@@ -143,8 +143,50 @@
     }
 }
 
+.input-with-search{
+    font-size: 12px!important;
+    height: 34px;
+    background: #2b3645;
+    line-height: 34px;
+    .el-input-group__prepend, .el-input-group__append{
+        height: 30px;
+        background-color: transparent;
+        border: none;
+    }
+    .el-input-group__prepend{
+        border-right: 1px solid #d9d9d9;
+        width: 50px;
+        padding: 0;
+        .el-input__inner{
+            padding: 0;
+        }
+        .el-select{
+            margin: 0;
+        }
+    }
+    .el-input__inner,.el-button{
+        height: 34px;
+        background-color: transparent;
+        border: none;
+    }
+    .el-input--suffix{
+        .el-input__inner{
+            padding-right: 10px;
+            width: 50px;
+        }
+    }
+    //.el-button{
+    //    background: transparent;
+    //}
+}
+
 // form 表单 元素
 .el-select {
+    /*滑动轨道*/
+    ::-webkit-scrollbar-track{
+        border-radius: 0px;
+        background: none;
+    }
     .el-select__tags {
         color: #ffffff;
         background: #101c2f;
