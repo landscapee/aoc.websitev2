@@ -277,17 +277,22 @@
 				 border-bottom: $border;
 				 th{
 					 /*<!--border-top: $border;-->*/
-					 border-bottom: $border;
+					 border-bottom: $border!important;
 					 border-right: 0!important;
 					 background: #36445a!important;
 				 }
 				 td{
 					 border-right: 0!important;
-					 border-bottom: $border;
+					 border-bottom: $border!important;
+					 .flightType{
+						 padding: 1px;
+						 border: 1px solid #ffffff;
+						 border-radius: 4px 4px 0px 0px;
+						 font-size: 12px;
+					 }
 				 }
 			 }
 		 }
-
 	}
 	.poolMonitorWithRunway {
 		& > * {

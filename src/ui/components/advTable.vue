@@ -68,7 +68,8 @@
                                                         </div>
                                                     </template>
                                                     <template v-else>
-                                                        {{ syncDisplay(row, col, ri)}}
+                                                        <span v-html="  syncDisplay(row, col, ri) "></span>
+                                                        <!--{{ syncDisplay(row, col, ri)}}-->
                                                     </template>
                                                 </span>
                                                 <span v-if="col.type == 'waybillCode'" class="text-link" :style="col.wordStyle ? col.wordStyle(row, outParams):{}" @click.stop="waybillDetailShow(row, col.wid,)"> {{ syncDisplay(row, col, ri)}} </span>
@@ -274,7 +275,9 @@
                                 <el-tooltip :content="col.tip?col.tip(row):''" placement="top" :disabled="!(col.tip && col.tip(row))" transition="none" :open-delay="300">
                                     <div class="adv-body-col" :data-px="ci" :data-py="ri" :class="editPointClass(ci, ri)" @click="handlePointSet(row, col, ci, ri)" :title="col.tip?col.tip(row):''">
                                         <span v-if="col.type == 'index'" > {{ ri + 1 }} </span>
-                                        <span v-if="col.type == 'simple'"   :style="col.wordStyle ? col.wordStyle(row, outParams):{}"   class="cell-simple"> {{ syncDisplay(row, col, ri)}} </span>
+                                        <span v-if="col.type == 'simple'"   :style="col.wordStyle ? col.wordStyle(row, outParams):{}"   class="cell-simple">
+                                             {{ syncDisplay(row, col, ri)}}
+                                        </span>
                                         <span v-if="col.type == 'waybillCode'" class="text-link" :style="col.wordStyle ? col.wordStyle(row, outParams):{}" @click.stop="waybillDetailShow(row, col.wid,)">
                                         {{col.display?col.display(row, ri):(row[col.key] === 0?0:row[col.key] || (col.placeholder?col.placeholder:"－－"))}}
                                     </span>
@@ -412,7 +415,9 @@
                                                         </el-select>
                                                     </template>
                                                     <template v-else>
-                                                        <label style="text-overflow: ellipsis;white-space:normal;" class="cell-simple"> {{ syncDisplay(row, col, ri)}} </label>
+                                                        <label style="text-overflow: ellipsis;white-space:normal;" class="cell-simple">
+                                                            {{ syncDisplay(row, col, ri)}}
+                                                        </label>
                                                     </template>
                                                 </template>
                                             </div>

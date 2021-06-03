@@ -1,6 +1,7 @@
 
 import {situationStart, situationStop,grounpStatus,getFlightDatas} from "../manage/runMonitor";
 import Logger from "../../lib/logger";
+import {checkWebsocketResponseDataFinish} from "../../lib/helper/flight";
 import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 let clientObj = {};
@@ -46,8 +47,10 @@ const subWSEvent = () => {
     })
     //长期延误池
     client.sub('/Flight/monitor/alwaysDelay',(res)=>{
-        let data=getFlightDatas(res)
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'alwaysDelay'})
+        checkWebsocketResponseDataFinish().then((d)=>{
+            let data=getFlightDatas(res)
+            worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'alwaysDelay'})
+        })
     })
     //起飞保障池
     client.sub('/Flight/monitor/departureGuarantee',(res)=>{

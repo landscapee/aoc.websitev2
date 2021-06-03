@@ -1,7 +1,5 @@
 import {getFlightDetail} from "../lib/storage";
 import { forEach,map} from 'lodash';
-
-
 export const getFlightDatas = (data) => {
     let arr=[];
     map(data,(k,l)=>{
