@@ -4,6 +4,7 @@ import {init as flightInit} from '../channel/flight'
 import { init as homeInit,delaysInit} from '../channel/home'
 // import { init as delaysInit } from '../connect/delays'
 import {init as monitorInit} from '../channel/runMonitor'
+import {init as MonitorWithRunwayInit} from '../channel/poolMonitorWithRunway'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
 import HttpRequest from "../../lib/axios";
@@ -56,6 +57,7 @@ postal.subscribe({
     let httpRequest = new HttpRequest(data.httpConfig);
     flightInit(posWorker, httpRequest);
     monitorInit(posWorker, httpRequest);
+      MonitorWithRunwayInit(posWorker, httpRequest);
     flightHttp(posWorker, httpRequest);
     homeInit(posWorker, httpRequest)
     delaysInit(posWorker, httpRequest)

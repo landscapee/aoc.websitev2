@@ -1645,7 +1645,8 @@
                 return function(row, ri) {
                     let classExtend = [];
                     // classExtend.push(this.checkedRowNumber == ri?'adv-tab_row-checked':'');
-                    return classExtend;
+                    this.$emit('rowClassExtend',row,'classRow')
+                    return row.classRow;
                 }
             },
             inputStyleExtend(row, col, ri, ci) {
@@ -1918,7 +1919,9 @@
                 flex-grow:0;
                 /*box-shadow: 0 1px 8px #293756;*/
                 border-bottom:solid 1px #45547c;
-
+                & > * {
+                    box-sizing: border-box;
+                }
                 z-index:1;
                 /* 普通 表头 header */
                 table {
@@ -1930,12 +1933,12 @@
                              font-family: AlibabaPuHuiTiM;
                             font-weight: 400;
                             border-right:solid 1px #45547c;
-                            height: 40px;
+                            height: 38px;
                             padding: 0!important;
                             .adv-header-col {
                                 position: relative;
-                                min-height: 40px;
-                                line-height: 40px;
+                                min-height: 38px;
+                                line-height: 38px;
                                 white-space: normal;
                                 overflow: hidden;
                                 width: 100%;
@@ -1948,7 +1951,7 @@
                         }
 
                         th:last-child {
-                            border:none;
+                            border-right:none;
                         }
                     }
                 }
@@ -2155,21 +2158,24 @@
                     /*font-size:14px;*/
                     /*font-weight:800;*/
                 }
+                & > * {
+                    box-sizing: border-box;
+                }
                 table {
                     min-width:100%;
                     tr {
-                        background-color:#162134;
+                         background-color:#162134;
                         position:relative;
                         transition:all .1s linear;
-                        min-height:39px;
+                        min-height:38px;
                         td {
                             border-right:solid 1px #45547c;
                             border-bottom:solid 1px #45547c;
                             font-size:14px;
-                            overflow: hidden;
-                            white-space: nowrap;
+                             white-space: nowrap;
                             word-break: break-word;
                             color: #fff;
+                            min-height:38px;
                             padding: 0 !important;
                             .adv-body-col {
                                 position:relative;

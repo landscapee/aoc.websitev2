@@ -90,7 +90,7 @@ export const setting = {
 			{
 				key: 'cancel',
 				width: '50px',label: '取消关注',
-                type: 'simple'
+                type: 'slot'
 			},
 		],
 	guaranteeWarn: [

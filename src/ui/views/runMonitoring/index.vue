@@ -22,7 +22,7 @@
 				<div class="itemTitle">
 					<div>{{opt.name}}（{{(opt.data||[]).length}}）</div>
 					<div >
-						<span v-if="index==0||index==3" @click="openWaring(opt) " :class="{infoSvg:!getMoreWarnLength(opt.key)}">
+						<span v-if="isWarning(opt)" @click="openWaring(opt) " :class="{infoSvg:!getMoreWarnLength(opt.key)}">
 							<icon-svg  iconClass="warning" ></icon-svg>
 						</span>
  						<i @click="openSetting(opt)" class="el-icon-setting"></i>
@@ -30,7 +30,7 @@
 
 				</div>
 				<div class="tablediv">
-					<AdvTable :tab-data="opt.data" :columnConfig="opt.tableConfig" >
+					<AdvTable :tab-data="opt.data" @rowClassExtend="rowClassExtend(...arguments,opt)" :columnConfig="opt.tableConfig" >
  						<template slot="batchSet" slot-scope="{row,index}">
 							<!--<div>批量预警</div>-->
 							<el-checkbox class="labelNone" v-model="allCheckWarn[opt.key]" :label="row.flightId">
@@ -39,8 +39,14 @@
 						</template>
 						<template slot="warnDetail" slot-scope="{row,index}">
 							<!--<div>取消预警</div>-->
-							<span @click="resetWaring(row) " >
+							<span @click="resetWaring(row) "  class="quxiao">
 							<icon-svg  iconClass="huifu"  :class="{infoSvg:!row.hightLightStatus}"></icon-svg>
+						</span>
+						</template>
+						<template slot="cancel" slot-scope="{row,index}">
+							<!--<div>取消关注</div>-->
+							<span @click="delWaring(row) "  class="quxiao">
+							<icon-svg  iconClass="shanchu"  ></icon-svg>
 						</span>
 						</template>
 
@@ -49,7 +55,7 @@
 				</div>
 			</div>
 		</div>
-		<Setting ref="Setting" @getCol="getCol"></Setting>
+		<Setting :setting="setting" ref="Setting" col="7" @getCol="getCol"></Setting>
 		<Warning ref="Warning" ></Warning>
 	</div>
 </template>
@@ -60,14 +66,19 @@
     import {setting} from './help';
     import PostalStore from "../../lib/postalStore";
     let postalStore = new PostalStore();
-	import Setting from "./setting"
-	import Warning from "./warning"
+    import Setting from "@components/setTableCol/setting"
+
+    import Warning from "./warning"
 	import AdvTable from "@/ui/components/advTable.vue"
     export default {
         name: "runMonitoringIndex",
         components: {Setting,AdvTable,Warning},
         data() {
             return {
+                setting,
+                infoObj:{},
+                statusOptions:[],
+                timeOptions:[],
                 allCheckWarn:{
                     batchConcern:[],
                     vvpFlights:[],
@@ -82,6 +93,11 @@
             }
         },
         computed:{
+            isWarning(){
+              return (opt)=>{
+                  return opt.key=='batchConcern'||opt.key=='vvpFlights'
+			  }
+			},
             pageList(){
                 return map(this.pageListObj,(k,l)=>{
                     return k
@@ -104,20 +120,12 @@
                 channel: 'Worker',
                 topic: 'Page.RunMonitor.Start',
             }) ;
-            let flight=JSON.parse( localStorage.getItem('runmonitor'))
-
-            postal.publish({
-                channel: 'Worker',
-                topic: 'getadvanceArrive',
-                data:flight
-            }) ;
-
+            this.getTimeS()
         },
         mounted(){
             //批量关注池
-            postalStore.sub( 'batchConcern',([data,flight])=>{
+            postalStore.sub( 'batchConcern',(data)=>{
                 let length=Object.keys(data[0]||{}).length
-                localStorage.setItem('runmonitor',JSON.stringify(flight))
 
                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 this.allCheckWarn.batchConcern=[]
@@ -130,7 +138,6 @@
                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
                 length&&this.$set(this.pageListObj.vvpFlights,'data',data)
-
                 console.log('advanceArrive',data);
             });
             //地面保障池
@@ -156,11 +163,63 @@
             postalStore.unsubAll()
         },
         methods: {
-            cancelAttention(row){
+            rowClassExtend(row,key,opt){
+                if(this.isWarning(opt)&&row.hightLightStatus){
+                      row[key]='warningRow'
+                }
+			},
+            getTimeS(){
+                this.$request.post('situation', 'batchConcernStatus/list', null,true).then((res)=>{
+                    if(res.code!=200||!res.data){
+                         return
+                    }
+                    this.statusOptions=map(res.data.statusType,(k,l)=>{
+                        return {value:l,label:k}
+                    });
+                    this.timeOptions=map(res.data.timeType,(k,l)=>{
+                        return {value:l,label:k}
+                    })
+                    map({...res.data.timeType,...res.data.statusType},(k,l)=>{
+                        this.infoObj[l]=k
+                    })
+                })
 
             },
             resetWaring(row){
+				if(!row.hightLightStatus){
+				    return
+				}
+                this.$confirm(`当前预警：${this.infoObj[row.hightLightStatus]}；是否确认取消 航班${row.flightNo}的预警状态？`, '提示', {
+                    type: 'warning',
+                }).then(() => {
+                    this.$request.post('flight', 'batchConcernStatus/cancel/'+row.flightId, {flightId: row.flightId},false).then((res)=>{
+                        if(res.code!=200||!res.data){
+                            this.$message.warning(res.message)
+                            return
+                        }
+                        this.$message.success('操作成功')
+                    })
 
+				}).catch(() => {
+                    this.$message.info('已取消操作')
+				})
+            },
+            delWaring(row){
+
+                this.$confirm(`是否确认取消关注航班${row.flightNo}？`, '提示', {
+                    type: 'warning',
+                }).then(() => {
+                    this.$request.post('situation', 'flight/batchConcern', {flightids: row.flightId},true).then((res)=>{
+                        if(res.code!=200||!res.data){
+                            this.$message.warning(res.message)
+                            return
+                        }
+                        this.$message.success('取消关注成功')
+                    })
+
+				}).catch(() => {
+                    this.$message.info('已取消操作')
+				})
             },
             getCol(cols,key){
                 this.pageListObj[key].tableConfig=[...cols]
@@ -177,7 +236,7 @@
                 if(!this.getMoreWarnLength(key)){
                     return
                 }
-                this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key])
+                this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key],this.statusOptions,this.timeOptions,this.infoObj)
             },
         },
 
@@ -185,6 +244,10 @@
 </script>
 
 <style lang="scss" scoped>
+	::v-deep .warningRow{
+		background: #f2dede!important;
+
+	}
 	 .el-dropdown-menu{
 		padding:15px!important;
 	}
@@ -197,11 +260,10 @@
 			display: none;
 		}
 	}
-	 .infoSvg{
-		 fill:#6c757d;
-		 svg{
-			 fill:#6c757d;
-		 }
+
+	 .quxiao{
+		 padding: 3px 5px ;
+		 /*background: #2e67f6;*/
 	 }
 	 .resetPage{
 		 color:#28a745;
