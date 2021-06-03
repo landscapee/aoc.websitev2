@@ -5,9 +5,9 @@
             <span class="sansB">{{$t('message.sysName')}}</span>
         </div>
         <ul class="nav_middle">
-            <li v-for="(item,idx) in navList" :key="idx" :class="{active:navFlag==idx}" @click="navHandle(item.code,idx)">
+            <li v-for="(item,idx) in navList" :key="idx" :class="{active:navFlag==idx}" @click="navHandle(item.path,idx)">
                 <div>
-                    <!-- <icon-svg :iconClass="item.icon" :iconColor="'#fff'" /> -->
+                    <icon-svg :iconClass="item.icon" :iconColor="'#fff'" />
                     <span>{{item.name}}</span>
                 </div>
             </li>
@@ -278,45 +278,73 @@ export default {
                 if (nav || drop) {
                     return false
                 }
-                if (list.code == 'flight_monitor') {
-                    //航班监控
-                    list.icon = 'jiankong2'
+
+                // if (list.name.indexOf('tobt') >= 0) {
+                //     console.log(list, 1111111111)
+                // }
+                //运行态势
+                if (list.code == 'situation-all') {
+                    list.icon = 'yunxingtaishi'
+                    list.path = 'home'
                     this.navList.push(list)
                 }
-                if (list.code == 'support_monitor') {
-                    //作业保障监控
-                    list.icon = 'peizhi'
+                //航班动态
+                if (list.code == 'flight') {
+                    list.icon = 'hangbandongtai1'
+                    list.path = 'flight'
                     this.navList.push(list)
                 }
-                if (list.code == 'flight_dynamics') {
-                    //航班动态
-                    list.icon = 'hangbandongtai'
+                //航班正常监控
+                if (list.code == 'normal_monitoring_runway') {
+                    list.icon = 'hbzcjk'
+                    list.path = 'poolMonitorWithRunway'
+                    list.name = '航班正常监控'
                     this.navList.push(list)
                 }
-                if (list.code == 'flight_full') {
-                    //全屏
-                    list.icon = 'jiankong1'
+                //运行监控
+                if (list.code == 'run_monitoring') {
+                    list.icon = 'yunxingjiankong'
+                    list.path = 'runMonitoring'
                     this.navList.push(list)
                 }
-                if (list.code == 'backend_management') {
-                    //后台管理
-                    list.icon = 'chongtu'
+                //动态调整
+                if (list.code == 'flight_schedule_dynamic_adjustment') {
+                    list.icon = 'tiaozheng1'
+                    list.path = 'flightAdjustment'
                     this.navList.push(list)
                 }
-                if (list.code == 'rule_config') {
-                    //规则维护
-                    this.dropLists.push(list)
+                //不利条件运行
+                if (list.code == 'conditionalOperationMain') {
+                    list.icon = 'bulitiaojian'
+                    list.path = 'conditionalOperation'
+                    this.navList.push(list)
                 }
-                if (list.code == 'bvc_config') {
-                    //规则维护
-                    this.dropLists.push(list)
+                //资源监控
+                if (list.code == 'resourceMonitoring') {
+                    list.icon = 'ziyuanjiankong'
+                    list.path = 'resourceMonitoring'
+                    this.navList.push(list)
                 }
+                //调整调减
+                if (list.code == 'adjustReduction') {
+                    list.icon = 'tiaozhengtiaojian'
+                    list.path = 'adjustmentReduction'
+                    this.navList.push(list)
+                }
+                //消息管理
+                if (list.code == 'N_XXGL') {
+                    list.icon = 'xiaoxifabu'
+                    list.path = 'specialTreatment'
+                    this.navList.push(list)
+                }
+
+                //
             })
             this.setNavFlag()
         },
         setNavFlag() {
             this.navList.forEach((list, index) => {
-                if (list.code == this.path) {
+                if (list.path == this.path) {
                     this.navFlag = index
                 }
             })
@@ -380,13 +408,13 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 48px;
+            height: 38px;
             cursor: pointer;
 
             div {
                 height: 20px;
                 width: 100%;
-                padding: 0 20px;
+                padding: 0 10px;
                 border-left: 1px solid rgba(255, 255, 255, 0.3);
                 display: flex;
                 justify-content: center;
@@ -395,7 +423,10 @@ export default {
                 span {
                     font-size: 16px;
                     color: #fff;
-                    margin-left: 8px;
+                    margin-left: 6px;
+                }
+                svg {
+                    font-size: 18px;
                 }
             }
         }

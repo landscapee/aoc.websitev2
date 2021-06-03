@@ -91,8 +91,8 @@ export const matchPercentNum = (v, cb) => {
 	if (!test || v > 100) {
 		postal.publish({
 			channel: 'Web',
-			topic: 'ShowRootAlert',
-			data: { content: `请输入0-100的数字,小数点后最多2位!`, type: `alert-danger` },
+			topic: 'Global.Alert',
+			data: ['请输入0-100的数字,小数点后最多2位!','提示',{type: 'error',center: true}],
 		});
 		return false;
 	} else {

@@ -41,17 +41,17 @@ Vue.prototype.$moment = moment
 Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 
 
-postal.subscribe({//系统时间更新
-    channel: 'web.aoc',
-    topic: 'sys_time',
-    callback:data => {
-        store.commit('setServerTime',new Date(data))
-    }
-})
+// postal.subscribe({//系统时间更新
+//     channel: 'web.aoc',
+//     topic: 'sys_time',
+//     callback:data => {
+//         store.commit('setServerTime',new Date(data))
+//     }
+// })
 
-if(localStorage.lang){//设置语言
-    store.commit('setLanguage',localStorage.lang)
-}
+// if(localStorage.lang){//设置语言
+//     store.commit('setLanguage',localStorage.lang)
+// }
 
 if(sessionStorage.userData){//刷新或者丢失用户信息，使用token获取用户信息
     store.commit('setUserMsg',JSON.parse(sessionStorage.userData))

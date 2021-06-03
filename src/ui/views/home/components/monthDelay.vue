@@ -86,7 +86,7 @@
 </template>
 
 <script>
-// import { matchPercentNum } from '@/ui/common/helper/utility'
+import { matchPercentNum } from '/src/lib/helper/utility'
 export default {
     props: [
         'options',
@@ -135,7 +135,9 @@ export default {
                   }
         },
         editMonthRateHandle() {
-            this.$request.get('situation', 'runningState/monthClearance/' + this.monthRate)
+            matchPercentNum(this.monthRate, () => {
+                this.$request.get('situation', 'runningState/monthClearance/' + this.monthRate)
+            })
         },
     },
 }

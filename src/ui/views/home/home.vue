@@ -71,56 +71,54 @@ export default {
         postalStore.pub('Worker', 'Page.Home.Start', '')
 
         postalStore.sub('flight.home', (data) => {
-            console.log(data)
+            // console.log(data)
             this.flight_home = data
         })
         // 月度放行正常率目标
         postalStore.sub('flight.monthClearance', (data) => {
-            console.log('月度放行正常率目标', data)
+            // console.log('月度放行正常率目标', data)
             this.flight_monthClearance = data
         })
         // 最近实际落地航班
         postalStore.sub('flight.lastestAta', (data) => {
-            console.log('最近实际落地航班', data)
+            // console.log('最近实际落地航班', data)
             this.flight_lastestAta = data
         })
         // 最近实际起飞航班
         postalStore.sub('flight.lastestAtd', (data) => {
-            console.log('最近实际起飞航班', data)
+            // console.log('最近实际起飞航班', data)
             this.flight_lastestAtd = data
         })
 
         //积压运行
         postalStore.sub('flight.FlightStatistic', (data) => {
-            console.log('运行', data)
+            // console.log('运行', data)
             this.flight_FlightStatistic = data
         })
         //走廊口方向放行率
         postalStore.sub('flight.direction', (data) => {
-            console.log('走廊口方向放行率', data)
+            // console.log('走廊口方向放行率', data)
             this.flight_direction = data
         })
         // 流量信息
         postalStore.sub('flight.traffic', (data) => {
-            console.log('流量信息', data)
+            // console.log('流量信息', data)
             this.flight_traffic = data
         })
         //下小时预计放行
         postalStore.sub('flight.estimateCtotRelease', (data) => {
-            console.log('下小时预计放行', data)
+            // console.log('下小时预计放行', data)
             this.flight_estimateCtotRelease = data
         })
         //综合速率
         postalStore.sub('flight.runwayTraffic', (data) => {
-            console.log('综合速率', data)
+            // console.log('综合速率', data)
             this.flight_runwayTraffic = data
         })
 
         postalStore.pub('Worker', 'Page.Delays.Start', '')
-        // Network.Connected.Widespread
-
         postalStore.sub('flight.delay.backStatus', (data) => {
-            console.log('积压', data)
+            // console.log('积压', data)
             this.flight_delay_backStatus = data
         })
     },
