@@ -23,15 +23,21 @@
       </el-radio-group>
       <div class="search">
         <div>
-          <el-input placeholder="请输入内容" v-model="searchValue" class="input-with-search">
+          <el-input placeholder="航班号|机位|机尾号|登机口|航线" v-model="searchValue" class="input-with-search">
             <el-select v-model="searchType" slot="prepend" placeholder="请选择">
-              <el-option label="餐厅名" value="1"></el-option>
-              <el-option label="订单号" value="2"></el-option>
-              <el-option label="用户电话" value="3"></el-option>
+              <el-option label="全部" value="all"></el-option>
+              <el-option label="航班号" value="flightNo"></el-option>
+              <el-option label="机位" value="seat"></el-option>
+              <el-option label="机尾号" value="tailNo"></el-option>
+              <el-option label="登机口" value="displayGate"></el-option>
+              <el-option label="航线" value="displayRouter"></el-option>
             </el-select>
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </div>
+      </div>
+      <div class="buttons">
+        <el-button size="mini"><i class="iconfont icon-gaojisousuo"/></el-button>
       </div>
     </div>
 
@@ -108,7 +114,7 @@ export default {
      display: flex;
      align-items: center;
      .search{
-       //width: 228px;
+       width: 228px;
        height: 34px;
        color: #fff;
        background: #2b3645;
