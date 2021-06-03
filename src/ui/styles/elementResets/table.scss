@@ -1,0 +1,51 @@
+
+//弹窗table样式
+.el-table.layerTable {
+    background-color: transparent;
+    border-color: #45547c;
+
+    thead {
+        color: #fff;
+
+        tr {
+            background-color: #293756;
+
+            th {
+                background-color: #293756;
+                border-color: #45547c;
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            background-color: transparent;
+
+            td {
+                background: transparent;
+                color: #Fff;
+                border-color: #45547c;
+            }
+        }
+
+        tr.el-table__row--striped td {
+            background: rgba(84, 136, 255, 0.05);
+        }
+
+    }
+
+    .el-table__body {
+
+        tr:hover {
+            td {
+                background-color: #2c3f6d !important;
+            }
+        }
+    }
+
+}
+
+.el-table.layerTable:before,
+.el-table.layerTable:after {
+    background-color: #45547c;
+}

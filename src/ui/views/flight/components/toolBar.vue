@@ -2,7 +2,7 @@
   <div class="toolbar">
     <div class="tabs">
       <el-tabs tab-position="bottom">
-        <el-tab-pane v-for="item in tabBarOptions" :label='item.name'>
+        <el-tab-pane v-for="item in tabBarOptions" :key="item.name" :label='item.name'>
           <span slot="label"> {{item.name}}
             <span class="tab-item-num">2</span>
           </span>
@@ -23,15 +23,24 @@
       </el-radio-group>
       <div class="search">
         <div>
-          <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
+          <el-input placeholder="航班号|机位|机尾号|登机口|航线" v-model="searchValue" class="input-with-search">
             <el-select v-model="searchType" slot="prepend" placeholder="请选择">
-              <el-option label="餐厅名" value="1"></el-option>
-              <el-option label="订单号" value="2"></el-option>
-              <el-option label="用户电话" value="3"></el-option>
+              <el-option label="全部" value="all"></el-option>
+              <el-option label="航班号" value="flightNo"></el-option>
+              <el-option label="机位" value="seat"></el-option>
+              <el-option label="机尾号" value="tailNo"></el-option>
+              <el-option label="登机口" value="displayGate"></el-option>
+              <el-option label="航线" value="displayRouter"></el-option>
             </el-select>
             <el-button slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </div>
+      </div>
+      <div class="buttons">
+        <el-button title="高级搜索" type="info" size="mini"><i class="iconfont icon-gaojisousuo"/></el-button>
+        <el-button title="查看航班历史" type="info" size="mini"><i class="iconfont icon-lishi"/></el-button>
+        <el-button title="列表配置" type="info" size="mini"><i class="iconfont icon-zidingyi"/></el-button>
+        <el-button title="导出当前结果" type="info" size="mini"><i class="iconfont icon-daochuexcel"/></el-button>
       </div>
     </div>
 
@@ -60,7 +69,8 @@ export default {
       tabBarOptions,
       operationType:'',
       timeType:'',
-      searchType: ''
+      searchType: '',
+      searchValue: ''
     }
   },
   components: {
@@ -112,10 +122,15 @@ export default {
        color: #fff;
        background: #2b3645;
        border-color: #2b3645;
-       .el-input-group__prepend{
-         height: 34px;
-         background: transparent;
-       }
+      margin-right: 3px;
+     }
+   }
+   .el-button--info{
+     margin-left: 0;
+     width: 30px;
+     padding: 0;
+     .iconfont{
+       font-size: 12px;
      }
    }
  }
