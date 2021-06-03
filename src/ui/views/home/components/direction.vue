@@ -5,7 +5,7 @@
                 <div class="chartBox">
                     <div class="title">
                         <div>
-                            <el-select v-model="select" placeholder="请选择">
+                            <el-select v-model="select" placeholder="请选择" @change="selectHandle" size="mini">
                                 <el-option v-for="item in selectArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
                             </el-select>
                         </div>
@@ -35,9 +35,8 @@
                             <div class="dataBox" :class="'dataBox'+index">
                                 <div style="width:8000px;height:100%;">
                                     <ul :class="'dataBox'+index+'_1'">
-                                        <li v-for="list in activeData[item].citys" :key="list.cityCode">
+                                        <li v-for="list in activeData[item].citys" :key="list.cityCode" @click="cityHandle(list)">
                                             <div>{{list.cityName}}<span>{{list.count}}</span></div>
-
                                         </li>
                                     </ul>
                                     <ul :class="'dataBox'+index+'_2'">
@@ -50,9 +49,70 @@
                 </div>
             </div>
             <div class="right">
+                <div class="top">
+                    <div class="title">
+                        <div class="name">
+                            <div>流控信息</div>
+                        </div>
+                        <i class="iconfont icon-yujing"></i>
+                    </div>
+                    <div class="content dataBox6">
+                        <ul class="dataBox6_1">
+                            <li v-for="item in noticeData['流控信息']" :key="item.id">
+                                {{item.content}}
+                            </li>
+                        </ul>
+                        <ul class="dataBox6_2"></ul>
+                    </div>
 
+                </div>
+                <div class="bottom">
+                    <div class="title">
+                        <div class="name">
+                            <div>MDRS预警</div>
+                        </div>
+                    </div>
+                    <div class="content dataBox7">
+                        <ul class="dataBox7_1">
+                            <li v-for="item in noticeData['MDRS预警']" :key="item.id">
+                                {{item.content}}
+                            </li>
+                        </ul>
+                        <ul class="dataBox7_2"></ul>
+                    </div>
+
+                </div>
             </div>
         </div>
+        <el-dialog :visible.sync="flightDetilShow" class="nodeDialog" :show-close="false" center width="700px" :append-to-body="true">
+            <template slot="title">
+                <div class="blankDiv"></div>
+                <div class="el-dialog__title"> {{layerName}}</div>
+                <div class="blankDiv"><i class="el-icon-circle-close" @click="flightDetilShow = false"></i></div>
+            </template>
+            <div class="contentbox">
+                <el-table :data="flightDetilLists" style="width: 100%" class="layerTable" stripe border>
+                    <el-table-column type="index" width="50" label="序号" align="center"></el-table-column>
+                    <el-table-column prop="flightNo" label="航班号" align="center"></el-table-column>
+                    <el-table-column label="计划起飞" align="center">
+                        <template slot-scope="scope">
+                            {{$moment(scope.row.scheduleTime).format('HH:mm')}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="实际起飞" align="center">
+                        <template slot-scope="scope">
+                            {{scope.row.actualTime?$moment(scope.row.actualTime).format('HH:mm'):'-'}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="航线" align="center">
+                        <template slot-scope="scope">
+                            {{scope.row.displayRouter?scope.row.displayRouter.join("->"):'-'}}
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -65,6 +125,28 @@ export default {
     props: ['options', 'flight_direction'],
     data() {
         return {
+            tableData: [
+                {
+                    date: '2016-05-02',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1518 弄',
+                },
+                {
+                    date: '2016-05-04',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1517 弄',
+                },
+                {
+                    date: '2016-05-01',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1519 弄',
+                },
+                {
+                    date: '2016-05-03',
+                    name: '王小虎',
+                    address: '上海市普陀区金沙江路 1516 弄',
+                },
+            ],
             select: 'normal',
             selectArr: [
                 { name: '航班正常率', value: 'normal' },
@@ -85,27 +167,76 @@ export default {
                 6: {},
             },
             showTable: [3, 4, 5, 1, 2, 6],
+            marqueeVar0: null,
+            marqueeVar1: null,
+            marqueeVar2: null,
+            marqueeVar3: null,
+            marqueeVar4: null,
+            marqueeVar5: null,
+            marqueeVar6: null,
+            marqueeVar7: null,
+            noticeData: {
+                流控信息: [],
+                MDRS预警: [],
+            },
+            flightDetilShow: false,
+            flightDetilLists: [],
+            layerName: '',
 
             //key当前业务value实时业务
         }
     },
-    created() {},
+    created() {
+        this.getFindCurrentNotice()
+    },
     mounted() {},
     watch: {
         flight_direction: function (val) {
-            console.log(val)
-            if (!this.loadMaping) {
-                this.loadMap()
-            }
+            this.loadMap()
         },
     },
     methods: {
+        cityHandle(city) {
+            this.layerName = city.cityName + '方向延误'
+            this.flightDetilShow = true
+            let flightids = city.flightIdList.join(',')
+            this.$request
+                .post(
+                    'situation',
+                    'direction/flightDetail',
+                    {
+                        flightids,
+                    },
+                    true
+                )
+                .then((res) => {
+                    if (res.data) {
+                        console.log(res.data)
+                        this.flightDetilShow = true
+                        this.flightDetilLists = res.data
+                    }
+                })
+        },
+        getFindCurrentNotice() {
+            this.$request.get('msg', 'notice/findCurrentNotice').then((res) => {
+                if (res.data) {
+                    this.noticeData = _.groupBy(res.data, 'category')
+
+                    this.$nextTick(() => {
+                        for (var i = 6; i <= 7; i++) {
+                            this.loadDataBoxAni(i, 'vertical')
+                        }
+                    })
+                }
+            })
+        },
         nowHandle() {
             this.nowShow = !this.nowShow
 
-            this.activeData = this.nowShow
-                ? _.keyBy(this.flight_direction.key[this.select], 'hallway')
-                : _.keyBy(this.flight_direction.value[this.select], 'hallway')
+            this.loadActiveData(true)
+        },
+        selectHandle() {
+            this.loadMap()
         },
         getPercent(data) {
             let count = _.get(data, 'delay', 0)
@@ -131,64 +262,95 @@ export default {
             }
         },
         loadMap() {
-            // let options = {}
-            // let def = this.options.map
-            // _.each(def.options, (v, k) => {
-            //     if (_.isFunction(v)) {
-            //         console.log(k)
-            //         // options[k] = v.call(null, data)
-            //     } else {
-            //         options[k] = v
-            //     }
-            // })
-            let options = _.cloneDeep(this.options.map.options)
-
             let series = this.options.map.options.series(this.flight_direction.key[this.select])
-            options.series = series
-            options.plotOptions.series.marker.lineColor = '#397DFF'
-            options.series[2].color = '#397DFF'
-            options.series[1].data[0].marker.lineColor = '#397DFF'
-            options.series[0].nullColor = '#e4f7ff'
-            console.log(options)
-            this.loadMaping = true
-            this.chart = Highcharts.mapChart('direction_chart_box', options)
-
+            if (!this.loadMaping) {
+                this.loadMaping = true
+                let options = _.cloneDeep(this.options.map.options)
+                options.series = series
+                options.plotOptions.series.marker.lineColor = '#397DFF'
+                options.series[2].color = '#397DFF'
+                options.series[1].data[0].marker.lineColor = '#397DFF'
+                options.series[0].nullColor = '#e4f7ff'
+                this.chart = Highcharts.mapChart('direction_chart_box', options)
+            } else {
+                this.chart.update({ series: series })
+            }
+            this.loadActiveData(false)
+        },
+        loadActiveData() {
             this.activeData = this.nowShow
                 ? _.keyBy(this.flight_direction.key[this.select], 'hallway')
                 : _.keyBy(this.flight_direction.value[this.select], 'hallway')
-            console.log(this.activeData)
-
             this.$nextTick(() => {
                 for (var i = 0; i <= 5; i++) {
-                    this.loadDataBoxAni(i)
+                    this.loadDataBoxAni(i, 'transverse')
                 }
             })
         },
-        loadDataBoxAni(idx) {
+        loadDataBoxAni(idx, direction) {
+            if (this['marqueeVar' + idx]) {
+                clearInterval(this['marqueeVar' + idx])
+            }
             var obj = document.getElementsByClassName('dataBox' + idx)[0]
             var obj1 = document.getElementsByClassName('dataBox' + idx + '_1')[0]
             var obj2 = document.getElementsByClassName('dataBox' + idx + '_2')[0]
-            if (obj1.clientWidth > obj.clientWidth) {
-                obj2.innerHTML = obj1.innerHTML
-                var marqueeVar = setInterval(() => {
-                    if (obj2.offsetWidth - obj.scrollLeft <= 0) {
-                        obj.scrollLeft -= obj1.offsetWidth
+
+            if (direction == 'transverse') {
+                if (obj1.clientWidth > obj.clientWidth) {
+                    this.loadRoll(idx, direction)
+                } else {
+                    obj2.innerHTML = ''
+                    obj.scrollLeft = 0
+                }
+            } else {
+                if (obj1.clientHeight > obj.clientHeight) {
+                    this.loadRoll(idx, direction)
+                } else {
+                    obj2.innerHTML = ''
+                    obj.scrollLeft = 0
+                }
+            }
+        },
+        loadRoll(idx, direction) {
+            var obj = document.getElementsByClassName('dataBox' + idx)[0]
+            var obj1 = document.getElementsByClassName('dataBox' + idx + '_1')[0]
+            var obj2 = document.getElementsByClassName('dataBox' + idx + '_2')[0]
+
+            obj2.innerHTML = obj1.innerHTML
+            this['marqueeVar' + idx] = setInterval(() => {
+                if (direction == 'transverse') {
+                    if (obj2.offsetWidth <= obj.scrollLeft) {
+                        obj.scrollLeft = 1
                     } else {
                         obj.scrollLeft++
                     }
-                }, 30)
-                obj.onmouseover = function () {
-                    clearInterval(marqueeVar)
+                } else {
+                    if (obj.scrollTop >= obj1.scrollHeight) {
+                        obj.scrollTop = 1
+                    } else {
+                        obj.scrollTop++
+                    }
                 }
-                obj.onmouseout = () => {
-                    marqueeVar = setInterval(() => {
-                        if (obj2.offsetWidth - obj.scrollLeft <= 0) {
-                            obj.scrollLeft -= obj1.offsetWidth
+            }, 30)
+            obj.onmouseover = () => {
+                clearInterval(this['marqueeVar' + idx])
+            }
+            obj.onmouseout = () => {
+                this['marqueeVar' + idx] = setInterval(() => {
+                    if (direction == 'transverse') {
+                        if (obj2.offsetWidth <= obj.scrollLeft) {
+                            obj.scrollLeft = 1
                         } else {
                             obj.scrollLeft++
                         }
-                    }, 30)
-                }
+                    } else {
+                        if (obj.scrollTop >= obj1.scrollHeight) {
+                            obj.scrollTop = 1
+                        } else {
+                            obj.scrollTop++
+                        }
+                    }
+                }, 30)
             }
         },
     },
@@ -202,18 +364,23 @@ export default {
     .box_content {
         display: flex;
         .left {
-            width: 80%;
+            width: 75%;
             height: 100%;
             border-right: 2px dashed rgba(179, 189, 220, 0.2);
             .chartBox {
                 height: calc(100% - 280px);
-                padding: 0 15px;
+                padding: 15px 15px 0;
                 overflow: hidden;
+
                 .title {
                     position: absolute;
                     top: 15px;
                     left: 15px;
                     z-index: 99;
+                    & > div {
+                        display: flex;
+                        align-items: center;
+                    }
                     & > div:before {
                         content: '';
                         display: inline-block;
@@ -244,6 +411,7 @@ export default {
                     background: rgba(246, 115, 81, 0.3);
                     padding: 0 7px 0 4px;
                     border-radius: 20px;
+                    cursor: pointer;
                     & > div {
                         height: 18px;
                         width: 18px;
@@ -273,7 +441,7 @@ export default {
                             align-items: center;
                         }
                         .dataBox {
-                            width: calc(100% - 120px);
+                            width: calc(100% - 160px);
                             overflow: hidden;
                             height: 100%;
                             position: relative;
@@ -285,9 +453,10 @@ export default {
 
                             li {
                                 height: 100%;
-                                width: 120px;
+                                min-width: 120px;
                                 padding: 1px;
                                 display: inline-block;
+                                cursor: pointer;
                                 div {
                                     height: 100%;
                                     background: rgba(42, 58, 95, 0.6);
@@ -295,7 +464,10 @@ export default {
                                     align-items: center;
                                     justify-content: center;
                                     color: #fff;
-                                    padding: 5px;
+                                    padding: 10px;
+                                    span {
+                                        margin-left: 10px;
+                                    }
                                 }
                             }
                         }
@@ -304,7 +476,74 @@ export default {
             }
         }
         .right {
-            width: 20%;
+            width: 25%;
+            & > div {
+                height: 50%;
+                padding: 15px;
+            }
+            .title {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                height: 26px;
+                .name {
+                    display: flex;
+                }
+                .name div {
+                    height: 26px;
+                    padding: 0 30px 0 10px;
+                    border-radius: 0px 13px 13px 0px;
+                    line-height: 26px;
+                    color: #fff;
+                }
+                .name:before {
+                    content: '';
+                    display: inline-block;
+                    height: 26px;
+                    width: 2px;
+                    margin-right: 3px;
+                }
+                i {
+                    font-size: 20px;
+                    color: #ffa500;
+                }
+            }
+            .content {
+                padding-left: 15px;
+                height: calc(100% - 26px);
+                overflow: hidden;
+                li {
+                    line-height: 30px;
+                    margin: 5px 0;
+                    list-style: inherit;
+                }
+            }
+            .top {
+                .name div {
+                    background: #ffa500;
+                }
+                .name:before {
+                    background: #ffa500;
+                }
+                .content {
+                    li {
+                        color: #ffa600;
+                    }
+                }
+            }
+            .bottom {
+                .name div {
+                    background: #940d5b;
+                }
+                .name:before {
+                    background: #940d5b;
+                }
+                .content {
+                    li {
+                        color: #ff63c6;
+                    }
+                }
+            }
         }
     }
 }

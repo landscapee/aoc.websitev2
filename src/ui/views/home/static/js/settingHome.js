@@ -58,6 +58,7 @@ const chartOptions = {
 	chart: {
 		backgroundColor: 'transparent',
 		type: 'solidgauge',
+		margin:0
 	},
 	//colors: ['#4169d2', '#9DFF02', '#0CCDD6'],
 	tooltip: {
@@ -499,7 +500,7 @@ export const settings = {
 								innerRadius: '89%',
 								name: `${count}/${total}`,
 								y: value,
-								className: 'shadowBlue',
+								// className: 'shadowBlue',
 							},
 						],
 					},
@@ -1565,7 +1566,6 @@ export const settings = {
 		title: '方向放行率',
 		options: {
 			chart: {
-				height: 400,
 				backgroundColor: 'transparent',
 				// marginLeft: -20,
 				// marginRight: -20,

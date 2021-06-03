@@ -1,7 +1,7 @@
 <template>
     <div id="com_glob_head">
         <div class="logo_left">
-            <div :style="'background-image:url(/static/img/'+sysEdition+'/logoTitle.png);'"></div>
+            <div :style="'background-image:url(/src/ui/assets/img/'+sysEdition+'/logoTitle.png);'"></div>
             <span class="sansB">{{$t('message.sysName')}}</span>
         </div>
         <ul class="nav_middle">

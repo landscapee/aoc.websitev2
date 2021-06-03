@@ -14,10 +14,18 @@
     }
 }
 
+
+
+
 .el-dialog {
     background: #233147;
     border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.50);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0 !important;
 
     .el-dialog__headerbtn {
         top: 14px;
@@ -37,16 +45,24 @@
 
     .el-dialog__header {
         padding: 0;
-        height: 50px;
-        text-align: center;
-        line-height: 50px;
+        height: 40px;
         background: #234479;
         border-radius: 5px 5px 0px 0px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 10px;
+
+        .blankDiv {
+            i {
+                font-size: 18px;
+                color: #fff;
+            }
+        }
 
         .el-dialog__title {
-
-            font-size: 18px;
             color: #ffffff;
+            font-size: 14px;
         }
     }
 
@@ -73,9 +89,10 @@
     }
 }
 
-.el-tabs--bottom{
+.el-tabs--bottom {
     height: auto;
-    .el-tabs__item{
+
+    .el-tabs__item {
         color: #fff;
         font-size: 14px;
         height: auto;
@@ -83,20 +100,23 @@
         padding-right: 0;
         font-weight: normal;
     }
-    .el-tabs__item.is-active{
-        color: rgba(97,156,255,1);
+
+    .el-tabs__item.is-active {
+        color: rgba(97, 156, 255, 1);
     }
-    .el-tabs__nav-wrap::after{
+
+    .el-tabs__nav-wrap::after {
         height: 0;
     }
-    .el-tabs__header.is-bottom{
+
+    .el-tabs__header.is-bottom {
         margin-top: 0;
     }
 }
 
 // tabs
-.el-radio-group{
-    .el-radio-button__inner{
+.el-radio-group {
+    .el-radio-button__inner {
         height: 34px;
         padding: 0 10px;
         color: #fff;
@@ -104,47 +124,111 @@
         border-color: #2b3645;
         font-weight: normal;
         line-height: 34px;
-        &:hover{
+
+        &:hover {
             background: #3e5b82;
         }
     }
+
     //.el-radio-button:first-child.is-focus{
     //    border-left-color: #2b3645;
     //}
-    .el-radio-button:first-child:not(.is-focus) .el-radio-button__inner{
+    .el-radio-button:first-child:not(.is-focus) .el-radio-button__inner {
         border-radius: 0.02rem 0 0 0.02rem;
         border-left-color: #2b3645;
     }
-    .el-radio-button:last-child .el-radio-button__inner{
+
+    .el-radio-button:last-child .el-radio-button__inner {
         border-radius: 0.02rem 0 0 0.02rem;
     }
 }
 
 // form 表单 元素
-.el-select{
-     .el-select__tags{
+.el-select {
+    .el-select__tags {
         color: #ffffff;
         background: #101c2f;
         left: 2px;
-        .el-tag{
+
+        .el-tag {
             background: #101c2f;
             border: 1px solid #37455c;
+
             .el-tag__close {
                 background: #37455c;
             }
         }
     }
-    .el-input__inner{
+
+    .el-input__inner {
         border: 1px solid #37455c;
         background: #101c2f;
     }
-    .el-input__inner:hover{
+
+    .el-input__inner:hover {
         border: 1px solid #37455c;
     }
 }
-.el-select-dropdown__item.selected{
+
+.el-select-dropdown__item.selected {
     background: #224167 !important;
 }
-.el-select-dropdown{
 
+.el-select-dropdown {}
+
+.el-checkbox__inner {
+    background: #101c2f !important;
+    border: 1px #101c2f solid;
+}
+
+
+
+.el-table.layerTable {
+    background-color: transparent;
+    border-color: #45547c;
+
+    thead {
+        color: #fff;
+
+        tr {
+            background-color: #293756;
+
+            th {
+                background-color: #293756;
+                border-color: #45547c;
+            }
+        }
+    }
+
+    tbody {
+        tr {
+            background-color: transparent;
+
+            td {
+                background: transparent;
+                color: #Fff;
+                border-color: #45547c;
+            }
+        }
+
+        tr.el-table__row--striped td {
+            background: rgba(84, 136, 255, 0.05);
+        }
+
+    }
+
+    .el-table__body {
+
+        tr:hover {
+            td {
+                background-color: #2c3f6d !important;
+            }
+        }
+    }
+
+}
+
+.el-table.layerTable:before,
+.el-table.layerTable:after {
+    background-color: #45547c;
 }

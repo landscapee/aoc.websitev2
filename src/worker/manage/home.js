@@ -35,6 +35,21 @@ export const flight_FlightStatistic = (posWorker, data) => {
 export const flight_direction = (posWorker, data) => {
   posWorker.publish('Web','flight.direction',data)
 }
+// 流量信息
+export const flight_traffic = (posWorker, data) => {
+  posWorker.publish('Web','flight.traffic',data)
+}
+//下小时预计放行
+export const flight_estimateCtotRelease = (posWorker, data) => {
+  posWorker.publish('Web','flight.estimateCtotRelease',data)
+}
+//综合速率
+export const flight_runwayTraffic = (posWorker, data) => {
+  posWorker.publish('Web','flight.runwayTraffic',data)
+}
+
+
+
 
 
 
