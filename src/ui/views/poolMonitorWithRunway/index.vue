@@ -78,7 +78,14 @@
     import sfhbc from '../../assets/img/sfhbc.png'
     import yywc from '../../assets/img/yywc.png'
     import cqywc from '../../assets/img/cqywc.png'
-
+      const ArrayItemTrue = (data) => {
+        let blo=false
+        let b=Object.prototype.toString.call(data)==='[object Array]'
+        if(b&&Object.keys(data[0]).length){
+            blo=true
+        }
+        return blo
+    }
 
     export default {
         name: "index",
@@ -134,14 +141,15 @@
 
             pageList() {
                 return map(this.pageListObj, (k, l) => {
-                    if (k.columns) {
-                        let arr = []
-                        arr = map(k.columns, (item, i) => {
+                    let obj={...k}
+                    if (obj.columns) {
+                        obj={...obj,columns:{...obj.columns}}
+                        let arr  = map({...obj.columns}, (item, i) => {
                             return item
                         })
-                        k.columns = arr
+                        obj.columns = arr
                     }
-                    return k
+                    return obj
 
                 })
             },
@@ -208,23 +216,28 @@
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
 
                 postalStore.sub( 'poolMonitorWithRunway.channel',(data)=>{
-                    let length=Object.keys(data.data[0]||{}).length
 					let obj=this.pageListObj[data.key]
-                    console.log('batchConcern',data);
-                    if(!length){
+                    console.log('batchConcern111',  data['data'], data.key);
+
+                    if(!data.data||!obj){
 					    return
 					}
 					if(obj.columns){
 					    let s=data.key+'_noRequested'
 					    let s1=data.key+'_requested'
-                        this.$set(this.pageListObj[data.key].columns[s],'data',data[s])
-                        this.$set(this.pageListObj[data.key].columns[s1],'data',data[s1])
+                         if(!data.data[s]||!this.pageListObj[data.key].columns[s]){
+                            return
+                        }
+                        this.$set(this.pageListObj[data.key].columns[s],'data', data.data[s]||[])
+                        this.$set(this.pageListObj[data.key].columns[s1],'data',data.data[s1]||[])
 
                     }else {
-                        this.$set(this.pageListObj[data.key],'data',data.data)
-                    }
-                });
 
+                        this.$set(this.pageListObj[data.key],'data',data.data||[])
+                    }
+                    console.log('pageListObj',this.pageListObj);
+
+                });
         },
         beforeDestroy() {
             postal.publish({
@@ -258,20 +271,23 @@
 
 		.adv-table_header-container{
 			border: 0!important;
-			table{
-				tr{
-					border-top: $border;
-					border-bottom: $border;
-					th{
-						/*<!--border-top: $border;-->*/
-						border-bottom: $border;
-						border-right: 0!important;
-						background: #36445a!important;
-					}
-				}
-			}
+		}table{
+			 tr{
+				 border-top: $border;
+				 border-bottom: $border;
+				 th{
+					 /*<!--border-top: $border;-->*/
+					 border-bottom: $border;
+					 border-right: 0!important;
+					 background: #36445a!important;
+				 }
+				 td{
+					 border-right: 0!important;
+					 border-bottom: $border;
+				 }
+			 }
+		 }
 
-		}
 	}
 	.poolMonitorWithRunway {
 		& > * {

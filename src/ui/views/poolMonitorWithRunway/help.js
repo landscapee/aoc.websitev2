@@ -1,9 +1,13 @@
+const DISPLAYNULL = '--';
+import {  get  } from 'lodash';
+
 export const setting = {
 	//始发航班池
     initialFlights2: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
+
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
          },
         {
             key: 'flightNo',
@@ -35,9 +39,8 @@ export const setting = {
 
     delayFlights2: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
-
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
         },
         {
             key: 'flightNo',
@@ -51,10 +54,20 @@ export const setting = {
         {
             key: 'sta-std',
             type: 'simple',width: '40px',label: '计划时间',
+            display:(row)=>{
+                let movement = row.movement;
+                return movement === 'D' ? get(row, 'displaySTDWithDate', DISPLAYNULL) : get(row, 'displaySTAWithDate', DISPLAYNULL);
+
+            }
         },
         {
             key: 'eta-ctot',
             type: 'simple',width: '40px',label: '预计时间',
+            display:(row)=>{
+                let movement = row.movement;
+                return movement === 'D' ? get(row, 'displayCTOT', DISPLAYNULL) : get(row, 'displayETA', DISPLAYNULL);
+
+            }
         },
         {
             key: 'reasonType',
@@ -69,8 +82,8 @@ export const setting = {
 
     alwaysDelay: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
 
         },
         {
@@ -107,8 +120,8 @@ export const setting = {
     // title: '过站时间不足',
     fastEnter_noRequested: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
 
         },
         {
@@ -134,8 +147,8 @@ export const setting = {
 	// title: '协调快速保障',
     fastEnter_requested: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
 
         },
         {
@@ -168,8 +181,8 @@ export const setting = {
     // title: '临界保障延误'
     critical_noRequested: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
 
         },
         {
@@ -196,8 +209,8 @@ export const setting = {
     // title: '协调临界保障',
     critical_requested: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
 
         },
         {
@@ -230,8 +243,8 @@ export const setting = {
 
     departGuarantee: [
         {
-            key: 'flightIndex',
-            type: 'simple',width: '20px',label: '序号',
+            key: 'ind',
+            type: 'index',width: '20px',label: '序号',
 
         },
         {

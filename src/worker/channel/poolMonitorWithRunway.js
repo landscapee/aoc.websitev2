@@ -1,5 +1,5 @@
 
-import {situationStart, situationStop,grounpStatus} from "../manage/poolMonitorWithRunway";
+import {situationStart, situationStop,grounpStatus,getFlightDatas} from "../manage/runMonitor";
 import Logger from "../../lib/logger";
 import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
@@ -23,32 +23,37 @@ export const checkClient = (clientField) => {
 const subWSEvent = () => {
     let client = clientObj.situationClient;
     //已延误池
-    client.sub('Flight/normalMonitor/delayFlight',(res)=>{
+
+    client.sub('/Flight/normalMonitor/delayFlight',(res)=>{
         
-        worker.publish('Web','poolMonitorWithRunway.channel',{delayFlights2:res,key:'delayFlights2'})
+        let data=getFlightDatas(res.unNormal)
+        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'delayFlights2'})
     });
     //快速过站池
     client.sub('/Flight/monitor/overStation',(res)=>{
-        let data=grounpStatus(res)
+        let data=grounpStatus(res,'fastEnter')
         worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'fastEnter'})
     });
     //临界延误池
-    client.sub('Flight/monitor/criticalDelay',(res)=>{
-        let data=grounpStatus(res)
+    client.sub('/Flight/monitor/criticalDelay',(res)=>{
+         let data=grounpStatus(res,'critical')
         worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'critical'})
     });
     //始发航班池
-    client.sub('Flight/monitor/initialFlights',(res)=>{
-        
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:res,key:'initialFlights2'})
+    client.sub('/Flight/monitor/initialFlights',(res)=>{
+        let data=getFlightDatas(res)
+        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'initialFlights2'})
     })
     //长期延误池
-    client.sub('Flight/monitor/alwaysDelay',(res)=>{
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:res,key:'alwaysDelay'})
+    client.sub('/Flight/monitor/alwaysDelay',(res)=>{
+        let data=getFlightDatas(res)
+        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'alwaysDelay'})
     })
     //起飞保障池
-    client.sub('Flight/monitor/departureGuarantee',(res)=>{
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:res,key:'departureGuarantee'})
+    client.sub('/Flight/monitor/departureGuarantee',(res)=>{
+        
+        let data=getFlightDatas(res)
+        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'departGuarantee'})
     })
 };
 

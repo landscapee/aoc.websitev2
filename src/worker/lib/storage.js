@@ -478,7 +478,7 @@ export const saveToIntelligenceDB = (msg, convert) => {
   return Promise.resolve(msg);
 };
 export const getFlightDetail = (flightId) => {
-    let f = flightDB.by('flightId', flightId + '') || {};
+    let f = flightDB.by('flightId', flightId + '') || {flightId:flightId};
     if (f.relatedId) {
         let relatedF = flightDB.by('flightId', f.relatedId);
         if (f.movement == 'A') {
