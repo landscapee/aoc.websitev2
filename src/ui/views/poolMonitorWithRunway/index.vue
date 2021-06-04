@@ -29,15 +29,26 @@
 		</el-dropdown>
 
 		<div class="top">
-			<div style="width: 100px ;height: 100px;">
- 			</div>
- 		</div>
+			<div style="width: 100px ;height: 100px;background: url('../../assets/img/ksgzc.png')">
+
+			</div>
+		</div>
 		<div class="bottom">
-			<div class="bottomItem " :class="opt.columns?'bottomItemTwoTable':''" v-if="opt.show" v-for="(opt,index) in pageList" :key="index">
-				<div class="itemTitle" :style="'background:url('+opt.bg+') no-repeat'" >
-					<div>{{opt.name}}（{{(opt.data||[]).length}}）</div>
+			<div class="bottomItem " :class="opt.columns?'bottomItemTwoTable':''" v-if="opt.show"
+				 v-for="(opt,index) in pageList" :key="index">
+				<div class="itemTitle"
+					 :style="'background-image:url('+opt.bg+') ;background-repeat:no-repeat;background-size:100% 100%;'">
+					<div>
+						{{opt.name}}（{{getLength(opt)}}）
+						<el-select v-if="opt.select" v-model="delayFlights" placeholder="请选择" size="mini"  >
+							<el-option v-for="item in delayFlightsOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+						</el-select>
+					</div>
 					<div>
 						<i v-if="!notSeting(opt)" @click="openSetting(opt)" class="el-icon-setting"></i>
+						<span v-if="opt.dig" @click="bangzhu(opt) "  style="color:#fff"  >
+							<icon-svg  iconClass="bangzhu"  ></icon-svg>
+						</span>
 					</div>
 				</div>
 				<div class="  twotablediv" v-if="opt.columns">
@@ -45,22 +56,40 @@
 						<div class="T_title">{{optItem.name}}</div>
 						<div class="tablediv">
 							<AdvTable :tab-data="optItem.data" :columnConfig="optItem.tableConfig">
-
+								<template slot="noRequestedHandle" slot-scope="{row,index}">
+									<!--<div> 过站时间不足 操作 </div>-->
+									<span @click="jiantou(row,opt.key,opt.name) "  class="jiantouSpan cursor">
+										<icon-svg  iconClass="jiantou1" :style="{transform: 'rotate(-90deg)'}" ></icon-svg>
+									</span>
+								</template>
+								<template slot="requestedHandle" slot-scope="{row,index}">
+									<!--<div> 过站时间不足 操作 </div>-->
+									<span  class="xietiao  ">
+										<span  class="  cursor" @click="xietiao(row,opt.key) "  v-if="row.overStationStatus==0" :title="row.descript">
+											协调
+										</span>
+										<span v-else-if="row.overStationStatus==1" :title="row.descript">
+											已协调
+										</span>
+										<span v-else :title="row.descript">
+											已拒绝
+										</span>
+ 									</span>
+								</template>
 							</AdvTable>
 						</div>
-
 					</div>
 				</div>
 				<div class="tablediv tabledivWC" v-else>
-					<AdvTable :tab-data="opt.data" :columnConfig="opt.tableConfig">
+					<AdvTable :tab-data="getData(opt)" :columnConfig="opt.tableConfig">
 
 					</AdvTable>
-
 				</div>
 			</div>
-
 		</div>
 		<Setting :setting="setting" ref="Setting" col="7" @getCol="getCol"></Setting>
+		<Bangzhu   ref="Bangzhu"  ></Bangzhu>
+		<Coordination   ref="Coordination"  ></Coordination>
 
 	</div>
 </template>
@@ -70,36 +99,38 @@
     import {map, keyBy} from 'lodash';
     import {setting} from './help';
     import PostalStore from "../../lib/postalStore";
-     let postalStore = new PostalStore();
+
+    let postalStore = new PostalStore();
     import AdvTable from "@/ui/components/advTable.vue";
     import Setting from "@components/setTableCol/setting";
+    import Bangzhu from './components/bangzhu'
+    import Coordination from './components/coordination'
     import ksgzc from '../../assets/img/ksgzc.png'
     import ljywc from '../../assets/img/ljywc.png'
     import sfhbc from '../../assets/img/sfhbc.png'
     import yywc from '../../assets/img/yywc.png'
     import cqywc from '../../assets/img/cqywc.png'
-      const ArrayItemTrue = (data) => {
-        let blo=false
-        let b=Object.prototype.toString.call(data)==='[object Array]'
-        if(b&&Object.keys(data[0]).length){
-            blo=true
-        }
-        return blo
-    }
+
+
 
     export default {
         name: "index",
-        components: {AdvTable, Setting},
+        components: {AdvTable, Setting,Bangzhu,Coordination},
         data() {
             return {
                 cqywc,
                 setting,
                 jg: true,
                 lg: true,
+                delayFlights:'unNormal',
+                delayFlightsData:{},
                 pageListObj: {
-                    delayFlights2: {name: '已延误池', key: 'delayFlights2',select:true,bg:ksgzc, data: [], show: true, tableConfig: []},
+                    delayFlights2: {name: '已延误池',
+                        key: 'delayFlights2', select: true,
+                        bg: ksgzc, data: [], show: true, tableConfig: []
+                    },
                     fastEnter: {
-                        name: '快速过站池', key: 'fastEnter', bg:yywc,show: true, columns: {
+                        name: '快速过站池', key: 'fastEnter',dig:true, bg: yywc, show: true, columns: {
                             fastEnter_noRequested: {
                                 name: '过站时间不足',
                                 key: 'fastEnter_noRequested',
@@ -115,7 +146,7 @@
                         }
                     },
                     critical: {
-                        name: '临界延误池', key: 'critical', bg:ljywc,show: true, columns: {
+                        name: '临界延误池', key: 'critical',dig:true, bg: ljywc, show: true, columns: {
                             critical_noRequested: {
                                 name: '临界保障延误',
                                 key: 'critical_noRequested',
@@ -125,10 +156,26 @@
                             critical_requested: {name: '协调临界保障', key: 'critical_requested', data: [], tableConfig: []},
                         }
                     },
-                    initialFlights2: {name: '始发航班池', bg:sfhbc,key: 'initialFlights2', data: [], show: true, tableConfig: []},
-                    alwaysDelay: {name: '长期延误池', bg:cqywc,key: 'alwaysDelay', data: [], show: true, tableConfig: []},
-                    departGuarantee: {name: '起飞保障池',bg:ljywc, key: 'departGuarantee', data: [], show: true, tableConfig: []},
+                    initialFlights2: {
+                        name: '始发航班池',
+                        bg: sfhbc,
+                        key: 'initialFlights2',
+                        data: [],
+                        show: true,
+                        tableConfig: []
+                    },
+                    alwaysDelay: {name: '长期延误池', bg: cqywc, key: 'alwaysDelay', data: [], show: true, tableConfig: []},
+                    departGuarantee: {
+                        name: '起飞保障池',
+                        bg: ljywc,
+                        key: 'departGuarantee',
+                        data: [],
+                        show: true,
+                        tableConfig: []
+                    },
                 },
+                delayFlightsOptions: [{ value: 'unNormal', label: '航班不正常' }, { value: 'allowtakeOff', label: '放行不正常' }, { value: 'orignalAllowTakeOff', label: '始发不正常' }, { value: 'OrignalAllowTakeOffInMorning', label: '早高峰始发不正常' }, { value: 'departure', label: '起飞不正常' }, { value: 'arrive', label: '落地不正常' }],
+
             }
         },
         computed: {
@@ -137,14 +184,33 @@
                     return opt.key == 'fastEnter' || opt.key == 'critical'
                 }
             },
-
-
+            getLength() {
+                return (opt) => {
+                    let len = (opt.data || []).length
+                    if (opt.columns) {
+                        len = opt.columns[0].data.length + opt.columns[1].data.length
+                    }
+                    if (opt.select) {
+                        len =(this.delayFlightsData[this.delayFlights]||[]).length
+                    }
+                    return len || 0
+                }
+            },
+			getData() {
+                return (opt) => {
+                    let data = opt.data
+                    if (opt.select) {
+                        data =this.delayFlightsData[this.delayFlights]
+                    }
+                     return data
+                }
+            },
             pageList() {
                 return map(this.pageListObj, (k, l) => {
-                    let obj={...k}
+                    let obj = {...k}
                     if (obj.columns) {
-                        obj={...obj,columns:{...obj.columns}}
-                        let arr  = map({...obj.columns}, (item, i) => {
+                        obj = {...obj, columns: {...obj.columns}}
+                        let arr = map({...obj.columns}, (item, i) => {
                             return item
                         })
                         obj.columns = arr
@@ -154,7 +220,6 @@
                 })
             },
         },
-
 
 
         methods: {
@@ -170,13 +235,55 @@
             right() {
 
             },
+            xietiao(row,key) {
+                let obj={
+                    fastEnter:'edit-overstation-coordination',
+                    critical:'edit-delay-coordination',
+                }
+                if(!this.$hasRole(obj[key])){
+                    return
+				}
+				let fn=(obj)=>{
+                    this.$request.post('situation', 'pool/status',obj,true).then((res)=>{
+                        if(res.code!=200 ){
+                            this.$message.warning(res.message)
+                            return
+                        }
+                        this.$message.success('取消关注成功')
+                    })
+				}
+ 				let o={ status:1, flightId: row.flightId,type:'overStation'}
+                this.$confirm(`你确认协调${row.flightNo}航班吗?`, '提示', {
+                    type: 'warning',
+                    confirmButtonText: '确认协调',
+                    cancelButtonText: '不协调',
+                }).then(() => {
+					fn(o)
+                }).catch(() => {
+                    o.status=null
+                    fn(o)
+                    // this.$message.info('已取消操作')
+                })
+			 },
+            jiantou({flightId},key,name){
+                let obj={
+                    fastEnter:'edit-overstation-request-coordination',
+                    critical:'edit-delay-request',
+				}
+                if(this.$hasRole(obj[key])){
+                    this.$refs.Coordination.open({name, flightId})
+				}
+            },
+			bangzhu({name, key}){
+                this.$refs.Bangzhu.open({name, key})
+			},
             resetPageList() {
                 map(this.pageListObj, (k, l) => {
                     k.show = true
                 })
             },
-            openSetting( {name, key, tableConfig,}) {
-                 this.$refs.Setting.open({name, key, tableConfig})
+            openSetting({name, key, tableConfig,}) {
+                this.$refs.Setting.open({name, key, tableConfig})
             },
             getCol(cols, key) {
 
@@ -208,36 +315,40 @@
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.poolMonitorWithRunway.Start',
-            }) ;
+            });
         },
-        mounted(){
+        mounted() {
             // 已延误池 delayFlights2; 快速过站池 fastEnter;临界延误池 critical
             // 始发航班池 initialFlights2; 长期延误池 alwaysDelay;起飞保障池 departureGuarantee
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
 
-                postalStore.sub( 'poolMonitorWithRunway.channel',(data)=>{
-					let obj=this.pageListObj[data.key]
-                    console.log('batchConcern111',  data['data'], data.key);
+            postalStore.sub('poolMonitorWithRunway.channel', (data) => {
+                let obj = this.pageListObj[data.key]
+              data.key=='fastEnter'&&  console.log('batchConcern111', data['data'], data.key);
 
-                    if(!data.data||!obj){
-					    return
-					}
-					if(obj.columns){
-					    let s=data.key+'_noRequested'
-					    let s1=data.key+'_requested'
-                         if(!data.data[s]||!this.pageListObj[data.key].columns[s]){
-                            return
-                        }
-                        this.$set(this.pageListObj[data.key].columns[s],'data', data.data[s]||[])
-                        this.$set(this.pageListObj[data.key].columns[s1],'data',data.data[s1]||[])
-
-                    }else {
-
-                        this.$set(this.pageListObj[data.key],'data',data.data||[])
+                if (!data.data || !obj) {
+                    return
+                }
+                if (obj.columns) {
+                    let s = data.key + '_noRequested'
+                    let s1 = data.key + '_requested'
+                    if (!data.data[s] || !this.pageListObj[data.key].columns[s]) {
+                        return
                     }
-                    console.log('pageListObj',this.pageListObj);
+                    this.$set(this.pageListObj[data.key].columns[s], 'data', data.data[s] || [])
+                    this.$set(this.pageListObj[data.key].columns[s1], 'data', data.data[s1] || [])
 
-                });
+                } else {
+					if(data.key=='delayFlights2'){
+                        console.log('delayFlights2',data.data);
+                        this.delayFlightsData=data.data
+					}else{
+                        this.$set(this.pageListObj[data.key], 'data', data.data || [])
+
+                    }
+                }
+
+            });
         },
         beforeDestroy() {
             postal.publish({
@@ -256,52 +367,59 @@
 		text-align: center;
 		padding-top: 10px;
 	}
-	 .el-dropdown-menu {
+
+	.el-dropdown-menu {
 		padding: 15px !important;
 	}
+
 	::v-deep .el-dropdown-menu__item {
 		padding: 0px;
 		border-bottom: 1px #ddd solid !important;
 	}
-	$border:1px #565c67 solid;
+
+	$border: 1px #565c67 solid;
 	::v-deep .adv-table-container {
-		.adv-table_main-container{
-			border: 0!important;
+		.adv-table_main-container {
+			border: 0 !important;
 		}
 
-		.adv-table_header-container{
-			border: 0!important;
-		}table{
-			 tr{
-				 border-top: $border;
-				 border-bottom: $border;
-				 th{
-					 /*<!--border-top: $border;-->*/
-					 border-bottom: $border!important;
-					 border-right: 0!important;
-					 background: #36445a!important;
-				 }
-				 td{
-					 border-right: 0!important;
-					 border-bottom: $border!important;
-					 .flightType{
-						 padding: 1px;
-						 border: 1px solid #ffffff;
-						 border-radius: 4px 4px 0px 0px;
-						 font-size: 12px;
-					 }
-				 }
-			 }
-		 }
+		.adv-table_header-container {
+			border: 0 !important;
+		}
+		table {
+			tr {
+				border-top: $border;
+				border-bottom: $border;
+				th {
+					/*<!--border-top: $border;-->*/
+					border-bottom: $border !important;
+					border-right: 0 !important;
+					background: #36445a !important;
+				}
+				td {
+					border-right: 0 !important;
+					border-bottom: $border !important;
+					.flightType {
+						padding: 1px;
+						border: 1px solid #ffffff;
+						border-radius: 4px 4px 0px 0px;
+						font-size: 12px;
+					}
+					.xietiao{
+
+					}
+				}
+			}
+		}
 	}
+
 	.poolMonitorWithRunway {
 		& > * {
 			box-sizing: border-box;
 		}
 		height: calc(100vh - 40px);
 		overflow: hidden;
-		padding: 15px 15px 0px 15px ;
-
+		padding: 15px 15px 0px 15px;
 
 		.positionDropdown {
 			cursor: pointer;
@@ -327,7 +445,7 @@
 		.buttonDiv {
 			display: inline-block;
 			padding: 4px 0;
- 			height: 27px;
+			height: 27px;
 			background: #0566ff;
 			border-radius: 2px;
 			.middle, .right, .left {
@@ -397,7 +515,7 @@
 			height: calc(45vh - 46px);
 		}
 		.bottom {
- 			color: #fff;
+			color: #fff;
 			width: 100%;
 			overflow-x: auto;
 			white-space: nowrap;
@@ -413,13 +531,13 @@
 					width: 100%;
 					height: calc(100% - 40px);
 				}
-				.tabledivWC{
+				.tabledivWC {
 					border: $border;
 					border-top: 0;
 				}
-				.twotablediv{
+				.twotablediv {
 					height: calc(100% - 40px);
-					.T_title{
+					.T_title {
 						width: 100%;
 						height: 37px;
 						line-height: 37px;
@@ -429,15 +547,15 @@
 						position: relative;
 						z-index: 10;
 					}
-					.tabledivItem{
+					.tabledivItem {
 						width: 50% !important;
-						height: calc(100% );;
+						height: calc(100%);;
 						display: inline-block;
- 						position: relative;
+						position: relative;
 						border: $border;
 						border-top: 0;
 					}
-					.tabledivItem:last-child{
+					.tabledivItem:last-child {
 						border-left: 0;
 					}
 				}
@@ -449,13 +567,18 @@
 					height: 37px;
 					line-height: 37px;
 					border-radius: 6px 6px 0 0;
-					background: #234479;
+					/*background: #234479;*/
 					display: flex;
 					padding: 0 15px;
 					justify-content: space-between;
+					::v-deep .el-input__inner{
+						background: rgba(0, 124, 215, 0.55);
+						border: 1px solid rgba(255, 255, 255, 0.45);
+						color: #ffffff;
+					}
 				}
 			}
-			.bottomItemTwoTable{
+			.bottomItemTwoTable {
 				width: 40% !important;
 			}
 		}

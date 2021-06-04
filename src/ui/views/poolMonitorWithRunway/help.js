@@ -1,6 +1,21 @@
 const DISPLAYNULL = '--';
 import {  get  } from 'lodash';
-
+export const titleMessage={
+        fastEnter: (
+            `<div>
+            <p align="left">  ${'1. 计划过站时间不足：机型最小过站时间-10min<STD-STA<机型最小过站时间； '} </p>
+    <p align="left"> ${' 2. 实际过站时间不足：机型最小过站时间-10min<STD-ETA<机型最小过站时间； '} </p>
+</div>`
+),
+critical: (
+`<div>
+<p align="left">COBT在55分钟内 </p>
+<p align="left"> 并且：-5分钟 <= COBT-标准保障时间 <= 10分钟</p>
+<p align="left"> 并且：标准保障时间+30分钟>当前时间</p>
+</div>
+`
+    ),
+}
 export const setting = {
 	//始发航班池
     initialFlights2: [
@@ -12,14 +27,7 @@ export const setting = {
         {
             key: 'flightNo',
             type: 'simple',width: '40px',label: '航班号',
-            display:(data)=> {
-                return (
-                    ` <div class ="flightTypeBox">
-                    <span>${data['flightNo']}</span>
-                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
-                    </div>`
-                );
-            }
+
          },
         {
             key: 'displayPreOrNxtPlanTime',
@@ -49,7 +57,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
 
         },
         {
@@ -93,7 +101,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
 
         },
         {
@@ -128,14 +136,14 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
-            display:(data)=>{
+            type: 'simple',width: '40px',label: '航班号',
+            display:(data)=> {
                 return (
-                   ` <div class ="flightTypeBox">
-                    <span>${data['flightNo']}</span>
+                    `<div class ="flightTypeBox">
+                    <span>${data['flightNo']||''}</span>
                     <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
                     </div>`
-            );
+                );
             }
         },
         {
@@ -147,8 +155,8 @@ export const setting = {
             type: 'simple',width: '30px',label: 'CTOT',
         },
         {
-            key: 'handle',
-            type: 'simple',width: '20px',label: '操作',
+            key: 'noRequestedHandle',
+            type: 'slot',width: '20px',label: '操作',
 
         },
     ],
@@ -161,8 +169,15 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
-
+            type: 'simple',width: '40px',label: '航班号',
+            display:(data)=> {
+                return (
+                    `<div class ="flightTypeBox">
+                    <span>${data['flightNo']||''}</span>
+                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
+                    </div>`
+                );
+            }
 
         },
         {
@@ -178,9 +193,8 @@ export const setting = {
             type: 'simple',width: '20px',label: '部门',
         },
         {
-            key: 'handle',
-            type: 'simple',width: '20px',label: '操作',
-
+            key: 'requestedHandle',
+            type: 'slot',width: '20px',label: '操作',
 
         },
     ],
@@ -195,8 +209,15 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
-
+            type: 'simple',width: '40px',label: '航班号',
+            display:(data)=> {
+                return (
+                    `<div class ="flightTypeBox">
+                    <span>${data['flightNo']||''}</span>
+                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
+                    </div>`
+                );
+            }
         },
         {
             key: 'displayCOBT',
@@ -207,8 +228,8 @@ export const setting = {
             type: 'simple',width: '30px',label: 'CTOT',
         },
         {
-            key: 'handle',
-            type: 'simple',width: '20px',label: '操作',
+            key: 'noRequestedHandle',
+            type: 'slot',width: '20px',label: '操作',
 
 
         },
@@ -222,8 +243,15 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
-
+            type: 'simple',width: '40px',label: '航班号',
+            display:(data)=> {
+                return (
+                    `<div class ="flightTypeBox">
+                    <span>${data['flightNo']||''}</span>
+                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
+                    </div>`
+                );
+            }
 
         },
         {
@@ -239,8 +267,8 @@ export const setting = {
             type: 'simple',width: '20px',label: '部门',
         },
         {
-            key: 'handle',
-            type: 'simple',width: '20px',label: '操作',
+            key: 'requestedHandle',
+            type: 'slot',width: '20px',label: '操作',
 
 
         },
@@ -256,7 +284,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
 
         },
         {

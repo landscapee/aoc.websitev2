@@ -33,12 +33,13 @@
 						</div>   
 					</draggable>   
 				</div>   
+
+			</div>
 			<div class="footer">
-				<span @click="reset">重置</span>
-				<span @click="close">取消</span>
-				<span @click="save">保存</span>
-			</div>
-			</div>
+			<span @click="reset">重置</span>
+			<span @click="close">取消</span>
+			<span @click="save">保存</span>
+		</div>
 		</el-dialog>
 	</div>
 </template>
@@ -157,26 +158,7 @@
 			padding: 15px 20px;
 			max-height: 80vh;
 			overflow-y: auto;
-			.footer{
-				text-align: right;
-				border-top:1px #cacaca solid;
-				padding-top: 10px;
-				span{
-					cursor:pointer;
-					color:#fff;
-					display: inline-block;
-					padding:4px 10px;
-					border-radius: 2px;
-				}
-				span:hover{
-					opacity: .6;
-				}
-				span:last-child{
-					color: #fff;
-					background-color: #28a745;
-					border-color: #28a745;
-				}
-			}
+
 		}
 	}
 	.drag-box{
@@ -207,6 +189,8 @@
 		}
 		.drag-bottom{
 			padding-top:15px;
+			border-bottom:1px #cacaca solid;
+
 		}
 
 		.list-complete-item.sortable-chosen {

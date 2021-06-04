@@ -110,7 +110,7 @@
                                                             </template>
                                                         </template>
 
-                                                        <template v-if="col.editConfig && col.editConfig.type == 'textarea'">
+                                                        <template v-if="col.editConfig && col.editConfig.type == 'textarea.scss'">
                                                             <el-input type="textarea" autosize v-if="col.editConfig.switch(row, params, ri, ci, handlePoint)"
                                                                     v-model="row[col.key]"
                                                                     @keydown="handleEditCellKeyDown(row, col, ri, ci)"
@@ -317,7 +317,7 @@
                                                     </template>
                                                 </template>
 
-                                                <template v-if="col.editConfig && col.editConfig.type == 'textarea'">
+                                                <template v-if="col.editConfig && col.editConfig.type == 'textarea.scss'">
                                                     <el-input type="textarea" autosize v-if="col.editConfig.switch(row, params, ri, ci, handlePoint)"
                                                               v-model="row[col.key]"
                                                               @blur="handleEditCellInput(row, ri, col.key)"
@@ -1013,7 +1013,7 @@
                 let eles = compact([
                     { ele:document.querySelector('.edit-point-flicker input'), type:0},
                     { ele:document.querySelector('.edit-point-flicker button'), type:0},
-                    { ele:document.querySelector('.edit-point-flicker textarea'), type:0},
+                    { ele:document.querySelector('.edit-point-flicker textarea.scss'), type:0},
                     { ele:document.querySelector('.edit-point-flicker .cell-simple'), type:1},
                     { ele:document.querySelector('.edit-point-flicker .el-tooltip'), type:0},
                 ]);
@@ -1033,7 +1033,7 @@
                 let eles = compact([
                     { ele:document.querySelector('.edit-point-flicker input'), type:0},
                     { ele:document.querySelector('.edit-point-flicker button'), type:0},
-                    { ele:document.querySelector('.edit-point-flicker textarea'), type:0},
+                    { ele:document.querySelector('.edit-point-flicker textarea.scss'), type:0},
                     { ele:document.querySelector('.edit-point-flicker .cell-simple'), type:1},
                     { ele:document.querySelector('.edit-point-flicker .el-tooltip'), type:0},
                 ]);
