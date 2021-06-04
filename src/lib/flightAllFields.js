@@ -41,7 +41,7 @@ export const allField = {
         width: '50px' ,
 		search: { type: 'select', options: { D: '国内', I: '国际', M: '混合', R: '地区' } },
 	},
-	displayRouter: { text: '航线',width: '30px' , auto: true, search: { type: 'text' } },
+	displayRouter: { text: '航线',width: '35px' , auto: true, search: { type: 'text' } },
 	direction: { text: '方向', width: '30px' ,search: { type: 'select', options: { 西安: '西安', 贵阳: '贵阳', 重庆: '重庆', 拉萨: '拉萨', 兰州: '兰州', 昆明: '昆明' } } },
 	elecFlightStatus: { text: '电子进程单状态',width: '100px' , search: { type: 'select', options: ['未激活', '激活', '申请放行', '已发放行', '准备好', '未推出', '推出', '开车', '推出开车', '滑行', '滑回', '管制', '上跑道', '起飞', '起飞中断', '降落', '塔台滑行', '管制结束', '未管制', '降落', '落地', '入位'] } },
 	displayElecPublishTime: { text: '电子进程单发布', width: '100px' ,full: '电子进程单发布时间', search: { type: 'time' } },
@@ -208,4 +208,75 @@ export const allField = {
 	// EEGT: { text: '地服预计结束' }, //
 };
 
+export const defaultColumns = [
+	{ key: 'flightIndex', lock: true },
+	{ key: 'examine', lock: true },
+	{ key: 'airlineCnName', lock: true }, //航空公司
+	{ key: 'flightNo', lock: true }, //航班号
+	{ key: 'tailNo', lock: true }, //机号
+	{ key: 'aircraftType', lock: true }, //机型
+	{ key: 'seat', lock: true }, //机位
+	{ key: 'displayGate', lock: true }, //登机口
+	{ key: 'flightType', lock: true }, //航班类型
+	{ key: 'flightStatusText' }, //运营状态
+	{ key: 'displayRouter' }, //航线
+	{ key: 'direction' }, //方向
+	{ key: 'sta-std' }, //计划时间
+	{ key: 'ata-atd' }, //实际时间
+	{ key: 'displayPreOrNxtPlanTime' }, //前后站计划时间
+	{ key: 'displayPreOrNxtActualTime' }, //前后站实际时间
+	{ key: 'eta-ctot' }, //预计时间
+	{ key: 'displayStandardTakeOffTime' }, //标准起飞时间
+	{ key: 'elecFlightStatus' }, //电子进程单状态
+	{ key: 'movement' }, //进/离
+	{ key: 'displayRunway' }, //跑道
+	// { key: 'delayReason' }, // 延误原因
+	{ key: 'exceptionReason' }, // 延误原因
+	{ key: 'displayDELAYTIME' }, // 延误时间
+	{ key: 'displayCOBT' }, //COBT
+	{ key: 'displayTOBT' }, //TOBT
+	{ key: 'vtt' }, //VTT
+	{ key: 'flightIndicator' }, //航班性质
+	// { key: 'flightExtStatusText' }, //外部状态
+	{ key: 'relatedFlightNo' }, //关联航班号
+	{ key: 'shareFlights' }, //共享航班
+	{ key: 'c' }, //机类
+	{ key: 'displayCarousels' }, //转盘
+	{ key: 'displayCounters' }, //值机柜台
+	{ key: 'terminal' }, //航站楼
+	{ key: 'assignmentAgent' }, //签派代理
+	{ key: 'passengerService' }, //旅客代理
+	{ key: 'maintenance' }, //机务代理
+	{ key: 'serviceAgent' }, //勤务代理
+	{ key: 'checkInCounters' }, //已值机
+	{ key: 'securityCheckQty' }, //已安检
+	{ key: 'boardingCounters' }, //已登机
+	{ key: 'lastModifier' }, //最后修改人
+	{ key: 'contrlPoint' }, //流控点
+	{ key: 'fix' }, //走廊口
+	{ key: 'contrlStatus' }, //是否流控
+	{ key: 'displayFirstLuggageEstimateArriveTime', width: 160 }, //首件行李预计到达时间
+	{ key: 'estimateBordingLength', width: 120 }, //预计登机时长
+	{ key: 'displayEstimateGuaranteeCompleteTime', width: 140 }, //预计保障完成时间
+	{ key: 'displayFirstLuggageActualArriveTime', width: 160 }, //首件行李实际到达时间
+	{ key: 'actualBordingLength', width: 140 }, //实际登机时长
+	{ key: 'qualificationStatus' },
+	{ key: 'milestoneStatusCn' },
+	{ key: 'displayDSGT' },
+	{ key: 'displayTSTT' },
+	{ key: 'displayDSTT' },
+	{ key: 'displayTSGT' },
+	{ key: 'displayOverStationMinTime' },
+	{ key: 'displayOverStationScheduleTime' },
+	{ key: 'planRoute' },
+	{ key: 'abnormalCategory' }, // 不正常分类
+	{ key: 'delayBasis' }, // 延误依据
+	{ key: 'airlineDesc' }, // 延误备注
+	{ key: 'airportDesc' }, // 延误备注
 
+	{ key: 'displayActualStartTime' },
+	{ key: 'displayActualEndTime' },
+	{ key: 'displayEstimateStartTime' },
+	{ key: 'displayEstimateEndTime' },
+	{ key: 'showVideo' }, //
+];

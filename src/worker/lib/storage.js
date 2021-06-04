@@ -1,6 +1,6 @@
 import loki from 'lokijs';
 import Promise from 'bluebird';
-import { has, extend, get, groupBy, each, omit, flatMap, map, flow, orderBy, remove, concat, compact, isArray, toUpper, keyBy, includes } from 'lodash';
+import { has, extend, get, groupBy, each, omit, flatMap, map, flow, orderBy, remove, concat, compact, isArray, toUpper, keyBy, isString } from 'lodash';
 import { calcCancel, calcReturn, calcAlternate, calcCompleted, calcOriginated, addDisplayField, buildSearchField, fixTakeOffNormalStatus } from 'lib/helper/flight';
 
 import Logger from '@/lib/logger';
@@ -162,7 +162,7 @@ export const saveToFlightDBOriginal = (flights) => {
 export const saveToFlightDB = (flights) => {
   let newFlights = [];
   map(flights, (f) => {
-    let flightId = f.flightId + '';
+    let flightId = isString(f.flightId) ? parseInt(f.flightId) : f.flightId;
     let preFlight = flightDB.by('flightId', flightId);
     if (preFlight) {
       newFlights.push(extend(omit(preFlight, ['$loki', 'meta']), { ...f, flightId: flightId }));
@@ -478,7 +478,7 @@ export const saveToIntelligenceDB = (msg, convert) => {
   return Promise.resolve(msg);
 };
 export const getFlightDetail = (flightId) => {
-    let f = flightDB.by('flightId', flightId + '') || {flightId:flightId};
+    let f = flightDB.by('flightId', flightId) || {flightId:flightId};
     if (f.relatedId) {
         let relatedF = flightDB.by('flightId', f.relatedId);
         if (f.movement == 'A') {
