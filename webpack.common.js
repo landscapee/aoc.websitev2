@@ -204,7 +204,4 @@ module.exports = {
             '@components': path.join(__dirname, 'src/ui/components'),
         }
     },
-
-
-
 }

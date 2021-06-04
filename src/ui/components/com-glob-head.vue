@@ -19,7 +19,7 @@
             </div>
             <div class="timeBox">
                 <i class="el-icon-time" style="color:#fff;"></i>
-                <span class="orbiL flexSC">{{$moment().format('HH:mm')}}</span>
+                <span class="orbiL flexSC">{{$moment().format('HH:mm:ss')}}</span>
             </div>
             <div>
                 <!-- <icon-svg :iconClass="'yonghu'" :iconColor="'#fff'"></icon-svg> -->

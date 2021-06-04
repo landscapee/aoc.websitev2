@@ -25,6 +25,21 @@ const runMonitoring = () => import(/*webpackChunkName:"runMonitoring"*/ '../view
 const poolMonitorWithRunway = () => import(/*webpackChunkName:"poolMonitorWithRunway"*/ '../views/poolMonitorWithRunway')
 const adv = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonitoring/adv')
 
+//不利条件运行
+const conditionalOperation = () => import(/*webpackChunkName:"conditionalOperation"*/ '../views/conditionalOperation/conditionalOperation')
+//大面积备降
+const alternate = () => import(/*webpackChunkName:"alternate"*/ '../views/conditionalOperation/alternate/alternate')
+//低能见运行
+const runningNew = () => import(/*webpackChunkName:"runningNew"*/ '../views/conditionalOperation/runningNew/runningNew')
+//除冰
+const deice = () => import(/*webpackChunkName:"decrease"*/ '../views/conditionalOperation/deice/deice')
+//气象灾害
+const weatherNew = () => import(/*webpackChunkName:"weatherNew"*/ '../views/conditionalOperation/weatherNew/weatherNew')
+//大面积延误
+const delayNew = () => import(/*webpackChunkName:"weatherNew"*/ '../views/conditionalOperation/delayNew/delayNew')
+//调时调减
+const decrease = () => import(/*webpackChunkName:"decrease"*/ '../views/conditionalOperation/decrease/decrease')
+
 
 
 var routes = [
@@ -36,7 +51,18 @@ var routes = [
       { path: '/flight', name: 'flight', component:flight},
       { path: '/runMonitoring', name: 'runMonitoring', component:runMonitoring},
       { path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component:poolMonitorWithRunway},
-      { path: '/adv', name: 'adv', component:adv},
+      { path: '/adv', name: 'adv', component: adv },
+      {
+        path: '/conditionalOperation', name: 'conditionalOperation', component: conditionalOperation, children: [
+           { path: '/alternate', name: 'alternate', component: alternate },
+           { path: '/runningNew', name: 'runningNew', component: runningNew },
+           { path: '/deice', name: 'deice', component: deice },
+           { path: '/weatherNew', name: 'weatherNew', component: weatherNew },
+           { path: '/delayNew', name: 'delayNew', component: delayNew },
+           { path: '/decrease', name: 'decrease', component: decrease },
+        ]
+      },
+      
     ]
   },
 

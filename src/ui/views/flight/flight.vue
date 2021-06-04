@@ -1,20 +1,29 @@
 <template>
     <div id="flight">
       <toolBar/>
+      <flightTable :columns="columns"/>
     </div>
 </template>
 
 <script>
     import postal from 'postal';
     import PostalStore from "../../lib/postalStore";
+    import {getListHeader} from "@/ui/views/flight/components/flightTable/handleColumn";
     let postalStore = new PostalStore();
   export default {
     data() {
-      return {}
+      return {
+        columns: [],
+      }
     },
     components: {
       'toolBar': () =>
-        import(/*webpackChunkName:"com-globHead"*/ './components/toolBar'),
+        import(/*webpackChunkName:"com-toolBar"*/ './components/toolBar'),
+      'flightTable': () =>
+        import(/*webpackChunkName:"com-flightTable"*/ './components/flightTable/flightTable'),
+    },
+    beforeMount() {
+      this.columns = getListHeader();
     },
     mounted() {
       postalStore.sub('Test',a=>{
@@ -38,10 +47,7 @@
       postalStore.unsubAll()
     },
     methods: {
-      testClick(){
-        console.log('asdasdas')
-        // this.$pub('Worker','Test','')
-      }
+
     },
   }
 </script>

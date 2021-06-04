@@ -18,14 +18,14 @@ import HttpRequest from '@/lib/axios'
 import moment from 'moment';
 import {memoryStore} from "./src/worker/lib/memoryStore";
 
-import IconSvg from './src/ui/components/Icon-svg';// svg组件
+import '@/ui/config/vuecomponent'
 import Logger from "@/lib/logger";
 
 import {v4 as uuidv4} from "uuid";
 Vue.prototype.$uuid = uuidv4;
 Vue.prototype.$logger = Logger;
 
-Vue.component('icon-svg', IconSvg);
+
 
 import {servers,httpConfig} from "@/lib/interfaces"
 
