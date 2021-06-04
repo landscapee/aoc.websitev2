@@ -28,7 +28,7 @@
         },
         methods: {
             save(){
-                let obj={flightId:this.item.flightId,desc:this.text,type:'overStation'}
+                let obj={flightId:this.item.flightId,desc:this.text,type:item.type}
                 this.$request.post('situation', 'pool/coordinate', obj,true).then((res)=>{
                     if(res.code!=200 ){
                         this.$message.warning(res.message)

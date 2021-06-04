@@ -28,38 +28,45 @@ const subWSEvent = () => {
     client.sub('/Flight/normalMonitor/delayFlight',(res)=>{
         
         let data=getFlightDatas(res,true)
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'delayFlights2'})
+        worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'delayFlights2'})
     });
     //快速过站池
     client.sub('/Flight/monitor/overStation',(res)=>{
         checkWebsocketResponseDataFinish().then((d)=>{
             let data=grounpStatus(res,'fastEnter')
-            worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'fastEnter'})
+            worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'fastEnter'})
         })
     });
     //临界延误池
     client.sub('/Flight/monitor/criticalDelay',(res)=>{
          let data=grounpStatus(res,'critical')
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'critical'})
+        worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'critical'})
     });
     //始发航班池
     client.sub('/Flight/monitor/initialFlights',(res)=>{
         let data=getFlightDatas(res)
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'initialFlights2'})
+        worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'initialFlights2'})
     })
     //长期延误池
     client.sub('/Flight/monitor/alwaysDelay',(res)=>{
         checkWebsocketResponseDataFinish().then((d)=>{
             let data=getFlightDatas(res)
-            worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'alwaysDelay'})
+            worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'alwaysDelay'})
         })
     })
     //起飞保障池
     client.sub('/Flight/monitor/departureGuarantee',(res)=>{
         
         let data=getFlightDatas(res)
-        worker.publish('Web','poolMonitorWithRunway.channel',{data:data,key:'departGuarantee'})
+        worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'departGuarantee'})
     })
+     //time flight
+    client.sub('/Flight/monitor/queue',(res)=>{
+
+        // let data=getFlightDatas(res)
+        worker.publish('Web','monitor.queue',{data:res})
+    })
+
 };
 
 export const init = (worker_,httpRequest_) => {

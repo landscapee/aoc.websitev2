@@ -29,6 +29,7 @@
 		</el-dropdown>
 
 		<div class="top">
+			<i class ="iconfont icon-feiji2 depart" />
 			<div style="width: 100px ;height: 100px;background: url('../../assets/img/ksgzc.png')">
 
 			</div>
@@ -237,14 +238,21 @@
             },
             xietiao(row,key) {
                 let obj={
-                    fastEnter:'edit-overstation-coordination',
-                    critical:'edit-delay-coordination',
+                    fastEnter:{
+                        role:'edit-overstation-request-coordination',
+                        type:'overStation'
+                    },
+                    critical:{
+                        role:'edit-delay-request',
+                        type:'criticalDelay'
+                    },
+
                 }
-                if(!this.$hasRole(obj[key])){
+                if(!this.$hasRole(obj[key].role)){
                     return
 				}
-				let fn=(obj)=>{
-                    this.$request.post('situation', 'pool/status',obj,true).then((res)=>{
+				let fn=(data)=>{
+                    this.$request.post('situation', 'pool/status',data,true).then((res)=>{
                         if(res.code!=200 ){
                             this.$message.warning(res.message)
                             return
@@ -252,7 +260,7 @@
                         this.$message.success('取消关注成功')
                     })
 				}
- 				let o={ status:1, flightId: row.flightId,type:'overStation'}
+ 				let o={ status:1, flightId: row.flightId,type:obj[key].role.key}
                 this.$confirm(`你确认协调${row.flightNo}航班吗?`, '提示', {
                     type: 'warning',
                     confirmButtonText: '确认协调',
@@ -267,11 +275,18 @@
 			 },
             jiantou({flightId},key,name){
                 let obj={
-                    fastEnter:'edit-overstation-request-coordination',
-                    critical:'edit-delay-request',
+                    fastEnter:{
+                        role:'edit-overstation-request-coordination',
+						type:'overStation'
+					},
+                    critical:{
+                        role:'edit-delay-request',
+                        type:'criticalDelay'
+                    },
 				}
-                if(this.$hasRole(obj[key])){
-                    this.$refs.Coordination.open({name, flightId})
+				let type=obj[key].type
+                if(this.$hasRole(obj[key].role)){
+                    this.$refs.Coordination.open({name, flightId,type})
 				}
             },
 			bangzhu({name, key}){
@@ -321,11 +336,13 @@
             // 已延误池 delayFlights2; 快速过站池 fastEnter;临界延误池 critical
             // 始发航班池 initialFlights2; 长期延误池 alwaysDelay;起飞保障池 departureGuarantee
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
+            postalStore.sub('monitor.queue', (data) => {
+                console.log('queue',data);
+            })
 
-            postalStore.sub('poolMonitorWithRunway.channel', (data) => {
+            postalStore.sub('poolMonitorWithRunway.table', (data) => {
                 let obj = this.pageListObj[data.key]
-              data.key=='fastEnter'&&  console.log('batchConcern111', data['data'], data.key);
-
+              // data.key=='fastEnter'&&  console.log('batchConcern111', data['data'], data.key);
                 if (!data.data || !obj) {
                     return
                 }
@@ -337,17 +354,13 @@
                     }
                     this.$set(this.pageListObj[data.key].columns[s], 'data', data.data[s] || [])
                     this.$set(this.pageListObj[data.key].columns[s1], 'data', data.data[s1] || [])
-
                 } else {
 					if(data.key=='delayFlights2'){
-                        console.log('delayFlights2',data.data);
                         this.delayFlightsData=data.data
 					}else{
                         this.$set(this.pageListObj[data.key], 'data', data.data || [])
-
                     }
                 }
-
             });
         },
         beforeDestroy() {
@@ -513,6 +526,11 @@
 		}
 		.top {
 			height: calc(45vh - 46px);
+			.depart{
+				background: #2e67f6;
+				transform: rotate( -50deg );
+				display: inline-block;
+			}
 		}
 		.bottom {
 			color: #fff;
@@ -571,10 +589,13 @@
 					display: flex;
 					padding: 0 15px;
 					justify-content: space-between;
-					::v-deep .el-input__inner{
-						background: rgba(0, 124, 215, 0.55);
-						border: 1px solid rgba(255, 255, 255, 0.45);
-						color: #ffffff;
+					::v-deep .el-select {
+						width:120px;
+						.el-input__inner{
+							background: rgba(0, 124, 215, 0.55);
+							border: 1px solid rgba(255, 255, 255, 0.45);
+							color: #ffffff;
+						}
 					}
 				}
 			}
