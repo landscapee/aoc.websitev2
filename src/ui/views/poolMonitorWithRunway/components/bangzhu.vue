@@ -10,7 +10,7 @@
 </template>
 <script>
     import {map } from 'lodash'
-    import {titleMessage } from './help'
+    import {titleMessage } from '../help'
 
     export default {
         name: "warning",
@@ -22,9 +22,9 @@
             }
         },
         methods: {
-            close(row) {
+            close() {
 
-                this.item=row;
+                this.item={};
                 this.dialogFormVisible = false
             },
             open(item) {

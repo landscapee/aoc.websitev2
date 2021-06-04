@@ -146,26 +146,7 @@
 					width: 400px;
 				}
 			}
-			.footer {
-				text-align: center;
- 				padding-top: 10px;
-				span {
-					cursor: pointer;
-					color: #fff;
-					display: inline-block;
-					padding: 7px 15px;
-					border-radius: 2px;
-					background: #39404b;
-				}
-				span:hover {
-					opacity: .6;
-				}
-				span:last-child {
-					color: #fff;
-					background-color: #0566ff;
-					border-color: #0566ff;
-				}
-			}
+
 		}
 	}
 

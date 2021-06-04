@@ -56,11 +56,25 @@
 						<div class="T_title">{{optItem.name}}</div>
 						<div class="tablediv">
 							<AdvTable :tab-data="optItem.data" :columnConfig="optItem.tableConfig">
-								<template slot="handle" slot-scope="{row,index}">
+								<template slot="noRequestedHandle" slot-scope="{row,index}">
 									<!--<div> 过站时间不足 操作 </div>-->
-									<span @click="jiantou(row) "  class="jiantouSpan cursor">
+									<span @click="jiantou(row,opt.key,opt.name) "  class="jiantouSpan cursor">
 										<icon-svg  iconClass="jiantou1" :style="{transform: 'rotate(-90deg)'}" ></icon-svg>
 									</span>
+								</template>
+								<template slot="requestedHandle" slot-scope="{row,index}">
+									<!--<div> 过站时间不足 操作 </div>-->
+									<span  class="xietiao  ">
+										<span  class="  cursor" @click="xietiao(row,opt.key) "  v-if="row.overStationStatus==0" :title="row.descript">
+											协调
+										</span>
+										<span v-else-if="row.overStationStatus==1" :title="row.descript">
+											已协调
+										</span>
+										<span v-else :title="row.descript">
+											已拒绝
+										</span>
+ 									</span>
 								</template>
 							</AdvTable>
 						</div>
@@ -75,6 +89,7 @@
 		</div>
 		<Setting :setting="setting" ref="Setting" col="7" @getCol="getCol"></Setting>
 		<Bangzhu   ref="Bangzhu"  ></Bangzhu>
+		<Coordination   ref="Coordination"  ></Coordination>
 
 	</div>
 </template>
@@ -88,7 +103,8 @@
     let postalStore = new PostalStore();
     import AdvTable from "@/ui/components/advTable.vue";
     import Setting from "@components/setTableCol/setting";
-    import Bangzhu from './bangzhu'
+    import Bangzhu from './components/bangzhu'
+    import Coordination from './components/coordination'
     import ksgzc from '../../assets/img/ksgzc.png'
     import ljywc from '../../assets/img/ljywc.png'
     import sfhbc from '../../assets/img/sfhbc.png'
@@ -99,7 +115,7 @@
 
     export default {
         name: "index",
-        components: {AdvTable, Setting,Bangzhu},
+        components: {AdvTable, Setting,Bangzhu,Coordination},
         data() {
             return {
                 cqywc,
@@ -219,9 +235,44 @@
             right() {
 
             },
-
-            jiantou(opt){
-                console.log('qqqq',this.$hasRole('edit-overstation-request-coordination'));
+            xietiao(row,key) {
+                let obj={
+                    fastEnter:'edit-overstation-coordination',
+                    critical:'edit-delay-coordination',
+                }
+                if(!this.$hasRole(obj[key])){
+                    return
+				}
+				let fn=(obj)=>{
+                    this.$request.post('situation', 'pool/status',obj,true).then((res)=>{
+                        if(res.code!=200 ){
+                            this.$message.warning(res.message)
+                            return
+                        }
+                        this.$message.success('取消关注成功')
+                    })
+				}
+ 				let o={ status:1, flightId: row.flightId,type:'overStation'}
+                this.$confirm(`你确认协调${row.flightNo}航班吗?`, '提示', {
+                    type: 'warning',
+                    confirmButtonText: '确认协调',
+                    cancelButtonText: '不协调',
+                }).then(() => {
+					fn(o)
+                }).catch(() => {
+                    o.status=null
+                    fn(o)
+                    // this.$message.info('已取消操作')
+                })
+			 },
+            jiantou({flightId},key,name){
+                let obj={
+                    fastEnter:'edit-overstation-request-coordination',
+                    critical:'edit-delay-request',
+				}
+                if(this.$hasRole(obj[key])){
+                    this.$refs.Coordination.open({name, flightId})
+				}
             },
 			bangzhu({name, key}){
                 this.$refs.Bangzhu.open({name, key})
@@ -353,6 +404,9 @@
 						border: 1px solid #ffffff;
 						border-radius: 4px 4px 0px 0px;
 						font-size: 12px;
+					}
+					.xietiao{
+
 					}
 				}
 			}

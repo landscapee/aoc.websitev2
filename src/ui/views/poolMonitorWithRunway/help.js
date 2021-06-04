@@ -57,7 +57,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
 
         },
         {
@@ -101,7 +101,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
 
         },
         {
@@ -136,7 +136,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
             display:(data)=> {
                 return (
                     `<div class ="flightTypeBox">
@@ -155,7 +155,7 @@ export const setting = {
             type: 'simple',width: '30px',label: 'CTOT',
         },
         {
-            key: 'handle',
+            key: 'noRequestedHandle',
             type: 'slot',width: '20px',label: '操作',
 
         },
@@ -169,7 +169,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
             display:(data)=> {
                 return (
                     `<div class ="flightTypeBox">
@@ -193,9 +193,8 @@ export const setting = {
             type: 'simple',width: '20px',label: '部门',
         },
         {
-            key: 'handle',
-            type: 'simple',width: '20px',label: '操作',
-
+            key: 'requestedHandle',
+            type: 'slot',width: '20px',label: '操作',
 
         },
     ],
@@ -210,7 +209,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
             display:(data)=> {
                 return (
                     `<div class ="flightTypeBox">
@@ -229,8 +228,8 @@ export const setting = {
             type: 'simple',width: '30px',label: 'CTOT',
         },
         {
-            key: 'handle',
-            type: 'simple',width: '20px',label: '操作',
+            key: 'noRequestedHandle',
+            type: 'slot',width: '20px',label: '操作',
 
 
         },
@@ -244,7 +243,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
             display:(data)=> {
                 return (
                     `<div class ="flightTypeBox">
@@ -268,8 +267,8 @@ export const setting = {
             type: 'simple',width: '20px',label: '部门',
         },
         {
-            key: 'handle',
-            type: 'simple',width: '20px',label: '操作',
+            key: 'requestedHandle',
+            type: 'slot',width: '20px',label: '操作',
 
 
         },
@@ -285,7 +284,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '30px',label: '航班号',
+            type: 'simple',width: '40px',label: '航班号',
 
         },
         {
