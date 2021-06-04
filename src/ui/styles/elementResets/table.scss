@@ -1,8 +1,11 @@
-
 //弹窗table样式
-.el-table.layerTable {
+.el-table {
     background-color: transparent;
     border-color: #45547c;
+
+    .tableButton {
+        cursor: pointer;
+    }
 
     thead {
         color: #fff;
@@ -13,6 +16,12 @@
             th {
                 background-color: #293756;
                 border-color: #45547c;
+                height: 40px;
+                padding: 0;
+            }
+
+            th.is-leaf {
+                border-bottom: none;
             }
         }
     }
@@ -25,11 +34,14 @@
                 background: transparent;
                 color: #Fff;
                 border-color: #45547c;
+                height: 40px;
+                padding: 0;
+
             }
         }
 
         tr.el-table__row--striped td {
-            background: rgba(84, 136, 255, 0.05);
+            background: rgba(84, 136, 255, 0.05) !important;
         }
 
     }
@@ -43,9 +55,13 @@
         }
     }
 
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
 }
 
-.el-table.layerTable:before,
-.el-table.layerTable:after {
+.el-table:before,
+.el-table:after {
     background-color: #45547c;
 }

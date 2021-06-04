@@ -23,7 +23,7 @@ export default {
     width: 100%;
     background-color: #111926;
     .index_content {
-        height: calc(100% - 50px);
+        height: calc(100% - 40px);
         width: 100%;
     }
 }
