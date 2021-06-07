@@ -47,7 +47,8 @@ export const pxtoremByCS = (valueOfPX) => {
  */
 export const remtopxByCS = (valueOfRem) => {
 	!currentScreenFontSize && selfAdaption();
-	return valueOfRem * currentScreenFontSize;
+    console.log(currentScreenFontSize);
+    return valueOfRem * currentScreenFontSize;
 };
 
 /**

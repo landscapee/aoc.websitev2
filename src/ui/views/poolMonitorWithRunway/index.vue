@@ -21,22 +21,51 @@
         			<i class="el-icon-setting el-icon--right"></i>自定义
 				</span>
 			<el-dropdown-menu slot="dropdown">
-				<el-dropdown-item v-for="(opt) in pageList" :key="opt.key">
-					<el-checkbox v-model="opt.show" :label="opt.name"></el-checkbox>
+				<el-dropdown-item v-for="(opt) in pageListObj" :key="opt.key">
+					<el-checkbox v-model="opt.show" :label="opt.name"> </el-checkbox>
 				</el-dropdown-item>
 				<div @click="resetPageList" class="resetPage">重置</div>
 			</el-dropdown-menu>
 		</el-dropdown>
 
-		<div class="top">
-			<i class ="iconfont icon-feiji2 depart" />
-			<div style="width: 100px ;height: 100px;background: url('../../assets/img/ksgzc.png')">
-
+		<div class="toprunway">
+			<!--<i class ="iconfont icon-feiji2 depart" />-->
+			<div  class="runway runway1"  v-for="(opt,key) in runway" :key="key">
+				<div class="title">{{key}}</div>
+				<div :class="`zhezhao ${opt.usage==3?'zhezhaoWarn':''}`" :style="zhezhaoWidth"></div>
+				<div class="flights   ">
+					<div :class="'feiji fiji'+item[0].movement" :style="getLeft(item,index)" v-for="(item,index) in opt.normal" :key="item.flightId">
+						<div class="status">{{item[0].elecFlightStatus || '未激活'}}</div>
+						<div class="flightNo">{{item[0].flightNo}}</div>
+						<div class="icon">
+							<icon-svg  iconClass="feiji3"  ></icon-svg>
+						</div>
+					</div>
+					<div :class="'feiji fijiYC'+item[0].movement" :style="getLeft(item,index)" v-for="(item,index) in opt.delay" :key="item.flightId">
+						<div class="status">{{item[0].elecFlightStatus || '未激活'}}</div>
+						<div class="flightNo">{{item[0].flightNo}}</div>
+						<div  class="icon">
+							<icon-svg  iconClass="feiji3"  ></icon-svg>
+						</div>
+					</div>
+				</div>
 			</div>
+			<div class="itemBox">
+					<div class="time time1" ref="time">
+						<div class="itemtime1"  v-for="opt in runwayTime" :key="opt">
+							<div class="timespan"  ></div>
+						</div>
+					</div>
+					<div class="time time2">
+						<div class="itemtime2"  v-for="opt in runwayTime" :key="opt">
+							<div class="title">{{getTime(opt)}}</div>
+						</div>
+					</div>
+				</div>
 		</div>
-		<div class="bottom">
+		<div class="bottomTable">
 			<div class="bottomItem " :class="opt.columns?'bottomItemTwoTable':''" v-if="opt.show"
-				 v-for="(opt,index) in pageList" :key="index">
+				 v-for="(opt,index) in pageListObj" :key="index">
 				<div class="itemTitle"
 					 :style="'background-image:url('+opt.bg+') ;background-repeat:no-repeat;background-size:100% 100%;'">
 					<div>
@@ -96,13 +125,15 @@
 </template>
 
 <script>
+
     import postal from 'postal';
     import {map, keyBy} from 'lodash';
     import {setting} from './help';
     import PostalStore from "../../lib/postalStore";
-
+	import moment from "moment"
     let postalStore = new PostalStore();
     import AdvTable from "@/ui/components/advTable.vue";
+    import {remtopxByCS} from "@/ui/lib/viewSize.js";
     import Setting from "@components/setTableCol/setting";
     import Bangzhu from './components/bangzhu'
     import Coordination from './components/coordination'
@@ -111,16 +142,16 @@
     import sfhbc from '../../assets/img/sfhbc.png'
     import yywc from '../../assets/img/yywc.png'
     import cqywc from '../../assets/img/cqywc.png'
-
-
-
     export default {
         name: "index",
         components: {AdvTable, Setting,Bangzhu,Coordination},
         data() {
             return {
-                cqywc,
-                setting,
+                timerInterval:null,
+                nowTime:null,
+                runway:[{},{},{}],
+                runwayTime:1,
+				setting,
                 jg: true,
                 lg: true,
                 delayFlights:'unNormal',
@@ -176,20 +207,41 @@
                     },
                 },
                 delayFlightsOptions: [{ value: 'unNormal', label: '航班不正常' }, { value: 'allowtakeOff', label: '放行不正常' }, { value: 'orignalAllowTakeOff', label: '始发不正常' }, { value: 'OrignalAllowTakeOffInMorning', label: '早高峰始发不正常' }, { value: 'departure', label: '起飞不正常' }, { value: 'arrive', label: '落地不正常' }],
-
             }
         },
         computed: {
+
+            getLeft(){
+				return (opt,index)=>{
+                    opt.ctot
+				    return {left:62*index+'px'}
+				}
+			},
+			zhezhaoWidth(){
+                let num=Math.floor(this.runwayTime/2)-1;
+                return {width:num*62+'px'}
+			},
             notSeting() {
                 return (opt) => {
                     return opt.key == 'fastEnter' || opt.key == 'critical'
+                }
+            },
+			getTime() {
+                return (opt) => {
+                    let num=Math.floor(this.runwayTime/2);
+					let time=new Date(this.nowTime.getTime()+(opt-num)*60*1000);
+                       console.log(1,this.nowTime.getSeconds(),num);
+                    // console.log(moment(time).format('HH:mm'));
+                    return moment(time).format('HH:mm')
                 }
             },
             getLength() {
                 return (opt) => {
                     let len = (opt.data || []).length
                     if (opt.columns) {
-                        len = opt.columns[0].data.length + opt.columns[1].data.length
+                        let s = opt.key + '_noRequested'
+                        let s1 = opt.key + '_requested'
+                        len = opt.columns[s].data.length + opt.columns[s1].data.length
                     }
                     if (opt.select) {
                         len =(this.delayFlightsData[this.delayFlights]||[]).length
@@ -206,24 +258,17 @@
                      return data
                 }
             },
-            pageList() {
-                return map(this.pageListObj, (k, l) => {
-                    let obj = {...k}
-                    if (obj.columns) {
-                        obj = {...obj, columns: {...obj.columns}}
-                        let arr = map({...obj.columns}, (item, i) => {
-                            return item
-                        })
-                        obj.columns = arr
-                    }
-                    return obj
 
-                })
-            },
         },
-
-
         methods: {
+            getRunwayTime(){
+                let time=document.getElementsByClassName('time')[0]
+                let timeitem=document.getElementsByClassName('timespan')[0]
+				let timewidth=parseInt(getComputedStyle(time)['width'])
+				let timeItemWidth=parseInt(getComputedStyle(timeitem)['width'])
+                console.log(parseInt(timewidth / timeItemWidth));
+                return Math.ceil(timewidth/timeItemWidth)
+            },
             left() {
 
             },
@@ -301,11 +346,21 @@
                 this.$refs.Setting.open({name, key, tableConfig})
             },
             getCol(cols, key) {
-
                 this.pageListObj[key].tableConfig = [...cols]
             },
+
         },
         created() {
+            this.nowTime=new Date()
+			let time=(60-this.nowTime.getSeconds())*1000
+			setTimeout(()=>{
+                this.nowTime=new Date(this.nowTime.getTime()+time)
+                console.log(333);
+                this.timerInterval= setInterval(()=>{
+                    console.log(222);
+                    this.nowTime=new Date(this.nowTime.getTime()+1000*60)
+                },1000*60)
+			},time)
             map(this.pageListObj, (k, l) => {
                 let arr = setting[l]
                 if (k.columns) {
@@ -332,17 +387,23 @@
                 topic: 'Page.poolMonitorWithRunway.Start',
             });
         },
+		destroyed(){
+          clearInterval(this.timerInterval)
+		},
         mounted() {
+            this.runwayTime=this.getRunwayTime();
             // 已延误池 delayFlights2; 快速过站池 fastEnter;临界延误池 critical
             // 始发航班池 initialFlights2; 长期延误池 alwaysDelay;起飞保障池 departureGuarantee
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
-            postalStore.sub('monitor.queue', (data) => {
-                console.log('queue',data);
-            })
+
+			 postalStore.sub('runwayModels', (data) => {
+				 console.log('runwayModels',data);
+ 				 this.runway=data;
+			 })
 
             postalStore.sub('poolMonitorWithRunway.table', (data) => {
                 let obj = this.pageListObj[data.key]
-              // data.key=='fastEnter'&&  console.log('batchConcern111', data['data'], data.key);
+              // data.key=='critical'&&  console.log('critical', data['data'], data.key);
                 if (!data.data || !obj) {
                     return
                 }
@@ -433,7 +494,6 @@
 		height: calc(100vh - 40px);
 		overflow: hidden;
 		padding: 15px 15px 0px 15px;
-
 		.positionDropdown {
 			cursor: pointer;
 			color: #fff;
@@ -520,19 +580,158 @@
 				}
 			}
 		}
-		.bottom, .top {
+		.bottomTable, .toprunway {
 			position: relative;
 			height: calc(55vh - 46px);
+
 		}
-		.top {
+		.toprunway {
+			margin-top: 5px;
 			height: calc(45vh - 46px);
+			position: relative;
+			.runway{
+				height: 110px;
+				border-top:1px #279dff solid;
+				position: relative;
+				&>div{
+					height:100%;
+					position:absolute;
+					left: 24px;
+					color: #fff;
+				}
+				.title{
+					line-height: 110px;
+					left: 0px;
+					width: 24px;
+					text-align: center;
+					background: #36445a;
+				}
+				.zhezhao{
+					z-index: 100;
+					width: 0px;
+					background: #17212f;
+					box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.50);
+					border-right: 1px dashed #ffffff;
+				}
+				.zhezhaoWarn{
+					background: #301933;
+				}
+				.flights{
+					width:calc( 100% - 24px);
+ 					background: #233147;
+					box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.50);
+					display:flex;
+					align-items: center;
+					&>div{
+						z-index: 200;
+						position: absolute;
+						width: 63px;
+ 					}
+
+					.feiji{
+						color:#fff;
+						padding: 1px;
+						&>div{
+							text-align: center;
+						}
+						.flightNo{
+							margin: 6px 0 12px 0;
+							background: #2e67f6;
+							border-radius: 2px;
+							box-shadow: 0px 0px 10px 0px #2d50a6;
+						}
+						.status{
+							font-size: 12px;
+							padding:2px 1px;
+							border: 1px solid #2e67f6;
+							border-radius: 12px;
+						}
+						svg{
+							width: 27px;
+						}
+					}
+					.fijiYCA,.fijiA{
+						.status{
+							border: 1px solid #3bab0b;
+						}
+						.flightNo{
+							background: #3bab0b;
+						}
+					}
+					.fijiYCD,.fijiD{
+						svg{
+							transform: rotate(-60deg);
+						}
+					}
+					.fijiYCA,.fijiYCD{
+						.icon{
+							color:#c35555;
+						}
+ 					}
+					 .fijiD{
+ 						 .icon{
+							 color:#2e67f6;
+						 }
+					}
+					.fijiA{
+ 						.icon{
+							color:#3bab0b;
+						}
+					}
+				}
+			}
+			.runway:first-child{
+				border: none!important;
+			}
 			.depart{
 				background: #2e67f6;
 				transform: rotate( -50deg );
 				display: inline-block;
 			}
+			/*<!--$border: 1px  solid #279dff;-->*/
+			.itemBox{
+  				position: relative;
+				top: -7px;
+			}
+			.time{
+				position: relative;
+				z-index: 300;
+				width: 100%;
+				display: flex;
+				justify-content: left;
+				.itemtime2,.itemtime1{
+  					color: #fff;
+					width: 62px;
+				}
+				.itemtime2{
+					height: 20px;
+					line-height: 20px;
+					div {
+						width: 62px;
+						text-align: center;
+					}
+				}
+				.timespan{
+					height: 5px;
+					border: 1px  solid #279dff;
+					display: inline-block;
+					width: 62px;
+					border-top: 0;
+ 				}
+			}
+			.time1{
+				line-height: 5px;
+				width: calc(100% - 24px);
+				margin-left: 24px;
+				overflow: hidden;
+			}
+			.time2{
+				background: #152c4a;
+				padding-left: 24px;
+			}
+
 		}
-		.bottom {
+		.bottomTable {
 			color: #fff;
 			width: 100%;
 			overflow-x: auto;
