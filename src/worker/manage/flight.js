@@ -3,15 +3,17 @@ import {every, extend, filter, flow, get, head, last, map, merge, orderBy, toUpp
 import moment from "moment";
 import {flightDB} from "@/worker/lib/storage";
 import {addSerialNumber, filterRoleFlights} from "@/lib/helper/flight";
+import {getOperationDate} from '@/lib/helper/date'
+import Logger from "@/lib/logger";
 let Options = { day: 'Today', all: true };
-
+const log = new Logger('worker:flight');
 /**
  * 通过 begin ,end 日期 和 searchKey导入航班
  * @returns {*}
  */
 const loadDefaultFlights = () => {
-  // let now = remote.getGlobal('now') || 0;
-  let now = moment().format('x');
+  let now = 1622800842466;
+  // let now = moment().format('x');
   //now = now - 3 * 24 * 60 * 60 * 1000;
   let day = get(Options, 'day') || 'Today';
   let dayProperty = get(Options, 'dayProperty') || 'naturalDay';
@@ -32,8 +34,9 @@ const loadDefaultFlights = () => {
         // end = moment(getOperationDate(now), 'YYYYMMDDHH').valueOf();
         break;
       case 'Today':
+        let a = moment(now).add(1, 'd');
         begin = moment(getOperationDate(now) + diffHours, 'YYYYMMDDHH').valueOf();
-        end = moment(getOperationDate(moment(now).add(1, 'days')) + diffHours, 'YYYYMMDDHH').valueOf();
+        end = moment(getOperationDate(a) + diffHours, 'YYYYMMDDHH').valueOf();
         // begin = moment(getOperationDate(now), 'YYYYMMDDHH').valueOf();
         // end = moment(getNextOperationDate(now), 'YYYYMMDDHH').valueOf();
         break;
@@ -148,7 +151,8 @@ export const refreshFlights = (arg) => {
 export const flightStart = (posWorker) => {
   let flightStart = (data) => {
     let result = refreshFlights(data);
-    result.flights && channel.publish('Web', 'Flight.Sync', result);
+    console.log(result);
+    result.flights && posWorker.publish('Web', 'Flight.Sync', result);
   };
   posWorker.subscribe('Flight.Change.Sync',(data)=>{
     flightStart()

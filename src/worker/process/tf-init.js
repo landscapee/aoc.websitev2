@@ -66,7 +66,7 @@ postal.subscribe({
       channel: 'Worker',
       topic: 'LoginSuccess',
       callback: (data)=>{
-        memoryStore.setItem('global',{token: data.token});
+        memoryStore.setItem('global', data);
       }
     })
   }

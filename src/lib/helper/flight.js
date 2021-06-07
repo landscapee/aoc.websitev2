@@ -680,7 +680,7 @@ export const filterFlightsByRole = (flights, role = {}) => {
 
 // 通过后端返回的权限过滤航班
 export const filterRoleFlights = (flights) => {
-	let roleFlight = remote.getGlobal('roleFlights');
+	let roleFlight = memoryStore.getItem('global').roleFlights
 	return filterFlightsByRole(flights, roleFlight);
 };
 
