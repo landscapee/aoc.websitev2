@@ -190,11 +190,11 @@ export const setting = {
         },
         {
             key: 'deptName',
-            type: 'simple',width: '20px',label: '部门',
+            type: 'simple',width: '30px',label: '部门',
         },
         {
             key: 'requestedHandle',
-            type: 'slot',width: '20px',label: '操作',
+            type: 'slot',width: '30px',label: '操作',
 
         },
     ],
@@ -264,11 +264,11 @@ export const setting = {
         },
         {
             key: 'deptName',
-            type: 'simple',width: '20px',label: '部门',
+            type: 'simple',width: '30px',label: '部门',
         },
         {
             key: 'requestedHandle',
-            type: 'slot',width: '20px',label: '操作',
+            type: 'slot',width: '30px',label: '操作',
 
 
         },

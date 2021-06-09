@@ -22,6 +22,13 @@
 				<div class="itemTitle">
 					<div>{{opt.name}}（{{(opt.data||[]).length}}）</div>
 					<div >
+
+						<!--edit-batch-confirm-->
+						<!--编辑-批量设置确认-->
+						<!--edit-vvp-confirm-->
+						<!--编辑-要客航班确认-->
+						<!--edit-batch-cancel-->
+						<!--编辑-批量关注航班取消-->
 						<span v-if="isWarning(opt)" @click="openWaring(opt) " :class="{infoSvg:!getMoreWarnLength(opt.key)}">
 							<icon-svg  iconClass="warning" ></icon-svg>
 						</span>
