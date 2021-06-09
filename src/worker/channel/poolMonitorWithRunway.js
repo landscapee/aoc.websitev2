@@ -34,14 +34,14 @@ const subWSEvent = () => {
     //快速过站池
     client.sub('/Flight/monitor/overStation',(res)=>{
         checkWebsocketResponseDataFinish().then((d)=>{
-            let data=grounpStatus(res,'fastEnter')
+            let data=grounpStatus(res,'fastEnter','overStationStatus')
             worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'fastEnter'})
         })
     });
     //临界延误池
     client.sub('/Flight/monitor/criticalDelay',(res)=>{
-         let data=grounpStatus(res,'critical')
-        worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'critical'})
+         let data=grounpStatus(res,'critical','criticalDelayStatus')
+          worker.publish('Web','poolMonitorWithRunway.table',{data:data,key:'critical'})
     });
     //始发航班池
     client.sub('/Flight/monitor/initialFlights',(res)=>{
@@ -83,6 +83,9 @@ export const init = (worker_,httpRequest_) => {
     ajax = httpRequest_;
     worker.subscribe('Situation.Network.Connected', (c) => {
         clientObj.situationClient = new SocketWrapper(c);
+    });
+    worker.subscribe('QueuesMonitor.TimeFilter', (time) => {
+        transRunwayData(worker,time )
     });
 
     worker.subscribe('Page.poolMonitorWithRunway.Start',()=>{

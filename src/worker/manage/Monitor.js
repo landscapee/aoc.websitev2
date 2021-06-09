@@ -1,7 +1,8 @@
 import {getFlightDetail} from "../lib/storage";
-import { forEach,map,flow,orderBy} from 'lodash';
+import { forEach,map,flow,orderBy,extend} from 'lodash';
 import {memoryStore} from "../../worker/lib/memoryStore";
 import moment from 'moment';
+import {flightDB} from "@/worker/lib/storage";
 
 export const getFlightDatas = (data,blo) => {
     let arr=[];
@@ -11,20 +12,20 @@ export const getFlightDatas = (data,blo) => {
                 arr[l]=[]
             map(k,(item)=>{
                 if(getFlightDetail(item.flightId)){
-                    arr[l].push(getFlightDetail(JSON.stringify(item.flightId)))
+                    arr[l].push({...getFlightDetail(JSON.stringify(item.flightId)),...item})
                 }
             })
         })
     }else{
         map(data,(k,l)=>{
             if(getFlightDetail(k.flightId)){
-                arr.push(getFlightDetail(JSON.stringify(k.flightId)))
+                arr.push({...getFlightDetail(JSON.stringify(k.flightId)),...k})
             }
         })
     }
     return arr
 }
-export const grounpStatus = (res,key) => {
+export const grounpStatus = (res,key,key1) => {
     let data={
 
     }
@@ -32,58 +33,81 @@ export const grounpStatus = (res,key) => {
     let criticalRequested = [];
     forEach(res, (item) => {
         // status 0:未协调 1:已协调 2:已拒绝
-        if (!item.overStationStatus && item.overStationStatus !== 0) {
+        if (!item[key1] && item[key1] !== 0) {
             criticalNoRequested.push(item);
         } else {
             criticalRequested.push(item);
         }
     });
+
     data[key+'_noRequested']=getFlightDatas(criticalNoRequested)
     data[key+'_requested']=getFlightDatas(criticalRequested)
 
     return data
 }
 
-export const transRunwayData=(worker)=>{
-    let obj={
+export const transRunwayData=(worker,time)=>{
+     let obj={
         '01':'19', '19': '01', '02':'20', '20':'02', '11':'11'
     }
+    let duo_one={}
     let runwayObj={}
-    let normalTimeObj={}
-    let delayTimeObj={}
      let monitorQueue= memoryStore.getItem('Pools').monitorQueue
     let runwayModels= memoryStore.getItem('Pools' ).runwayModels
+
     if(monitorQueue&&runwayModels){
+        if(time){
+            let arr=[time.startTime, time.startTime+30*60*1000]
+            let  flights = flightDB.find({ $or: [{ atd: { $jbetween: arr } }, { ata: { $jbetween: arr } }, { eta: { $jbetween: arr } }, { ctot: { $jbetween: arr } }] });
+            let normal= map(flights, (f) => {
+                return extend({ actualTime: f.atd || f.ata || f.eta || f.ctot }, f);
+            });
+            monitorQueue={normal,delay:[]}
+         }
         map(runwayModels,(k,l)=>{
             let o={...k,runway:k.runway,delayLen:0,normalLen:0,delay:[],normal:[]}
             runwayObj[k.runway]=o
+            duo_one[k.runway]=k.runway
              runwayObj[obj[k.runway]]=o
+            duo_one[obj[k.runway]]=k.runway
 
         })
         // 分类
-        let classifyFn=(data,key,checkObj)=>{
+        let classifyFn=(data,key)=>{
             let len=key+'Len'
+            let checkObj={}
             map(data,(k,l)=>{
-                let time=moment(k.ctot).format('HH:mm')
-                let o=checkObj[k.runway]&&checkObj[k.runway][k.ctot]
+                // 转换跑到
+                let paodao=duo_one[k.runway]
+                let shifen=moment(k.actualTime||k.eta||k.ctot).format('HH_mm')
+                let o=checkObj[paodao]&&checkObj[paodao][shifen]
                 if(o){
-                    //  时间ctot 为 k.ctot 重复时  o.len为前一个 ctot的 大数组下标
-                    runwayObj[k.runway][key][o.len].push({...k,displayCTOT:time})
+                    // 同一 跑到 同一 shifen 的放入一个数组
+                    runwayObj[paodao][key][o.len].push({...k})
                 }else{
-                    //记录 时间ctot 为 k.ctot 项的下标
-                    checkObj[k.runway]={[k.ctot]:{len:runwayObj[k.runway][len]}}
-                    runwayObj[k.runway][key].push([{...k,displayCTOT:time}])
-                    runwayObj[k.runway][len]=runwayObj[k.runway][len]+1
+                    //记录 同一个跑到 不同 shifen 的大数组下标
+                    checkObj[paodao]= checkObj[paodao]||{}
+                    checkObj[paodao][shifen]={len:runwayObj[paodao][len]}
+                    runwayObj[paodao][key].push([{...k}])
+                    runwayObj[paodao][len]=runwayObj[paodao][len]+1
                 }
             });
+            // checkObj
+            // debugger
         }
 
-        classifyFn(monitorQueue.normal,'normal',normalTimeObj)
-        classifyFn(monitorQueue.delay,'delay',delayTimeObj)
-        let endObj={}
+        classifyFn(monitorQueue.normal,'normal')
+        classifyFn(monitorQueue.delay,'delay')
+        let endObj=[]
+        let usage=null
         map(runwayModels,(k,l)=>{
-            endObj[k.runway]=runwayObj[k.runway]
+            if(k.usage==3){
+                usage=runwayObj[k.runway]
+            }else{
+                endObj.push(runwayObj[k.runway])
+            }
         })
+        usage&&endObj.push(usage)
         worker.publish('Web','runwayModels',endObj)
         // worker.publish('Web','runwayModels',{monitorQueue,runwayModels})
 
