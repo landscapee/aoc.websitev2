@@ -29,7 +29,7 @@ export const selfAdaption = () => {
  * 基于设计稿的转换
  */
 export const pxtorem = (valueOfPX) => {
-	return p2r(valueOfPX, DEFAULT_FONTSIZE);
+	return valueOfPX / 100
 };
 
 /**

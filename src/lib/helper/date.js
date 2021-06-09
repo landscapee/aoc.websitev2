@@ -13,7 +13,6 @@ export const getNaturalDate = (time) => {
  * @return {[int]}      [YYYYMMDD]
  */
 export const getOperationDate = (time, overFour) => {
-	debugger;
 	let scheduleTime;
 	//数字, 识别为 timestamp
 	if (time == null) {

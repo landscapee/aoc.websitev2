@@ -29,10 +29,12 @@ router.beforeEach((to, from, next) => {
             next()
         }else{
             if(sessionStorage.token&&sessionStorage.token!=undefined){
+                let host = httpConfig['login'].host;
+                let port = httpConfig['login'].port;
                 axios({
                     method:"post",
                     // url:httpConfig['login'] 'api-login/sso/login/authorizeToken',
-                    url:`${httpConfig['login'].path}/authorizeToken`,
+                    url:`http://${host}:${port}/${httpConfig['login'].path}/authorizeToken`,
                     dataType:"text",
                     data:sessionStorage.token,
                     async:false,
@@ -42,6 +44,11 @@ router.beforeEach((to, from, next) => {
                 })
                 .then(res=>{
                     if(res&&res.responseCode=='1000'){
+                        postal.publish({
+                            channel: 'Worker',
+                            topic: 'LoginSuccess',
+                            data: res.data
+                        })
                         next()
                     }
                 })

@@ -215,17 +215,10 @@ export default {
                                     (res.responseCode == 30003 || res.responseCode == 1000) &&
                                     res.data
                                 ) {
-                                  let user = res.data;
-                                    //登录成功
-                                  // 根据权限过滤航班
-                                  let roleData = find(user.roles, (item) => item.code.indexOf('DATA') > -1);
-                                  let roleFlights = get(roleData, 'menus.0.path');
-                                  roleFlights = roleFlights ? JSON.parse(roleFlights)[0] : { reversal: true, data: [] };
                                   let storageData = {
                                     token: res.data.token,
-                                    roleFlights
                                   }
-                                    postalStore.pub('Worker', 'LoginSuccess', storageData)
+                                    postalStore.pub('Worker', 'LoginSuccess', res.data)
                                     memoryStore.setItem('global', storageData)
                                     this.$store.commit('setUserMsg', res.data)
                                     sessionStorage.setItem('token', res.data.token)

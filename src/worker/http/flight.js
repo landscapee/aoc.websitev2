@@ -8,7 +8,7 @@ export const flightHttp = (worker,httpRequest) => {
         memoryStore.setItem('global', { websocketDataFinish: true });
         worker.publish('Worker','Flight.Change.Sync',response)
       });
-    })
+    }).catch()
   }
 
   getTodayFLight()

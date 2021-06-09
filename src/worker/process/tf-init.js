@@ -1,4 +1,4 @@
-import {each} from "lodash";
+import {each, find, get} from "lodash";
 import socket from '../lib/socket'
 import {init as flightInit} from '../channel/flight'
 import { init as homeInit,delaysInit} from '../channel/home'
@@ -57,7 +57,7 @@ postal.subscribe({
     let httpRequest = new HttpRequest(data.httpConfig);
     flightInit(posWorker, httpRequest);
     monitorInit(posWorker, httpRequest);
-      MonitorWithRunwayInit(posWorker, httpRequest);
+    MonitorWithRunwayInit(posWorker, httpRequest);
     flightHttp(posWorker, httpRequest);
     homeInit(posWorker, httpRequest)
     delaysInit(posWorker, httpRequest)
@@ -65,8 +65,17 @@ postal.subscribe({
     postal.subscribe({
       channel: 'Worker',
       topic: 'LoginSuccess',
-      callback: (data)=>{
-        memoryStore.setItem('global', data);
+      callback: (user)=>{
+        //登录成功
+        // 根据权限过滤航班
+        let roleData = find(user.roles, (item) => item.code.indexOf('DATA') > -1);
+        let roleFlights = get(roleData, 'menus.0.path');
+        roleFlights = roleFlights ? JSON.parse(roleFlights)[0] : { reversal: true, data: [] };
+
+        memoryStore.setItem('global', {
+          token: data.token,
+          roleFlights,
+        });
       }
     })
   }
