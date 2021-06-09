@@ -261,8 +261,7 @@
                    let blo=this.isUnfold(item[0],runway)
                     return {
                        width:blo?item.length*62/100+'rem':'0.62rem',
-                       zIndex:blo?300:200,
-                        filter: `brightness(${item[0].actualTime ? '65%' : '100%'})`
+						filter: `brightness(${item[0].actualTime ? '65%' : '100%'})`
 					}
 			   }
 			},
@@ -284,7 +283,8 @@
                     let time = this.nowTime.getTime() - num * 60 * 1000;
                     let time1 = opt.actualTime || opt.eta || opt.ctot;
                     let time2 = Math.ceil((time1 - time) / 60 / 1000) * 62
-                     return {left: time2/100 + 'rem'}
+                    console.log(time1,time1/60);
+                    return {left: time2/100 + 'rem', zIndex:opt.zIndex,}
                 }
             },
             zhezhaoWidth() {
@@ -749,7 +749,7 @@
 					align-items: center;
 					overflow: hidden;
 					& > div {
-						z-index: 200;
+						/*z-index: 200;*/
 						position: absolute;
 					}
 
@@ -776,10 +776,10 @@
 							padding: 3px 1px;
 							border: 1px solid #2e67f6;
 							border-radius: 12px;
-						}
-						.status:hover{
 							background: #1E2A3D;
+
 						}
+
 						.status,.flightNo{
 							width: 63px;
 							white-space:nowrap;
