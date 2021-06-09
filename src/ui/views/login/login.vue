@@ -1,10 +1,10 @@
 <template>
     <div class="login-container">
-        <div class="login-bg blur" :style="'background-image: url(/src/ui/assets/img/'+sysEdition+'/bg.png);'"></div>
+        <div class="login-bg blur" :style="'background-image: url('+bg+');'"></div>
         <div class="loginPanle">
             <div class="loginTitle"><span>天府机场A-CDM管理系统</span></div>
             <el-row class="left">
-                <img :src="'/src/ui/assets/img/'+sysEdition+'/login-logo.png'" alt="" />
+                <img :src="loginLogo" alt="" />
             </el-row>
             <el-row class="right">
                 <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
@@ -67,10 +67,13 @@
 <script>
 import userimg from './assets/img/login-username.png'
 import pwdimg from './assets/img/login-password.png'
+import bg from 'ui/assets/img/tianfu/bg.png'
+import loginLogo from 'ui/assets/img/tianfu/login-logo.png'
 import './assets/index.scss'
 import { encryptedData } from '../../lib/des-coder.js'
 import { memoryStore } from '../../../worker/lib/memoryStore'
 import PostalStore from '@/ui/lib/postalStore'
+import {find, get} from "lodash";
 let postalStore = new PostalStore()
 export default {
     name: 'login',
@@ -119,6 +122,8 @@ export default {
             }
         }
         return {
+            bg,
+            loginLogo,
             userimg,
             pwdimg,
             languageLists: [
@@ -210,11 +215,11 @@ export default {
                                     (res.responseCode == 30003 || res.responseCode == 1000) &&
                                     res.data
                                 ) {
-                                    //登录成功
-                                    postalStore.pub('Worker', 'LoginSuccess', {
-                                        token: res.data.token,
-                                    })
-                                    memoryStore.setItem('global', { token: res.data.token })
+                                  let storageData = {
+                                    token: res.data.token,
+                                  }
+                                    postalStore.pub('Worker', 'LoginSuccess', res.data)
+                                    memoryStore.setItem('global', storageData)
                                     this.$store.commit('setUserMsg', res.data)
                                     sessionStorage.setItem('token', res.data.token)
                                     sessionStorage.setItem(

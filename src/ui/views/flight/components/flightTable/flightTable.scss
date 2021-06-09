@@ -1,5 +1,7 @@
 .flightTable{
 
+  height: 100%;
+  overflow-y: hidden;
   $border-color: rgba(204,204,204,.3);
   ::v-deep.el-table th, .el-table tr{
     background-color: #17212F;
@@ -64,6 +66,19 @@
     //    background: rgba(84, 136, 255, 0.05);
     //  }
     }
+  }
+  .scrollWrapper{
+    height: 100%;
+    overflow-y: auto;
+  }
+  .scrollBox{
+    width: 1px;
+    background-color: transparent;
+  }
+  .virtualFlight{
+    width: 98%;
+    position: absolute;
+    top: 0;
   }
 }
 
