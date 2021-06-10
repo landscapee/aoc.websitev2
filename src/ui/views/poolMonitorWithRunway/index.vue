@@ -888,6 +888,7 @@
 				overflow: hidden;
 			}
 			.time2 {
+				overflow: hidden;
 				background: #152c4a;
 				padding-left: 24px;
 			}

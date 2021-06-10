@@ -235,12 +235,12 @@
                 this.$refs.Setting.open({name,key,tableConfig})
             },
             openWaring({name,key,tableConfig, }){
-                <!--edit-batch-confirm-->
-                <!--编辑-批量设置确认-->
-                <!--edit-vvp-confirm-->
-                <!--编辑-要客航班确认-->
-                <!--edit-batch-cancel-->
-                <!--编辑-批量关注航班取消-->
+                // <!--edit-batch-confirm-->
+                // <!--编辑-批量设置确认-->
+                // <!--edit-vvp-confirm-->
+                // <!--编辑-要客航班确认-->
+                // <!--edit-batch-cancel-->
+                // <!--编辑-批量关注航班取消-->
 				let obj={
                     batchConcern:'edit-batch-confirm',
                     vvpFlights:'edit-vvp-confirm',
