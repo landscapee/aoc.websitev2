@@ -13,7 +13,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item prop="time" label="起止时间：">
-					<el-time-picker format="HH:mm"   is-range v-model="form.time" range-separator="至"
+					<el-time-picker format="HH:mm"  @change="timeChange"  is-range v-model="form.time" range-separator="至"
 									start-placeholder="开始时间" end-placeholder="结束时间"
 									placeholder="请选择起止时间">
 					</el-time-picker>
@@ -27,11 +27,10 @@
 				</el-form-item>
 				<!--间隔时间 通行能力下降-->
 				<el-form-item prop="closeScheme" :label="closeSchemeObj[type]">
-					<el-input v-model="form.closeScheme" clearable
-							  placeholder="请输入间隔时间"></el-input>
+					<el-input v-model="form.closeScheme" @blur="closeSchemeBlur" @input="closeSchemeInput" clearable placeholder="请输入间隔时间"></el-input>
 				</el-form-item>
 				<el-form-item v-if="this.type=='warning'" prop="level" label="预警等级：">
-					<el-select v-model="form.level" clearable placeholder="请选择预警等级">
+					<el-select v-model="form.level"   clearable placeholder="请选择预警等级">
 						<el-option v-for="item in levelArr"
 								   :key="item" :label="item" :value="item">
 						</el-option>
@@ -56,17 +55,7 @@
     export default {
         name: "add",
         data() {
-            let checkNum = (rule, value, callback) => {
-                if (!value) {
-                    return callback(new Error('请输入'));
-                }
-                let reg = /^[1-9]\d*$/g
-                if (value.match(reg)) {
-                    callback();
-                } else {
-                    callback(new Error('请输入正整数'));
-                }
-            };
+
             return {
                 type:'',
                 title: '',
@@ -93,8 +82,7 @@
                     time: [{trigger: "blur", required: true, message: '请选择'}],
                     specificType: [{trigger: "blur", required: true, message: '请选择'}],
                     level: [{trigger: "blur", required: true, message: '请选择'}],
-                    // {  trigger: "blur",required:true ,message:'请输入间隔时间'},
-                    closeScheme: [{required: true, validator: checkNum, trigger: 'blur'}],
+                     closeScheme: [{required: true, message: '请输入', /*validator: checkNum,*/ trigger: 'blur'}],
                     content: [{trigger: "blur", required: true, message: '请输入'}],
                 },
                 areaStr: [
@@ -140,14 +128,18 @@
         },
         computed: {
             getContent() {
-                return this.form.title + this.form.specificType + this.form.closeScheme + this.form.time+this.form.level
+                return this.form.title + this.form.specificType + this.form.closeScheme + this.form.closeEndTime+ this.form.closeStartTime+this.form.level
             },
         },
         watch: {
             getContent: function () {
-                let time1=this.form?.time[0]?this.form?.time[0]?.format('HH:mm'):'--'
-                let time2=this.form?.time[1]?this.form?.time[1]?.format('HH:mm'):'--'
-                let content = `受${this.form.title || '--'}${this.form.specificType || '--'}限制影响，间隔${this.form.closeScheme || '--'}，起止时间${time1}-${time2}`;
+                console.log(2);
+                let tranTime=(time)=>{
+                    return moment(time).format('HH:mm')||'--'
+				}
+                 let time1=tranTime(this.form.closeStartTime)
+                 let time2=tranTime(this.form.closeEndTime)
+                 let content = `受${this.form.title || '--'}${this.form.specificType || '--'}限制影响，间隔${this.form.closeScheme || '--'}，起止时间${time1}-${time2}`;
                 if(this.type=='warning'){
 					content = `${this.form.title}预计${time1}-${time2}受${this.form.specificType}影响，通行能力下降${this.form.closeScheme || 0}%，发布${this.form.title}航班延误${this.form.level}预警。`;
                 }
@@ -155,9 +147,49 @@
             }
         },
         methods: {
+            closeSchemeInput(value){
+ 				let s
+				if(this.type=='warning'){
+                    // let reg = /^(([1-9]\d{0,1})|([1-9]\d{1,1}\.)|(0\.)|0)(\d{0,2})$/g;
+                    s = value.replace(/[^\d|\.]/g, '')
+                    s = s.replace(/(\d{0,2})(\d*)(.*)/g, '$1$3')
+                    s = s.replace(/^([0])(\d+)(.*)/, '$2')
+                    s = s.replace(/^\./, '')
+                    s = s.replace(/\.{2,}$/, '.')
+					s = s.replace(/(\.)(\d{1,2})(.*)$/, '$1$2')
+                    this.$set(this.form,'closeScheme',s)
 
+                }else{
+                    let reg = /([^\d]*)/g
+                    let reg1 = /(0*)([1-9](\d{0,7}))?(\d*)/g
+                    s = value.replace(reg, '')
+                    s = s.replace(reg1, '$2') || null
+					this.$set(this.form,'closeScheme',s)
+ 				}
+
+			},
+            closeSchemeBlur({target}){
+                if(this.type=='warning'){
+                    let value=target.value
+                    console.log(value);
+                    let arr=value.split('.')
+                    if(arr.length>1&&arr[1]===''){
+                         this.$set(this.form,'closeScheme',arr[0])
+                        this.$message.warning('以为您自动过滤尾部‘.’')
+                    }
+				}
+			},
             titleChange(val) {
                 this.form.title = this.areaObj[val]
+            },
+			timeChange(value) {
+                console.log(11111,2,value);
+                if(value){
+                    console.log(333);
+
+                    this.$set(this.form, 'closeStartTime', value[0])
+                    this.$set(this.form, 'closeEndTime', value[1])
+				}
             },
             save(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -167,6 +199,10 @@
                         this.$set(this.form, 'closeEndTime', arr[1])
                         let obj={...this.form}
 						delete obj.time
+						if(this.type=='warning'){
+						    delete obj.extendField2;
+                            delete obj.level
+						}
                         this.$request.post('msg', 'notice/save', obj, false).then((res) => {
                              if(res.code==200){
                                 this.$message.success('发布成功')
@@ -199,6 +235,9 @@
                 this.dialogFormVisible = true
                 this.title = title
 				this.type=type
+				if(type=='warning'){
+				    this.form.category='MDRS预警'
+				}
             },
 
 
