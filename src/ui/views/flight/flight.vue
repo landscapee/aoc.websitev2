@@ -1,7 +1,9 @@
 <template>
     <div id="flight">
       <toolBar/>
-      <flightTable :columns="columns"/>
+      <div class="flightWrapper">
+        <flightTable :flights="flights" :columns="columns"/>
+      </div>
     </div>
 </template>
 
@@ -14,6 +16,7 @@
     data() {
       return {
         columns: [],
+        flights: [],
       }
     },
     components: {
@@ -31,11 +34,17 @@
       });
 
 
+      postalStore.sub('Flight.Sync',data=>{
+        this.flights = data.flights
+      })
       postal.publish({
         channel: 'Worker',
         topic: 'Page.Flight.Start',
-        data: ''
-      })
+        data: getListHeader()
+      });
+      let header = getListHeader();
+      // debugger;
+      // postalStore.pub('Worker','Flight.UpdateHeader', header)
     },
     beforeDestroy() {
       postal.publish({
@@ -55,5 +64,9 @@
 <style>
   #flight{
     padding-left: 15px;
+  }
+  .flightWrapper{
+    height: calc(100% - 50px);
+    position: relative;
   }
 </style>

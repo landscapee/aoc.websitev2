@@ -83,8 +83,8 @@ export const init = (worker_) => {
 
 
 
-  worker.subscribe('Page.Flight.Start',()=>{
-    flightStart(worker);
+  worker.subscribe('Page.Flight.Start',(myHeader)=>{
+    flightStart(worker, myHeader);
     checkClient('flightClient').then(()=>{
       subWSEvent();
       console.log('flight连接成功')

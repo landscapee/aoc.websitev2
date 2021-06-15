@@ -20,7 +20,7 @@ const webpack = require('webpack');
 
 let html_webpack_plugin;
 let indexJs = './index.js';
-
+const BUILD_DIR = path.resolve(__dirname, 'website');
 
 const HtmlWebpackPluginConfig = {
     title: '',
@@ -52,7 +52,6 @@ module.exports = {
         path: path.resolve(__dirname, 'website'),
         filename: '[name].[hash].bundle.js',
         chunkFilename: '[name].[hash].chunk.js',
-        publicPath: '/',
         globalObject: 'this',
     },
     module: {
@@ -64,7 +63,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 loader: 'babel-loader',
-                include: [resolve('src'), resolve('worker'), resolve('static')]
+                include: [resolve('src'), resolve('static')],
             },
             {
                 test: /\.svg$/,
@@ -85,8 +84,11 @@ module.exports = {
                       {
                           loader: 'css-loader',
                           options: {
-                              sourceMap: true
-                          }
+                              // alias: {
+                              //     '/src': 'src',
+                              // },
+                              sourceMap: true,
+                          },
                       },
                       {
                           loader: 'px2rem-loader',
@@ -133,9 +135,11 @@ module.exports = {
                 exclude: [resolve('src/icons')],
                 use: {
                     loader: 'url-loader',
+                    // loader: 'file-loader',
                     options: {
                         limit: 10000,
-                        name: '[name].[ext]'
+                        name: './img/[name].[ext]',
+                        esModule: false
                     }
                 }
             },
@@ -182,20 +186,20 @@ module.exports = {
     ],
     optimization:{
         minimizer:[
-            new UglifyjsWebpackPlugin({
-                uglifyOptions: {
-                    compress: {
-                        warnings: false,
-                        drop_debugger: true,
-                        drop_console: true,
-                        pure_funcs: ['console.log']
-                    }
-                }
-            })
+            // new UglifyjsWebpackPlugin({
+            //     uglifyOptions: {
+            //         compress: {
+            //             warnings: false,
+            //             drop_debugger: true,
+            //             drop_console: true,
+            //             pure_funcs: ['console.log']
+            //         }
+            //     }
+            // })
         ]
     },
     resolve: {
-        modules: ['node_modules', 'common', 'src', 'worker'],
+        modules: ['node_modules', 'common', 'src'],
         // modules: ['node_modules', 'src', 'static', 'worker'],
         extensions:['.js','.vue'], // 后缀省略设置
         alias: {

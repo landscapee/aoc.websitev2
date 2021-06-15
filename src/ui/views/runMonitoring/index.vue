@@ -205,7 +205,9 @@
 				})
             },
             delWaring(row){
-
+                if(!this.$hasRole('edit-batch-cancel')){
+                    return
+                }
                 this.$confirm(`是否确认取消关注航班${row.flightNo}？`, '提示', {
                     type: 'warning',
                 }).then(() => {
@@ -233,7 +235,17 @@
                 this.$refs.Setting.open({name,key,tableConfig})
             },
             openWaring({name,key,tableConfig, }){
-                if(!this.getMoreWarnLength(key)){
+                // <!--edit-batch-confirm-->
+                // <!--编辑-批量设置确认-->
+                // <!--edit-vvp-confirm-->
+                // <!--编辑-要客航班确认-->
+                // <!--edit-batch-cancel-->
+                // <!--编辑-批量关注航班取消-->
+				let obj={
+                    batchConcern:'edit-batch-confirm',
+                    vvpFlights:'edit-vvp-confirm',
+				}
+                if(!this.getMoreWarnLength(key)||!this.$hasRole(obj[key])){
                     return
                 }
                 this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key],this.statusOptions,this.timeOptions,this.infoObj)

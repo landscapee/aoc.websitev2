@@ -602,6 +602,34 @@ export const calcPropertyChanges = (oldValue, newValue) => {
 	return diff;
 };
 
+export const calcDelayTime = (flight) => {
+	let now = memoryStore.getItem('global').now;
+	let movement = get(flight, 'movement');
+	if (movement === 'A') {
+		let ata = get(flight, 'ata');
+		let sta = get(flight, 'sta');
+		let staLimit = sta - 10 * 60 * 1000;
+		if (ata && ata > staLimit) {
+			return parseInt((ata - staLimit) / 60 / 1000);
+		} else if (!ata && now > staLimit) {
+			return parseInt((now - staLimit) / 60 / 1000);
+		} else {
+			return null;
+		}
+	} else if (movement === 'D') {
+		let atd = get(flight, 'atd');
+		let std = get(flight, 'std');
+		let stdLimit = std + 30 * 60 * 1000;
+		if (atd && atd > stdLimit) {
+			return parseInt((atd - stdLimit) / 60 / 1000);
+		} else if (!atd && now > stdLimit) {
+			return parseInt((now - stdLimit) / 60 / 1000);
+		} else {
+			return null;
+		}
+	}
+};
+
 /**
  * 当前运营日航班统计
  * totalPlan 总计划航班数
@@ -680,7 +708,7 @@ export const filterFlightsByRole = (flights, role = {}) => {
 
 // 通过后端返回的权限过滤航班
 export const filterRoleFlights = (flights) => {
-	let roleFlight = remote.getGlobal('roleFlights');
+	let roleFlight = memoryStore.getItem('global').roleFlights
 	return filterFlightsByRole(flights, roleFlight);
 };
 

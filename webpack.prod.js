@@ -1,6 +1,6 @@
 /*
- * @Descripttion: 
- * @version: 
+ * @Descripttion:
+ * @version:
  * @Author: xdh.ss
  * @Date: 2020-04-08 12:12:43
  * @LastEditors: xdh.ss
@@ -8,12 +8,13 @@
  */
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
-// const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require('webpack');
 
 module.exports = merge(common, {
-    mode:'development',
+    mode:'production',
     plugins: [
         // 压缩js
         // new UglifyjsWebpackPlugin(),
@@ -22,6 +23,9 @@ module.exports = merge(common, {
         // 打包前清除打包目录下的文件，但不删除打包目录
         new CleanWebpackPlugin(),
     ],
+    module: {
+        // rules: []
+    }
     // optimization:{
     //     minimizer:[
     //         new UglifyjsWebpackPlugin({

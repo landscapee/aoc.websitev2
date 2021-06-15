@@ -123,9 +123,11 @@ export default class HttpRequest {
   }
   post(channel, url, params, isFormData, method){
     let serverPath = this.httpConfig[channel].path;
+    let host = this.httpConfig[channel].host;
+    let port = this.httpConfig[channel].port;
     return new Promise((resolve, reject) => {
       axios({
-        url:`${serverPath}/${url}`,
+        url:`http://${host}:${port}/${serverPath}/${url}`,
         method: method || 'POST',
         headers: isFormData ? {} : { 'Content-Type': 'application/json' },
         data: isFormData ? qs.stringify(params) : params,
@@ -139,9 +141,11 @@ export default class HttpRequest {
 
   get(channel, url){
     let serverPath = this.httpConfig[channel].path;
+    let host = this.httpConfig[channel].host;
+    let port = this.httpConfig[channel].port;
     return new Promise((resolve,reject) => {
       axios({
-        url:`${serverPath}/${url}`,
+        url:`http://${host}:${port}/${serverPath}/${url}`,
         method: 'GET',
       }).then(response => {
         resolve(response)

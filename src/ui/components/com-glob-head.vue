@@ -332,9 +332,10 @@ export default {
                     this.navList.push(list)
                 }
                 //消息管理
-                if (list.code == 'N_XXGL') {
+                if (list.code == 'news_releaseAll') {
                     list.icon = 'xiaoxifabu'
                     list.path = 'specialTreatment'
+                    list.name = '消息发布'
                     this.navList.push(list)
                 }
 

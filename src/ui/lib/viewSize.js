@@ -29,7 +29,7 @@ export const selfAdaption = () => {
  * 基于设计稿的转换
  */
 export const pxtorem = (valueOfPX) => {
-	return p2r(valueOfPX, DEFAULT_FONTSIZE);
+	return valueOfPX / 100
 };
 
 /**
@@ -47,7 +47,8 @@ export const pxtoremByCS = (valueOfPX) => {
  */
 export const remtopxByCS = (valueOfRem) => {
 	!currentScreenFontSize && selfAdaption();
-	return valueOfRem * currentScreenFontSize;
+    console.log(currentScreenFontSize);
+    return valueOfRem * currentScreenFontSize;
 };
 
 /**
