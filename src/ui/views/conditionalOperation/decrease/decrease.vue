@@ -1,13 +1,19 @@
 <template>
     <div id="decrease">
-        <div class="tableBox">
+        <!-- <div class="tableBox">
             <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
-        </div>
+        </div> -->
+        <setting />
+
     </div>
 </template>
 
 <script>
+import Setting from './components/setting.vue'
 export default {
+    components: {
+        setting: Setting,
+    },
     data() {
         return {
             columnConfig: [
@@ -119,6 +125,114 @@ export default {
                     flightDate: 1589341428610,
                     remark: '',
                 },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
+                {
+                    waybillCode: '217-00000000',
+                    des: 'bkk',
+                    number: 5,
+                    weight: 10,
+                    specialCode: 'RLI',
+                    flightDate: 1589341428610,
+                    remark: '',
+                },
             ],
         }
     },
@@ -132,9 +246,12 @@ export default {
 </script>
 <style scoped lang="scss">
 #decrease {
-    .tableBox {
-        width: 800px;
-        height: 500px;
+    position: relative;
+    & > div {
+        background: rgba(25, 37, 60, 0.8);
+        box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        position: absolute;
     }
 }
 </style>
