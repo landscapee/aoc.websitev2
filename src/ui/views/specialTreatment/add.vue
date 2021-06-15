@@ -27,7 +27,7 @@
 				</el-form-item>
 				<!--间隔时间 通行能力下降-->
 				<el-form-item prop="closeScheme" :label="closeSchemeObj[type]">
-					<el-input v-model="form.closeScheme" @blur="closeSchemeBlur" @input="closeSchemeInput" clearable placeholder="请输入间隔时间"></el-input>
+					<el-input v-model="form.closeScheme"  @input="closeSchemeInput" clearable placeholder="请输入间隔时间"></el-input>
 				</el-form-item>
 				<el-form-item v-if="this.type=='warning'" prop="level" label="预警等级：">
 					<el-select v-model="form.level"   clearable placeholder="请选择预警等级">
@@ -168,17 +168,7 @@
  				}
 
 			},
-            closeSchemeBlur({target}){
-                if(this.type=='warning'){
-                    let value=target.value
-                    console.log(value);
-                    let arr=value.split('.')
-                    if(arr.length>1&&arr[1]===''){
-                         this.$set(this.form,'closeScheme',arr[0])
-                        this.$message.warning('以为您自动过滤尾部‘.’')
-                    }
-				}
-			},
+
             titleChange(val) {
                 this.form.title = this.areaObj[val]
             },

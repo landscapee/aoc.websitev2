@@ -1,0 +1,600 @@
+<template>
+	<div class="resourceMonitoring">
+		<div class="left">
+			<div class="leftItem leftItem1" v-for="(opt,key) in dataSituation" :key="key">
+				<div class="itemTitle">
+					<div class="div1"><span></span><span>{{opt.name}}</span></div>
+					<div class="div2">
+						<span>
+							<span></span><span>实际</span>
+						</span>
+						<span>
+							<span></span><span>预计</span>
+						</span>
+					</div>
+				</div>
+				<div class="eChartsBox">
+					<div class="tabsBox">
+						<div @click="addtab(opt,key)">dfdf</div>
+						<MyTabs :tabs="gettab(opt.tabs)" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
+					</div>
+					<div class="eCharts" :ref="'eCharts'+key">
+					</div>
+				</div>
+			</div>
+ 		</div>
+		<div class="right">
+			<div class="rightItem rightItem1">
+				<div class="itemTitle ">
+					<div class="div1"><span></span><span> 实时停机位使用情况</span></div>
+				</div>
+				<div class="banner">
+					<div class="bannerItem">
+						<div>
+							<img src="../../assets/img/tianfu/jiwei.png" alt="">
+						</div>
+						<div>
+							<div>370</div>
+							<div>机位总数</div>
+						</div>
+					</div>
+					<div class="bannerItem">
+						<div>
+							<img src="../../assets/img/tianfu/kyjiwei.png" alt="">
+						</div>
+						<div>
+							<div>370</div>
+							<div>可用机位总数</div>
+						</div>
+					</div>
+					<div class="bannerItem">
+						<div>
+							<img src="../../assets/img/tianfu/bkyjiwei.png" alt="">
+						</div>
+						<div>
+							<div>370</div>
+							<div>不可用机位总数</div>
+						</div>
+					</div>
+				</div>
+				<div class="baifenbiBox">
+					<div class="baifenbi" v-for="item in 4 " :key="item+'baifenbi'">
+						<div class="baifenbiLeft">C</div>
+						<div class="baifenbiMiddle">
+							<div>50/120</div>
+							<div>占用数/总数</div>
+						</div>
+						<div class="baifenbiRight">
+							<el-progress :percentage="50"></el-progress>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="rightItem rightItem1_1">
+				<div class="baifenbiBox">
+					<div class="baifenbi" v-for="item in getNum " :key="item+'baifenbi'">
+						<div class="baifenbiLeft">C</div>
+						<div class="baifenbiMiddle">
+							<div>50/120</div>
+							<div>占用数/总数</div>
+						</div>
+						<div class="baifenbiRight">
+							<el-progress :percentage="50"></el-progress>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="rightItem rightItem1_2">
+				<div class="baifenbiBox">
+					<div class="baifenbi" v-for="item in getNum " :key="item+'baifenbi'">
+						<div class="baifenbiLeft">C</div>
+						<div class="baifenbiMiddle">
+							<div>50/120</div>
+							<div>占用数/总数</div>
+						</div>
+						<div class="baifenbiRight">
+							<el-progress :percentage="50"></el-progress>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="rightItem rightItem2">
+				<div class="itemTitle">
+					<div class="div1"><span></span><span> 实时登机口使用情况</span></div>
+				</div>
+
+				<div class="baifenbiBox">
+					<div class="baifenbi" v-for="opt in 5 " :key="opt+'rightItem3'">
+						<div class="baifenbiLeft">C</div>
+						<div class="baifenbiMiddle">
+							<div>50/120</div>
+							<div>占用数/总数</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="rightItem rightItem3">
+				<div class="itemTitle">
+					<div class="div1"><span></span><span> 实时行李转盘使用情况</span></div>
+				</div>
+				<div class="baifenbiBox">
+					<div class="baifenbi" v-for="opt in 2 " :key="opt+'rightItem3'">
+						<div class="baifenbiLeft">C</div>
+						<div class="baifenbiMiddle">
+							<div>50/120</div>
+							<div>占用数/总数</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+    import MyTabs from './components/tabs'
+    import postal from 'postal';
+    import {map, keyBy} from 'lodash';
+    import PostalStore from "../../lib/postalStore";
+    import * as echarts from 'echarts'
+
+    let postalStore = new PostalStore();
+    export default {
+        name: "index",
+        components: {MyTabs},
+        data() {
+            return {
+                isMounted: false,
+                activeName: '',
+                dataObj: {
+                    TJW: null,
+                    DJK: null,
+                    XLZP: null,
+                },
+                echartsInstance: {
+                    seatSituation: null,
+                    gateSituation: null,
+                    carouselSituation: null,
+                },
+                dataSituation: {
+                    seatSituation: {
+                        name: '停机位态势', key: 'TJW', tabs: [
+                            {name: '全部', key: 'all'},
+                            {name: 'C', key: 'C'},
+                            {name: 'D', key: 'D'},
+                            {name: 'E', key: 'E'},
+                            {name: 'F', key: 'F'},
+                        ], data: {}
+                    },
+                    gateSituation: {
+                        name: '登机口态势', key: 'DJK', tabs: [
+                            {name: '全部', key: 'all'},
+                            {name: 'T8远', key: 'T8'},
+                            {name: '远', key: 'yuan'},
+                            {name: 'T1远', key: 'T1'},
+                            {name: 'T2远', key: 'T2'},
+                        ], data: {}
+                    },
+                    carouselSituation: {
+                        name: '行李转盘态势', key: 'XLZP', tabs: [
+                            {name: '全部', key: 'all'},
+                            {name: 'T1', key: 'T1'},
+                            {name: 'T2', key: 'T2'},
+                        ], data: {}
+                    }
+                },
+            }
+        },
+        computed: {
+            getNum(){
+                console.log('wwwwww');
+                return 2
+			},
+            gettab(){
+                return (opt)=>{
+                    console.log('optoptopt',opt);
+                    return opt
+				}
+			}
+		},
+        methods: {
+            addtab(opt,key){
+                this.dataSituation[key].tabs.push(  {name: 'G'+opt.tabs[opt.tabs.length-1].key, key: 'G'+opt.tabs[opt.tabs.length-1].key},)
+			},
+            tabClick(tab, opt) {
+                this.dataObj[opt.key] = tab.key
+            },
+            setOptions(option, key) {
+                this.echartsInstance[key].setOption(option)
+
+            },
+
+        },
+        created() {
+
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.resourceMonitoring.Start',
+            });
+        }
+        ,
+        mounted() {
+            this.isMounted = true
+			map(this.echartsInstance,(k,key)=>{
+                let ele = this.$refs['eCharts' + key][0]
+                let option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'cross',
+                            crossStyle: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            dataView: {show: true, readOnly: false},
+                            magicType: {show: true, type: ['line', 'bar']},
+                            restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    legend: {
+                        data: ['蒸发量', '降水量', '平均温度']
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '水量',
+                            min: 0,
+                            max: 250,
+                            interval: 50,
+                            axisLabel: {
+                                formatter: '{value} ml'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '温度',
+                            min: 0,
+                            max: 25,
+                            interval: 5,
+                            axisLabel: {
+                                formatter: '{value} °C'
+                            }
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '蒸发量',
+                            type: 'bar',
+                            data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+                        },
+                        {
+                            name: '降水量',
+                            type: 'bar',
+                            data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+                        },
+                        {
+                            name: '平均温度',
+                            type: 'line',
+                            yAxisIndex: 1,
+                            data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+                        }
+                    ]
+                };
+                console.log(this.$refs, ele);
+                this.echartsInstance[key] = echarts.init(ele)
+                this.setOptions(option,key)
+			})
+            postalStore.sub('resourceSituationData', ({data, key}) => {
+                console.log('resourceSituationData', data, key);
+            })
+        }
+        ,
+        beforeDestroy() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.resourceMonitoring.Stop',
+            })
+            postalStore.unsubAll()
+        }
+        ,
+    }
+</script>
+
+<style lang="scss" scoped>
+	.resourceMonitoring {
+		overflow-y: auto;
+		padding: 11px 15px;
+		display: flex;
+		justify-content: left;
+		color: #fff;
+		box-sizing: border-box;
+		.left {
+			width: 1230px;
+			margin-right: 17px;
+			.leftItem:first-child {
+				margin-top: 0 !important;
+			}
+
+			.leftItem {
+				position: relative;
+				/*height: calc(33.3333% - 10px);*/
+				height: 281px;
+				margin-top: 15px;
+				padding: 18px 19px 11px 6px;
+				background: rgba(25, 37, 60, 0.8);
+				border-radius: 5px;
+				box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
+				.eChartsBox{
+					.eCharts{
+ 						height: 238px;
+						&>div{
+							height: 100%;
+						}
+					}
+				}
+				.tabsBox {
+					top: 15px;
+					position: absolute;
+					left: 50%;
+					transform: translateX(-50%);
+				}
+			}
+		}
+		/*left right 公用*/
+		.itemTitle {
+			display: flex;
+			justify-content: space-between;
+			span {
+				display: inline-block;
+				vertical-align: middle;
+				color: #fff;
+				font-family: AlibabaPuHuiTiB;
+				font-size: 14px;
+
+			}
+			.div1 {
+				height: 25px;
+				line-height: 25px;
+				span:first-child {
+					width: 4px;
+					height: 16px;
+					opacity: 1;
+					background: #649fff;
+					border-radius: 1px;
+					margin: 0 8px 0 10px;
+				}
+				span:last-child {
+					font-size: 18px;
+				}
+			}
+			.div2 {
+				& > span {
+					span:first-child {
+						margin-right: 10px;
+						width: 14px;
+						height: 14px;
+						background: linear-gradient(180deg, #4ca1e2 2%, #3490ff 98%);
+					}
+					span:last-child {
+						font-size: 14px;
+					}
+				}
+				& > span:last-child {
+					margin-left: 30px;
+					span:first-child {
+						background: linear-gradient(180deg, #25e0e7, #00cad2);
+					}
+				}
+			}
+		}
+		.right {
+			height: calc(100%);
+			overflow-y: auto;
+			width: 643px;
+			border-radius: 5px;
+			box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
+			.rightItem:first-child {
+				/*border-radius: 5px 5px 0 0;*/
+				margin-top: 0 !important;
+			}
+			.rightItem {
+				background: rgba(25, 37, 60, 0.8);
+				padding: 15px 25px 2px 25px;
+				margin-top: 15px;
+				.itemTitle {
+					margin-left: -24px;
+					margin-bottom: 11px;
+				}
+				.banner {
+					display: flex;
+					margin-bottom: 12px;
+					.bannerItem {
+						width: 190px;
+						height: 66px;
+						display: flex;
+						padding: 13px;
+						margin-right: 12px;
+						background: #3280e7;
+						border-radius: 5px;
+						box-shadow: 0px 2px 10px 0px rgba(63, 78, 90, 0.05);
+						& > div:first-child {
+							img {
+								width: 40px;
+							}
+							margin-right: 13px;
+						}
+						& > div:nth-child(2) {
+							div {
+								font-size: 20px;
+							}
+							div:last-child {
+								font-size: 13px;
+							}
+						}
+					}
+					.bannerItem:nth-child(2) {
+						background: #37b6f9;
+					}
+					.bannerItem:nth-child(3) {
+						background: #07c7cf;
+						margin-right: 0 !important;
+					}
+				}
+
+			}
+			.baifenbiBox {
+				.baifenbi:last-child {
+					border-bottom: 0;
+				}
+				.baifenbi {
+					display: flex;
+					margin-top: 7px;
+					padding-bottom: 7px;
+					border-bottom: 1px dashed #2d3748;
+					.baifenbiLeft {
+						width: 40px;
+						height: 40px;
+						color: #37b6f9;
+						font-size: 24px;
+						line-height: 40px;
+						text-align: center;
+						background: url("../../assets/img/tianfu/mounitorBJBKXS.png");
+						background-size: 100% 100%;
+					}
+					.baifenbiMiddle {
+						margin: 0 0px 0 19px;
+						width: 98px;
+						div:first-child {
+							font-size: 18px;
+							height: 22px;
+							line-height: 22px;
+						}
+						div:last-child {
+							margin-top: 3px;
+							font-size: 13px;
+							color: rgba(255, 255, 255, 0.51);
+						}
+					}
+					.baifenbiRight {
+						width: 430px;
+						display: flex;
+						align-items: center;
+						.el-progress {
+							width: 100%;
+
+							::v-deep .el-progress-bar__outer {
+								background: rgba(255, 255, 255, 0.11) !important;
+							}
+							::v-deep .el-progress__text {
+								margin-left: 18px;
+								color: #fff;
+								font-size: 18px !important;
+							}
+						}
+					}
+				}
+			}
+			.rightItem1_1, .rightItem1_2 {
+				margin-top: 4px;
+				padding: 2px 25px;
+			}
+			.rightItem1_2 {
+				border-radius: 0 0 5px 5px;
+
+			}
+			.rightItem2 {
+				.baifenbi:last-child {
+					margin-right: 0 !important;
+				}
+				.baifenbi {
+					width: calc(20% - 8px);;
+					display: inline-block;
+					margin-right: 5px;
+
+					.baifenbiLeft {
+						width: 100%;
+						height: 31px;
+						line-height: 31px;
+						font-size: 18px;
+						background: url("../../assets/img/tianfu/djksyqk.png");
+						background-size: 100% 100%;
+					}
+					.baifenbiMiddle {
+						width: 100%;
+						height: 53px;
+						margin: 0 !important;
+						border: 1px solid rgba(100, 159, 255, 0.51);
+						border-top: 0;
+						& > div {
+							font-size: 16px;
+							text-align: center;
+						}
+
+					}
+				}
+			}
+			.rightItem2, .rightItem3 {
+				border-radius: 5px;
+				.baifenbi {
+					border: 0 !important;
+					margin-top: 0px;
+					.baifenbiMiddle {
+						display: flex;
+						flex-direction: column;
+						justify-content: center;
+					}
+				}
+			}
+			.rightItem3 {
+				.baifenbiBox {
+					display: flex;
+					width: 100%;
+				}
+				.baifenbi:first-child {
+					margin-right: 6px;
+				}
+				.baifenbi {
+					width: calc(50% - 6px);
+					/*padding-bottom: 3px;*/
+					.baifenbiLeft {
+						width: 60px;
+						height: 60px;
+						line-height: 60px;
+						font-size: 28px;
+						text-align: center;
+						color: #07c7cf;
+						background: url("../../assets/img/tianfu/ssxlzp.png");
+						background-size: 100% 100%;
+					}
+					.baifenbiMiddle {
+						width: calc(100% - 60px);
+						height: 58px;
+						margin: 1px 0 0 0;
+						padding: 0 0 0 20px;
+						border: 1px solid rgba(7, 199, 207, 0.51);
+						border-left: 0;
+					}
+				}
+
+			}
+		}
+	}
+
+
+</style>
