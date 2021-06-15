@@ -39,6 +39,10 @@ const weatherNew = () => import(/*webpackChunkName:"weatherNew"*/ '../views/cond
 const delayNew = () => import(/*webpackChunkName:"weatherNew"*/ '../views/conditionalOperation/delayNew/delayNew')
 //调时调减
 const decrease = () => import(/*webpackChunkName:"decrease"*/ '../views/conditionalOperation/decrease/decrease')
+//消息发布
+const specialTreatment = () => import(/*webpackChunkName:"specialTreatment"*/ '../views/specialTreatment/index')
+//资源监控
+const resourceMonitoring = () => import(/*webpackChunkName:"resourceMonitoring"*/ '../views/resourceMonitoring/index')
 
 
 
@@ -51,8 +55,9 @@ var routes = [
       { path: '/flight', name: 'flight', component:flight},
       { path: '/runMonitoring', name: 'runMonitoring', component:runMonitoring},
       { path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component:poolMonitorWithRunway},
+      { path: '/resourceMonitoring', name: 'resourceMonitoring', component:resourceMonitoring},
       { path: '/adv', name: 'adv', component: adv },
-      {
+       {
         path: '/conditionalOperation', name: 'conditionalOperation', component: conditionalOperation, children: [
            { path: '/alternate', name: 'alternate', component: alternate },
            { path: '/runningNew', name: 'runningNew', component: runningNew },
@@ -62,8 +67,9 @@ var routes = [
            { path: '/decrease', name: 'decrease', component: decrease },
         ]
       },
-      
-    ]
+          { path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment },
+
+      ]
   },
 
 

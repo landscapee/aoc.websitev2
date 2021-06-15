@@ -5,6 +5,7 @@ let locationHost = '173.101.1.30'; // 双流测试
 // console.log('env', process.env.ENVIROMENT);
 // let locationHost = '173.100.1.137';
 // let port = location.port;
+// let port = 80;
 let port = '6075'; // 双流测试
 // let locationHost = '173.100.1.133';
 let serverPreset = 'api/';

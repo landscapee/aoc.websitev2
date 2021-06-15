@@ -73,37 +73,6 @@
                 </ul>
             </div>
 
-            <!-- <div class="lineText">
-                <div class="line"></div>
-                <div class="text text2">
-                    10
-                </div>
-                <div class="line"></div>
-            </div>
-            <ul class="ulAD2">
-                <div>
-                    <div>
-                        <span>12</span>
-                        分/架
-                    </div>
-                    <div>起飞速率</div>
-                </div>
-                <div>
-                    <div>
-                        <span>12</span>
-                        分/架
-                    </div>
-                    <div>落地速率</div>
-                </div>
-                <div>
-                    <div>
-                        <span>12</span>
-                        分/架
-                    </div>
-                    <div>综合速率</div>
-                </div>
-            </ul> -->
-
         </div>
     </div>
 </template>

@@ -106,8 +106,7 @@ export const getUrlParam = function (name) {
 export const hasRole = function (key,isMessage=true) {
     let blo=false
     let userInfo= JSON.parse(sessionStorage.getItem('userData')).menus
-    console.log('userInfo',userInfo);
-    function f(arr) {
+     function f(arr) {
         for(let i=0;i<arr.length;i++){
             if(arr[i].code===key){
                 blo=true

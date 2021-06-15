@@ -10,7 +10,7 @@ import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css';
 import './src/ui/styles/elementReset.scss';//element样式重置
 import i18n from './src/ui/i18n'//中英双语
-import {hasRole} from './src/ui/lib/common'//中英双语
+import {hasRole} from './src/ui/lib/common'
 
 import router from './src/ui/lib/router'
 import HttpRequest from '@/lib/axios'
