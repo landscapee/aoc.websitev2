@@ -15,7 +15,7 @@
 				</div>
 				<div class="eChartsBox">
 					<div class="tabsBox">
- 						<MyTabs :tabs="gettab(opt.tabs)" :activeName="tabObj[key]" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
+ 						<MyTabs :tabs="gettab(opt.tabs)" :activeKey="key" :activeName="tabObj[key]" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
 					</div>
 					<div id="eCharts" :ref="'eCharts'+key">
 					</div>
@@ -148,9 +148,9 @@
             return {
                 isMounted: false,
                  tabObj: {
-                     seatSituation: '全部',
-                     gateSituation:  '全部',
-                     carouselSituation:  '全部',
+                     seatSituation: '全部seatSituation',
+                     gateSituation:  '全部gateSituation',
+                     carouselSituation:  '全部carouselSituation',
 				 },
                 echartsInstance: {
                     seatSituation: null,

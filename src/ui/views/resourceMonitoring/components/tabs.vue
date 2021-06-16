@@ -2,8 +2,8 @@
 
 	<span class="tabs" ref="tabs">
  		<span @click="tabItemClick( tab)" class="tabItem cursor"
-			  :class="activeName==tab.key?'tabItemActive':''"
-			  :ref="tab.key"
+			  :class="activeName == tab['name'] + activeKey ? 'tabItemActive' : ''"
+			  :ref="tab['name'] + activeKey"
 			  v-for="(tab) in tabs" :key="tab.key">
 			{{tab.name}}
 		</span>
@@ -13,43 +13,57 @@
 </template>
 
 <script>
+    let flag;
     export default {
         name: "mytabs",
         components: {},
-        props: ['tabs','activeName'],
+        props: ['tabs','activeName', 'activeKey'],
         data() {
             return {
                 // activeName: '全部',
                 mountedIs:false,
+              getItemWidthStyle:{width: 0 + 'px', left: 0 + 'px'}
             }
         },
 		watch:{
             tabs:function (n) {
-                console.log(n,'qweqweqw');
+              // console.log('--', this.$refs)
+              // console.log('this.activeName', this.activeName)
+              if (!flag && this.$refs[this.activeName]){
+                flag = true
+                console.log('--', this.$refs[this.activeName])
+                console.log('this.activeName', this.activeName)
+                let element= this.$refs[this.activeName]&&this.$refs[this.activeName][0]
+                let width=0
+                let width1=0
+                if(element){
+                  width=parseInt(window.getComputedStyle(element).width)
+                  width1= element.offsetLeft
+                }
+                console.log(width,'--',width1);
+                this.getItemWidthStyle = {width: width + 'px', left: width1 + 'px'}
+              }
             }
 		},
         computed: {
-            getItemWidthStyle() {
-                if(this.mountedIs){
-                    let width=0
-                    let width1=0
-                    let element=null
-					this.$nextTick(()=>{
-                        element= this.$refs[this.activeName]&&this.$refs[this.activeName][0]
-					})
-                    if(element){
-                        width=parseInt(window.getComputedStyle(element).width)
-                        width1= element.offsetLeft
-                    }
-                    console.log(this.$refs[this.activeName],element,this.activeName,'getItemWidthStyle');
-                    return {width: width + 'px', left: width1 + 'px'}
-
-				}
-            },
+        //     getItemWidthStyle() {
+        //         if(this.mountedIs){
+        //           let element= this.$refs[this.activeName]&&this.$refs[this.activeName][0]
+        //             let width=0
+        //             let width1=0
+        //             if(element){
+        //                 width=parseInt(window.getComputedStyle(element).width)
+        //                 width1= element.offsetLeft
+        //             }
+        //             console.log(this.$refs[this.activeName],element,this.activeName,'getItemWidthStyle');
+        //             return {width: width + 'px', left: width1 + 'px'}
+        //
+				// }
+        //     },
         },
         methods: {
             tabItemClick( tab) {
-				this.$emit('tabClick',tab)
+				    this.$emit('tabClick',tab)
             },
         },
         created() {
