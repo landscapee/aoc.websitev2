@@ -1,49 +1,61 @@
 <template>
 
 	<span class="tabs" ref="tabs">
-		<span @click="tabItemClick( tab)" class="tabItem"
+ 		<span @click="tabItemClick( tab)" class="tabItem cursor"
 			  :class="activeName==tab.key?'tabItemActive':''"
 			  :ref="tab.key"
-			  v-for="(tab,index) in tabs" :key="index+'tabs'">
+			  v-for="(tab) in tabs" :key="tab.key">
 			{{tab.name}}
 		</span>
 		<span class="allWidth"></span>
-		<span class="itemWidth" :style="getItemWidthStyle"></span>
+ 		<span class="itemWidth"   :style="getItemWidthStyle"></span>
 	</span>
 </template>
 
 <script>
     export default {
-        name: "index",
+        name: "mytabs",
         components: {},
-        props: ['tabs'],
+        props: ['tabs','activeName'],
         data() {
             return {
-                activeName: '',
+                // activeName: '全部',
                 mountedIs:false,
             }
         },
+		watch:{
+            tabs:function (n) {
+                console.log(n,'qweqweqw');
+            }
+		},
         computed: {
             getItemWidthStyle() {
                 if(this.mountedIs){
-                    let element=this.$refs[this.activeName][0]
-					let width=parseInt(window.getComputedStyle(element).width)
-					let width1= element.offsetLeft
-                    console.log(222,width1);
+                    let width=0
+                    let width1=0
+                    let element=null
+					this.$nextTick(()=>{
+                        element= this.$refs[this.activeName]&&this.$refs[this.activeName][0]
+					})
+                    if(element){
+                        width=parseInt(window.getComputedStyle(element).width)
+                        width1= element.offsetLeft
+                    }
+                    console.log(this.$refs[this.activeName],element,this.activeName,'getItemWidthStyle');
                     return {width: width + 'px', left: width1 + 'px'}
+
 				}
             },
         },
         methods: {
             tabItemClick( tab) {
-                this.activeName= tab.key
 				this.$emit('tabClick',tab)
             },
         },
         created() {
-            this.activeName=this.tabs[0]?.key
         },
 		mounted(){
+            console.log(this.$refs[this.activeName],'11111qweqweqw');
             this.mountedIs=true
 		}
     }
@@ -86,5 +98,6 @@
 		.tabItemActive {
 			color: #85b9ff !important;
 		}
+
 	}
 </style>

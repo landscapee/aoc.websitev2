@@ -64,8 +64,14 @@ export const transRunwayData = (worker, time) => {
         let orderByFn = (data) => orderBy(data, ['actualTime', 'eta', 'ctot'], ['asc'])
 
         //按时间排序 后面处理层级 时间越小 层级越高
-        monitorQueue.normal = orderByFn(monitorQueue.normal)
-        monitorQueue.delay = orderByFn(monitorQueue.delay)
+        // monitorQueue.normal = orderByFn(monitorQueue.normal)
+        // monitorQueue.delay = orderByFn(monitorQueue.delay)
+        let arr= orderByFn([...monitorQueue.delay,...monitorQueue.normal])
+        let zIndex = 1000 //设置层级 时间越小 层级越高
+        map(arr,(k,l)=>{
+            zIndex--
+            k.zIndex=zIndex
+        })
         map(runwayModels, (k, l) => {
             let o = {...k, runway: k.runway, delayLen: 0, normalLen: 0, delay: [], normal: []}
             runwayObj[k.runway] = o
@@ -78,7 +84,7 @@ export const transRunwayData = (worker, time) => {
         let classifyFn = (data, key) => {
             let len = key + 'Len'
             let checkObj = {}
-            let zIndex = 1000 //设置层级 时间越小 层级越高
+            // let zIndex = 1000 //设置层级 时间越小 层级越高
             map(data, (k, l) => {
                 // 转换跑到
                 let paodao = duo_one[k.runway]
@@ -86,15 +92,15 @@ export const transRunwayData = (worker, time) => {
                 let o = checkObj[paodao] && checkObj[paodao][shifen]
                 if (o) {
                     // 同一 跑到 同一 shifen 的放入一个数组
-                    runwayObj[paodao][key][o.len].push({...k, zIndex})
-                    zIndex--
+                    runwayObj[paodao][key][o.len].push({...k})
+                    // zIndex--
                 } else {
                     //记录 同一个跑到 不同 shifen 的大数组下标
                     checkObj[paodao] = checkObj[paodao] || {}
                     checkObj[paodao][shifen] = {len: runwayObj[paodao][len]}
-                    runwayObj[paodao][key].push([{...k, zIndex}])
+                    runwayObj[paodao][key].push([{...k}])
                     runwayObj[paodao][len] = runwayObj[paodao][len] + 1
-                    zIndex--
+                    // zIndex--
                 }
             });
             // checkObj

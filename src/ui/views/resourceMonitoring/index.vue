@@ -15,10 +15,9 @@
 				</div>
 				<div class="eChartsBox">
 					<div class="tabsBox">
-						<div @click="addtab(opt,key)">dfdf</div>
-						<MyTabs :tabs="gettab(opt.tabs)" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
+ 						<MyTabs :tabs="gettab(opt.tabs)" :activeName="tabObj[key]" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
 					</div>
-					<div class="eCharts" :ref="'eCharts'+key">
+					<div id="eCharts" :ref="'eCharts'+key">
 					</div>
 				</div>
 			</div>
@@ -137,10 +136,10 @@
 <script>
     import MyTabs from './components/tabs'
     import postal from 'postal';
-    import {map, keyBy} from 'lodash';
+    import {map,cloneDeep} from 'lodash';
     import PostalStore from "../../lib/postalStore";
     import * as echarts from 'echarts'
-
+	import {getBarLineOption} from './options'
     let postalStore = new PostalStore();
     export default {
         name: "index",
@@ -148,43 +147,25 @@
         data() {
             return {
                 isMounted: false,
-                activeName: '',
-                dataObj: {
-                    TJW: null,
-                    DJK: null,
-                    XLZP: null,
-                },
+                 tabObj: {
+                     seatSituation: '全部',
+                     gateSituation:  '全部',
+                     carouselSituation:  '全部',
+				 },
                 echartsInstance: {
                     seatSituation: null,
                     gateSituation: null,
                     carouselSituation: null,
                 },
+                echartsData:{
+                    seatSituation: null,
+                    gateSituation: null,
+                    carouselSituation: null,
+				},
                 dataSituation: {
-                    seatSituation: {
-                        name: '停机位态势', key: 'TJW', tabs: [
-                            {name: '全部', key: 'all'},
-                            {name: 'C', key: 'C'},
-                            {name: 'D', key: 'D'},
-                            {name: 'E', key: 'E'},
-                            {name: 'F', key: 'F'},
-                        ], data: {}
-                    },
-                    gateSituation: {
-                        name: '登机口态势', key: 'DJK', tabs: [
-                            {name: '全部', key: 'all'},
-                            {name: 'T8远', key: 'T8'},
-                            {name: '远', key: 'yuan'},
-                            {name: 'T1远', key: 'T1'},
-                            {name: 'T2远', key: 'T2'},
-                        ], data: {}
-                    },
-                    carouselSituation: {
-                        name: '行李转盘态势', key: 'XLZP', tabs: [
-                            {name: '全部', key: 'all'},
-                            {name: 'T1', key: 'T1'},
-                            {name: 'T2', key: 'T2'},
-                        ], data: {}
-                    }
+                    seatSituation: {name: '停机位态势',tooltipName:'停机位总数', key: 'seatSituation', tabs: []},
+                    gateSituation: {name: '登机口态势',tooltipName:'登机口总数', key: 'gateSituation', tabs: []},
+                    carouselSituation: {name: '行李转盘态势',tooltipName:'行李转盘总数', key: 'carouselSituation', tabs: []}
                 },
             }
         },
@@ -195,21 +176,17 @@
 			},
             gettab(){
                 return (opt)=>{
-                    console.log('optoptopt',opt);
-                    return opt
+                     return opt
 				}
 			}
 		},
         methods: {
-            addtab(opt,key){
-                this.dataSituation[key].tabs.push(  {name: 'G'+opt.tabs[opt.tabs.length-1].key, key: 'G'+opt.tabs[opt.tabs.length-1].key},)
-			},
+
             tabClick(tab, opt) {
-                this.dataObj[opt.key] = tab.key
+                this.tabObj[opt.key] = tab.name
             },
             setOptions(option, key) {
-                this.echartsInstance[key].setOption(option)
-
+                 this.echartsInstance[key].setOption(option)
             },
 
         },
@@ -225,83 +202,19 @@
             this.isMounted = true
 			map(this.echartsInstance,(k,key)=>{
                 let ele = this.$refs['eCharts' + key][0]
-                let option = {
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            type: 'cross',
-                            crossStyle: {
-                                color: '#fff'
-                            }
-                        }
-                    },
-                    toolbox: {
-                        feature: {
-                            dataView: {show: true, readOnly: false},
-                            magicType: {show: true, type: ['line', 'bar']},
-                            restore: {show: true},
-                            saveAsImage: {show: true}
-                        }
-                    },
-                    legend: {
-                        data: ['蒸发量', '降水量', '平均温度']
-                    },
-                    xAxis: [
-                        {
-                            type: 'category',
-                            data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                            axisPointer: {
-                                type: 'shadow'
-                            }
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            type: 'value',
-                            name: '水量',
-                            min: 0,
-                            max: 250,
-                            interval: 50,
-                            axisLabel: {
-                                formatter: '{value} ml'
-                            }
-                        },
-                        {
-                            type: 'value',
-                            name: '温度',
-                            min: 0,
-                            max: 25,
-                            interval: 5,
-                            axisLabel: {
-                                formatter: '{value} °C'
-                            }
-                        }
-                    ],
-                    series: [
-                        {
-                            name: '蒸发量',
-                            type: 'bar',
-                            data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
-                        },
-                        {
-                            name: '降水量',
-                            type: 'bar',
-                            data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
-                        },
-                        {
-                            name: '平均温度',
-                            type: 'line',
-                            yAxisIndex: 1,
-                            data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
-                        }
-                    ]
-                };
-                console.log(this.$refs, ele);
-                this.echartsInstance[key] = echarts.init(ele)
-                this.setOptions(option,key)
+				this.echartsInstance[key] = echarts.init(ele)
+                this.setOptions(getBarLineOption({}),key)
 			})
-            postalStore.sub('resourceSituationData', ({data, key}) => {
-                console.log('resourceSituationData', data, key);
+            postalStore.sub('resourceSituationData', (data) => {
+                console.log('resourceSituationData,data',data);
+                map(data,(item,key)=>{
+                   this.dataSituation[key].tabs=cloneDeep(item.tabs)
+                   item.tabs? delete item.tabs:''
+                   this.echartsData[key]=item;
+                   let tooltipName=this.dataSituation[key].tooltipName
+					this.setOptions(getBarLineOption({...item[this.tabObj[key]],tooltipName}),key)
+
+                })
             })
         }
         ,
@@ -310,6 +223,9 @@
                 channel: 'Worker',
                 topic: 'Page.resourceMonitoring.Stop',
             })
+            map(this.echartsInstance,(k,key)=>{
+                 this.echartsInstance[key].dispose()
+             })
             postalStore.unsubAll()
         }
         ,
@@ -317,6 +233,14 @@
 </script>
 
 <style lang="scss" scoped>
+	#eCharts{
+
+		::v-deep &>div{
+ 			border: none!important;
+			box-shadow:none!important;
+		}
+
+	}
 	.resourceMonitoring {
 		overflow-y: auto;
 		padding: 11px 15px;
@@ -341,10 +265,18 @@
 				border-radius: 5px;
 				box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
 				.eChartsBox{
-					.eCharts{
+					#eCharts{
  						height: 238px;
 						&>div{
 							height: 100%;
+						}
+						&>div{
+							border-style:none!important;
+							border: none!important;
+						}
+						::v-deep &>div:last-child{
+							border-style:none;
+							border: none!important;
 						}
 					}
 				}
