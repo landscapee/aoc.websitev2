@@ -8,7 +8,7 @@
 			{{tab.name}}
 		</span>
 		<span class="allWidth"></span>
- 		<span class="itemWidth"   :style="getItemWidthStyle"></span>
+ 		<span class="itemWidth"  :key="($refs[this.activeName]||'').toString()" :style="getItemWidthStyle"></span>
 	</span>
 </template>
 
@@ -19,8 +19,8 @@
         props: ['tabs','activeName'],
         data() {
             return {
-                // activeName: '全部',
-                mountedIs:false,
+                element:null,
+                 mountedIs:false,
             }
         },
 		watch:{
@@ -29,19 +29,16 @@
             }
 		},
         computed: {
-            getItemWidthStyle() {
+             getItemWidthStyle() {
                 if(this.mountedIs){
                     let width=0
                     let width1=0
-                    let element=null
-					this.$nextTick(()=>{
-                        element= this.$refs[this.activeName]&&this.$refs[this.activeName][0]
-					})
+                     let element=this.$refs[this.activeName]&&this.$refs[this.activeName][0]
                     if(element){
                         width=parseInt(window.getComputedStyle(element).width)
                         width1= element.offsetLeft
                     }
-                    console.log(this.$refs[this.activeName],element,this.activeName,'getItemWidthStyle');
+                    console.log( element,width,this.activeName,'getItemWidthStyle');
                     return {width: width + 'px', left: width1 + 'px'}
 
 				}
@@ -52,11 +49,11 @@
 				this.$emit('tabClick',tab)
             },
         },
+
         created() {
         },
 		mounted(){
-            console.log(this.$refs[this.activeName],'11111qweqweqw');
-            this.mountedIs=true
+             this.mountedIs=true
 		}
     }
 </script>
