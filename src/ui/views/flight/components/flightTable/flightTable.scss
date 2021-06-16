@@ -15,6 +15,9 @@
   ::v-deep.el-table{
     background-color: #111926;
     border-color: #45547c;
+    ::-webkit-scrollbar {
+      display: block;
+    }
     tr{
       background-color: #111926;
     }

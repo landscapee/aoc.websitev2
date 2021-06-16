@@ -11,6 +11,8 @@
     import postal from 'postal';
     import PostalStore from "../../lib/postalStore";
     import {getListHeader} from "@/ui/views/flight/components/flightTable/handleColumn";
+    import _ from 'lodash';
+    import ColumnsDefine from './columnDefine'
     let postalStore = new PostalStore();
   export default {
     data() {
@@ -26,7 +28,7 @@
         import(/*webpackChunkName:"com-flightTable"*/ './components/flightTable/flightTable'),
     },
     beforeMount() {
-      this.columns = getListHeader();
+      this.setColumns(getListHeader())
     },
     mounted() {
       postalStore.sub('Test',a=>{
@@ -56,7 +58,16 @@
       postalStore.unsubAll()
     },
     methods: {
-
+      setColumns: function (Columns) {
+        let newColumns = _.map(Columns, (h) => {
+          if (ColumnsDefine[h.key]) {
+            return _.extend({}, h, ColumnsDefine[h.key]);
+          } else {
+            return h;
+          }
+        });
+        this.columns = newColumns
+      }
     },
   }
 </script>
