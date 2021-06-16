@@ -15,7 +15,7 @@
 				</div>
 				<div class="eChartsBox">
 					<div class="tabsBox">
- 						<MyTabs :tabs="gettab(opt.tabs)" :activeName="tabObj[key]" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
+ 						<MyTabs :tabs="gettab(opt.tabs)"   :activeName="tabObj[key]" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
 					</div>
 					<div id="eCharts" :ref="'eCharts'+key">
 					</div>

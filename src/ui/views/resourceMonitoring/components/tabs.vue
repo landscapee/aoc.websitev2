@@ -1,35 +1,55 @@
 <template>
 
 	<span class="tabs" ref="tabs">
+
  		<span @click="tabItemClick( tab)" class="tabItem cursor"
-			  :class="activeName==tab.key?'tabItemActive':''"
-			  :ref="tab.key"
+			  :class="activeName == tab['name']  ? 'tabItemActive' : ''"
+			  :ref="tab['name'] "
 			  v-for="(tab) in tabs" :key="tab.key">
 			{{tab.name}}
 		</span>
 		<span class="allWidth"></span>
  		<span class="itemWidth"  :key="($refs[this.activeName]||'').toString()" :style="getItemWidthStyle"></span>
+		<div>{{a}}</div>
 	</span>
 </template>
 
 <script>
+    let flag;
     export default {
         name: "mytabs",
         components: {},
         props: ['tabs','activeName'],
         data() {
             return {
-                element:null,
+                 element:null,
                  mountedIs:false,
-            }
+				a:2,
+                 // activeName: '全部',
+             }
         },
 		watch:{
             tabs:function (n) {
-                console.log(n,'qweqweqw');
-            }
-		},
+                if (!flag && this.$refs[this.activeName]){
+                  flag = true
+					this.a=3
+                  // console.log('--', this.$refs[this.activeName])
+                  // console.log('this.activeName', this.activeName)
+                  // let element= this.$refs[this.activeName]&&this.$refs[this.activeName][0]
+                  // let width=0
+                  // let width1=0
+                  // if(element){
+                  //   width=parseInt(window.getComputedStyle(element).width)
+                  //   width1= element.offsetLeft
+                  // }
+                  // console.log(width,'--',width1);
+                  // this.getItemWidthStyle = {width: width + 'px', left: width1 + 'px'}
+            	}
+              }
+            },
+
         computed: {
-             getItemWidthStyle() {
+              getItemWidthStyle() {
                 if(this.mountedIs){
                     let width=0
                     let width1=0
@@ -43,10 +63,11 @@
 
 				}
             },
+
         },
         methods: {
             tabItemClick( tab) {
-				this.$emit('tabClick',tab)
+				    this.$emit('tabClick',tab)
             },
         },
 
