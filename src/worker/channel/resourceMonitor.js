@@ -1,5 +1,5 @@
 
-import {resourceStart,resourceStop} from "../manage/resourceMonitor";
+import {resourceStart,resourceStop,resourceSituationData} from "../manage/resourceMonitor";
  // import {checkWebsocketResponseDataFinish} from "../../lib/helper/flight";
 import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
@@ -21,17 +21,12 @@ export const checkClient = (clientField) => {
 };
 // situation 服务的连接
 const subWSEvent = () => {
-    let resourceSituationData=(data)=>{
-        worker.publish('Web','resourceSituationData',data)
-    }
-    let client = clientObj.resourceClient;
 
+    let client = clientObj.resourceClient;
     //停机位态势
     client.sub('/resource/stat/seatSituation', (data) => {
         //1、先存workpage
-        memoryStore.setItem('ResourceMonitoring', { seatSituation: data });
-        resourceSituationData({seatSituation: data })
-
+        resourceSituationData(worker,data,'seatSituation')
     });
     //登机口态势
     client.sub('/resource/stat/gateSituation', (data, body) => {
@@ -39,15 +34,12 @@ const subWSEvent = () => {
         if (!body.responseData) {
             return;
         }
-        memoryStore.setItem('ResourceMonitoring', { gateSituation: data });
-        resourceSituationData({gateSituation: data })
-     });
+        resourceSituationData(worker,data,'gateSituation')
+    });
     //行李转盘态势
     client.sub('/resource/stat/carouselSituation', (data) => {
         //1、先存workpage
-        memoryStore.setItem('ResourceMonitoring', { carouselSituation: data });
-        resourceSituationData({carouselSituation: data })
-
+        resourceSituationData(worker,data,'carouselSituation')
     });
     //机位当前使用情况
     client.sub('/resource/stat/seatSituationUsing', (data) => {
