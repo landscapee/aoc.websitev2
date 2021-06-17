@@ -1,4 +1,5 @@
 @import "./common";
+
 /*svg图标样式*/
 .svg-icon {
 	width: 1em;
@@ -9,81 +10,83 @@
 }
 
 
-@font-face {
-	font-family: 'sansN';
-	src: url("/static/font/Normal.ttf");
-}
+
+// @font-face {
+// 	font-family: 'ALiR';
+// 	src: url('/static/font/AlibabaPuHuiTiR/webfont.eot');
+// 	/* IE9*/
+// 	src: url('/static/font/AlibabaPuHuiTiR/webfont.eot') format('embedded-opentype'),
+// 		/* IE6-IE8 */
+// 		url('/static/font/AlibabaPuHuiTiR/webfont.woff') format('woff'),
+// 		/* chrome、firefox */
+// 		url('/static/font/AlibabaPuHuiTiR/webfont.ttf') format('truetype'),
+// 		/* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+// 		url('/static/font/AlibabaPuHuiTiR/webfont.svg') format('svg');
+// 	/* iOS 4.1- */
+// }
+
+// @font-face {
+// 	font-family: 'ALiB';
+// 	src: url('/static/font/AlibabaPuHuiTiB/webfont.eot');
+// 	/* IE9*/
+// 	src: url('/static/font/AlibabaPuHuiTiB/webfont.eot') format('embedded-opentype'),
+// 		/* IE6-IE8 */
+// 		url('/static/font/AlibabaPuHuiTiB/webfont.woff') format('woff'),
+// 		/* chrome、firefox */
+// 		url('/static/font/AlibabaPuHuiTiB/webfont.ttf') format('truetype'),
+// 		/* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+// 		url('/static/font/AlibabaPuHuiTiB/webfont.svg') format('svg');
+// 	/* iOS 4.1- */
+// }
 
 @font-face {
-	font-family: 'sansB';
-	src: url("/static/font/SourceHanSansCN-Bold.ttf");
-}
-
-@font-face {
-	font-family: 'sansR';
-	src: url("/static/font/Regular.ttf");
-}
-
-@font-face {
-	//数字英文
-	font-family: 'Arial';
-	src: url("/static/font/Regular.ttf");
-}
-
-//数字字体
-@font-face {
-	font-family: 'orbiL';
-	src: url("/static/font/orbitron-Light.ttf");
-}
-
-@font-face {
-	font-family: 'orbiR';
-	src: url("/static/font/orbitron-Regular.ttf");
-}
-
-@font-face {
-	font-family: 'orbiB';
-	src: url("/static/font/orbitron-Bold1.ttf");
+	font-family: 'ALiR';
+	src: url("/static/font/AlibabaPuHuiTiR.ttf");
 }
 
 @font-face {
-	//重点数字
-	font-family: 'siB';
-	src: url("/static/font/siyuanBold.ttf");
+	font-family: 'ALiB';
+	src: url("/static/font/AlibabaPuHuiTiB.ttf");
+
+}
+
+@font-face {
+	font-family: 'PingFang';
+	src: url("/static/font/PingFang.ttf");
+}
+
+@font-face {
+	font-family: 'FjallaOne';
+	src: url("/static/font/FjallaOne.ttf");
 }
 
 
-.sansB {
-	font-family: 'sansB' !important;
+
+
+.alir {
+	font-family: 'ALiR' !important;
 }
 
-.sansN {
-	font-family: 'sansN' !important;
+.alib {
+	font-family: 'ALiB' !important;
+	font-weight: 600;
 }
 
-.sansR {
-	font-family: 'sansR' !important;
+.pf {
+	font-family: 'PingFang' !important;
 }
 
-.orbiR {
-	font-family: 'orbiR' !important;
+.fo {
+	font-family: 'FjallaOne' !important;
 }
 
-.orbiL {
-	font-family: 'orbiL' !important;
-}
-
-.orbiB {
-	font-family: 'orbiB' !important;
-}
-
-
-.Arial {
-	font-family: 'Arial' !important;
+.fob {
+	font-family: 'FjallaOne' !important;
+	font-weight: 600;
 }
 
 html * {
-	font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+	font-family: "ALiR",
 }
 
 #app {

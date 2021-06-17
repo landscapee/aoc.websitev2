@@ -2,7 +2,7 @@
     <div class="home_number2" :class="options.position">
         <div class="box_content">
             <div class="left">
-                <div class="top">
+                <div class="top fo">
                     {{activeData}}
                 </div>
                 <div class="footer">
@@ -48,6 +48,7 @@ export default {
         padding: 20px 10px 20px 30px;
         display: flex;
         justify-content: space-between;
+        align-items: center;
         .left {
             display: flex;
             flex-direction: column;
@@ -56,14 +57,14 @@ export default {
         .top {
             color: #fff;
             font-size: 28px;
-            font-weight: 600;
+            margin-bottom: 5px;
         }
         .footer {
             color: #909090 !important;
         }
         .right {
             svg {
-                font-size: 40px;
+                font-size: 50px;
             }
         }
     }

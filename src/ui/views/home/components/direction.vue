@@ -9,28 +9,27 @@
                                 <el-option v-for="item in selectArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
                             </el-select>
                         </div>
-
                     </div>
                     <div id="direction_chart_box"></div>
                 </div>
                 <div class="bottomBox">
                     <div class="title">
-                        <div>
-                            方向放行不正常城市排名
+                        <div class="alib">
+                            {{selectNameObj[select]}}不正常城市排名
                         </div>
                         <div class="rightBox" @click="nowHandle">
                             <div>
                                 <i class="iconfont icon-qiehuan"></i>
                             </div>
-                            <span v-if="nowShow">当前延误</span>
-                            <span v-else>实时延误</span>
+                            <span class="alib" v-if="nowShow">当前延误</span>
+                            <span class="alib" v-else>实时延误</span>
                         </div>
 
                     </div>
                     <div class="content">
                         <div v-for="(item,index) in showTable" :key="item.hallway" class="li_content">
 
-                            <div class="nameBox" :style="{color:getPercentColor(activeData[item])}"><span>{{activeData[item].displayHallway}}方向</span><span>{{activeData[item].delay}}</span><span>{{getPercent(activeData[item])}}%</span></div>
+                            <div class="nameBox" :style="{color:getPercentColor(activeData[item])}"><span>{{activeData[item].displayHallway}}方向</span><span>{{activeData[item].delay}}</span><span class="fo">{{getPercent(activeData[item])}}%</span></div>
 
                             <div class="dataBox" :class="'dataBox'+index">
                                 <div style="width:8000px;height:100%;">
@@ -84,32 +83,14 @@
                 </div>
             </div>
         </div>
-        <el-dialog :visible.sync="flightDetilShow" class="nodeDialog" :show-close="false" center width="700px" :append-to-body="true">
-            <template slot="title">
+        <el-dialog :title="layerName" :visible.sync="flightDetilShow" class="nodeDialog" center width="700px" :append-to-body="true">
+            <!-- <template slot="title">
                 <div class="blankDiv"></div>
                 <div class="el-dialog__title"> {{layerName}}</div>
                 <div class="blankDiv"><i class="el-icon-circle-close" @click="flightDetilShow = false"></i></div>
-            </template>
+            </template> -->
             <div class="contentbox">
-                <el-table :data="flightDetilLists" style="width: 100%" class="layerTable" stripe border>
-                    <el-table-column type="index" width="50" label="序号" align="center"></el-table-column>
-                    <el-table-column prop="flightNo" label="航班号" align="center"></el-table-column>
-                    <el-table-column label="计划起飞" align="center">
-                        <template slot-scope="scope">
-                            {{$moment(scope.row.scheduleTime).format('HH:mm')}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="实际起飞" align="center">
-                        <template slot-scope="scope">
-                            {{scope.row.actualTime?$moment(scope.row.actualTime).format('HH:mm'):'-'}}
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="航线" align="center">
-                        <template slot-scope="scope">
-                            {{scope.row.displayRouter?scope.row.displayRouter.join("->"):'-'}}
-                        </template>
-                    </el-table-column>
-                </el-table>
+                <ele-table :columnConfig="columnConfig" :tableData="flightDetilLists"></ele-table>
             </div>
         </el-dialog>
 
@@ -125,26 +106,32 @@ export default {
     props: ['options', 'flight_direction'],
     data() {
         return {
-            tableData: [
+            columnConfig: [
+                { key: 'ind', label: '序号', type: 'index', width: '50px' },
                 {
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄',
+                    key: 'flightNo',
+                    label: '航班号',
                 },
                 {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1517 弄',
+                    key: 'scheduleTime',
+                    label: '计划起飞',
+                    display: ({ row }) => {
+                        return this.$moment(row.scheduleTime).format('HH:mm')
+                    },
                 },
                 {
-                    date: '2016-05-01',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1519 弄',
+                    key: 'actualTime',
+                    label: '计划起飞',
+                    display: ({ row }) => {
+                        return row.actualTime ? this.$moment(row.actualTime).format('HH:mm') : '-'
+                    },
                 },
                 {
-                    date: '2016-05-03',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1516 弄',
+                    key: 'displayRouter',
+                    label: '航线',
+                    display: ({ row }) => {
+                        return row.displayRouter ? row.displayRouter.join('->') : '-'
+                    },
                 },
             ],
             select: 'normal',
@@ -156,6 +143,14 @@ export default {
                 { name: '早高峰正常率', value: 'originalInMorning' },
                 { name: '放行正常率', value: 'takeOffNormal' },
             ],
+            selectNameObj: {
+                normal: '航班',
+                originalAllowTakeOff: '始发',
+                arriveNormal: '落地',
+                departureNormal: '起飞',
+                originalInMorning: '早高峰',
+                takeOffNormal: '放行',
+            },
             loadMaping: false,
             nowShow: true,
             activeData: {
@@ -399,7 +394,6 @@ export default {
                     display: flex;
                     justify-content: space-between;
                     color: #fff;
-                    font-weight: 700;
                     height: 30px;
                     align-items: center;
                 }
@@ -412,6 +406,9 @@ export default {
                     padding: 0 7px 0 4px;
                     border-radius: 20px;
                     cursor: pointer;
+                    span {
+                        color: #f67351;
+                    }
                     & > div {
                         height: 18px;
                         width: 18px;
@@ -422,9 +419,9 @@ export default {
                         display: flex;
                         align-items: center;
                         margin-right: 7px;
+
                         i {
                             font-size: 12px;
-                            font-weight: 100;
                         }
                     }
                 }

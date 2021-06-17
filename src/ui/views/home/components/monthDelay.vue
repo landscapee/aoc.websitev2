@@ -4,14 +4,14 @@
             <div class="left">
                 <div class="top">
                     <icon-svg iconClass="monthdelay" />
-                    <span class="name">月度放行正常率目标:{{flight_monthClearance.targetRate}}%</span>
+                    <span class="name alib">月度放行正常率目标:{{flight_monthClearance.targetRate}}%</span>
                     <el-input class="iconshowInput" v-model="monthRate" size="mini" v-show="monthDRateInput" @keyup.enter.native="editMonthRateHandle"></el-input>
                     <i class="iconfont icon-bianji" @click="monthDRateInput = true" v-show="!monthDRateInput"></i>
                 </div>
                 <div class="mid">
                     <div>
                         <p>当月累计放行正常率:{{flight_monthClearance.value?flight_monthClearance.value.average:0}}%</p>
-                        <p>后续每日放行正常率最低目标:{{flight_monthClearance.value?flight_monthClearance.value.lowest:0}} %</p>
+                        <p>后续每日放行正常率最低目标:{{flight_monthClearance.value?flight_monthClearance.value.lowest:0}}%</p>
                     </div>
                     <div>
                         <p>今天限制延误架次:{{flight_monthClearance.value?flight_monthClearance.value.limitDelay:0}}</p>
@@ -21,7 +21,7 @@
                 <div class="footer">
                     <div class="top">
                         <icon-svg iconClass="monthtitle" />
-                        <span class="name">延误航班统计</span>
+                        <span class="name alib">延误航班统计</span>
                         <el-select v-model="select" placeholder="请选择" size="mini" @change="load_flight_home">
                             <el-option v-for="item in selectArr" :key="item.value" :label="item.name" :value="item.value"></el-option>
                         </el-select>
@@ -50,34 +50,26 @@
             </div>
             <div class="right">
                 <div>
-                    <div class="title">
+                    <div class="title alib">
                         最近实际落地航班
                         <icon-svg iconClass="intitle" />
                     </div>
-                    <div>
-                        <table>
-                            <tr v-for="flight in flight_lastestAta" :key="flight.flightId">
-                                <td>{{flight.flightNo}}</td>
-                                <td>{{flight.runway}}</td>
-                                <td>{{$moment(flight.actualTime).format('mm:ss')}} </td>
-                            </tr>
-                        </table>
-                    </div>
+                    <el-row v-for="flight in flight_lastestAta" :key="flight.flightId" tag="ul">
+                        <el-col tag="li" :span="12">{{flight.flightNo}}</el-col>
+                        <el-col tag="li" :span="6">{{flight.runway}}</el-col>
+                        <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('mm:ss')}}</el-col>
+                    </el-row>
                 </div>
                 <div>
-                    <div class="title">
+                    <div class="title alib">
                         最近实际起飞航班
                         <icon-svg iconClass="movementD" />
                     </div>
-                    <div>
-                        <table>
-                            <tr v-for="flight in flight_lastestAtd" :key="flight.flightId">
-                                <td>{{flight.flightNo}}</td>
-                                <td>{{flight.runway}}</td>
-                                <td>{{$moment(flight.actualTime).format('mm:ss')}} </td>
-                            </tr>
-                        </table>
-                    </div>
+                    <el-row v-for="flight in flight_lastestAtd" :key="flight.flightId" tag="ul">
+                        <el-col tag="li" :span="12">{{flight.flightNo}}</el-col>
+                        <el-col tag="li" :span="6">{{flight.runway}}</el-col>
+                        <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('mm:ss')}}</el-col>
+                    </el-row>
                 </div>
 
             </div>
@@ -225,7 +217,6 @@ export default {
                 height: 50%;
                 width: 100%;
                 .title {
-                    font-size: 12px;
                     height: 30px;
                     color: #fff;
                     display: flex;
@@ -235,14 +226,11 @@ export default {
                         margin-left: 5px;
                     }
                 }
-                table {
-                    width: 100%;
-                    height: 100%;
-                    tr {
-                        td {
-                            color: #fff;
-                            height: 20px;
-                        }
+                ul {
+                    li {
+                        color: rgba(255, 255, 255, 0.8);
+                        height: 24px;
+                        line-height: 24px;
                     }
                 }
             }
@@ -257,6 +245,13 @@ export default {
 
         input {
             background: #39404b;
+            border: none;
+            color: #fff;
+        }
+    }
+    .el-select {
+        input {
+            background-color: rgba(216, 216, 216, 0.1);
             border: none;
             color: #fff;
         }
