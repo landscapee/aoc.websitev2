@@ -98,7 +98,7 @@
 			height: 3px;
 			background: #85b9ff;
 			border-radius: 4px;
-			width: 40px;
+			/*width: 40px;*/
 			transition: .3s;
 		}
 		.tabItem {

@@ -25,40 +25,39 @@ const subWSEvent = () => {
     let client = clientObj.resourceClient;
     //停机位态势
     client.sub('/resource/stat/seatSituation', (data) => {
-        //1、先存workpage
-        resourceSituationData(worker,data,'seatSituation')
+         resourceSituationData(worker,data,'seatSituation')
     });
     //登机口态势
     client.sub('/resource/stat/gateSituation', (data, body) => {
-         //1、先存workpage
-        if (!body.responseData) {
+         if (!body.responseData) {
             return;
         }
         resourceSituationData(worker,data,'gateSituation')
     });
     //行李转盘态势
     client.sub('/resource/stat/carouselSituation', (data) => {
-        //1、先存workpage
-        resourceSituationData(worker,data,'carouselSituation')
+         resourceSituationData(worker,data,'carouselSituation')
     });
     //机位当前使用情况
     client.sub('/resource/stat/seatSituationUsing', (data) => {
-        //socke
-        //1、先存workpage
-        memoryStore.setItem('ResourceMonitoring', { seatUsageData: data });
-     });
+         //1、先存workpage
+        // memoryStore.setItem('ResourceMonitoring', { seatUsageData: data });
+        worker.publish('Web','resourceUsageData',{data,key:'seatUsageData'})
+    });
     //登机口当前使用情况
     client.sub('/resource/stat/gateSituationUsing', (data) => {
-        //socket
-        //1、先存workpage
-        memoryStore.setItem('ResourceMonitoring', { boardingGateUsageData: data });
-     });
+         //1、先存workpage
+        // memoryStore.setItem('ResourceMonitoring', { gateUsageData: data });
+        worker.publish('Web','resourceUsageData',{data,key:'gateUsageData'})
+
+    });
     //行李转盘当前使用情况
     client.sub('/resource/stat/carouselSituationUsing', (data) => {
-        //socket
-        //1、先存workpage
-        memoryStore.setItem('ResourceMonitoring', { luggageCarouselUsageData: data });
-     });
+         //1、先存workpage
+        // memoryStore.setItem('ResourceMonitoring', { carouselUsageData: data });
+        worker.publish('Web','resourceUsageData',{data,key:'carouselUsageData'})
+
+    });
 
 };
 

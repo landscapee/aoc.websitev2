@@ -339,8 +339,14 @@ export default {
                     list.name = '消息发布'
                     this.navList.push(list)
                 }
+                //消息管理
+                if (list.code == 'TOBTConfig') {
+                    list.icon = 'tiaozhengtiaojian'
+                    list.path = 'tobtConfig'
+                    list.name = 'TOBT配置'
+                    this.navList.push(list)
+                }
 
-                //
             })
             this.setNavFlag()
         },

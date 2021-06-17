@@ -172,11 +172,11 @@ export function getBarLineOption({xData = [], yData = [], yData2 = [], usableLis
                 boundaryGap: false,
                 data: xDATA,
                 name: '时间',
-                nameLocation: 'end',
+                nameLocation: 'center',
                 nameTextStyle: {
                     fontSize: 12,
                     color: '#7286AC',
-                    padding: [0, 0, -5000, -30],
+                    padding: [-7, 0, 0, 1115],
                 },
                 axisTick: {
                     show: true,

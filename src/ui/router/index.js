@@ -43,6 +43,8 @@ const decrease = () => import(/*webpackChunkName:"decrease"*/ '../views/conditio
 const specialTreatment = () => import(/*webpackChunkName:"specialTreatment"*/ '../views/specialTreatment/index')
 //资源监控
 const resourceMonitoring = () => import(/*webpackChunkName:"resourceMonitoring"*/ '../views/resourceMonitoring/index')
+//tobt配置
+const tobtConfig = () => import(/*webpackChunkName:"tobtConfig"*/ '../views/tobtConfig/index')
 
 
 
@@ -68,6 +70,7 @@ var routes = [
         ]
       },
           { path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment },
+          { path: '/tobtConfig', name: 'tobtConfig', component: tobtConfig },
 
       ]
   },

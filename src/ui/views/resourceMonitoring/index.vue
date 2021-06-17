@@ -18,7 +18,7 @@
 						<MyTabs :tabs="opt.tabs" :activeName="tabObj[key]"
 								@tabClick="tabClick(arguments[0],opt)"></MyTabs>
 					</div>
-					<div  class="eCharts" :ref="'eCharts'+key">
+					<div class="eCharts" :ref="'eCharts'+key">
 					</div>
 				</div>
 			</div>
@@ -26,7 +26,15 @@
 		<div class="right">
 			<div class="rightItem rightItem1">
 				<div class="itemTitle ">
-					<div class="div1"><span></span><span> 实时停机位使用情况</span></div>
+					<div class="div1">
+						<span></span>
+						<span> 实时停机位使用情况
+							<span class="cursor" @click="qiehuanSeat">
+								<icon-svg iconClass="qiehuan"></icon-svg>
+							</span>
+						</span>
+
+					</div>
 				</div>
 				<div class="banner">
 					<div class="bannerItem">
@@ -34,7 +42,7 @@
 							<img src="../../assets/img/tianfu/jiwei.png" alt="">
 						</div>
 						<div>
-							<div>370</div>
+							<div>{{getSeatNum('total')}}</div>
 							<div>机位总数</div>
 						</div>
 					</div>
@@ -43,7 +51,7 @@
 							<img src="../../assets/img/tianfu/kyjiwei.png" alt="">
 						</div>
 						<div>
-							<div>370</div>
+							<div>{{getSeatNum('usable')}}</div>
 							<div>可用机位总数</div>
 						</div>
 					</div>
@@ -52,20 +60,20 @@
 							<img src="../../assets/img/tianfu/bkyjiwei.png" alt="">
 						</div>
 						<div>
-							<div>370</div>
+							<div>{{getSeatNum('disabled')}}</div>
 							<div>不可用机位总数</div>
 						</div>
 					</div>
 				</div>
 				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="item in 4 " :key="item+'baifenbi'">
-						<div class="baifenbiLeft">C</div>
+					<div class="baifenbi" v-for="item in getSeatData('modelList') " :key="item.type+'baifenbi'">
+						<div class="baifenbiLeft">{{item.type}}</div>
 						<div class="baifenbiMiddle">
-							<div>50/120</div>
+							<div>{{item.using}}/{{item.total}}</div>
 							<div>占用数/总数</div>
 						</div>
 						<div class="baifenbiRight">
-							<el-progress :percentage="50"></el-progress>
+							<el-progress :percentage="getProgress(item)"></el-progress>
 						</div>
 					</div>
 
@@ -73,28 +81,28 @@
 			</div>
 			<div class="rightItem rightItem1_1">
 				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="item in getNum " :key="item+'baifenbi'">
-						<div class="baifenbiLeft">C</div>
+					<div class="baifenbi" v-for="item in getSeatData('terminalList') " :key="item.type+'baifenbi'">
+						<div class="baifenbiLeft">{{item.type}}</div>
 						<div class="baifenbiMiddle">
-							<div>50/120</div>
+							<div>{{item.using}}/{{item.total}}</div>
 							<div>占用数/总数</div>
 						</div>
 						<div class="baifenbiRight">
-							<el-progress :percentage="50"></el-progress>
+							<el-progress :percentage="getProgress(item)"></el-progress>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class="rightItem rightItem1_2">
 				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="item in getNum " :key="item+'baifenbi'">
-						<div class="baifenbiLeft">C</div>
+					<div class="baifenbi" v-for="item in getSeatData('seatTypeList') " :key="item.type+'baifenbi'">
+						<div class="baifenbiLeft">{{item.type}}</div>
 						<div class="baifenbiMiddle">
-							<div>50/120</div>
+							<div>{{item.using}}/{{item.total}}</div>
 							<div>占用数/总数</div>
 						</div>
 						<div class="baifenbiRight">
-							<el-progress :percentage="50"></el-progress>
+							<el-progress :percentage="getProgress(item)"></el-progress>
 						</div>
 					</div>
 				</div>
@@ -106,10 +114,10 @@
 				</div>
 
 				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="opt in 5 " :key="opt+'rightItem3'">
-						<div class="baifenbiLeft">C</div>
+					<div class="baifenbi" v-for="opt in gateUsageData " :key="opt.type+'rightItem2'">
+						<div class="baifenbiLeft">{{opt.type}}</div>
 						<div class="baifenbiMiddle">
-							<div>50/120</div>
+							<div>{{opt.using}}/{{opt.total}}</div>
 							<div>占用数/总数</div>
 						</div>
 					</div>
@@ -120,10 +128,10 @@
 					<div class="div1"><span></span><span> 实时行李转盘使用情况</span></div>
 				</div>
 				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="opt in 2 " :key="opt+'rightItem3'">
-						<div class="baifenbiLeft">C</div>
+					<div class="baifenbi" v-for="opt in carouselUsageData " :key="opt.type+'rightItem3'">
+						<div class="baifenbiLeft">{{opt.type}}</div>
 						<div class="baifenbiMiddle">
-							<div>50/120</div>
+							<div>{{opt.using}}/{{opt.total}}</div>
 							<div>占用数/总数</div>
 						</div>
 					</div>
@@ -137,7 +145,7 @@
 <script>
     import MyTabs from './components/tabs'
     import postal from 'postal';
-    import {map, cloneDeep,extend} from 'lodash';
+    import {map, cloneDeep, extend} from 'lodash';
     import PostalStore from "../../lib/postalStore";
     import * as echarts from 'echarts'
     import {getBarLineOption} from './options'
@@ -148,6 +156,8 @@
         components: {MyTabs},
         data() {
             return {
+
+                seatUsageKey: 'split',//complex 复合 split 拆分
                 isMounted: false,
                 // tabs 切换时 点击的 tab 的key
                 tabObj: {
@@ -172,41 +182,73 @@
                     gateSituation: {name: '登机口态势', tooltipName: '登机口总数', key: 'gateSituation', tabs: []},
                     carouselSituation: {name: '行李转盘态势', tooltipName: '行李转盘总数', key: 'carouselSituation', tabs: []}
                 },
+                // 实时停机位使用情况
+                seatUsageData: {},
+                // 登机口当前使用情况
+                gateUsageData: [],
+                //行李转盘当前使用情况
+                carouselUsageData: [],
             }
         },
         computed: {
-            getNum() {
-                return 2
+            getProgress() {
+                return ( item )=>{
+                    let num = 0
+					if(item.total>0){
+                        num = parseInt(item.using / item.total * 100)
+					}
+                    return num
+                };
             },
+            getSeatNum() {
+                return (key) => {
+                    let obj = this.seatUsageData[this.seatUsageKey]
+                    return obj && obj[key] || 0
+                }
+            },
+            getSeatData() {
+                return (key) => {
+                    let obj = this.seatUsageData[this.seatUsageKey]
+                    return obj && obj[key] || []
+                }
+            },
+
 
         },
         methods: {
+            qiehuanSeat() {
+                let seatUsageKeyObj = {
+                    split: 'complex',
+                    complex: 'split',
+                };
+                this.seatUsageKey = seatUsageKeyObj[this.seatUsageKey]
+            },
             tabClick(tab, opt) {
                 this.tabObj[opt.key] = tab.name
-				let data=this.echartsData[opt.key][tab.key]
-				this.setOptions(data,opt.key)
+                let data = this.echartsData[opt.key]
+                this.setOptions(data, opt.key)
             },
-            setOptions(item, key,blo) {
-                 let tabData=item[this.tabObj[key]]||{};
-                let xData =  map(tabData.minList||[],(item, i) => {
-                    let hour = parseInt(item / 60) === 0 ? '00' : parseInt(item / 60).toString().length == 1 ? '0' + parseInt(item / 60) : parseInt(item / 60);
-                    let minute = item % 60 === 0 ? '00' : (item % 60) + '';
-                    return hour + minute;
-                });
-                 let  yData = [{name: '实际', data: tabData.actNumList}, {
-                    name: '预计',
-                    data: tabData.planNumList||[]
-                }];
-                let  yData2 = [{name: '总实际', data: tabData.totalList}, {
-                    name: '总预计',
-                    data: tabData.totalList||[]
-                }];
-                console.log('tabData',tabData, xData);
-                let tooltipName = this.dataSituation[key].tooltipName
-                let option1=getBarLineOption({...tabData,xData,yData,yData2, tooltipName})
-                console.log(222,this.echartsInstance);
-                let option=extend(this.echartsInstance[key].getOption()||{},option1)
-				this.echartsInstance[key].setOption(option)
+            setOptions(item, key, blo) {
+                let tabData = item[this.tabObj[key]] || {};
+                if (JSON.stringify(tabData !== '{}')) {
+                    let xData = map(tabData.minList || [], (item, i) => {
+                        let hour = parseInt(item / 60) === 0 ? '00' : parseInt(item / 60).toString().length == 1 ? '0' + parseInt(item / 60) : parseInt(item / 60);
+                        let minute = item % 60 === 0 ? '00' : (item % 60) + '';
+                        return hour + minute;
+                    });
+                    let yData = [{name: '实际', data: tabData.actNumList}, {
+                        name: '预计',
+                        data: tabData.planNumList || []
+                    }];
+                    let yData2 = [{name: '总实际', data: tabData.totalList}, {
+                        name: '总预计',
+                        data: tabData.totalList || []
+                    }];
+                    let tooltipName = this.dataSituation[key].tooltipName
+                    let option = getBarLineOption({...tabData, xData, yData, yData2, tooltipName})
+                    this.echartsInstance[key].setOption(option)
+                }
+
             },
         },
         created() {
@@ -215,29 +257,31 @@
                 channel: 'Worker',
                 topic: 'Page.resourceMonitoring.Start',
             });
-        }
-        ,
+        },
         mounted() {
             this.isMounted = true
             map(this.echartsInstance, (k, key) => {
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     let ele = this.$refs['eCharts' + key][0]
                     this.echartsInstance[key] = echarts.init(ele)
                     // this.setOptions({}, key)
-				})
+                })
 
             })
             postalStore.sub('resourceSituationData', (data) => {
-                console.log('resourceSituationData,data', data);
+                // console.log('resourceSituationData,data', data);
                 map(data, (item, key) => {
                     this.dataSituation[key].tabs = cloneDeep(item.tabs)
                     item.tabs ? delete item.tabs : ''
                     this.echartsData[key] = item;
-					this.setOptions(item, key)
+                    this.setOptions(item, key)
                 })
+            });
+            postalStore.sub('resourceUsageData', ({data, key}) => {
+                console.log('resourceUsageData,data', data, key);
+                this[key] = data
             })
-        }
-        ,
+        },
         beforeDestroy() {
             postal.publish({
                 channel: 'Worker',
@@ -253,11 +297,27 @@
 </script>
 
 <style lang="scss" scoped>
-	.eCharts {
+	.itemTitle {
+		svg {
+			fill: #f78501 !important;
+		}
 
+	}
+
+	.eCharts {
 		::v-deep & > div {
-			border: none !important;
 			box-shadow: none !important;
+			border: none !important;
+		}
+		::v-deep & > div:first-child {
+			width: 100% !important;
+			height: 100% !important;
+			canvas, & > div {
+				height: 100% !important;
+
+				width: 100% !important;
+			}
+
 		}
 
 	}
@@ -319,12 +379,11 @@
 				color: #fff;
 				font-family: AlibabaPuHuiTiB;
 				font-size: 14px;
-
 			}
 			.div1 {
 				height: 25px;
 				line-height: 25px;
-				span:first-child {
+				& > span:first-child {
 					width: 4px;
 					height: 16px;
 					opacity: 1;
@@ -332,7 +391,7 @@
 					border-radius: 1px;
 					margin: 0 8px 0 10px;
 				}
-				span:last-child {
+				& > span:last-child {
 					font-size: 18px;
 				}
 			}
@@ -484,7 +543,7 @@
 						width: 100%;
 						height: 31px;
 						line-height: 31px;
-						font-size: 18px;
+						font-size: 16px;
 						background: url("../../assets/img/tianfu/djksyqk.png");
 						background-size: 100% 100%;
 					}
