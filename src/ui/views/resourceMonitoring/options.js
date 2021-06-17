@@ -1,30 +1,30 @@
+import {cloneDeep, get} from 'lodash';
 
-import { cloneDeep, get } from 'lodash';
 // xData,yData,yData2,
-export function getBarLineOption(  {usableList, disabledList, actSurplusList, planSurplusList, tooltipName}) {
+export function getBarLineOption({xData = [], yData = [], yData2 = [], usableList = [], disabledList = [], actSurplusList = [], planSurplusList = [], tooltipName}) {
     //usableList可用 disabledList不可用 actSurplusList实际空余 planSurplusList预计空余
-    let xData = ['0030', '0130', '0230', '0330', '0430', '0530', '0630', '0730', '0830', '0930', '1030', '1130', '1230', '1330', '1430', '1530', '1630', '1730', '1830', '1930', '2030', '2130', '2230', '2330'];
-    // /实际预计
-    let yData = [
-    	//
-    	{ name: '实际', data: [10, 2, 1, 25, 4, 7, 8, 8, 6, 5, 8, 7, 9, 5, 6, 7, 12, 45, 32, 45, 9, 5, 6, 7] },
-    	{ name: '预计', data: [5, 1, 0, 10, 2, 7, 4, 4, 3, 5, 10, 12, 15, 2, 3, 3, 10, 40, 30, 4, 5, 10, 12, 12] },
-    ];
-    // 实际占有预计占用
-    let yData2 = [
-    	//
-    	{ name: '实际', data: [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45] },
-    	{ name: '预计', data: [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45] },
-    ];
+    // let xData = ['0030', '0130', '0230', '0330', '0430', '0530', '0630', '0730', '0830', '0930', '1030', '1130', '1230', '1330', '1430', '1530', '1630', '1730', '1830', '1930', '2030', '2130', '2230', '2330'];
+    // // /实际预计
+    // let yData = [
+    // 	//
+    // 	{ name: '实际', data: [10, 2, 1, 25, 4, 7, 8, 8, 6, 5, 8, 7, 9, 5, 6, 7, 12, 45, 32, 45, 9, 5, 6, 7] },
+    // 	{ name: '预计', data: [5, 1, 0, 10, 2, 7, 4, 4, 3, 5, 10, 12, 15, 2, 3, 3, 10, 40, 30, 4, 5, 10, 12, 12] },
+    // ];
+    // // 实际占有预计占用
+    // let yData2 = [
+    // 	//
+    // 	{ name: '实际', data: [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45] },
+    // 	{ name: '预计', data: [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45] },
+    // ];
 
     let defaultColorList = [
         //
-        { top: '#0C9FFF', bottom: '#0566FF' },
-        { top: '#25E0E7', bottom: '#00CAD2' },
-        { top: '#56DF95', bottom: '#3DC37A' },
-        { top: '#56BFE2', bottom: '#3399D4' },
-        { top: '#97EBFF', bottom: '#6DE3FF' },
-        { top: '#0C9FFF', bottom: '#0566FF' },
+        {top: '#0C9FFF', bottom: '#0566FF'},
+        {top: '#25E0E7', bottom: '#00CAD2'},
+        {top: '#56DF95', bottom: '#3DC37A'},
+        {top: '#56BFE2', bottom: '#3399D4'},
+        {top: '#97EBFF', bottom: '#6DE3FF'},
+        {top: '#0C9FFF', bottom: '#0566FF'},
     ];
     let xDATA = cloneDeep(xData);
     xDATA.push('');
@@ -98,12 +98,15 @@ export function getBarLineOption(  {usableList, disabledList, actSurplusList, pl
         };
     });
     let option = {
-         grid: { top: 20,
+        grid: {
+            top: 20,
             left: 20,
             right: 20,
             bottom: 10,
-            containLabel: true,},
-        legend: {  show: false,
+            containLabel: true,
+        },
+        legend: {
+            show: false,
             icon: 'square',
             orient: 'horizontal',
             top: '0.5%',
@@ -112,7 +115,8 @@ export function getBarLineOption(  {usableList, disabledList, actSurplusList, pl
             textStyle: {
                 color: '#FFFFFF',
                 fontSize: 12,
-            },},
+            },
+        },
         tooltip: {
             show: true,
             trigger: 'axis',
@@ -120,10 +124,10 @@ export function getBarLineOption(  {usableList, disabledList, actSurplusList, pl
                 type: 'none',
             },
             backgroundColor: 'none',
-            formatter: function(value) {
+            formatter: function (value) {
                 //实际占用率==实际占用/可用
                 //预计占用率==预计占用/可用
-                if(value&&usableList){
+                if (value && usableList) {
                     let title = value[0].dataIndex === 0 ? '0000-' + xData[value[0].dataIndex] : xData[value[0].dataIndex - 1] + '-' + xData[value[0].dataIndex];
                     let actualRate = usableList[value[0].dataIndex] === 0 ? 0 : Math.round((value[0].value / usableList[value[0].dataIndex]) * 100); //实际占用率
                     let planeRate = usableList[value[0].dataIndex] === 0 ? 0 : Math.round((value[1].value / usableList[value[1].dataIndex]) * 100); //预计占用率
@@ -172,7 +176,7 @@ export function getBarLineOption(  {usableList, disabledList, actSurplusList, pl
                 nameTextStyle: {
                     fontSize: 12,
                     color: '#7286AC',
-                    padding: [0, 0, 0, 30],
+                    padding: [0, 0, -5000, -30],
                 },
                 axisTick: {
                     show: true,
@@ -305,7 +309,7 @@ export function getBarLineOption(  {usableList, disabledList, actSurplusList, pl
             },
         ],
     };
-    option.series[4].data = get(option, 'series.4.data', []).map((x, i) => [38 + i * 100, x]);
-    option.series[5].data = get(option, 'series.5.data', []).map((x, i) => [68 + i * 100, x]);
+    option.series[4] ? option.series[4].data = get(option, 'series.4.data', []).map((x, i) => [38 + i * 100, x]) : '';
+    option.series[5] ? option.series[5].data = get(option, 'series.5.data', []).map((x, i) => [68 + i * 100, x]) : "";
     return option;
 }

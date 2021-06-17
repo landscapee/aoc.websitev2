@@ -15,13 +15,14 @@
 				</div>
 				<div class="eChartsBox">
 					<div class="tabsBox">
- 						<MyTabs :tabs="gettab(opt.tabs)" :activeKey="key" :activeName="tabObj[key]" @tabClick="tabClick(arguments[0],opt)"></MyTabs>
+						<MyTabs :tabs="opt.tabs" :activeName="tabObj[key]"
+								@tabClick="tabClick(arguments[0],opt)"></MyTabs>
 					</div>
-					<div id="eCharts" :ref="'eCharts'+key">
+					<div  class="eCharts" :ref="'eCharts'+key">
 					</div>
 				</div>
 			</div>
- 		</div>
+		</div>
 		<div class="right">
 			<div class="rightItem rightItem1">
 				<div class="itemTitle ">
@@ -136,10 +137,11 @@
 <script>
     import MyTabs from './components/tabs'
     import postal from 'postal';
-    import {map,cloneDeep} from 'lodash';
+    import {map, cloneDeep,extend} from 'lodash';
     import PostalStore from "../../lib/postalStore";
     import * as echarts from 'echarts'
-	import {getBarLineOption} from './options'
+    import {getBarLineOption} from './options'
+
     let postalStore = new PostalStore();
     export default {
         name: "index",
@@ -147,48 +149,65 @@
         data() {
             return {
                 isMounted: false,
-                 tabObj: {
-                     seatSituation: '全部seatSituation',
-                     gateSituation:  '全部gateSituation',
-                     carouselSituation:  '全部carouselSituation',
-				 },
+                // tabs 切换时 点击的 tab 的key
+                tabObj: {
+                    seatSituation: '全部',
+                    gateSituation: '全部',
+                    carouselSituation: '全部',
+                },
+                // echarts实例对象，销毁需要
                 echartsInstance: {
                     seatSituation: null,
                     gateSituation: null,
                     carouselSituation: null,
                 },
-                echartsData:{
+                // echarts数据 与dataSituation 对应
+                echartsData: {
                     seatSituation: null,
                     gateSituation: null,
                     carouselSituation: null,
-				},
+                },
                 dataSituation: {
-                    seatSituation: {name: '停机位态势',tooltipName:'停机位总数', key: 'seatSituation', tabs: []},
-                    gateSituation: {name: '登机口态势',tooltipName:'登机口总数', key: 'gateSituation', tabs: []},
-                    carouselSituation: {name: '行李转盘态势',tooltipName:'行李转盘总数', key: 'carouselSituation', tabs: []}
+                    seatSituation: {name: '停机位态势', tooltipName: '停机位总数', key: 'seatSituation', tabs: []},
+                    gateSituation: {name: '登机口态势', tooltipName: '登机口总数', key: 'gateSituation', tabs: []},
+                    carouselSituation: {name: '行李转盘态势', tooltipName: '行李转盘总数', key: 'carouselSituation', tabs: []}
                 },
             }
         },
         computed: {
-            getNum(){
-                console.log('wwwwww');
+            getNum() {
                 return 2
-			},
-            gettab(){
-                return (opt)=>{
-                     return opt
-				}
-			}
-		},
-        methods: {
+            },
 
+        },
+        methods: {
             tabClick(tab, opt) {
                 this.tabObj[opt.key] = tab.name
+				let data=this.echartsData[opt.key][tab.key]
+				this.setOptions(data,opt.key)
             },
-            setOptions(option, key) {
-                 this.echartsInstance[key].setOption(option)
+            setOptions(item, key,blo) {
+                 let tabData=item[this.tabObj[key]]||{};
+                let xData =  map(tabData.minList||[],(item, i) => {
+                    let hour = parseInt(item / 60) === 0 ? '00' : parseInt(item / 60).toString().length == 1 ? '0' + parseInt(item / 60) : parseInt(item / 60);
+                    let minute = item % 60 === 0 ? '00' : (item % 60) + '';
+                    return hour + minute;
+                });
+                 let  yData = [{name: '实际', data: tabData.actNumList}, {
+                    name: '预计',
+                    data: tabData.planNumList||[]
+                }];
+                let  yData2 = [{name: '总实际', data: tabData.totalList}, {
+                    name: '总预计',
+                    data: tabData.totalList||[]
+                }];
+                console.log('tabData',tabData, xData);
+                let tooltipName = this.dataSituation[key].tooltipName
+                let option1=getBarLineOption({...tabData,xData,yData,yData2, tooltipName})
+                console.log(222,this.echartsInstance);
+                let option=extend(this.echartsInstance[key].getOption()||{},option1)
+				this.echartsInstance[key].setOption(option)
             },
-
         },
         created() {
 
@@ -200,20 +219,21 @@
         ,
         mounted() {
             this.isMounted = true
-			map(this.echartsInstance,(k,key)=>{
-                let ele = this.$refs['eCharts' + key][0]
-				this.echartsInstance[key] = echarts.init(ele)
-                this.setOptions(getBarLineOption({}),key)
-			})
-            postalStore.sub('resourceSituationData', (data) => {
-                console.log('resourceSituationData,data',data);
-                map(data,(item,key)=>{
-                   this.dataSituation[key].tabs=cloneDeep(item.tabs)
-                   item.tabs? delete item.tabs:''
-                   this.echartsData[key]=item;
-                   let tooltipName=this.dataSituation[key].tooltipName
-					this.setOptions(getBarLineOption({...item[this.tabObj[key]],tooltipName}),key)
+            map(this.echartsInstance, (k, key) => {
+                this.$nextTick(()=>{
+                    let ele = this.$refs['eCharts' + key][0]
+                    this.echartsInstance[key] = echarts.init(ele)
+                    // this.setOptions({}, key)
+				})
 
+            })
+            postalStore.sub('resourceSituationData', (data) => {
+                console.log('resourceSituationData,data', data);
+                map(data, (item, key) => {
+                    this.dataSituation[key].tabs = cloneDeep(item.tabs)
+                    item.tabs ? delete item.tabs : ''
+                    this.echartsData[key] = item;
+					this.setOptions(item, key)
                 })
             })
         }
@@ -223,9 +243,9 @@
                 channel: 'Worker',
                 topic: 'Page.resourceMonitoring.Stop',
             })
-            map(this.echartsInstance,(k,key)=>{
-                 this.echartsInstance[key].dispose()
-             })
+            map(this.echartsInstance, (k, key) => {
+                this.echartsInstance[key].dispose()
+            })
             postalStore.unsubAll()
         }
         ,
@@ -233,14 +253,15 @@
 </script>
 
 <style lang="scss" scoped>
-	#eCharts{
+	.eCharts {
 
-		::v-deep &>div{
- 			border: none!important;
-			box-shadow:none!important;
+		::v-deep & > div {
+			border: none !important;
+			box-shadow: none !important;
 		}
 
 	}
+
 	.resourceMonitoring {
 		overflow-y: auto;
 		padding: 11px 15px;
@@ -264,19 +285,19 @@
 				background: rgba(25, 37, 60, 0.8);
 				border-radius: 5px;
 				box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
-				.eChartsBox{
-					#eCharts{
- 						height: 238px;
-						&>div{
+				.eChartsBox {
+					.eCharts {
+						height: 238px;
+						& > div {
 							height: 100%;
 						}
-						&>div{
-							border-style:none!important;
-							border: none!important;
+						& > div {
+							border-style: none !important;
+							border: none !important;
 						}
-						::v-deep &>div:last-child{
-							border-style:none;
-							border: none!important;
+						::v-deep & > div:last-child {
+							border-style: none;
+							border: none !important;
 						}
 					}
 				}
