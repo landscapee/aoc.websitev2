@@ -16,12 +16,11 @@
                 :prop="item.key"
                 :label="item.text"
                 :width="item.width || 'auto'"
-                :formatter="item.formatter"
             >
-              <template v-if="item.formatter" slot-scope="scope">
-                <span :v-html="item.formatter(scope.row, scope.column) "></span>
-<!--                <span style="margin-left: 10px">{{ scope.row.date }}</span>-->
-              </template>
+<!--              <template v-if="item.formatter" slot-scope="scope">-->
+<!--                <span :v-html="item.formatter(scope.row, scope.column) "></span>-->
+<!--&lt;!&ndash;                <span style="margin-left: 10px">{{ scope.row.date }}</span>&ndash;&gt;-->
+<!--              </template>-->
             </el-table-column>
           </el-table>
         </div>
