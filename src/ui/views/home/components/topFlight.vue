@@ -8,35 +8,35 @@
             </div>
             <ul class="ulAD1">
                 <li class="moveA">
-                    <div><span>{{get(flight_traffic, [ 'A', 'numeric'])}}</span>架次</div>
+                    <div><span class="fo">{{get(flight_traffic, [ 'A', 'numeric'])}}</span>架次</div>
                     <div>1小时内落地架次</div>
                 </li>
                 <li class="moveD">
-                    <div><span>{{get(flight_traffic, [ 'D', 'numeric'])}}</span>架次</div>
+                    <div><span class="fo">{{get(flight_traffic, [ 'D', 'numeric'])}}</span>架次</div>
                     <div>1小时内起飞架次</div>
                 </li>
                 <li class="moveA">
-                    <div><span>{{get(flight_traffic, [ 'A', 'rate'])}}</span>分/架次</div>
+                    <div><span class="fo">{{get(flight_traffic, [ 'A', 'rate'])}}</span>分/架次</div>
                     <div>1小时内落地速率</div>
                 </li>
                 <li class="moveD">
-                    <div><span>{{get(flight_traffic, [ 'D', 'rate'])}}</span>分/架次</div>
+                    <div><span class="fo">{{get(flight_traffic, [ 'D', 'rate'])}}</span>分/架次</div>
                     <div>1小时内起飞速率</div>
                 </li>
                 <li class="moveA">
-                    <div><span>{{flight_estimateCtotRelease.estimateInFlight}}</span>架次</div>
+                    <div><span class="fo">{{flight_estimateCtotRelease.estimateInFlight}}</span>架次</div>
                     <div>预计下小时段落地</div>
                 </li>
                 <li class="moveD">
-                    <div><span>{{flight_estimateCtotRelease.estimateReleaseFlight}}</span>架次</div>
+                    <div><span class="fo">{{flight_estimateCtotRelease.estimateReleaseFlight}}</span>架次</div>
                     <div>预计下小时段起飞</div>
                 </li>
                 <li class="moveA nobottom">
-                    <div><span>{{get(flight_traffic, [ 'A', 'spacing'])}}</span>分</div>
+                    <div><span class="fo">{{get(flight_traffic, [ 'A', 'spacing'])}}</span>分</div>
                     <div>落地间隔</div>
                 </li>
                 <li class="moveD nobottom">
-                    <div><span>{{get(flight_traffic, [ 'D', 'spacing'])}}</span>分</div>
+                    <div><span class="fo">{{get(flight_traffic, [ 'D', 'spacing'])}}</span>分</div>
                     <div>起飞间隔</div>
                 </li>
             </ul>
@@ -51,21 +51,21 @@
                 <ul class="ulAD2">
                     <div>
                         <div>
-                            <span>{{value.departure?value.departure:0}}</span>
+                            <span class="fo">{{value.departure?value.departure:0}}</span>
                             分/架
                         </div>
                         <div>起飞速率</div>
                     </div>
                     <div>
                         <div>
-                            <span>{{value.arrive?value.arrive:0}}</span>
+                            <span class="fo">{{value.arrive?value.arrive:0}}</span>
                             分/架
                         </div>
                         <div>落地速率</div>
                     </div>
                     <div>
                         <div>
-                            <span>{{value.arriveAndDeparture?value.arriveAndDeparture:0}}</span>
+                            <span class="fo">{{value.arriveAndDeparture?value.arriveAndDeparture:0}}</span>
                             分/架
                         </div>
                         <div>综合速率</div>

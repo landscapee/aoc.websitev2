@@ -1,6 +1,6 @@
 <template>
-    <div class="eleTableBox">
-        <el-table ref="ref_table" :data="tableData" style="width:calc(100% + 8px)" :height="maxHeight" :key="componentKey" border stripe>
+    <div class="eleTableBox" ref="ref_eleTableBox">
+        <el-table ref="ref_table" :data="tableData" :style="{'width':tableWidth}" :height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName">
             <el-table-column v-for="(col,idx) in columnConfig" :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
                 <template slot-scope="scope">
                     <template v-if="col.type=='index'">{{scope.$index+1}}</template>
@@ -11,7 +11,6 @@
                         <div v-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
                         <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{scope.row[col.key]}}</div>
                     </template>
-
                 </template>
             </el-table-column>
         </el-table>
@@ -30,6 +29,9 @@ export default {
             default: () => {
                 return []
             },
+        },
+        setRowClassName: {
+            type: Function,
         },
     },
     computed: {
@@ -56,7 +58,24 @@ export default {
         return {
             maxHeight: '100%',
             componentKey: 0,
+            tableWidth: '100%',
         }
+    },
+    watch: {
+        tableData: function () {
+            this.$nextTick(function () {
+                let refTable = this.$refs.ref_table.$el
+                let boxheight = refTable.parentNode.clientHeight
+
+                let tableheight = refTable.querySelector('.el-table__body').clientHeight
+                console.log(boxheight, tableheight)
+                this.componentKey++
+                if (tableheight > boxheight) {
+                    console.log(111)
+                    this.tableWidth = 'calc(100% + 8px)'
+                }
+            })
+        },
     },
     mounted() {
         // this.maxHeight = this.$refs.ref_table.$el.parentNode.clientHeight
@@ -67,8 +86,7 @@ export default {
 </script>
 <style scoped lang="scss">
 .eleTableBox {
-    height: 100%;
-    width: 100%;
     overflow: hidden;
+    height: 100%;
 }
 </style>

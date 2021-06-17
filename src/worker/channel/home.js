@@ -11,7 +11,8 @@ import {
   flight_direction,
   flight_traffic,
   flight_estimateCtotRelease,
-  flight_runwayTraffic
+  flight_runwayTraffic,
+  flight_runwayModels
 } from "../manage/home";
 import Logger from "../../lib/logger";
 import { forEach} from 'lodash';
@@ -70,6 +71,11 @@ const subWSEvent = () => {
   //综合速率
   homeClient.sub('/Flight/runwayTraffic', (data) => {
     flight_runwayTraffic(worker,data)
+	});
+  //跑道
+  homeClient.sub('/Flight/runwayModels', (data) => {
+    console.log(data)
+    flight_runwayModels(worker,data)
 	});
 
 

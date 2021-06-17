@@ -30,7 +30,7 @@
 // export const oOptions = { 0: '落地', 1: '起飞', 2: '起飞+落地', 3: '暂停使用' };
 // const specialOOptions = { 1: '起飞', 3: '暂停使用' };
 export default {
-    props: ['data'],
+    props: ['data', 'flight_runwayModels'],
     data() {
         return {
             selectDirection: 'north',
@@ -65,9 +65,18 @@ export default {
         }
     },
     created() {
-        this.getLists()
+        // this.getLists()
     },
     mounted() {},
+    watch: {
+        flight_runwayModels: function (val) {
+            this.lists = val || []
+            if (this.lists.length > 0) {
+                this.selectDirection = this.lists[0].direction
+            }
+            this.loadSelectObj()
+        },
+    },
     methods: {
         loadSelectObj() {
             let selectArr = this.selectDirection == 'north' ? this.runwayNorth : this.runwaySouth
@@ -83,7 +92,6 @@ export default {
             this.selectArr = selectArr
         },
         runwayHandle() {
-            console.log(this.selectArr)
             let data = {
                 direction: this.selectDirection,
             }
