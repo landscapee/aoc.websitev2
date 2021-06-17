@@ -323,6 +323,7 @@ export default {
                 if (list.code == 'resourceMonitoring') {
                     list.icon = 'ziyuanjiankong'
                     list.path = 'resourceMonitoring'
+                    list.name = '资源监控'
                     this.navList.push(list)
                 }
                 //调整调减

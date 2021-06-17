@@ -15,7 +15,6 @@
 				<span>离港</span>
 			</span>
 		</span>
-
 		<el-dropdown class="positionDropdown" trigger="click" :hide-on-click="false">
       			<span class="el-dropdown-link">
         			<i class="el-icon-setting el-icon--right"></i>自定义
@@ -954,8 +953,8 @@
 					::v-deep .el-select {
 						width: 120px;
 						.el-input__inner {
-							background: rgba(0, 124, 215, 0.55);
-							border: 1px solid rgba(255, 255, 255, 0.45);
+							background: rgba(0, 124, 215, 0.55) !important;
+							border: 1px solid rgba(255, 255, 255, 0.45)!important;
 							color: #ffffff;
 						}
 					}
