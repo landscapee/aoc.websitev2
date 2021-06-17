@@ -1,73 +1,66 @@
 <template>
 
-	<span class="tabs" ref="tabs">
+	<span class="tabs" ref="tabs"  >
 
  		<span @click="tabItemClick( tab)" class="tabItem cursor"
 			  :class="activeName == tab['name']  ? 'tabItemActive' : ''"
-			  :ref="tab['name'] "
+
 			  v-for="(tab) in tabs" :key="tab.key">
 			{{tab.name}}
 		</span>
 		<span class="allWidth"></span>
- 		<span class="itemWidth"  :key="($refs[this.activeName]||'').toString()" :style="getItemWidthStyle"></span>
-		<div>{{a}}</div>
-	</span>
+ 		<span class="itemWidth"   :style="style"></span>
+ 	</span>
 </template>
 
 <script>
-    let flag;
+
     export default {
         name: "mytabs",
         components: {},
         props: ['tabs','activeName'],
         data() {
             return {
+                flag:null,
                  element:null,
                  mountedIs:false,
-				a:2,
+				 style:{},
                  // activeName: '全部',
              }
         },
 		watch:{
             tabs:function (n) {
-                if (!flag && this.$refs[this.activeName]){
-                  flag = true
-					this.a=3
-                  // console.log('--', this.$refs[this.activeName])
-                  // console.log('this.activeName', this.activeName)
-                  // let element= this.$refs[this.activeName]&&this.$refs[this.activeName][0]
-                  // let width=0
-                  // let width1=0
-                  // if(element){
-                  //   width=parseInt(window.getComputedStyle(element).width)
-                  //   width1= element.offsetLeft
-                  // }
-                  // console.log(width,'--',width1);
-                  // this.getItemWidthStyle = {width: width + 'px', left: width1 + 'px'}
+                let ele=this.$el.getElementsByClassName('tabItemActive')
+                ele=ele&&ele[0]
+                if (!this.flag && ele){
+                  this.flag = true
+                  	this.getItemWidthStyle()
             	}
               }
             },
 
-        computed: {
-              getItemWidthStyle() {
-                if(this.mountedIs){
-                    let width=0
-                    let width1=0
-                     let element=this.$refs[this.activeName]&&this.$refs[this.activeName][0]
-                    if(element){
-                        width=parseInt(window.getComputedStyle(element).width)
-                        width1= element.offsetLeft
-                    }
-                    console.log( element,width,this.activeName,'getItemWidthStyle');
-                    return {width: width + 'px', left: width1 + 'px'}
 
-				}
-            },
-
-        },
         methods: {
+            getItemWidthStyle() {
+                if(this.mountedIs){
+                    this.$nextTick(()=>{
+                        let width=0
+                        let width1=0
+                        let element=this.$el.getElementsByClassName('tabItemActive')
+                        element=element&&element[0]
+                        if(element){
+                            width=parseInt(window.getComputedStyle(element).width)
+                            width1= element.offsetLeft
+                        }
+                         this.style= {width: width + 'px', left: width1 + 'px'}
+					})
+
+
+                }
+            },
             tabItemClick( tab) {
 				    this.$emit('tabClick',tab)
+                this.getItemWidthStyle()
             },
         },
 
