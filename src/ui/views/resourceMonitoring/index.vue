@@ -266,7 +266,6 @@
                     this.echartsInstance[key] = echarts.init(ele)
                     // this.setOptions({}, key)
                 })
-
             })
             postalStore.sub('resourceSituationData', (data) => {
                 // console.log('resourceSituationData,data', data);
