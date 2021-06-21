@@ -132,7 +132,7 @@ export function getBarLineOption({xData = [], yData = [], yData2 = [], usableLis
                     let actualRate = usableList[value[0].dataIndex] === 0 ? 0 : Math.round((value[0].value / usableList[value[0].dataIndex]) * 100); //实际占用率
                     let planeRate = usableList[value[0].dataIndex] === 0 ? 0 : Math.round((value[1].value / usableList[value[1].dataIndex]) * 100); //预计占用率
                     return `
-					<div style='background:#25395C;width:276px;height:147px;border-radius:5px;padding-top:9px'>
+	<div style='background:#25395C;width:276px;height:147px;border-radius:5px;padding-top:9px'>
 						<div style='padding:0 9px;height:25px;line-height:25px;text-align:left;margin-bottom:5px'><span style='padding:2px 5px;background: #357ad7;border-radius: 2px;font-size: 12px;'>${title}</span></div>
 						<div style='margin-bottom:5px;padding:0 9px;height:25px;line-height:25px;text-align:left;color:#7286ac'>
 							<span style='padding-right:10px;text-align:left'>${tooltipName} ${value[3].value}</span>

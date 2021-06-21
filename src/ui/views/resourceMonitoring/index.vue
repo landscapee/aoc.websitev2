@@ -28,7 +28,7 @@
 				<div class="itemTitle ">
 					<div class="div1">
 						<span></span>
-						<span> 实时停机位使用情况
+						<span> 实时停机位使用情况({{seatUsageKey=='split'?'拆分':'复合'}})
 							<span class="cursor" @click="qiehuanSeat">
 								<icon-svg iconClass="qiehuan"></icon-svg>
 							</span>
@@ -376,7 +376,7 @@
 				display: inline-block;
 				vertical-align: middle;
 				color: #fff;
-				font-family: AlibabaPuHuiTiB;
+				font-family: ALiB;
 				font-size: 14px;
 			}
 			.div1 {

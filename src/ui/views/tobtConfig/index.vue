@@ -134,7 +134,7 @@
 					display: inline-block;
 					vertical-align: middle;
 					color: #fff;
-					font-family: AlibabaPuHuiTiB;
+					font-family: ALiB;
 					font-size: 14px;
 				}
 				.div1 {
