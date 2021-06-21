@@ -1,8 +1,12 @@
+
 export default {
-  displayRouter: {
-    formatter: (row, column, cellValue, index) => {
+
+  direction: {
+    formatter: (item) => {
       return(
-        `<div style='color: red'>${row.displayRouter}</div>`
+        `
+        <div style="color: #f0f">${item.direction}</div>
+        `
       )
     }
   }

@@ -183,8 +183,8 @@
         methods: {
             tabClick(tab, opt) {
                 this.tabObj[opt.key] = tab.name
-				let data=this.echartsData[opt.key][tab.key]
-				this.setOptions(data,opt.key)
+                let data=this.echartsData[opt.key][tab.key]
+                this.setOptions(data,opt.key)
             },
             setOptions(item, key,blo) {
                  let tabData=item[this.tabObj[key]]||{};
@@ -204,9 +204,9 @@
                 console.log('tabData',tabData, xData);
                 let tooltipName = this.dataSituation[key].tooltipName
                 let option1=getBarLineOption({...tabData,xData,yData,yData2, tooltipName})
-                console.log(222,this.echartsInstance);
-                let option=extend(this.echartsInstance[key].getOption()||{},option1)
-				this.echartsInstance[key].setOption(option)
+                console.log('option1:',option1);
+                // let option=extend(this.echartsInstance[key].getOption()||{},option1)
+				        this.echartsInstance[key].setOption(option1, true)
             },
         },
         created() {

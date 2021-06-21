@@ -15,12 +15,12 @@
                 :fixed="!!item.lock"
                 :prop="item.key"
                 :label="item.text"
-                :width="item.width || 'auto'"
+                :width="item.width ? fixPx(item.width) : 'auto'"
             >
-<!--              <template v-if="item.formatter" slot-scope="scope">-->
-<!--                <span :v-html="item.formatter(scope.row, scope.column) "></span>-->
-<!--&lt;!&ndash;                <span style="margin-left: 10px">{{ scope.row.date }}</span>&ndash;&gt;-->
-<!--              </template>-->
+
+              <complex-column slot-scope="scope" :item="item" :scope="scope"/>
+
+
             </el-table-column>
           </el-table>
         </div>
@@ -42,20 +42,42 @@ export default {
     columns: {
       type: Array,
       default: [],
-
+    },
+    flights: {
+      type: Array,
+      default: [],
     }
+  },
+  components: {
+    'complex-column': () =>
+        import(/*webpackChunkName:"complex-column"*/ '../complexColumnDom'),
   },
   data(){
     return{
-      flights: map(new Array(500), (item, index)=> ({
-        date: '2016-05-03',
-        name: '王小虎',
-        flightIndex: index
-      })),
+      // flights: map(new Array(500), (item, index)=> ({
+      //   date: '2016-05-03',
+      //   direction: '王小虎',
+      //   flightIndex: index
+      // })),
       isScrolling: false, // 是否在滚动
       offSetY: 0,
       topCount: 0,
-      showCount: 20
+      showCount: 20,
+      options: [{
+        value: '选项1',
+        label: '黄金糕'
+      }, {
+        value: '选项2',
+        label: '双皮奶'
+      }, {
+        value: '选项3',
+        label: '蚵仔煎'
+      }, {
+        value: '选项4',
+        label: '龙须面'
+      },
+      ],
+      value: ''
     }
   },
 
@@ -73,34 +95,23 @@ export default {
 
   mounted() {
     document.onmousewheel = (e) => {
-      // let scrollTop = this.offSetY + e.deltaY;
-      // console.log( 'scrollHeight:',this.$refs.scrollOut.scrollHeight)
-      // console.log('scrollTop:', scrollTop)
-      // this.offSetY = scrollTop
-      console.log(e)
       clearTimeout(this.timer)
-      this.isScrolling = true
+      if (Math.abs(e.deltaY) >= 1){
+        this.isScrolling = true
+      }
+      if (Math.abs(e.deltaX) >= 2){
+        this.isScrolling = false
+      }
       this.timer = setTimeout(()=>{
         this.isScrolling = false
       }, 100)
-      // let clientHeight = this.$refs.scrollOut.clientHeight; // 外层盒子可视高度
-      // // let scrollHeight = this.$refs.scrollOut.scrollHeight; // 外层盒子总高度
-      // let topCount = Math.ceil(scrollTop / fixPx(itemH)); // 从哪里截取
-      // let showCount = Math.floor(clientHeight / fixPx(itemH)) - 1; // 可视多少条 因表头减一
-      // if ((topCount + showCount) > this.flights.length){
-      //   this.topCount = this.flights.length - showCount;
-      //   return
-      // }
-      // this.topCount = topCount;
-      // this.showCount = showCount;
-      // console.log(topCount, showCount)
-      // e.stopPropagation()
-      // this.$refs.scrollOut.scrollTo(0,scrollTop)
-      // return false
     }
   },
 
   methods:{
+    fixPx: function (px){
+      return fixPx(px)
+    },
     onScroll: function (e){
       let scrollTop = e.target.scrollTop;  // 滚动了多少距离 这里获取的px已经通过rem转换成了px 所以不用根据屏幕尺寸再计算
       let clientHeight = e.target.clientHeight; // 外层盒子可视高度

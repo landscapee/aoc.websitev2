@@ -1,5 +1,5 @@
 .flightTable{
-
+  font-size: 12px;
   height: 100%;
   overflow-y: hidden;
   $border-color: rgba(204,204,204,.3);
@@ -11,6 +11,13 @@
   }
   ::v-deep.el-table__body-wrapper.is-scrolling-left ~ .el-table__fixed, .el-table__body-wrapper.is-scrolling-none ~ .el-table__fixed, .el-table__body-wrapper.is-scrolling-none ~ .el-table__fixed-right, .el-table__body-wrapper.is-scrolling-right ~ .el-table__fixed-right{
     box-shadow: none;
+  }
+  ::v-deep th {
+    height: 30px;
+    padding: 0 ;
+  }
+  ::v-deep td {
+    padding: 0 ;
   }
   ::v-deep.el-table{
     background-color: #111926;
@@ -34,6 +41,7 @@
           padding: 0;
           .cell{
             padding: 0;
+            height: 20px;
           }
         }
       }
@@ -62,6 +70,7 @@
           border-bottom: none;
           height: 40px;
           padding: 0;
+          text-align: center;
         }
       }
     //
