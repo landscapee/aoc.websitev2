@@ -7,13 +7,13 @@
                     <el-option label="国内" value="domestic"></el-option>
                     <el-option label="国际" value="international"></el-option>
                 </el-select>
-                <span class="pre">{{percentage}}%</span>
+                <span class="pre fo">{{percentage}}%</span>
             </div>
             <div class="mid">
                 <div class="left">
                     <div class="num">
-                        <span class="actual">{{activeData[0]}}</span>
-                        <span class="plan">/{{activeData[1]}}</span>
+                        <span class="actual fo">{{activeData[0]}}</span>
+                        <span class="plan fo">/{{activeData[1]}}</span>
                     </div>
                     <div class="name">
                         {{options.title}}
@@ -25,7 +25,7 @@
 
             </div>
             <div class="footer" :style="{'background-color':options.barBg}">
-                <div class="bar" :style="{'background':options.barColor}"></div>
+                <div class="bar" :style="{background:options.barColor,width:percentage+'%'}"></div>
             </div>
         </div>
     </div>
@@ -69,18 +69,20 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+        padding: 0;
         .top {
             display: flex;
             justify-content: space-between;
+            padding: 5px 10px 0;
             .pre {
                 color: #fff;
-                font-weight: 600;
                 font-size: 12px;
             }
         }
         .mid {
             display: flex;
             justify-content: space-between;
+            padding: 0 10px;
             .left {
                 display: flex;
                 flex-direction: column;
@@ -89,11 +91,7 @@ export default {
                 color: #fff;
                 margin-bottom: 4px;
                 .actual {
-                    font-size: 14px;
-                    font-weight: 600;
-                }
-                .plan {
-                    font-size: 12px;
+                    font-size: 24px;
                 }
             }
             .name {
@@ -103,7 +101,7 @@ export default {
             .right {
                 svg,
                 use {
-                    font-size: 40px;
+                    font-size: 44px;
                 }
             }
         }
@@ -113,7 +111,6 @@ export default {
             .bar {
                 height: 100%;
                 border-radius: 0 5px 5px 0;
-                width: 20%;
             }
         }
     }
@@ -129,10 +126,13 @@ export default {
             font-size: 12px;
             height: 16px;
             padding: 3px;
+            color: rgba(255, 255, 255, 0.5);
+            background: none;
+            height: 20px;
         }
         .el-input__icon {
             width: auto;
-            line-height: 16px;
+            line-height: 20px;
             font-size: 12px;
         }
     }

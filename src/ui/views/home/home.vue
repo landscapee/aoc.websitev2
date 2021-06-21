@@ -12,7 +12,7 @@
         </div>
         <div class="home_right">
             <top-flight :flight_traffic="flight_traffic" :flight_estimateCtotRelease="flight_estimateCtotRelease" :flight_runwayTraffic="flight_runwayTraffic" />
-            <runway />
+            <runway :flight_runwayModels="flight_runwayModels" />
         </div>
 
     </div>
@@ -53,6 +53,7 @@ export default {
             flight_traffic: {},
             flight_estimateCtotRelease: {},
             flight_runwayTraffic: {},
+            flight_runwayModels: [],
         }
     },
     components: {
@@ -114,6 +115,11 @@ export default {
         postalStore.sub('flight.runwayTraffic', (data) => {
             // console.log('综合速率', data)
             this.flight_runwayTraffic = data
+        })
+        //跑道
+        postalStore.sub('flight.runwayModels', (data) => {
+            console.log('跑道', data)
+            this.flight_runwayModels = data
         })
 
         postalStore.pub('Worker', 'Page.Delays.Start', '')
@@ -244,15 +250,7 @@ export default {
     overflow: hidden;
     padding: 5px 10px 0;
 }
-.home_left {
-    .el-select {
-        input {
-            background-color: rgba(216, 216, 216, 0.1);
-            border: none;
-            color: #fff;
-        }
-    }
-}
+
 .homeSelect {
     li {
         height: 20px;

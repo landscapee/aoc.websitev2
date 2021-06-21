@@ -47,6 +47,11 @@ export const flight_estimateCtotRelease = (posWorker, data) => {
 export const flight_runwayTraffic = (posWorker, data) => {
   posWorker.publish('Web','flight.runwayTraffic',data)
 }
+//跑道
+export const flight_runwayModels = (posWorker, data) => {
+  posWorker.publish('Web','flight.runwayModels',data)
+}
+
 
 
 

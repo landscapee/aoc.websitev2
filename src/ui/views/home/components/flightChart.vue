@@ -123,7 +123,7 @@ export default {
             display: flex;
             align-items: center;
             position: absolute;
-            top: 5px;
+            top: 15px;
             left: 10px;
             z-index: 10;
             .name {

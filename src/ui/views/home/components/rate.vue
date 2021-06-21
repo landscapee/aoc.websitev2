@@ -2,12 +2,12 @@
     <div class="home_rate" :class="options.rate.position">
         <div class="box_content">
             <div class="selectBox">
-                <el-select v-model="stateTypeSelect" placeholder="请选择" size="mini" popper-class="homeSelect">
-                    <el-option label="全场" value="1"></el-option>
-                    <el-option label="定期" value="2"></el-option>
-                    <el-option label="客运" value="3"></el-option>
+                <el-select v-model="stateTypeSelect" placeholder="请选择" size="mini" @change="loadRate">
+                    <el-option label="全场" :value="1"></el-option>
+                    <el-option label="定期" :value="2"></el-option>
+                    <el-option label="客运" :value="3"></el-option>
                 </el-select>
-                <el-select v-model="timeSelect" placeholder="请选择" size="mini" popper-class="homeSelect">
+                <el-select v-model="timeSelect" placeholder="请选择" size="mini" @change="loadRate">
                     <el-option label="年" :value="1"></el-option>
                     <el-option label="月" :value="2"></el-option>
                     <el-option label="周" :value="3"></el-option>
@@ -22,11 +22,11 @@
                     <div class="rotateBox"></div>
                     <div id="takeOffBox" class="chartBox"></div>
                     <div class="center">
-                        <div class="top" :style="{color:getPercentColor(rate1)}">
+                        <div class="top fob" :style="{color:getPercentColor(rate1)}">
                             {{getPercent(rate1)}}%
                         </div>
                         <div class="line" :style="{background:getPercentColor(rate1)}"></div>
-                        <div class="bottom" :style="{color:getPercentColor(rate1)}">
+                        <div class="bottom fo" :style="{color:getPercentColor(rate1)}">
                             {{rate1.numerator}}/{{rate1.denominator}}
                         </div>
                     </div>
@@ -40,11 +40,11 @@
                     <div class="rotateBox"></div>
                     <div id="originatedBox" class="chartBox"></div>
                     <div class="center">
-                        <div class="top" :style="{color:getPercentColor(rate2)}">
+                        <div class="top fob" :style="{color:getPercentColor(rate2)}">
                             {{getPercent(rate2)}}%
                         </div>
                         <div class="line" :style="{background:getPercentColor(rate1)}"></div>
-                        <div class="bottom" :style="{color:getPercentColor(rate2)}">
+                        <div class="bottom fo" :style="{color:getPercentColor(rate2)}">
                             {{rate2.numerator}}/{{rate2.denominator}}
                         </div>
                     </div>
@@ -54,7 +54,7 @@
                 <div v-for="item in rateLists" :key="item.rateType" v-show="item.show">
                     <div class="title">
                         <span>{{rateTypeName[item.rateType]}}</span>
-                        <span class="span1" :style="{color:getPercentColor(item)}">{{getPercent(item)}}%</span>
+                        <span class="span1 fo" :style="{color:getPercentColor(item)}">{{getPercent(item)}}%</span>
                     </div>
                     <el-progress :percentage="getPercent(item)" :show-text="false" :color="colors"></el-progress>
                 </div>
@@ -274,7 +274,7 @@ export default {
                         margin: 5px 0;
                     }
                     .top {
-                        font-size: 20px;
+                        font-size: 22px;
                     }
                 }
             }

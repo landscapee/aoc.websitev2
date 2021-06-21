@@ -28,7 +28,7 @@ const adv = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonit
 //不利条件运行
 const conditionalOperation = () => import(/*webpackChunkName:"conditionalOperation"*/ '../views/conditionalOperation/conditionalOperation')
 //大面积备降
-const alternate = () => import(/*webpackChunkName:"alternate"*/ '../views/conditionalOperation/alternate/alternate')
+const alternate = () => import(/*webpackChunkName:"alternate"*/ '../views/conditionalOperation/alternate/index')
 //低能见运行
 const runningNew = () => import(/*webpackChunkName:"runningNew"*/ '../views/conditionalOperation/runningNew/runningNew')
 //除冰
@@ -43,6 +43,8 @@ const decrease = () => import(/*webpackChunkName:"decrease"*/ '../views/conditio
 const specialTreatment = () => import(/*webpackChunkName:"specialTreatment"*/ '../views/specialTreatment/index')
 //资源监控
 const resourceMonitoring = () => import(/*webpackChunkName:"resourceMonitoring"*/ '../views/resourceMonitoring/index')
+//tobt配置
+const tobtConfig = () => import(/*webpackChunkName:"tobtConfig"*/ '../views/tobtConfig/index')
 
 
 
@@ -68,6 +70,7 @@ var routes = [
         ]
       },
           { path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment },
+          { path: '/tobtConfig', name: 'tobtConfig', component: tobtConfig },
 
       ]
   },
