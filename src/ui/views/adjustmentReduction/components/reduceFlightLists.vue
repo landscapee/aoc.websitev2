@@ -1,23 +1,25 @@
 <template>
-    <div class="flightDelay showBox">
+    <div class="reduceFlightLists showBox">
         <div class="title">
-            <div class="name alib">
-                已延误航班统计<span>(点击柱状图查看详情)</span>
+            <div class="name alib">调减航班</div>
+            <div class="title_right fo">
+                <span class="fo">20</span>/50
             </div>
         </div>
+
         <div class="content">
             <div id="flightDelay_charts"></div>
         </div>
     </div>
 </template>
+
 <style lang="scss" scoped>
-.flightDelay {
-    flex: 1;
+.reduceFlightLists {
     margin: 15px 0;
-    padding: 15px;
     .title {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         color: #fff;
         .name {
             color: #fff;
@@ -26,11 +28,6 @@
             align-items: center;
             margin-right: 15px;
             font-size: 18px;
-            span {
-                font-size: 12px;
-                color: rgba(255, 255, 255, 0.5);
-                margin-left: 10px;
-            }
         }
         .name:before {
             content: '';
@@ -41,8 +38,11 @@
             border-radius: 1px;
             margin-right: 5px;
         }
-    }
-    .content {
+        .title_right {
+            span {
+                color: #0566ff;
+            }
+        }
     }
 }
 </style>

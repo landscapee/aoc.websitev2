@@ -15,11 +15,11 @@
         <div class="user_right">
             <div class="dateBox">
                 <i class="el-icon-date" style="color:#fff;"></i>
-                <span class="orbiL flexSC">{{$moment().format('YYYY-MM-DD')}}</span>
+                <span class="fo">{{$moment().format('YYYY-MM-DD')}}</span>
             </div>
             <div class="timeBox">
                 <i class="el-icon-time" style="color:#fff;"></i>
-                <span class="orbiL flexSC">{{$moment().format('HH:mm:ss')}}</span>
+                <span class="fo">{{$moment().format('HH:mm:ss')}}</span>
             </div>
             <div>
                 <!-- <icon-svg :iconClass="'yonghu'" :iconColor="'#fff'"></icon-svg> -->

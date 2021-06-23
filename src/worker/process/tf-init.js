@@ -9,7 +9,8 @@ import {init as MonitorWithRunwayInit} from '../channel/poolMonitorWithRunway'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
 import HttpRequest from "../../lib/axios";
-import {flightHttp} from "../http/flight";
+import { flightHttp } from "../http/flight";
+import {getSysConfigHttp} from "../http/getSysConfig";
 
 const channels = {
   Worker: postal.channel('Worker'),
@@ -60,6 +61,7 @@ postal.subscribe({
     monitorInit(posWorker, httpRequest);
     MonitorWithRunwayInit(posWorker, httpRequest);
     resourceMonitorInit(posWorker, httpRequest);
+    getSysConfigHttp(posWorker, httpRequest);
     flightHttp(posWorker, httpRequest);
     homeInit(posWorker, httpRequest)
     delaysInit(posWorker, httpRequest)

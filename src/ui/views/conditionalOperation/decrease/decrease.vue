@@ -1,8 +1,8 @@
 <template>
     <div id="decrease">
         <div class="decrease_left">
-            <setting />
-            <recommend />
+            <setting :type='type' @change-type="changeType" @change-planno="changePlanno" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
+            <recommend :type='type' :currentReduce="currentReduce" />
         </div>
         <div class="decrease_mid">
             <MDRS-warning />
@@ -34,230 +34,43 @@ export default {
     },
     data() {
         return {
-            columnConfig: [
-                { key: 'ind', label: '序号', type: 'index', align: 'center' },
-                {
-                    key: 'waybillCode',
-                    label: '运单号',
-                    type: 'simple',
-                    align: 'right',
-                    title: true,
-                    // color: 'red',
-                    style: { color: 'red' },
-                    display: ({ row }) => {
-                        return row.arrive ? '已到达' : '<span>确认到达</span>'
-                    },
-                },
-                {
-                    key: 'waybillCode',
-                    label: '运单号',
-                    type: 'simple',
-                    display: () => {
-                        return '<i class="iconfont icon-feijia"></i>'
-                    },
-                },
-                {
-                    key: 'waybillCode',
-                    label: '运单号',
-                    type: 'button',
-                    align: 'left',
-                    display: () => {
-                        return '<i class="iconfont icon-feijia"></i>'
-                    },
-                    click: ({ row }) => {
-                        this.logg(row)
-                    },
-                },
-                {
-                    key: 'number',
-                    label: '备注',
-                    type: 'simple',
-                    editConfig: {
-                        type: 'input',
-                        switch: (r) => {
-                            return true
-                        },
-                    },
-                },
-                {
-                    key: '',
-                    label: '操作',
-                    width: '200px',
-                    type: 'operate',
-                    operates: [
-                        {
-                            style: { color: 'red' },
-                            display: () => {
-                                return '已到达'
-                            },
-                            click: ({ row }) => {
-                                this.logg(row)
-                            },
-                        },
-                        {
-                            style: { color: '#0566ff' },
-                            display: () => {
-                                return '<i class="iconfont icon-feijia"></i>'
-                            },
-                            click: ({ row }) => {
-                                console.log(row)
-                            },
-                        },
-                    ],
-                },
-            ],
-            tableData: [
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-                {
-                    waybillCode: '217-00000000',
-                    des: 'bkk',
-                    number: 5,
-                    weight: 10,
-                    specialCode: 'RLI',
-                    flightDate: 1589341428610,
-                    remark: '',
-                },
-            ],
+            type: 1,
+            currentReduce: {},
+            currentReduceLists: [],
         }
     },
-    mounted() {},
+    mounted() {
+        this.getCurrentReduce()
+    },
     methods: {
         logg(row) {
             console.log(row)
+        },
+        changeType(type) {
+            this.type = type
+            this.getCurrentReduce()
+        },
+        getCurrentReduce() {
+            this.$request
+                .get('adverse', 'adjust/getCurrentReduce?type=' + this.type)
+                .then((res) => {
+                    if (res.data) {
+                        this.currentReduceLists = res.data || []
+                        this.changePlanno(0)
+                    }
+                })
+        },
+        changePlanno(idx) {
+            console.log(idx)
+            this.currentReduce = this.currentReduceLists[idx]
+        },
+        addPlanno() {
+            this.currentReduceLists.push({
+                reduceInfo: {
+                    reduceplanNo: this.currentReduceLists.length,
+                },
+            })
+            this.changePlanno(this.currentReduceLists.length - 1)
         },
     },
 }
