@@ -2,7 +2,9 @@
     <div id="flight">
       <toolBar/>
       <div class="flightWrapper">
-        <flightTable :flights="flights" :columns="columns"/>
+        <flightTable :flights="flights" :columns="columns">
+<!--          <complex-column :item="scope.item" :scope="scope.scope"/>-->
+        </flightTable>
       </div>
     </div>
 </template>
@@ -26,6 +28,8 @@
         import(/*webpackChunkName:"com-toolBar"*/ './components/toolBar'),
       'flightTable': () =>
         import(/*webpackChunkName:"com-flightTable"*/ './components/flightTable/flightTable'),
+      'complex-column': () =>
+        import(/*webpackChunkName:"complex-column"*/ './components/complexColumnDom'),
     },
     beforeMount() {
       this.setColumns(getListHeader())

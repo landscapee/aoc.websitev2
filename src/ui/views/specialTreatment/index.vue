@@ -169,7 +169,7 @@
 				background: linear-gradient(134deg, rgba(38, 56, 92, 0.5), rgba(29, 47, 67, 0.51) 100%);
 				border-radius: 5px;
 				box-shadow: 0px 0px 4px 0px rgba(0,0,0,0.50);
-				font-family: AlibabaPuHuiTiB;
+				font-family: ALiB;
 				color: #fff;
 				.title{
 					height: 22px ;
@@ -177,7 +177,7 @@
 					display: flex;
 					justify-content: space-between;
 					span{
-						font-family: AlibabaPuHuiTiB;
+						font-family: ALiB;
 						font-size: 16px;
 					}
 					span:last-child{

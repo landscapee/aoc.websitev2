@@ -99,6 +99,12 @@ const filterFlight = (cacheFlights) => {
   return result;
 };
 
+export const setFlightTop = (data) => {
+  todayTopFlights = data;
+};
+
+
+
 /**
  * 把字段根据列定义转换为界面需要的数据
  * @param f
@@ -135,11 +141,11 @@ const getPosition = (f) => {
   let position = '',
     diffTime,
     executeTime;
-  // if (!todayTopFlights) {
-  //   todayTopFlights = remote.getGlobal('flightSetTop')[moment(now).format('YYYYMMDD')] || {};
-  // }
+  if (!todayTopFlights) {
+    todayTopFlights = {};
+  }
   //手动置顶放最上面
-  // position += todayTopFlights[f.flightId] ? 'A' : 'Z';
+  position += todayTopFlights[f.flightId] ? 'A' : 'Z';
   //取消的航班放最后
   position += f.cancel ? 'Z' : 'A';
   //完成的放后面
@@ -179,7 +185,7 @@ export const combineFlightField = (cacheFlights) => {
     let flight = flow([proFlightField])(f);
     //保留排序用字段
     flight.position = getPosition(f);
-    // flight.setTop = todayTopFlights[f.flightId] ? 1 : 0;
+    flight.setTop = todayTopFlights[f.flightId] ? 1 : 0;
     flight.isSeatConflict = f.isSeatConflict;
     flight.milestoneStatusType = f.milestoneStatusType;
     flight.flightLabel = f.flightLabel;
@@ -243,6 +249,15 @@ export const flightStart = (posWorker, myHeader) => {
     memoryStore.setItem('global', {flightHeader: newColumns});
     columns = getListHeader();
   });
+
+  //手动置顶
+  posWorker.subscribe('Flight.Personal.SetTop', (data) => {
+    console.log(data)
+    setFlightTop(data);
+    flightStart(true);
+  });
+
+  flightStart()
 }
 
 export const flightStop = (posWorker) => {
