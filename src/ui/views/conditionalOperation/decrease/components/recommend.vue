@@ -4,14 +4,12 @@
             <div class="name alib">推荐调时调减架次</div>
             <div class="right">
                 <span style="margin-right:6px">反馈时长</span>
-                <el-input placeholder="请输入" size="mini" style="width:70px" />
-                <span style="margin:0 15px 0 5px;color: #60779b;">分钟</span>
-                倒计时:
-                10分10秒
+                <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" />
+                <!-- <span style="margin:0 15px 0 5px;color: #60779b;">分钟</span> -->
             </div>
         </div>
         <div class="table">
-            <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+            <ele-table :columnConfig="columnConfig" :tableData="tableData" :key="tableKey" @table-input-change="tableInputChange"></ele-table>
         </div>
     </div>
 </template>
@@ -21,6 +19,8 @@ export default {
     data() {
         return {
             airLines: [],
+            tableKey: 0,
+            feedBackTime: 30,
             columnConfig: [
                 {
                     key: 'airline',
@@ -29,10 +29,21 @@ export default {
                 {
                     key: 'R',
                     label: '计划调减',
+                    input: true,
+                    inputShow: 'RInputShow',
+                    click: ({ row }) => {
+                        this.trHandle(row, 'R')
+                    },
                 },
                 {
                     key: 'A',
                     label: '计划调整',
+                    input: true,
+                    inputShow: 'AInputShow',
+
+                    click: ({ row }) => {
+                        this.trHandle(row, 'A')
+                    },
                 },
                 {
                     key: '',
@@ -43,29 +54,32 @@ export default {
                             display: () => {
                                 return '<i class="iconfont icon-fasong"></i>'
                             },
+                            disabled: (row) => {
+                                let result = false
+                                if (
+                                    row.sendType != 0 ||
+                                    this.currentReduce.reduceInfo.status == 1
+                                ) {
+                                    result = true
+                                }
+                                return result
+                            },
                             click: ({ row }) => {
                                 console.log(row)
+                                this.rowSend(row)
                             },
                         },
                     ],
                 },
             ],
-            tableData: [
-                { key: 'total', cnName: '全部' },
-                { key: 'CA', cnName: '国航' },
-                { key: '3U', cnName: '川航' },
-                { key: 'MU', cnName: '东航' },
-                { key: 'CZ', cnName: '南航' },
-                { key: 'EU', cnName: '成航' },
-                { key: '8L', cnName: '祥航' },
-                { key: 'other', cnName: '其他' },
-            ],
+            tableData: [],
         }
     },
     watch: {
         currentReduce: function (val) {
             this.plan = val.plan
             this.tableData = this.formatSuggestForEdit(val.plan)
+            this.feedBackTime = val.reduceInfo ? val.reduceInfo.feedbackTime : 30
         },
     },
     mounted() {},
@@ -92,16 +106,102 @@ export default {
                 { key: 'CA', cnName: '国航' },
                 { key: '3U', cnName: '川航' },
                 { key: 'MU', cnName: '东航' },
-                { key: 'CZ', cnName: '南航' },
-                { key: 'EU', cnName: '成航' },
-                { key: '8L', cnName: '祥航' },
-                { key: 'other', cnName: '其他' },
+                { key: 'CZ', cnName: '南航', AInputShow: false, RInputShow: false },
+                { key: 'EU', cnName: '成航', AInputShow: false, RInputShow: false },
+                { key: '8L', cnName: '祥航', AInputShow: false, RInputShow: false },
+                { key: 'other', cnName: '其他', AInputShow: false, RInputShow: false },
             ]
             let formated = formatData(suggestForEdit)
             return _.map(airLines, (item, key) => {
                 let current = formated[item.key]
                 return { ...current, airline: item.cnName, A: current.A, R: current.R }
             })
+        },
+        trHandle(row, type) {
+            let index = _.findIndex(this.tableData, { id: row.id })
+            if (!this.tableData[index][type + 'InputShow']) {
+                this.tableData.map((list) => {
+                    list.AInputShow = false
+                    list.RInputShow = false
+                })
+                this.tableData[index][type + 'InputShow'] = true
+                this.tableKey++
+            }
+        },
+        tableInputChange({ row }) {
+            this.$request
+                .post(
+                    'adverse',
+                    'adjust/editPlan',
+                    {
+                        id: row.id,
+                        totalPlanAdjust: row.A,
+                        totalPlanReduce: row.R,
+                    },
+                    false,
+                    'PUT'
+                )
+                .then((res) => {
+                    this.$message({
+                        message: res.message,
+                        type: 'success',
+                    })
+                    this.tableData.map((list) => {
+                        list.AInputShow = false
+                        list.RInputShow = false
+                    })
+                    this.tableKey++
+                })
+        },
+        rowSend(row) {
+            console.log(row)
+            let idArrs = []
+            if (row.airline == '全部') {
+                this.tableData.map((list) => {
+                    if (list) {
+                        idArrs.push(list.id)
+                    }
+                })
+            } else {
+                idArrs.push(row.id)
+            }
+            this.$confirm('确认发送调时调减计划到航司?', '提示', {
+                type: 'warning',
+                center: true,
+            }).then(() => {
+                this.$request
+                    .post('adverse', 'adjust/publish', idArrs, false, 'PUT')
+                    .then((res) => {
+                        this.$message({
+                            message: res.message,
+                            type: 'success',
+                        })
+                        this.tableData.map((list) => {
+                            list.AInputShow = false
+                            list.RInputShow = false
+                        })
+                        this.tableKey++
+                    })
+            })
+        },
+        feedbackTimeChange() {
+            this.$request
+                .post(
+                    'adverse',
+                    'adjust/editFeedBackTime?reduceId=' +
+                        this.currentReduce.reduceId +
+                        '&feedBackTime=' +
+                        this.feedBackTime,
+                    null,
+                    false,
+                    'PUT'
+                )
+                .then((res) => {
+                    this.$message({
+                        message: res.message,
+                        type: 'success',
+                    })
+                })
         },
     },
 }

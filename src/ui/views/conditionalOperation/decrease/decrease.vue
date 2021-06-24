@@ -55,7 +55,8 @@ export default {
                 .get('adverse', 'adjust/getCurrentReduce?type=' + this.type)
                 .then((res) => {
                     if (res.data) {
-                        this.currentReduceLists = res.data || []
+                        console.log(res.data)
+                        this.currentReduceLists = _.sortBy(res.data, 'reduceInfo.reduceplanNo')
                         this.changePlanno(0)
                     }
                 })

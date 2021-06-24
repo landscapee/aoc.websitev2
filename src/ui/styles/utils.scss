@@ -40,6 +40,13 @@
 @keyframes pulse-in { 0% { transform: scale3d(1, 1, 1); }
   50% { transform: scale3d(1.1, 1.1, 1.1); }
   100% { transform: scale3d(1, 1, 1); } }
+
+
+// 字体颜色
+.text-yellow {
+  color: #ffc107!important;
+}
+
 /* Add a gray border */
 .border { border: 1px #e1e4e8 solid !important; }
 

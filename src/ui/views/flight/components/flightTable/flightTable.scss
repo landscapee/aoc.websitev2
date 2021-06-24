@@ -23,6 +23,14 @@
       //top: -3px;
       position: relative;
     }
+    .icon-lock-2 {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      background: url("~@/ui/assets/img/tianfu/lock-2.svg") no-repeat;
+      vertical-align: middle;
+      background-size: 18px;
+    }
     //实现“跑道”中的字体图标效果
     .letter-icon {
       display: inline-block;
