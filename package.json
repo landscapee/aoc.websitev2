@@ -66,6 +66,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "bluebird": "^3.7.2",
+    "bootstrap": "^4.1.1",
+    "classnames": "^2.3.1",
     "debug": "^4.3.1",
     "echarts": "^5.1.2",
     "element-ui": "^2.13.0",

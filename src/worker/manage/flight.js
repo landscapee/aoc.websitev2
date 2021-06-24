@@ -234,7 +234,10 @@ export const refreshFlights = (arg) => {
 };
 
 export const flightStart = (posWorker, myHeader) => {
-  columns = myHeader;
+  // ui线程传过来的header 先存进内存
+  memoryStore.setItem('global',{flightHeader: myHeader})
+  // 这里从内存里面取出来 加上了convert的header
+  columns = getListHeader();
   memoryStore.setItem('global',{now: moment().valueOf()})
   let flightStart = (data) => {
     let result = refreshFlights(data);

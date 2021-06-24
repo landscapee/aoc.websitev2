@@ -39,7 +39,7 @@
       <div class="buttons">
         <el-button title="高级搜索" type="info" size="mini"><i class="iconfont icon-gaojisousuo"/></el-button>
         <el-button title="查看航班历史" type="info" size="mini"><i class="iconfont icon-lishi"/></el-button>
-        <el-button title="列表配置" type="info" size="mini"><i class="iconfont icon-zidingyi"/></el-button>
+        <el-button @click="toggleFieldSetting" title="列表配置" type="info" size="mini"><i class="iconfont icon-zidingyi"/></el-button>
         <el-button title="导出当前结果" type="info" size="mini"><i class="iconfont icon-daochuexcel"/></el-button>
       </div>
     </div>
@@ -64,6 +64,7 @@ let tabBarOptions = [
   { name: '可执行积压', key: 'isExecutableFlight', option: { isExecutableFlight: true } },
 ]
 export default {
+  props: ['toggleFieldSetting'],
   data() {
     return {
       tabBarOptions,

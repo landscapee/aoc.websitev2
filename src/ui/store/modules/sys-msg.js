@@ -1,6 +1,6 @@
 
 const sysMsg = {
-    state: { 
+    state: {
         language:'zh',
         serverTime:null,
         userMsg:{},

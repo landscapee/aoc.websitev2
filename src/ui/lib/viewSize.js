@@ -59,7 +59,8 @@ export const remtopxByCS = (valueOfRem) => {
  * @returns {number}
  */
 export const fixPx = (valueOfPX) => {
+	let px = parseFloat(valueOfPX);
 	let currentFs = window.document.documentElement.style.fontSize;
 	currentFs = parseFloat(currentFs)
-	return (currentFs / DEFAULT_FONTSIZE) * valueOfPX;
+	return (currentFs / DEFAULT_FONTSIZE) * px;
 };

@@ -1,19 +1,21 @@
 <template>
   <div v-if="item.key === 'examine'" slot-scope="scope">
-    <el-button @click="setTop(scope.row.flightId)" :type="scope.row.setTop ? 'primary': 'info'"><i class="iconfont icon-zhiding"></i></el-button>
+    <el-button class="set-top-btn" @click="setTop(scope.row.flightId)" type="info"><i :class="scope.row.setTop ? 'iconfont icon-quxiaozhiding' : 'iconfont icon-zhiding' "></i></el-button>
   </div>
 
-  <!--displayRouter-->
-  <div v-else-if="item.key === 'displayRouter'" slot-scope="scope">
-    <el-select v-model="value" placeholder="请选择">
-      <el-option
-          v-for="item in options"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value">
-      </el-option>
-    </el-select>
+  <div v-else-if="item.key === 'flightNo'" slot-scope="scope">
+    <span v-if="scope.row.markLate" class="flightLabel">晚</span>
+    <span class="flightLabel">{{ flightLabel }}</span>
+    <span :style="{ color: scope.row.movement === 'A' ? '#00FE4A' : 'rgba(25,197,255,1)' }" class="flightNo fo">{{ scope.row.flightNo }}</span>
   </div>
+
+  <permissionSwitch v-else-if="item.key === 'displayTOBT'" slot-scope="scope" role="edit-TOBT">
+    <div @click="TOBTClick($event, scope.row)" class="d-flex flex-justify-center">
+      <i v-if="scope.row.movement === 'D'" class="iconfont icon-bianji text-blue" ></i>
+      <div>{{scope.row.displayTOBT}}</div>
+    </div>
+  </permissionSwitch>
+
   <div slot-scope="scope" v-else-if="item.formatter" v-html="item.formatter(scope.row)">
   </div>
   <div v-else slot-scope="scope">
@@ -28,9 +30,14 @@ import {memoryStore} from "@/worker/lib/memoryStore";
 import moment from "moment";
 import {get} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
+
 let postalStore = new PostalStore()
 export default {
   name: "complex-column",
+  components: {
+    'permissionSwitch': () =>
+        import(/*webpackChunkName:"permissionSwitch"*/ './permissionSwitch'),
+  },
   props: {
     scope: {
       type: Object,
@@ -43,25 +50,7 @@ export default {
   },
   data(){
     return{
-      options: [{
-        value: '选项1',
-        label: '黄金糕'
-      }, {
-        value: '选项2',
-        label: '双皮奶'
-      }, {
-        value: '选项3',
-        label: '蚵仔煎'
-      }, {
-        value: '选项4',
-        label: '龙须面'
-      },
-        {
-          value: '选项5',
-          label: '北京烤鸭'
-        }
-      ],
-       value: ''
+      row: this.scope.row
     }
   },
   methods: {
@@ -77,6 +66,33 @@ export default {
       console.log(todayTopFlights)
       postalStore.pub( 'Flight.Personal.SetTop', todayTopFlights)
       // this.pub('Worker', 'Flight.Personal.SetTop', todayTopFlights);
+    },
+    TOBTClick: function (e,flight){
+      let x = e.clientX;
+      let y = e.clientY;
+      let payload = {
+        x,
+        y,
+        flight
+      }
+      this.$store.commit('flight/toggleTOBTVisibility', payload)
+    }
+  },
+  computed: {
+    flightLabel: function (){
+      let flightLabel = '';
+      switch (this.scope.row.flightLabel) {
+        case '过站':
+          flightLabel = '站';
+          break;
+        case '始发':
+          flightLabel = '始';
+          break;
+        case '过夜':
+          flightLabel = '夜';
+          break;
+      }
+      return flightLabel
     }
   }
 }

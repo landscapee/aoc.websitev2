@@ -47,7 +47,7 @@ router.beforeEach((to, from, next) => {
                         postal.publish({
                             channel: 'Worker',
                             topic: 'LoginSuccess',
-                            data: res.data
+                            data: {...res.data, token: sessionStorage.token}
                         })
                         next()
                     }

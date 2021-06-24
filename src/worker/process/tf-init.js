@@ -54,6 +54,19 @@ postal.subscribe({
     channel: 'Worker',
     topic: 'init',
     callback: (data) => {
+        //
+        // let posWorker = myPostal('Worker');
+        // let mySockets = socket(data.servers);
+        // let httpRequest = new HttpRequest(data.httpConfig);
+        // flightInit(posWorker, httpRequest);
+        // monitorInit(posWorker, httpRequest);
+        // MonitorWithRunwayInit(posWorker, httpRequest);
+        // resourceMonitorInit(posWorker, httpRequest);
+        //
+        // flightHttp(posWorker, httpRequest);
+        // homeInit(posWorker, httpRequest)
+        // delaysInit(posWorker, httpRequest)
+        memoryStore.setItem('global', { token: data.token });
         postal.subscribe({
             channel: 'Worker',
             topic: 'LoginSuccess',
@@ -66,6 +79,10 @@ postal.subscribe({
                 let posWorker = myPostal('Worker');
                 let mySockets = socket(data.servers);
                 let httpRequest = new HttpRequest(data.httpConfig);
+                memoryStore.setItem('global', {
+                    token: user.token,
+                    roleFlights,
+                });
                 flightInit(posWorker, httpRequest);
                 monitorInit(posWorker, httpRequest);
                 MonitorWithRunwayInit(posWorker, httpRequest);
@@ -74,24 +91,25 @@ postal.subscribe({
                 flightHttp(posWorker, httpRequest);
                 homeInit(posWorker, httpRequest)
                 delaysInit(posWorker, httpRequest)
+                getSysConfigHttp(posWorker, httpRequest);
                 TOBTConfigInit(posWorker, httpRequest)
-                memoryStore.setItem('global', { token: data.token });
-                postal.subscribe({
-                    channel: 'Worker',
-                    topic: 'LoginSuccess',
-                    callback: (user) => {
-                        //登录成功
-                        // 根据权限过滤航班
-                        let roleData = find(user.roles, (item) => item.code.indexOf('DATA') > -1);
-                        let roleFlights = get(roleData, 'menus.0.path');
-                        roleFlights = roleFlights ? JSON.parse(roleFlights)[0] : { reversal: true, data: [] };
 
-                        memoryStore.setItem('global', {
-                            token: data.token,
-                            roleFlights,
-                        });
-                    }
-                })
+                // postal.subscribe({
+                //     channel: 'Worker',
+                //     topic: 'LoginSuccess',
+                //     callback: (user) => {
+                //         //登录成功
+                //         // 根据权限过滤航班
+                //         let roleData = find(user.roles, (item) => item.code.indexOf('DATA') > -1);
+                //         let roleFlights = get(roleData, 'menus.0.path');
+                //         roleFlights = roleFlights ? JSON.parse(roleFlights)[0] : { reversal: true, data: [] };
+                //
+                //         memoryStore.setItem('global', {
+                //             token: data.token,
+                //             roleFlights,
+                //         });
+                //     }
+                // })
             }
         })
     }

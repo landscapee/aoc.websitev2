@@ -1,5 +1,5 @@
 @import "./common";
-
+@import "utils";
 /*svg图标样式*/
 .svg-icon {
 	width: 1em;
@@ -31,6 +31,11 @@
 	src: url("/static/font/FjallaOne.ttf");
 }
 
+@font-face {
+	font-family: "MicrosoftYaHei-Bold";
+	src: url("/static/font/MicrosoftYaHei-Bold.ttf");
+}
+
 
 
 
@@ -53,6 +58,11 @@
 
 .fob {
 	font-family: 'FjallaOne' !important;
+	font-weight: 600;
+}
+
+.ms-b{
+	font-family: 'MicrosoftYaHei-Bold' !important;
 	font-weight: 600;
 }
 

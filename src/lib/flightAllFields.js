@@ -1,6 +1,189 @@
-
+import {get, map} from "lodash";
+import {formatDate} from "@/lib/helper/date";
 // flight/ proFlightField 使用
 
+const DISPLAYNULL = '--'
+export const filedConvert = {
+	displayScheduleTime: {
+		convert: (data) => {
+			let scheduleTime = get(data, 'scheduleTime');
+			scheduleTime = scheduleTime ? formatDate(scheduleTime, 'HHmm') : DISPLAYNULL;
+			return scheduleTime;
+		},
+	},
+	'sta-std': {
+		convert: (data) => {
+			let movement = get(data, 'movement');
+			return movement === 'D' ? get(data, 'displaySTDWithDate', DISPLAYNULL) : get(data, 'displaySTAWithDate', DISPLAYNULL);
+		},
+	},
+	'ata-atd': {
+		convert: (data) => {
+			let movement = get(data, 'movement');
+			return movement === 'D' ? get(data, 'displayATD', DISPLAYNULL) : get(data, 'displayATA', DISPLAYNULL);
+		},
+	},
+	'eta-ctotSort': {
+		convert: (data) => {
+			let movement = get(data, 'movement');
+			return movement === 'D' ? get(data, 'ctot') : get(data, 'eta');
+		},
+	},
+	'eta-ctot': {
+		convert: (data) => {
+			let movement = get(data, 'movement');
+			return movement === 'D' ? get(data, 'displayCTOT', DISPLAYNULL) : get(data, 'displayETA', DISPLAYNULL);
+		},
+	},
+	displayRouter: {
+		convert: (data) => {
+			let displayRouter = get(data, 'displayRouter');
+			let router = get(data, 'router', []);
+			// let displayRoutes = get(data, 'displayRoutes');
+			return displayRouter && displayRouter.length > 0 ? displayRouter : router;
+			//return displayRouter;
+		},
+	},
+	shareFlights: {
+		convert: (data) => {
+			let shareFlights = get(data, 'shareFlights');
+			return shareFlights && shareFlights.length > 0 ? shareFlights.join(',') : DISPLAYNULL;
+		},
+	},
+	// aircraftC: {
+	// 	convert: (data) => {
+	// 		//return get(data, 'c', get(seats, data.aircraftType, {}).Type);
+	// 		return get(data, 'c');
+	// 	},
+	// },
+	mark: {
+		convert: (data) => {
+			return {
+				D: get(data, 'markD') === '1',
+				V: get(data, 'markV') === '1',
+			};
+		},
+	},
+	closeDoorTime: {
+		convert: (data) => {
+			let closeDoorTime = data.closeDoorTime;
+			return closeDoorTime ? formatDate(data.closeDoorTime, 'HHmm') : DISPLAYNULL;
+		},
+	},
+	delay: {
+		convert: (data) => {
+			// let movement = get(data, 'movement');
+			// if (movement !== 'D') {
+			// 	return DISPLAYNULL;
+			// }
+			// let atd = data.atd ? data.atd : null;
+			// atd = atd || remote.getGlobal('now');
+			// let std = data.std ? data.std : null;
+			// if (atd && std && atd > std + 30 * 60 * 1000) {
+			// 	return Math.round((atd - std) / 60 / 1000) - 30 + 'min';
+			// }
+			let delay = calcDelayTime(data);
+			return delay ? delay + 'min' : DISPLAYNULL;
+		},
+	},
+	// arriveFlightNo: {
+	// 	convert: (data) => {
+	// 		let movement = get(data, 'movement');
+	// 		return movement !== 'D' ? DISPLAYNULL : get(data, 'arriveFlightNo', DISPLAYNULL);
+	// 	},
+	// },
+	arriveAircraftNo: {
+		convert: (data) => {
+			let movement = get(data, 'movement');
+			return movement === 'A' ? DISPLAYNULL : get(data, 'arriveAircraftNo', DISPLAYNULL);
+		},
+	},
+	ata: {
+		convert: (data) => {
+			let movement = get(data, 'movement');
+			return movement !== 'D' ? get(data, 'displayATA', DISPLAYNULL) : get(data, 'arriveFlight.displayATA', DISPLAYNULL);
+		},
+	},
+	originated: {
+		convert: (data) => {
+			let originated = get(data, 'originated');
+			return originated ? '始' : DISPLAYNULL;
+		},
+	},
+	isExecutableFlight: {
+		convert: (data) => {
+			let isExecutableFlight = get(data, 'isExecutableFlight');
+			return isExecutableFlight ? '是' : '否';
+		},
+	},
+	isPassagerFlight: {
+		convert: (data) => {
+			let isExecutableFlight = get(data, 'isPassagerFlight');
+			return isExecutableFlight ? '是' : '否';
+		},
+	},
+	releaseDelay: {
+		convert: (data) => {
+			let movement = data.movement;
+			if (movement !== 'D') {
+				return DISPLAYNULL;
+			}
+			let arriveFlight = data.arriveFlight;
+			if (!arriveFlight) {
+				return DISPLAYNULL;
+			}
+			let limit = data.maintainTime;
+			let std = data.std;
+			let atd = data.atd;
+			atd = atd || remote.getGlobal('now');
+			if (std && atd && limit && atd > std + 30 * 60 * 1000 && atd > limit) {
+				return Math.round((atd - limit) / 60 / 1000) + 'min';
+			}
+			return DISPLAYNULL;
+		},
+	},
+	'eta-etd': {
+		convert: (data) => {
+			let movement = get(data, 'movement');
+			return movement === 'A' ? get(data, 'displayETA', DISPLAYNULL) : get(data, 'displayETD', DISPLAYNULL);
+		},
+	},
+
+	displayPreATDOrETD: {
+		convert: (data) => {
+			let preETD = get(data, 'preEtd');
+			let preATD = get(data, 'preAtd');
+			return [formatDate(preETD, 'HHmm'), formatDate(preATD, 'HHmm')];
+		},
+	},
+	counters: {
+		convert: (data) => {
+			let counters = map(get(data, 'counters', []), function(item) {
+				return item.counterId;
+			});
+			return counters.length > 0 ? counters.join(',') : DISPLAYNULL;
+		},
+	},
+	airlineCnName: {
+		convert: (data) => {
+			return get(data, 'airlineCnName', DISPLAYNULL);
+		},
+	},
+	vtt: {
+		convert: (data) => {
+			let slipTime = get(data, 'vtt');
+			// slipTime = slipTime > 0 ? Math.round(slipTime / 60) : 0;
+			return slipTime ? slipTime + 'm' : '--';
+		},
+	},
+	estimateBordingLength: {
+		convert: (data) => {
+			let time = get(data, 'estimateBordingLength');
+			time = time !== undefined ? Math.round(time / 60) : DISPLAYNULL;
+			return time;
+		},
+	},
+};
 //lock 是否锁定   可配
 //sort 是否可以排序 不可配
 //auto 是否需要计算列宽
@@ -19,9 +202,9 @@ export const allField = {
 	},
 	flightIndex: { text: '序号', unConfigurable: true, search: false },
 	position: { text: '排序', reference: true, search: false },
-	flightNo: { text: '航班号', search: { type: 'text' } },
+	flightNo: { text: '航班号', search: { type: 'text' }, width: '120px' },
 	shareFlights: { text: '共享航班号', auto: true, search: { type: 'text' } },
-	flightId: { text: '航班ID', sort: true, search: { type: 'text' } },
+	flightId: { text: '航班ID', sort: true, search: { type: 'text' }, width: 180 },
 	scheduleTime: { text: 'scheduleTime', reference: true, search: false },
 	// displayScheduleTime: { text: 'scheduleTime', sort: true, referenceTo: 'scheduleTime' },
 	'sta-std': { text: '计划', full: '计划进港sta，计划离港合并std', sort: true, referenceTo: 'scheduleTime', search: { type: 'time' } },
@@ -40,9 +223,9 @@ export const allField = {
 		full: '国内国际混合',
 		search: { type: 'select', options: { D: '国内', I: '国际', M: '混合', R: '地区' } },
 	},
-	displayRouter: { text: '航线', auto: true, search: { type: 'text' } },
+	displayRouter: { text: '航线', auto: true, search: { type: 'text' }, width: '300px' },
 	direction: { text: '方向', search: { type: 'select', options: { 西安: '西安', 贵阳: '贵阳', 重庆: '重庆', 拉萨: '拉萨', 兰州: '兰州', 昆明: '昆明' } } },
-	elecFlightStatus: { text: '电子进程单状态', search: { type: 'select', options: ['未激活', '激活', '申请放行', '已发放行', '准备好', '未推出', '推出', '开车', '推出开车', '滑行', '滑回', '管制', '上跑道', '起飞', '起飞中断', '降落', '塔台滑行', '管制结束', '未管制', '降落', '落地', '入位'] } },
+	elecFlightStatus: { text: '电子进程单状态',width:  130, search: { type: 'select', options: ['未激活', '激活', '申请放行', '已发放行', '准备好', '未推出', '推出', '开车', '推出开车', '滑行', '滑回', '管制', '上跑道', '起飞', '起飞中断', '降落', '塔台滑行', '管制结束', '未管制', '降落', '落地', '入位'] } },
 	displayElecPublishTime: { text: '电子进程单发布', full: '电子进程单发布时间', search: { type: 'time' } },
 	c: { text: '机类', sort: true, search: { type: 'select', options: ['B', 'C', 'D', 'E', 'F'] } },
 	mark: { text: '标记', search: { type: 'select', options: { markD: 'D', markV: 'V' } } },
@@ -69,7 +252,7 @@ export const allField = {
 	displayPreATDOrETD: { text: '前站起飞' },
 	counters: { text: '值机柜台' },
 	displayCarousels: { text: '转盘' },
-	airlineCnName: { text: '航空公司', auto: true, search: { type: 'text' } },
+	airlineCnName: { text: '航空公司',  search: { type: 'text' } },
 	cobt: { text: 'COBT', reference: true },
 	ctot: { text: 'CTOT', reference: true },
 	tobt: { text: 'TOBT', reference: true },

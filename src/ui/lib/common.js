@@ -120,3 +120,11 @@ export const hasRole = function (key,isMessage=true) {
     }
     return blo
 }
+
+export const sizeStr = (str) => {
+    try {
+        return str.match(/[^ -~]/g) == null ? str.length : str.length + str.match(/[^ -~]/g).length;
+    } catch (e) {
+        return false;
+    }
+}

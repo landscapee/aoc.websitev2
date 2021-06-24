@@ -8,17 +8,18 @@
 import { get, map, each, extend, pick, keyBy } from 'lodash';
 import Logger from 'lib/logger';
 import {memoryStore} from "@/worker/lib/memoryStore";
+import {filedConvert} from "@/lib/flightAllFields";
 
 const log = new Logger('columns:Define');
 
 export const getListHeader = () => {
 	let myFlightHeader = memoryStore.getItem('global').flightHeader
-	return myFlightHeader
-	// return map(myFlightHeader, (h) => {
-	// 	if (filedConvert[h.key]) {
-	// 		return extend({}, filedConvert[h.key], h);
-	// 	} else {
-	// 		return h;
-	// 	}
-	// });
+	// return myFlightHeader
+	return map(myFlightHeader, (h) => {
+		if (filedConvert[h.key]) {
+			return extend({}, filedConvert[h.key], h);
+		} else {
+			return h;
+		}
+	});
 };
