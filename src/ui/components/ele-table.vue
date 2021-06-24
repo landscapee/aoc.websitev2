@@ -5,10 +5,14 @@
                 <template slot-scope="scope">
                     <template v-if="col.type=='index'">{{scope.$index+1}}</template>
                     <template v-else-if="col.type=='operate'">
-                        <span v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope)" @click="item.click?item.click(scope):''"></span>
+                        <el-button type='text' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope)" @click="item.click?item.click(scope):''" :disabled="col.click?col.disabled(scope):''"></el-button>
                     </template>
                     <template v-else>
-                        <div v-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
+                        <div v-if="col.input" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">
+                            <el-input v-if="scope.row[col.inputShow]" v-model='scope.row[col.key]' size="mini" autofocus @change="inputChange(col,scope.row)" />
+                            <span v-else>{{scope.row[col.key]}}</span>
+                        </div>
+                        <div v-else-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
                         <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{scope.row[col.key]}}</div>
                     </template>
                 </template>
@@ -79,7 +83,12 @@ export default {
         // this.maxHeight = this.$refs.ref_table.$el.parentNode.clientHeight
         // this.componentKey++
     },
-    methods: {},
+    methods: {
+        inputChange(col, row) {
+            console.log(col, row)
+            this.$emit('table-input-change', { col, row })
+        },
+    },
 }
 </script>
 <style scoped lang="scss">

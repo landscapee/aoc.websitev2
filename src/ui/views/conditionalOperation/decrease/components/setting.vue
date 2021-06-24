@@ -18,10 +18,10 @@
                         <el-col :span="18">
                             <el-dropdown trigger="click" @command="handleReducePlanNo">
                                 <span class="el-dropdown-link">
-                                    第{{subData.reduceplanNo}}轮<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                                    第{{chineseNum[subData.reduceplanNo-1]}}轮<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
                                 </span>
                                 <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item :command="idx" v-for="(item,idx) in currentReduceLists" :key="idx">第{{idx+1}}轮</el-dropdown-item>
+                                    <el-dropdown-item :command="idx" v-for="(item,idx) in currentReduceLists" :key="idx">第{{chineseNum[item.reduceInfo.reduceplanNo-1]}}轮</el-dropdown-item>
                                     <el-dropdown-item command="add">+</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
@@ -148,6 +148,7 @@ export default {
                 { value: 'D', label: '离港' },
             ],
             allAirportOptions: [],
+            chineseNum: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一'],
 
             subData: {
                 airports: '',
@@ -204,7 +205,15 @@ export default {
     methods: {
         resetReduceInfo(reduceInfo) {},
         navHandle(idx) {
-            this.getStatus()
+            if (this.judgeStatus()) {
+                //判断是否有未结束
+                this.$alert('当前轮次尚未结束,不能切换!', '提示', {
+                    type: 'warning',
+                    center: true,
+                })
+                return
+            }
+
             this.navFalg = idx
             this.$emit('change-type', idx)
         },
@@ -223,20 +232,30 @@ export default {
             }
         },
         restar() {
-            if (this.subData.status != 1) {
-                // this.pub('Web', 'Global.Alert', data: [
-                //     '服务端错误，请联系管理员处理！',
-                //     '提示',
-                //     {type: 'error', center: true}
-                // ])
-            }
-        },
-        getStatus() {
-            if (this.currentReduce.status != 1) {
-                console.log(this.pub)
-
+            if (this.judgeStatus()) {
+                //判断是否有未结束
+                this.$alert('当前轮次尚未结束,不能重新开始!', '提示', {
+                    type: 'warning',
+                    center: true,
+                })
                 return
             }
+        },
+        judgeStatus() {
+            let result = false
+            this.currentReduceLists.map((list) => {
+                if (list.reduceInfo.status != 1) {
+                    result = true
+                }
+            })
+            if (result) {
+                this.$alert('当前轮次尚未结束,不能新增轮次!', '提示', {
+                    type: 'warning',
+                    center: true,
+                })
+            }
+
+            return result
         },
     },
 }

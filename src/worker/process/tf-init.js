@@ -54,19 +54,6 @@ postal.subscribe({
     channel: 'Worker',
     topic: 'init',
     callback: (data) => {
-
-        let posWorker = myPostal('Worker');
-        let mySockets = socket(data.servers);
-        let httpRequest = new HttpRequest(data.httpConfig);
-        flightInit(posWorker, httpRequest);
-        monitorInit(posWorker, httpRequest);
-        MonitorWithRunwayInit(posWorker, httpRequest);
-        resourceMonitorInit(posWorker, httpRequest);
-        getSysConfigHttp(posWorker, httpRequest);
-        flightHttp(posWorker, httpRequest);
-        homeInit(posWorker, httpRequest)
-        delaysInit(posWorker, httpRequest)
-        memoryStore.setItem('global', { token: data.token });
         postal.subscribe({
             channel: 'Worker',
             topic: 'LoginSuccess',
@@ -83,6 +70,7 @@ postal.subscribe({
                 monitorInit(posWorker, httpRequest);
                 MonitorWithRunwayInit(posWorker, httpRequest);
                 resourceMonitorInit(posWorker, httpRequest);
+                getSysConfigHttp(posWorker, httpRequest);
                 flightHttp(posWorker, httpRequest);
                 homeInit(posWorker, httpRequest)
                 delaysInit(posWorker, httpRequest)
