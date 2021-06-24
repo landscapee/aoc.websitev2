@@ -22,6 +22,10 @@ module.exports = merge(common, {
         new webpack.BannerPlugin('Qin Xiao'),
         // 打包前清除打包目录下的文件，但不删除打包目录
         new CleanWebpackPlugin(),
+        new webpack.DefinePlugin(
+          {
+              'DEBUG': JSON.stringify(false)
+          }),
     ],
     module: {
         // rules: []

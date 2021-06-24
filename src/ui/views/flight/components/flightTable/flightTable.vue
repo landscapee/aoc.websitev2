@@ -15,6 +15,7 @@
                 :fixed="!!item.lock"
                 :prop="item.key"
                 :label="item.text"
+                align="center"
                 :width="item.width ? fixPx(item.width) : 'auto'"
             >
 
@@ -35,7 +36,7 @@
 import { map } from 'lodash';
 import {fixPx, pxtorem} from "@/ui/lib/viewSize";
 import {debounce} from "@/ui/lib/common";
-let itemH = 40;
+let itemH = 36;
 export default {
   name: "flightTable",
   props: {
@@ -62,7 +63,7 @@ export default {
       isScrolling: false, // 是否在滚动
       offSetY: 0,
       topCount: 0,
-      showCount: 20,
+      showCount: 22,
       options: [{
         value: '选项1',
         label: '黄金糕'

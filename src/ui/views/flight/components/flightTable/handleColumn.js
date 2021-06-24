@@ -1,6 +1,6 @@
 import {extend, filter, get, map, pick} from "lodash";
 import {allField, defaultColumns} from "@/lib/flightAllFields";
-
+import postal from 'postal'
 var myFlightHeader;
 const combineHeader = (columns) => {
   return map(columns, (item) => {
