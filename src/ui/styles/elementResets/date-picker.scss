@@ -1,0 +1,23 @@
+.el-picker-panel {
+    color: #ffffff;
+    background: #25395c;
+    border-color: #101c2f;
+
+    .el-picker-panel__footer {
+        background-color: #25395c;
+        border-color: #101c2f;
+    }
+
+    .el-date-range-picker__time-header,
+    .el-date-range-picker__content.is-left,
+    .el-date-table th {
+        border-color: #101c2f;
+    }
+
+    .el-date-table td.in-range div,
+    .el-date-table td.in-range div:hover,
+    .el-date-table.is-week-mode .el-date-table__row.current div,
+    .el-date-table.is-week-mode .el-date-table__row:hover div {
+        background-color: #101c2f;
+    }
+}

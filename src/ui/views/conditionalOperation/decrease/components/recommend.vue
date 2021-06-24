@@ -1,7 +1,7 @@
 <template>
     <div class="recommend showBox">
         <div class="title">
-            <div class="name">推荐调时调减架次</div>
+            <div class="name alib">推荐调时调减架次</div>
             <div class="right">
                 <span style="margin-right:6px">反馈时长</span>
                 <el-input placeholder="请输入" size="mini" style="width:70px" />
@@ -17,19 +17,21 @@
 </template>
 <script>
 export default {
+    props: ['currentReduce'],
     data() {
         return {
+            airLines: [],
             columnConfig: [
                 {
-                    key: 'name',
+                    key: 'airline',
                     label: '航司',
                 },
                 {
-                    key: 'sum',
+                    key: 'R',
                     label: '计划调减',
                 },
                 {
-                    key: 'in',
+                    key: 'A',
                     label: '计划调整',
                 },
                 {
@@ -39,7 +41,7 @@ export default {
                     operates: [
                         {
                             display: () => {
-                                return '<i class="iconfont icon-feijia"></i>'
+                                return '<i class="iconfont icon-fasong"></i>'
                             },
                             click: ({ row }) => {
                                 console.log(row)
@@ -49,10 +51,58 @@ export default {
                 },
             ],
             tableData: [
-                { name: '计划调时', sum: 10, in: 2 },
-                { name: '计划调减', sum: 12, in: 3 },
+                { key: 'total', cnName: '全部' },
+                { key: 'CA', cnName: '国航' },
+                { key: '3U', cnName: '川航' },
+                { key: 'MU', cnName: '东航' },
+                { key: 'CZ', cnName: '南航' },
+                { key: 'EU', cnName: '成航' },
+                { key: '8L', cnName: '祥航' },
+                { key: 'other', cnName: '其他' },
             ],
         }
+    },
+    watch: {
+        currentReduce: function (val) {
+            this.plan = val.plan
+            this.tableData = this.formatSuggestForEdit(val.plan)
+        },
+    },
+    mounted() {},
+    methods: {
+        formatSuggestForEdit(suggestForEdit) {
+            const formatData = (data) => {
+                let totalA = 0
+                let totalR = 0
+                _.map(data, (item) => {
+                    totalA += item.totalPlanAdjust || 0
+                    totalR += item.totalPlanReduce || 0
+                })
+                return {
+                    ..._.mapValues(data, (item) => ({
+                        ...item,
+                        A: item.totalPlanAdjust,
+                        R: item.totalPlanReduce,
+                    })),
+                    total: { A: totalA, R: totalR },
+                }
+            }
+            const airLines = [
+                { key: 'total', cnName: '全部' },
+                { key: 'CA', cnName: '国航' },
+                { key: '3U', cnName: '川航' },
+                { key: 'MU', cnName: '东航' },
+                { key: 'CZ', cnName: '南航' },
+                { key: 'EU', cnName: '成航' },
+                { key: '8L', cnName: '祥航' },
+                { key: 'other', cnName: '其他' },
+            ]
+            let formated = formatData(suggestForEdit)
+            return _.map(airLines, (item, key) => {
+                let current = formated[item.key]
+                return { ...current, airline: item.cnName, A: current.A, R: current.R }
+            })
+        },
     },
 }
 </script>
@@ -71,13 +121,13 @@ export default {
             line-height: 30px;
             display: flex;
             align-items: center;
-            font-weight: 600;
+            font-size: 18px;
         }
         .name:before {
             content: '';
             display: inline-block;
             height: 16px;
-            width: 5px;
+            width: 4px;
             background: #0566ff;
             border-radius: 1px;
             margin-right: 5px;

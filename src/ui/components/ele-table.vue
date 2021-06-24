@@ -68,10 +68,8 @@ export default {
                 let boxheight = refTable.parentNode.clientHeight
 
                 let tableheight = refTable.querySelector('.el-table__body').clientHeight
-                console.log(boxheight, tableheight)
                 this.componentKey++
                 if (tableheight > boxheight) {
-                    console.log(111)
                     this.tableWidth = 'calc(100% + 8px)'
                 }
             })

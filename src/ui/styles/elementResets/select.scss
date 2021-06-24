@@ -1,10 +1,12 @@
 //select
 .el-select {
+
     /*滑动轨道*/
-    ::-webkit-scrollbar-track{
+    ::-webkit-scrollbar-track {
         border-radius: 0px;
         background: none;
     }
+
     .el-select__tags {
         color: #ffffff;
         background: #101c2f;
@@ -43,10 +45,11 @@
     border: none;
 
     /*滑动轨道*/
-    ::-webkit-scrollbar-track{
+    ::-webkit-scrollbar-track {
         border-radius: 0px;
         background: none;
     }
+
     li {
         color: #fff;
     }
@@ -65,4 +68,23 @@
     .popper__arrow::after {
         border-bottom-color: #25395c !important;
     }
+}
+
+.el-input.is-disabled {
+    .el-input__inner {
+        background: #101c2f;
+        color: #ccc;
+    }
+
+}
+
+.el-range-editor.is-disabled input {
+    background: #101c2f;
+    color: #ccc;
+}
+
+.el-range-editor.is-disabled {
+    background: #101c2f;
+    border-color: #101c2f;
+    color: #ccc;
 }

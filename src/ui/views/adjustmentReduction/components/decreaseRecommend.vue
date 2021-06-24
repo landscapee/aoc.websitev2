@@ -1,20 +1,16 @@
 <template>
-    <div class="flightDelay showBox">
+    <div class="decreaseRecommend showBox">
         <div class="title">
-            <div class="name alib">
-                已延误航班统计<span>(点击柱状图查看详情)</span>
-            </div>
+            <div class="name alib">推荐调时时刻<span class="alir">(点击柱状图查看详情)</span></div>
         </div>
         <div class="content">
             <div id="flightDelay_charts"></div>
         </div>
     </div>
 </template>
+
 <style lang="scss" scoped>
-.flightDelay {
-    flex: 1;
-    margin: 15px 0;
-    padding: 15px;
+.decreaseRecommend {
     .title {
         display: flex;
         align-items: center;
@@ -41,8 +37,6 @@
             border-radius: 1px;
             margin-right: 5px;
         }
-    }
-    .content {
     }
 }
 </style>

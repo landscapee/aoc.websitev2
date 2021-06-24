@@ -4,8 +4,8 @@
         <div class="content">
             <div class="nav">
                 <ul>
-                    <li :class="navFalg==0?'active':''" @click="navFalg=0">常态化</li>
-                    <li :class="navFalg==1?'active':''" @click="navFalg=1">大面积延误</li>
+                    <li :class="navFalg==1?'active':''" @click="navHandle(1)">常态化</li>
+                    <li :class="navFalg==2?'active':''" @click="navHandle(2)">大面积延误</li>
                 </ul>
                 <div>
                     <icon-svg iconClass="xingzhuangjiehe" />
@@ -13,34 +13,38 @@
                 </div>
             </div>
             <div class="form">
-                <el-form :model="ruleForm" ref="ruleForm" label-width="80px" class="demo-ruleForm">
+                <el-form label-width="80px">
                     <el-form-item label="轮次">
-                        <el-col :span="20">
-                            <div>
-                                <el-select v-model="value" placeholder="请选择" size="mini">
-                                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                                </el-select>
-                            </div>
+                        <el-col :span="18">
+                            <el-dropdown trigger="click" @command="handleReducePlanNo">
+                                <span class="el-dropdown-link">
+                                    第{{subData.reduceplanNo}}轮<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                                </span>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item :command="idx" v-for="(item,idx) in currentReduceLists" :key="idx">第{{idx+1}}轮</el-dropdown-item>
+                                    <el-dropdown-item command="add">+</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
                         </el-col>
                         <el-col :span="4">
-                            <el-button round type="danger" size="mini">结束</el-button>
+                            <el-button round type="danger" size="mini" @click="restar">重新开始</el-button>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="影响时间">
-                        <el-date-picker v-model="time" type="datetime" placeholder="选择影响时间" style="width:100%"></el-date-picker>
+                        <el-date-picker :disabled="editDisabled" v-model="influenceTime" style="width:100%" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="timestamp"></el-date-picker>
                     </el-form-item>
                     <el-row>
                         <el-col :span="12">
                             <el-form-item label="进/离">
-                                <el-select v-model="value" placeholder="请选择" size="mini">
-                                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                <el-select :disabled="editDisabled" v-model="subData.movement" placeholder="请选择" size="mini">
+                                    <el-option v-for="item in movementOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="方向">
-                                <el-select v-model="value" placeholder="请选择" size="mini">
-                                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                <el-select :disabled="editDisabled" v-model="subData.airports" placeholder="请选择" size="mini">
+                                    <el-option v-for="(value,key) in directionOptions" :key="key" :label="value" :value="key"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -48,29 +52,28 @@
                     <el-row>
                         <el-col :span="12">
                             <el-form-item label="机场">
-                                <el-select v-model="value" placeholder="请选择" size="mini">
-                                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                                <el-select :disabled="editDisabled" v-model="subData.airports" placeholder="请选择" size="mini" filterable>
+                                    <el-option label="全部" value="All"></el-option>
+                                    <el-option v-for="(value,key) in allAirportOptions" :key="key" :label="value" :value="key"></el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="下降比例">
-                                <el-select v-model="value" placeholder="请选择" size="mini">
-                                    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                                </el-select>
+                                <el-input :disabled="editDisabled" type="number" v-model="subData.declineRatio" placeholder="下降比例" size="mini"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
                     <el-form-item label="恢复时间">
-                        <el-date-picker v-model="time" type="datetime" placeholder="选择影响时间" style="width:100%"></el-date-picker>
+                        <el-date-picker :disabled="editDisabled" v-model="recoverTime" type="datetimerange" style="width:100%" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="timestamp"></el-date-picker>
                     </el-form-item>
                 </el-form>
             </div>
             <div class="table">
                 <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
                 <div class="buttonBox">
-                    <el-button type="primary" size="mini">提交</el-button>
+                    <el-button type="primary" size="mini" @click="submitData">提交</el-button>
                 </div>
             </div>
         </div>
@@ -78,66 +81,163 @@
     </div>
 </template>
 <script>
+import PostalStore from '@/ui/lib/postalStore'
+let postalStore = new PostalStore()
 export default {
+    props: ['currentReduce', 'currentReduceLists'],
     data() {
         return {
-            navFalg: 0,
-            ruleForm: {},
-            time: '',
+            navFalg: 1,
             value: '',
             options: [],
             columnConfig: [
                 {
-                    key: 'name',
-                    label: '调整/调减',
-                    width: '88px',
+                    key: 'adjust',
+                    label: '调时/调减',
+                    width: '90px',
                 },
                 {
-                    key: 'sum',
+                    key: 'total',
                     label: '总数',
-                    width: '50px',
+                    width: '57px',
                 },
                 {
-                    key: 'in',
+                    key: 'CA',
                     label: '国航',
-                    width: '50px',
+                    width: '57px',
                 },
                 {
-                    key: 'in',
+                    key: '3U',
                     label: '川航',
-                    width: '50px',
+                    width: '57px',
                 },
                 {
-                    key: 'in',
+                    key: 'MU',
                     label: '东航',
-                    width: '50px',
+                    width: '57px',
                 },
                 {
-                    key: 'in',
+                    key: 'CZ',
                     label: '南航',
-                    width: '50px',
+                    width: '57px',
                 },
                 {
-                    key: 'in',
+                    key: 'EU',
                     label: '成航',
-                    width: '50px',
+                    width: '57px',
                 },
                 {
-                    key: 'in',
+                    key: '8L',
                     label: '祥鹏',
-                    width: '50px',
+                    width: '57px',
+                },
+            ],
+            tableData: [{ adjust: '计划调时' }, { adjust: '计划调减' }],
+            directionOptions: {
+                All: '全部方向',
+                西安: '西安',
+                贵阳: '贵阳',
+                重庆: '重庆',
+                拉萨: '拉萨',
+                兰州: '兰州',
+                昆明: '昆明',
+            },
+            movementOptions: [
+                { value: 'All', label: '全部' },
+                { value: 'A', label: '进港' },
+                { value: 'D', label: '离港' },
+            ],
+            allAirportOptions: [],
+
+            subData: {
+                airports: '',
+                directions: '',
+                movement: '',
+                declineRatio: '',
+                recoverBeginTime: '',
+                recoverEndTime: '',
+                startTime: '',
+                endTime: '',
+                reduceplanNo: 1,
+                status: 1,
+            },
+            recoverTime: [],
+            influenceTime: [],
+            editDisabled: false,
+        }
+    },
+    mounted() {
+        postalStore.pub('Worker', 'Delay.GetCity', null)
+        postalStore.sub('Delay.GetCity', (res) => {
+            this.allAirportOptions = res
+        })
+    },
+    watch: {
+        currentReduce: function (val) {
+            console.log(val)
+
+            this.subData = val.reduceInfo
+            console.log(this.subData)
+
+            this.resetReduceInfo(val.reduceInfo)
+
+            if (this.subData.status == 1) {
+                this.editDisabled = false
+            } else {
+                this.editDisabled = true
+            }
+
+            this.recoverTime = [val.reduceInfo.recoverBeginTime, val.reduceInfo.recoverEndTime]
+            this.influenceTime = [val.reduceInfo.beginTime, val.reduceInfo.endTime]
+            this.tableData = [
+                {
+                    adjust: '计划调时',
+                    ..._.mapValues(val.suggest, (item) => item.A || 0),
                 },
                 {
-                    key: 'in',
-                    label: '其他',
-                    width: '50px',
+                    adjust: '计划调减',
+                    ..._.mapValues(val.suggest, (item) => item.R || 0),
                 },
-            ],
-            tableData: [
-                { name: '计划调时', sum: 10, in: 2 },
-                { name: '计划调减', sum: 12, in: 3 },
-            ],
-        }
+            ]
+        },
+    },
+    methods: {
+        resetReduceInfo(reduceInfo) {},
+        navHandle(idx) {
+            this.getStatus()
+            this.navFalg = idx
+            this.$emit('change-type', idx)
+        },
+        submitData() {
+            this.subData.recoverBeginTime = this.recoverTime[0]
+            this.subData.recoverEndTime = this.recoverTime[1]
+            this.subData.beginTime = this.influenceTime[0]
+            this.subData.endTime = this.influenceTime[1]
+            console.log(this.subData)
+        },
+        handleReducePlanNo(reduceplanNo) {
+            if (reduceplanNo != 'add') {
+                this.$emit('change-planno', reduceplanNo)
+            } else {
+                this.$emit('add-planno')
+            }
+        },
+        restar() {
+            if (this.subData.status != 1) {
+                // this.pub('Web', 'Global.Alert', data: [
+                //     '服务端错误，请联系管理员处理！',
+                //     '提示',
+                //     {type: 'error', center: true}
+                // ])
+            }
+        },
+        getStatus() {
+            if (this.currentReduce.status != 1) {
+                console.log(this.pub)
+
+                return
+            }
+        },
     },
 }
 </script>

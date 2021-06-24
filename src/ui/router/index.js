@@ -27,6 +27,8 @@ const adv = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonit
 
 //不利条件运行
 const conditionalOperation = () => import(/*webpackChunkName:"conditionalOperation"*/ '../views/conditionalOperation/conditionalOperation')
+//调减调时
+const adjustmentReduction = () => import(/*webpackChunkName:"adjustmentReduction"*/ '../views/adjustmentReduction/adjustmentReduction')
 //大面积备降
 const alternate = () => import(/*webpackChunkName:"alternate"*/ '../views/conditionalOperation/alternate/index')
 //低能见运行
@@ -59,7 +61,7 @@ var routes = [
       { path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component:poolMonitorWithRunway},
       { path: '/resourceMonitoring', name: 'resourceMonitoring', component:resourceMonitoring},
       { path: '/adv', name: 'adv', component: adv },
-       {
+      {
         path: '/conditionalOperation', name: 'conditionalOperation', component: conditionalOperation, children: [
            { path: '/alternate', name: 'alternate', component: alternate },
            { path: '/runningNew', name: 'runningNew', component: runningNew },
@@ -69,6 +71,7 @@ var routes = [
            { path: '/decrease', name: 'decrease', component: decrease },
         ]
       },
+      { path: '/adjustmentReduction', name: 'adjustmentReduction', component: adjustmentReduction },
           { path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment },
           { path: '/tobtConfig', name: 'tobtConfig', component: tobtConfig },
 
