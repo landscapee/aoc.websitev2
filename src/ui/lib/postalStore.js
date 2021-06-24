@@ -48,11 +48,11 @@ export default class PostalStore {
         }
         break;
       case 2: //topic, callback
-        if (isString(args[0]) && isFunction(args[1])) {
+        if (isString(args[0])) {
           params = {
             channel: 'Worker',
             topic: args[0],
-            callback: args[1],
+            data: args[1],
           };
         }
         break;
@@ -60,12 +60,12 @@ export default class PostalStore {
         params = {
           channel: args[0],
           topic: args[1],
-          callback: args[2],
+          data: args[2],
         };
         break;
     }
     if (params === null) {
-      throw new Error(`bad paramters for subscribe`);
+      throw new Error(`bad paramters for publish`);
     }
     postal.publish(params);
   }

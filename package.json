@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack-dev-server --config webpack.dev.js --Program fpms.dev --type tianfu",
     "dev:tianfu": "webpack-dev-server --config webpack.dev.js --Program fpms.dev --type tianfu",
+    "deploy": "scp -r website/*  root@173.100.1.137:/var/www/com.aoc.websitev2",
     "dev:shuangliu": "webpack-dev-server --config webpack.dev.js --Program fpms.dev --type shuangliu",
     "build": "webpack --config webpack.prod.js --Program fpms.website --type tianfu",
     "build:tianfu": "webpack --config webpack.prod.js --Program fpms.website --type tianfu",
@@ -65,6 +66,8 @@
   "dependencies": {
     "axios": "^0.19.2",
     "bluebird": "^3.7.2",
+    "bootstrap": "^4.1.1",
+    "classnames": "^2.3.1",
     "debug": "^4.3.1",
     "echarts": "^5.1.2",
     "element-ui": "^2.13.0",

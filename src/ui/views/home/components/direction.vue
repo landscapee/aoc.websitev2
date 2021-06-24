@@ -190,6 +190,13 @@ export default {
             this.loadMap()
         },
     },
+    destroyed() {
+        for (var i = 0; i <= 7; i++) {
+            if (this['marqueeVar' + i]) {
+                clearInterval(this['marqueeVar' + i])
+            }
+        }
+    },
     methods: {
         cityHandle(city) {
             this.layerName = city.cityName + '方向延误'

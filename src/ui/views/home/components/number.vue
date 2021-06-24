@@ -2,11 +2,16 @@
     <div class="home_number" :class="options.position">
         <div class="box_content">
             <div class="top">
-                <el-select v-model="select" placeholder="请选择" size="mini" popper-class="homeSelect" @change="load_flight_home">
-                    <el-option label="全场" value="all"></el-option>
-                    <el-option label="国内" value="domestic"></el-option>
-                    <el-option label="国际" value="international"></el-option>
-                </el-select>
+                <el-dropdown trigger="click" size="mini" @command="load_flight_home">
+                    <span class="el-dropdown-link">
+                        全场<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="all">全场</el-dropdown-item>
+                        <el-dropdown-item command="domestic">国内</el-dropdown-item>
+                        <el-dropdown-item command="international">国际</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
                 <span class="pre fo">{{percentage}}%</span>
             </div>
             <div class="mid">
@@ -49,9 +54,8 @@ export default {
         },
     },
     methods: {
-        load_flight_home() {
-            this.activeData = this.options.value(this.flight_home, this.select)
-
+        load_flight_home(command = 'all') {
+            this.activeData = this.options.value(this.flight_home, command)
             this.percentage =
                 this.activeData[1] == 0
                     ? 0
@@ -76,6 +80,9 @@ export default {
             padding: 5px 10px 0;
             .pre {
                 color: #fff;
+                font-size: 12px;
+            }
+            .el-dropdown-link {
                 font-size: 12px;
             }
         }
@@ -112,28 +119,6 @@ export default {
                 height: 100%;
                 border-radius: 0 5px 5px 0;
             }
-        }
-    }
-}
-</style>
-<style lang='scss'>
-.home_number {
-    .top {
-        .el-select {
-            width: 50px;
-        }
-        input {
-            font-size: 12px;
-            height: 16px;
-            padding: 3px;
-            color: rgba(255, 255, 255, 0.5);
-            background: none;
-            height: 20px;
-        }
-        .el-input__icon {
-            width: auto;
-            line-height: 20px;
-            font-size: 12px;
         }
     }
 }

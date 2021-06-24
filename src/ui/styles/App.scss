@@ -1,5 +1,5 @@
 @import "./common";
-
+@import "utils";
 /*svg图标样式*/
 .svg-icon {
 	width: 1em;
@@ -9,35 +9,6 @@
 	overflow: hidden;
 }
 
-
-
-// @font-face {
-// 	font-family: 'ALiR';
-// 	src: url('/static/font/AlibabaPuHuiTiR/webfont.eot');
-// 	/* IE9*/
-// 	src: url('/static/font/AlibabaPuHuiTiR/webfont.eot') format('embedded-opentype'),
-// 		/* IE6-IE8 */
-// 		url('/static/font/AlibabaPuHuiTiR/webfont.woff') format('woff'),
-// 		/* chrome、firefox */
-// 		url('/static/font/AlibabaPuHuiTiR/webfont.ttf') format('truetype'),
-// 		/* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-// 		url('/static/font/AlibabaPuHuiTiR/webfont.svg') format('svg');
-// 	/* iOS 4.1- */
-// }
-
-// @font-face {
-// 	font-family: 'ALiB';
-// 	src: url('/static/font/AlibabaPuHuiTiB/webfont.eot');
-// 	/* IE9*/
-// 	src: url('/static/font/AlibabaPuHuiTiB/webfont.eot') format('embedded-opentype'),
-// 		/* IE6-IE8 */
-// 		url('/static/font/AlibabaPuHuiTiB/webfont.woff') format('woff'),
-// 		/* chrome、firefox */
-// 		url('/static/font/AlibabaPuHuiTiB/webfont.ttf') format('truetype'),
-// 		/* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
-// 		url('/static/font/AlibabaPuHuiTiB/webfont.svg') format('svg');
-// 	/* iOS 4.1- */
-// }
 
 @font-face {
 	font-family: 'ALiR';
@@ -58,6 +29,11 @@
 @font-face {
 	font-family: 'FjallaOne';
 	src: url("/static/font/FjallaOne.ttf");
+}
+
+@font-face {
+	font-family: "MicrosoftYaHei-Bold";
+	src: url("/static/font/MicrosoftYaHei-Bold.ttf");
 }
 
 
@@ -82,6 +58,11 @@
 
 .fob {
 	font-family: 'FjallaOne' !important;
+	font-weight: 600;
+}
+
+.ms-b{
+	font-family: 'MicrosoftYaHei-Bold' !important;
 	font-weight: 600;
 }
 

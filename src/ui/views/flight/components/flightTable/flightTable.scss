@@ -1,8 +1,83 @@
 .flightTable{
-
+  font-size: 12px;
   height: 100%;
   overflow-y: hidden;
   $border-color: rgba(204,204,204,.3);
+  ::v-deep .el-table{
+    $textIconSize:16px;
+    @mixin textIcon ($content,$color){
+      &:before {
+        content: $content;
+      }
+      display: inline-block;
+      font-family: 'MicrosoftYaHei-Bold';
+      font-size: 9px;
+      font-style: normal;
+      color: $color;
+      border: 1px solid $color;
+      border-radius: 50%;
+      width:$textIconSize;
+      height: $textIconSize;
+      line-height: $textIconSize;
+      font-weight: 500;
+      //top: -3px;
+      position: relative;
+    }
+    //实现“跑道”中的字体图标效果
+    .letter-icon {
+      display: inline-block;
+      width: 27px;
+      height: 27px;
+      vertical-align: middle;
+      line-height: 27px;
+      //background-color: $gray-500;
+    }
+
+    .etd-font {
+      @include textIcon("预", #FD7E14FF);
+    }
+    .ata-font {
+      @include textIcon("实",#007BFFFF);
+    }
+
+
+  }
+  ::v-deep .cell.el-tooltip{
+    width: auto!important;
+  }
+  ::v-deep *{
+    font-size: 13px;
+  }
+  ::v-deep.set-top-btn{
+    padding: 0;
+    height: 28px;
+    width: 28px;
+    background-color: #444D5D;
+    border: 0;
+    .iconfont{
+      font-size: 14px;
+    }
+    .icon-quxiaozhiding{
+      color: #2e67f6;
+    }
+  }
+
+
+  ::v-deep.flightLabel{
+    height: 22px;
+    width: 22px;
+    border: solid 1px #fff;
+    border-radius: 11px;
+    text-align: center;
+    line-height: 22px;
+    display: inline-block;
+    color: #fff;
+    margin-right: 6px;
+    font-size: 12px;
+  }
+  ::v-deep.flightNo{
+    font-family: "Fjalla One";
+  }
   ::v-deep.el-table th, .el-table tr{
     background-color: #17212F;
   }
@@ -11,6 +86,13 @@
   }
   ::v-deep.el-table__body-wrapper.is-scrolling-left ~ .el-table__fixed, .el-table__body-wrapper.is-scrolling-none ~ .el-table__fixed, .el-table__body-wrapper.is-scrolling-none ~ .el-table__fixed-right, .el-table__body-wrapper.is-scrolling-right ~ .el-table__fixed-right{
     box-shadow: none;
+  }
+  ::v-deep th {
+    height: 30px;
+    padding: 0 ;
+  }
+  ::v-deep td {
+    padding: 0 ;
   }
   ::v-deep.el-table{
     background-color: #111926;
@@ -34,6 +116,7 @@
           padding: 0;
           .cell{
             padding: 0;
+            height: 20px;
           }
         }
       }
@@ -60,8 +143,9 @@
           color: #Fff;
           border-color: $border-color;
           border-bottom: none;
-          height: 40px;
+          height: 36px;
           padding: 0;
+          text-align: center;
         }
       }
     //
@@ -73,6 +157,9 @@
   .scrollWrapper{
     height: 100%;
     overflow-y: auto;
+    &::-webkit-scrollbar{
+      width: 12px;
+    }
   }
   .scrollBox{
     //width: 1px;
@@ -82,6 +169,13 @@
     width: 98%;
     position: absolute;
     top: 0;
+  }
+  ::v-deep.icon-arrow {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    background: url("../static/imgs/arrows-01.svg") no-repeat ;
+    background-size: 12px;
   }
 }
 

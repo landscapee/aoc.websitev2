@@ -1,7 +1,7 @@
 <template>
     <div class="sureDecrease showBox">
         <div class="title">
-            <div class="name">
+            <div class="name alib">
                 确认调时调减
             </div>
         </div>
@@ -124,13 +124,13 @@ export default {
             display: flex;
             align-items: center;
             margin-right: 15px;
-            font-weight: 600;
+            font-size: 18px;
         }
         .name:before {
             content: '';
             display: inline-block;
             height: 16px;
-            width: 5px;
+            width: 4px;
             background: #0566ff;
             border-radius: 1px;
             margin-right: 5px;

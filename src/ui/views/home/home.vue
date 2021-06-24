@@ -22,7 +22,7 @@
 import { postions } from './static/js/postions.js'
 import { settings as settingsCfg } from './static/js/settingHome'
 import PostalStore from '../../lib/postalStore'
-
+let postalStore = new PostalStore()
 import Number from './components/number'
 import Number2 from './components/number2'
 import MonthDelay from './components/monthDelay'
@@ -31,7 +31,7 @@ import Runway from './components/runway'
 import FlightChart from './components/flightChart'
 import Rate from './components/rate'
 import Direction from './components/direction'
-let postalStore = new PostalStore()
+
 export default {
     data() {
         return {
