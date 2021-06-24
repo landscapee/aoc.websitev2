@@ -45,6 +45,7 @@ const subRetainWs = () => {
         lastUpdateFinish = false;
         saveToFlightDB(_changes).then(() => {
           lastUpdateFinish = true;
+          console.log('ws sync')
           worker.publish('Flight.Change.Sync');
         });
       }

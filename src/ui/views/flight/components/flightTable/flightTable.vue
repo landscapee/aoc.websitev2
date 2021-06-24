@@ -20,7 +20,14 @@
             >
 
               <complex-column slot-scope="scope" :item="item" :scope="scope"/>
-
+<!--              自定义表头 -->
+              <template slot="header" slot-scope="scope">
+                <div>
+                  <i v-if="scope.column.fixed" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
+                  <i v-else class="icon-lock-2 cursor"></i>
+                  <span>{{scope.column.label}}</span>
+                </div>
+              </template>
 
             </el-table-column>
           </el-table>
