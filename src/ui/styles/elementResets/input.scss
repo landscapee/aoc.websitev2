@@ -58,3 +58,14 @@
     border-radius: 2px;
     border: none !important;
 }
+
+.tableInput {
+    background: #2b3645;
+    color: #fff;
+    border: none;
+    height: 30px;
+}
+
+.tableInput.text {
+    background: none;
+}
