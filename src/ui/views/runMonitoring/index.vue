@@ -153,7 +153,6 @@
                 this.allCheckWarn.vvpFlights=[]
                 console.log('vvpFlights',data);
             });
-
         },
         beforeDestroy() {
             postal.publish({

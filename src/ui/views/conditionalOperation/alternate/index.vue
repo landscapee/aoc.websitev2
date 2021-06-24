@@ -14,10 +14,10 @@
 					</div>
 				</div>
 				<div class="tableBox" v-if="opt.tableConfig">
-					<ele-table :columnConfig="opt.tableConfig" :tableData="opt.data"></ele-table>
+					<ele-table :columnConfig="opt.tableConfig" :tableData="getData(opt)"></ele-table>
 				</div>
 				<div class="other" v-else>
-					<component :data="opt.data" :is="opt.component"></component>
+					<component :data="getData(opt)" :is="opt.component"></component>
 				</div>
 			</div>
 
@@ -49,7 +49,9 @@
                 JWKCtime: new Date(),
                 timetext: '当前',
                 timetextFlag: false,
-                dataObj: {}, //key跟 pagObj的item的key关联
+                dataObj: {//key跟 pagObj的item的key关联
+                    alternateLanding:[{securityCheck:0,flightNo:'121',waitTime:121}],
+				},
                 pagObj: {
                     alternateTop: [
                         {
@@ -108,7 +110,13 @@
                 },
             }
         },
-
+		computed:{
+            getData(){
+              return (opt)=>{
+                  return this.dataObj[opt.key]||[]
+			  }
+			},
+		},
         methods: {
             JWKCtimeChange(val) {
                 if (!this.timetextFlag) {

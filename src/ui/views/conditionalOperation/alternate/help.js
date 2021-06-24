@@ -1,11 +1,12 @@
 import {displayTimeDate} from '@/lib/helper/utility.js'
+import {map} from 'lodash'
+
 // 备降航班统计
 export const LandingConfig=	 [
 
     {
         key: 'flightNo',
         label: '航班号',
-        
     },
     {key: 'aircraftNo', label: '机号', width:'60px'},
     {key: 'flightStatusText', label: '状态', width:'60px'},
@@ -13,7 +14,7 @@ export const LandingConfig=	 [
     {key: 'ata-atd', label: '落地时间',},
     {key: 'waitTime', label: '机上等待',
         display: (data) => {
-            return `${data.waitTime}(M)`;
+            return `${data.waitTime||'--'}(M)`;
         },
     },
     {
@@ -25,7 +26,7 @@ export const LandingConfig=	 [
     {
         key: 'displayRouter', label: '航线',
         display: (data) => {
-            let rs = get(data, 'displayRouter', []);
+            let rs =data?.displayRouter||[]  ;
             return map(rs, (r, i) => {
                 let city = r;
                 let icon = ('icon-arrow text-white px-1');
@@ -104,7 +105,7 @@ export const exigencyConfig=[
 
     {
         key: 'seat',
-        label: '机位', width:'155px'
+        label: '机位', width:'55px'
     },
     {
         key: 'flightNo',
