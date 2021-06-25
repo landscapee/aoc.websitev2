@@ -32,22 +32,22 @@ export const postions = {
 	return: {//返航
 		position: 'p-0x1 s-3x1',
 		icon: 'return',
-		toolTip: 'getReturnFlight',
+		toolTip: 'Flight/getReturnFlight',
 	},
 	alternateInner: {//备降本场
 		position: 'p-3x1 s-3x1',
 		icon: 'alternate',
-		toolTip: 'getAlternateFlight',
+		toolTip: 'Flight/getAlternateFlight',
 	},
 	alternateOuter: {//备降外场
 		position: 'p-6x1 s-3x1',
 		icon: 'alternateOut',
-		toolTip: 'getAlternateOtherCityFlight',
+		toolTip: 'flight/getAlternateOtherCityFlight',
 	},
 	cancel: {//取消
 		position: 'p-9x1 s-3x1',
 		icon: 'cancel',
-		toolTip: 'getCancelFlight',
+		toolTip: 'Flight/getCancelFlight',
 	},
 	monthStatistics: {//月度统计
 		position: 'p-0x2 s-12x4',

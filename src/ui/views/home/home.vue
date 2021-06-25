@@ -4,8 +4,8 @@
             <div class="p-0x0 s-12x1 numberBox">
                 <number v-for="(item,index) in numbersArr" :key="item.type+index" :options="item" :flight_home="flight_home" />
             </div>
-            <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :options="item" :flight_home="flight_home" />
-            <month-delay :options="monthData" :flight_home="flight_home" :flight_monthClearance="flight_monthClearance" :flight_lastestAta="flight_lastestAta" :flight_lastestAtd="flight_lastestAtd" />
+            <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :options="item" :flight_home="flight_home" @flight-dialog-handle="flightDialogHandle" />
+            <month-delay :options="monthData" :flight_home="flight_home" :flight_monthClearance="flight_monthClearance" :flight_lastestAta="flight_lastestAta" :flight_lastestAtd="flight_lastestAtd" @flight-dialog-handle="flightDialogHandle" />
             <flight-chart :options="chartData" :flight_FlightStatistic="flight_FlightStatistic" :flight_delay_backStatus="flight_delay_backStatus" @set-settingcfg="setSettingcfg" />
             <rate :options="rateData" :rate_data="flight_home.rate" />
             <direction :options="directionData" :flight_direction="flight_direction" />
@@ -14,7 +14,7 @@
             <top-flight :flight_traffic="flight_traffic" :flight_estimateCtotRelease="flight_estimateCtotRelease" :flight_runwayTraffic="flight_runwayTraffic" />
             <runway :flight_runwayModels="flight_runwayModels" />
         </div>
-
+        <flight-dialog ref="ref_flightDialog" />
     </div>
 </template>
 
@@ -31,6 +31,7 @@ import Runway from './components/runway'
 import FlightChart from './components/flightChart'
 import Rate from './components/rate'
 import Direction from './components/direction'
+import flightDialog from './components/flightDialog'
 
 export default {
     data() {
@@ -65,6 +66,7 @@ export default {
         'flight-chart': FlightChart,
         rate: Rate,
         direction: Direction,
+        'flight-dialog': flightDialog,
     },
     created() {
         this.loadSetting()
@@ -83,14 +85,13 @@ export default {
         // 最近实际落地航班
         postalStore.sub('flight.lastestAta', (data) => {
             // console.log('最近实际落地航班', data)
-            this.flight_lastestAta = data
+            this.flight_lastestAta = data.splice(0, 5)
         })
         // 最近实际起飞航班
         postalStore.sub('flight.lastestAtd', (data) => {
             // console.log('最近实际起飞航班', data)
-            this.flight_lastestAtd = data
+            this.flight_lastestAtd = data.splice(0, 5)
         })
-
         //积压运行
         postalStore.sub('flight.FlightStatistic', (data) => {
             // console.log('运行', data)
@@ -144,9 +145,6 @@ export default {
                             //月度统计
                             this.monthData = _.assign({}, item, postions[k])
                         }
-                        // if (item.type == 'dataRows') {//
-                        //     this.dataRowsArr.push(_.assign({}, item, postions[k]))
-                        // }
                         if (item.type == 'chart') {
                             //积压
                             if (k == 'summary-by-hour-backlog') {
@@ -192,6 +190,9 @@ export default {
         },
         setSettingcfg(key) {
             this.chartData = _.get(settingsCfg, key)
+        },
+        flightDialogHandle(option) {
+            this.$refs.ref_flightDialog.initData(option)
         },
     },
 }

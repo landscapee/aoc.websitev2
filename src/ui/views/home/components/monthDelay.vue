@@ -15,7 +15,7 @@
                     </div>
                     <div>
                         <p>今天限制延误架次:{{flight_monthClearance.value?flight_monthClearance.value.limitDelay:0}}</p>
-                        <p>今日已延误架次:{{flight_monthClearance.value?flight_monthClearance.value.delay:0}}</p>
+                        <p>今日已延误架次:<span @click="flightDialogHandle">{{flight_monthClearance.value?flight_monthClearance.value.delay:0}}</span></p>
                     </div>
                 </div>
                 <div class="footer">
@@ -57,7 +57,7 @@
                     <el-row v-for="flight in flight_lastestAta" :key="flight.flightId" tag="ul">
                         <el-col tag="li" :span="12">{{flight.flightNo}}</el-col>
                         <el-col tag="li" :span="6">{{flight.runway}}</el-col>
-                        <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('mm:ss')}}</el-col>
+                        <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('HH:mm')}}</el-col>
                     </el-row>
                 </div>
                 <div>
@@ -68,7 +68,7 @@
                     <el-row v-for="flight in flight_lastestAtd" :key="flight.flightId" tag="ul">
                         <el-col tag="li" :span="12">{{flight.flightNo}}</el-col>
                         <el-col tag="li" :span="6">{{flight.runway}}</el-col>
-                        <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('mm:ss')}}</el-col>
+                        <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('HH:mm')}}</el-col>
                     </el-row>
                 </div>
 
@@ -131,6 +131,13 @@ export default {
                 this.$request.get('situation', 'runningState/monthClearance/' + this.monthRate)
             })
         },
+        flightDialogHandle() {
+            this.$emit('flight-dialog-handle', {
+                key: 'delay',
+                toolTip: 'Flight/delayInfo',
+                title: '延误',
+            })
+        },
     },
 }
 </script>
@@ -183,6 +190,9 @@ export default {
                     p {
                         width: 50%;
                         color: #fff;
+                        span {
+                            cursor: pointer;
+                        }
                     }
                 }
             }
