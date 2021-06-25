@@ -135,9 +135,9 @@
             postalStore.sub( 'advanceArrive',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.advanceArrive,'data',data)
-                length&&this.$set(this.pageListObj.batchConcern,'data',data)
-                length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
-                length&&this.$set(this.pageListObj.vvpFlights,'data',data)
+                // length&&this.$set(this.pageListObj.batchConcern,'data',data)
+                // length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
+                // length&&this.$set(this.pageListObj.vvpFlights,'data',data)
                 console.log('advanceArrive',data);
             });
             //地面保障池
@@ -150,10 +150,9 @@
             postalStore.sub( 'vvpFlights',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.vvpFlights,'data',data)
-                this.allCheckWarn.batchConcern=[]
+                this.allCheckWarn.vvpFlights=[]
                 console.log('vvpFlights',data);
             });
-
         },
         beforeDestroy() {
             postal.publish({

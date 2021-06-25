@@ -290,8 +290,7 @@
                 this.echartsInstance[key].dispose()
             })
             postalStore.unsubAll()
-        }
-        ,
+        },
     }
 </script>
 
