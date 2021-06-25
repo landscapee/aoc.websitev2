@@ -22,7 +22,7 @@ export const updateListHeader = (columns) => {
   postal.publish({
     channel: 'Worker',
     topic: 'Flight.UpdateHeader',
-    data: columns,
+    data: JSON.parse(JSON.stringify(columns)),
   });
   myFlightHeader = combineHeader(columns);
 };

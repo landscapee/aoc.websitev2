@@ -19,12 +19,12 @@
                 :width="item.width ? fixPx(item.width) : 'auto'"
             >
 
-              <complex-column slot-scope="scope" :item="item" :scope="scope"/>
+              <complex-column :inputField.sync="inputField" slot-scope="scope" :item="item" :scope="scope"/>
 <!--              自定义表头 -->
               <template slot="header" slot-scope="scope">
                 <div>
-                  <i v-if="scope.column.fixed" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
-                  <i v-else class="icon-lock-2 cursor"></i>
+                  <i v-if="scope.column.fixed" @click="changeLockStatus(scope.column,scope.column.fixed)" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
+                  <i v-else @click="changeLockStatus(scope.column,scope.column.fixed)" class="icon-lock-2 cursor"></i>
                   <span>{{scope.column.label}}</span>
                 </div>
               </template>
@@ -40,9 +40,10 @@
 </template>
 
 <script>
-import { map } from 'lodash';
+import {map, some} from 'lodash';
 import {fixPx, pxtorem} from "@/ui/lib/viewSize";
 import {debounce} from "@/ui/lib/common";
+import {updateListHeader} from "@/ui/views/flight/components/flightTable/handleColumn";
 let itemH = 36;
 export default {
   name: "flightTable",
@@ -54,6 +55,9 @@ export default {
     flights: {
       type: Array,
       default: [],
+    },
+    setColumns: {
+      type: Function
     }
   },
   components: {
@@ -67,6 +71,7 @@ export default {
       //   direction: '王小虎',
       //   flightIndex: index
       // })),
+      inputField:'', // 正在编辑的字段
       isScrolling: false, // 是否在滚动
       offSetY: 0,
       topCount: 0,
@@ -134,7 +139,22 @@ export default {
       this.topCount = topCount;
       this.showCount = showCount;
       // console.log(topCount, showCount)
-    }
+    },
+
+    changeLockStatus: function (column, lock){
+      let lockColumnsLength = _.filter(this.columns, item => item.lock).length
+      let newColumns = this.columns;
+      if ((!lock && lockColumnsLength <= 14) || (lock && lockColumnsLength >= 0)) {
+      some(newColumns, (c) => {
+        if (c.key == column.property) {
+          c.lock = !c.lock;
+          return true;
+        }
+      });
+      this.setColumns(newColumns)
+      updateListHeader(newColumns);
+      }
+    },
   }
 
 }

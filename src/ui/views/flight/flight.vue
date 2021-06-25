@@ -3,7 +3,7 @@
       <toolBar :toggleFieldSetting="toggleFieldSetting"/>
       <fieldSetting :refreshColumn="refreshColumn" :toggleFieldSetting="toggleFieldSetting" v-if="showFieldSetting"/>
       <div class="flightWrapper">
-        <flightTable :flights="flights" :columns="columns">
+        <flightTable :setColumns="setColumns" :flights="flights" :columns="columns">
         </flightTable>
       </div>
       <TOBTTooltip v-if="getTOBTVisibility"></TOBTTooltip>
@@ -128,8 +128,6 @@
     z-index: 10;
     padding: 15px;
     color: #fff;
-    top: 0;
-    right: 0;
     .tableContainer{
       display: flex;
       align-items: center;

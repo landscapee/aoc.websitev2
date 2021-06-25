@@ -45,7 +45,6 @@ const subRetainWs = () => {
         lastUpdateFinish = false;
         saveToFlightDB(_changes).then(() => {
           lastUpdateFinish = true;
-          console.log('ws sync')
           worker.publish('Flight.Change.Sync');
         });
       }
@@ -70,6 +69,18 @@ const subDelayWSEvent = () => {
     // memoryStore.setItem('ExecutableFlights', flights, true);
   })
 };
+
+// adverse服务的连接
+const subAdverseClient = () => {
+  let client = clientObj.adverseClient;
+  // 除冰的连接
+  client.sub('/adverse-condition/deice/dynamic/flight',(data)=>{
+    console.log(data);
+    saveToFlightDB(data).then(() => {
+      worker.publish('Flight.Change.Sync');
+    });
+  })
+};
 export const init = (worker_) => {
   worker = worker_;
   worker.subscribe('Flight.Network.Connected', (c) => {
@@ -78,6 +89,11 @@ export const init = (worker_) => {
   });
   worker.subscribe('Delays.Network.Connected', (c) => {
     clientObj.delaysClient = new SocketWrapper(c);
+    // subWidespreadWSEvent();
+  });
+
+  worker.subscribe('Adverse.Network.Connected', (c) => {
+    clientObj.adverseClient = new SocketWrapper(c);
     // subWidespreadWSEvent();
   });
 
@@ -94,6 +110,11 @@ export const init = (worker_) => {
     checkClient('delaysClient').then(()=>{
       subDelayWSEvent();
       console.log('Widespread连接成功')
+    })
+
+    checkClient('adverseClient').then(()=>{
+      subAdverseClient();
+      console.log('adverseClient')
     })
   });
 

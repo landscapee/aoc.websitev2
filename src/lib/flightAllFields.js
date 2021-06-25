@@ -192,6 +192,7 @@ export const filedConvert = {
 //full 字段说明，显示为dom title
 //search 搜索配置，搜索框类型
 //remoteOptionField 搜索配置，从远程获取的筛选项
+//renderType 渲染类型
 export const allField = {
 	examine: {
 		text: '操作',
@@ -281,7 +282,7 @@ export const allField = {
 	displayPreOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', sort: true, referenceTo: 'preOrNxtPlanTime', search: { type: 'time' } },
 	displayPreOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', sort: true, referenceTo: 'preOrNxtActualTime', search: { type: 'time' } },
 	terminal: { text: '航站楼', search: { type: 'select', options: ['T1', 'T2'] } },
-	lastModifier: { text: 'TOBT最后修改人', full: 'TOBT最后修改人' },
+	lastModifier: { text: 'TOBT最后修改人', full: 'TOBT最后修改人', width: 130},
 	maintenance: { text: '放行机务' },
 	flightType: { text: '航班类型', search: { type: 'select', options: ['正班', '客加班', '货加班', '备降', '试飞', '包机', '测试', '补班', '普客加班', '货班', '公务', '调机', '货包', '返航'] } },
 	airlineCode: { text: '航空公司代码' },
@@ -353,18 +354,18 @@ export const allField = {
 	// ASAT: { text: '同意开车', full: '同意开车(空管)' }, //（空管）
 	// AOBT: { text: '实际撤轮档' }, //
 	// ATOT: { text: '实际本站起飞' }, //
-	displayActualStartTime: { text: '除冰实际开始', width: 120 }, //
-	displayActualEndTime: { text: '除冰实际结束', width: 120 }, //
+	displayActualStartTime: { text: '除冰实际开始', width: 120, renderType: 'deiceTimeInput', referenceTo: 'actualStartTime' }, //
+	displayActualEndTime: { text: '除冰实际结束', width: 120, renderType: 'deiceTimeInput', referenceTo: 'actualEndTime'  }, //
 	// ADIT: { text: '除冰实际持续', width: 120 }, //
-	displayEstimateStartTime: { text: '除冰预计开始', width: 120 }, //
-	displayEstimateEndTime: { text: '除冰预计结束', width: 120 }, //
+	displayEstimateStartTime: { text: '除冰预计开始', width: 120, renderType: 'deiceTimeInput', referenceTo: 'estimateStartTime'  }, //
+	displayEstimateEndTime: { text: '除冰预计结束', width: 120, renderType: 'deiceTimeInput', referenceTo: 'estimateEndTime'  }, //
 	// EDIT: { text: '除冰预计持续', width: 120 }, //
 	showVideo: { text: '播放视频', search: false, unConfigurable: true },
-	preDeicing: { text: '预除冰' }, // 预除冰
+	preDeicing: { text: '预除冰', renderType: 'timeInput' }, // 预除冰
 	preRefueling: { text: '预加油' }, // 预加油
 	// expectRunWay: { text: '计划使用跑道', width: 120 }, // 预加油
 	milestoneStatusCn: { text: '空地里程碑', width: 120 }, //
-	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: { 1: '是', 0: '否' } } }, //
+	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio' }, //
 	displayDSGT: { text: '放行标准保障时间', width: 140 },
 	displayTSGT: { text: '起飞标准保障时间', width: 140 },
 	displayDSTT: { text: '放行标准起飞时间', width: 140 },
