@@ -1,6 +1,6 @@
 <template>
     <div class="eleTableBox" ref="ref_eleTableBox">
-        <el-table ref="ref_table" :data="tableData" :style="{'width':tableWidth}" :height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName">
+        <el-table ref="ref_table" :data="tableData" :style="{'width':tableWidth}" :max-height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName">
             <el-table-column v-for="(col,idx) in columnConfig" :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
                 <template slot-scope="scope">
                     <template v-if="col.type=='index'">{{scope.$index+1}}</template>
@@ -30,12 +30,13 @@ export default {
         },
         tableData: {
             type: Array,
-            default: () => {
-                return []
-            },
         },
         setRowClassName: {
             type: Function,
+        },
+        tableMaxHeight: {
+            type: Number,
+            default: 600,
         },
     },
     computed: {
@@ -65,28 +66,32 @@ export default {
             tableWidth: '100%',
         }
     },
+    mounted() {
+        this.loadTableStyle()
+    },
     watch: {
         tableData: function () {
-            this.$nextTick(function () {
-                let refTable = this.$refs.ref_table.$el
-                let boxheight = refTable.parentNode.clientHeight
-
-                let tableheight = refTable.querySelector('.el-table__body').clientHeight
-                this.componentKey++
-                if (tableheight > boxheight) {
-                    this.tableWidth = 'calc(100% + 8px)'
-                }
-            })
+            this.loadTableStyle()
         },
-    },
-    mounted() {
-        // this.maxHeight = this.$refs.ref_table.$el.parentNode.clientHeight
-        // this.componentKey++
     },
     methods: {
         inputChange(col, row) {
-            console.log(col, row)
             this.$emit('table-input-change', { col, row })
+        },
+        loadTableStyle() {
+            this.$nextTick(function () {
+                let refTable = this.$refs.ref_table.$el
+                let boxheight = refTable.parentNode.clientHeight
+                let tableheight = refTable.querySelector('.el-table__body').clientHeight
+                if (tableheight > boxheight) {
+                    this.tableWidth = 'calc(100% + 8px)'
+                }
+                if (this.tableMaxHeight > 0 && this.tableData.length * 40 > this.tableMaxHeight) {
+                    this.maxHeight = this.tableMaxHeight
+                    this.tableWidth = 'calc(100% + 8px)'
+                }
+                this.componentKey++
+            })
         },
     },
 }

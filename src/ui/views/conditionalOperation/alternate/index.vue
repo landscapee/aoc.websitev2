@@ -14,10 +14,10 @@
 					</div>
 				</div>
 				<div class="tableBox" v-if="opt.tableConfig">
-					<ele-table :columnConfig="opt.tableConfig" :tableData="opt.data"></ele-table>
+					<ele-table :columnConfig="opt.tableConfig" :tableData="getData(opt)"></ele-table>
 				</div>
 				<div class="other" v-else>
-					<component :data="opt.data" :is="opt.component"></component>
+					<component :data="getData(opt)" :is="opt.component"></component>
 				</div>
 			</div>
 
@@ -27,11 +27,18 @@
 </template>
 
 <script>
+    import {LandingConfig, tempSeatConfig, exigencyConfig} from './help'
     import myEcharts from './echarts'
     import jjjyjw from './jjjyjw.vue'
     import jwkc3xs from './jwkc3xs.vue'
     import moment from 'moment'
+    import {map, mapKeys} from 'lodash';
+    import postal from 'postal';
+    import PostalStore from "../../../lib/postalStore";
+    import * as echarts from 'echarts'
+    import {getBarLineOption} from './options'
 
+    let postalStore = new PostalStore();
     export default {
         components: {
             myEcharts, jjjyjw, jwkc3xs
@@ -42,16 +49,35 @@
                 JWKCtime: new Date(),
                 timetext: '当前',
                 timetextFlag: false,
+                dataObj: {//key跟 pagObj的item的key关联
+                    alternateLanding:[{securityCheck:0,flightNo:'121',waitTime:121}],
+				},
                 pagObj: {
                     alternateTop: [
-                        {name: '备降航班统计', data: [], tableConfig: [], class: 'alternateTopDiv div1'},
-                        {name: '临时机位', data: [], tableConfig: [], class: 'alternateTopDiv div2'},
-                        {name: '机位空出3小时', time: true, data: [], component: 'jwkc3xs', class: 'alternateTopDiv div3'},
+                        {
+                            name: '备降航班统计',
+                            key: 'alternateLanding',
+                            tableConfig: LandingConfig,
+                            class: 'alternateTopDiv div1'
+                        },
+                        {name: '临时机位', key: 'tempSeat', tableConfig: tempSeatConfig, class: 'alternateTopDiv div2'},
+                        {
+                            name: '机位空出3小时',
+                            time: true,
+                            key: 'seatEvaluate',
+                            component: 'jwkc3xs',
+                            class: 'alternateTopDiv div3'
+                        },
                     ],
                     alternateBottom: [
-                        {name: '临时等待区', data: [], component: 'myEcharts', class: 'alternateTopDiv div1'},
-                        {name: '应急下客区', data: [], tableConfig: [], class: 'alternateTopDiv div2'},
-                        {name: '紧急加油机位', data: [], component: 'jjjyjw', class: 'alternateTopDiv div3'},
+                        {name: '临时等待区', key: 'tempWaitArea', component: 'myEcharts', class: 'alternateTopDiv div1'},
+                        {
+                            name: '应急下客区',
+                            key: 'exigencyDropOffArea',
+                            tableConfig: exigencyConfig,
+                            class: 'alternateTopDiv div2'
+                        },
+                        {name: '紧急加油机位', key: 'exigencyRefuelSeat', component: 'jjjyjw', class: 'alternateTopDiv div3'},
                     ],
                 },
                 pickerOptions: {
@@ -61,10 +87,10 @@
                             _this.timetext = '当前';
                             _this.timetextFlag = true;
                             let date = new Date()
-                            date =  date.setMinutes(0)
-                            date = new Date( date).setSeconds(0)
-                            date = new Date( date).setMilliseconds(0);
-                            console.log(222,new Date(date));
+                            date = date.setMinutes(0)
+                            date = new Date(date).setSeconds(0)
+                            date = new Date(date).setMilliseconds(0);
+                            console.log(222, new Date(date));
                             picker.$emit('pick', date);
                         }
                     }, {
@@ -74,30 +100,97 @@
                             _this.timetext = '半小时后';
                             _this.timetextFlag = true;
                             let date = new Date();
-                            date =  date.setMilliseconds(0);
-                            date = new Date( date).setSeconds(0)
-                            date = new Date( date).setMinutes(30)
-                            console.log(222,new Date(date));
+                            date = date.setMilliseconds(0);
+                            date = new Date(date).setSeconds(0)
+                            date = new Date(date).setMinutes(30)
+                            console.log(222, new Date(date));
                             picker.$emit('pick', date);
                         }
                     }]
                 },
             }
         },
-        mounted() {
-        },
+		computed:{
+            getData(){
+              return (opt)=>{
+                  return this.dataObj[opt.key]||[]
+			  }
+			},
+		},
         methods: {
             JWKCtimeChange(val) {
-                console.log(val);
                 if (!this.timetextFlag) {
                     this.timetext = moment(val).format('yyyy-MM-DD HH:mm')
                 }
                 this.timetextFlag = false
+                let obj = {
+                    type: 3,
+                    queryDate: moment(val).format('yyyy-MM-DD HH:mm')
+                }
+                this.$request.post('adverse', 'stat/seatEvaluate', obj, false).then((res) => {
+                    if (res.code != 200) {
+                        this.$message.warning(res.message)
+                        return
+                    }
+                    let data = mapKeys(res.info, (item) => item.seatType);
+                    this.$set(this.dataObj, 'seatEvaluateFree', data)
+
+                })
             }
         },
+        created() {
+
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.alternate.Start',
+            });
+        },
+        mounted() {
+
+            postalStore.sub('alternateData', ({data, key}) => {
+                console.log('alternateData,data', data);
+                this.$set(this.dataObj, key, data)
+            });
+
+        },
+        beforeDestroy() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.alternate.Stop',
+            })
+
+            postalStore.unsubAll()
+        }
     }
 </script>
 <style scoped lang="scss">
+	::v-deep .el-table__header,
+	::v-deep .el-table__body {
+		width: 100% !important;
+		
+	}
+
+	.tableBox {
+		margin-top: 15px;
+		width: 100%;
+		height: calc(100% - 30px);
+
+		.cell {
+			font-size: 12px;
+			font-weight: 400;
+		}
+		table {
+			width: 100% !important;
+		}
+
+		::v-deep .cell {
+			font-size: 12px;
+			font-weight: 400;
+			padding: 0 2px !important;
+		}
+
+	}
+
 	#alternate {
 		box-sizing: border-box;
 		.alternateBottom, .alternateTop {
@@ -159,6 +252,7 @@
 			& > div:first-child {
 				margin-left: 0;
 			}
+
 		}
 		.alternateTop {
 			.div1 {

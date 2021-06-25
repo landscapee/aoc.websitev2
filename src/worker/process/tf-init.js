@@ -7,6 +7,7 @@ import {init as monitorInit} from '../channel/runMonitor'
 import {init as resourceMonitorInit} from '../channel/resourceMonitor'
 import {init as MonitorWithRunwayInit} from '../channel/poolMonitorWithRunway'
 import {init as TOBTConfigInit} from '../channel/TOBTConfig'
+import {init as alternateConfigInit} from '../channel/alternate'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
 import HttpRequest from "../../lib/axios";
@@ -51,6 +52,7 @@ const myPostal = (channel) => {
 };
 
 postal.subscribe({
+
   channel: 'Worker',
   topic: 'init',
   callback: (data) => {
@@ -87,4 +89,4 @@ postal.subscribe({
       }
     })
   }
-})
+ })
