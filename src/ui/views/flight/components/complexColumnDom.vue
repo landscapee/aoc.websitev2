@@ -16,6 +16,13 @@
     </div>
   </permissionSwitch>
 
+  <el-cascader
+      v-else-if="item.key === 'abnormalCategory'"
+      slot-scope="scope"
+      :value="scope.row.delayReasonMerge ? scope.row.delayReasonMerge.split(',') : []"
+      :options="delayOptions"
+      @change="(v) => abnormalCategoryChange(v, scope.row)"></el-cascader>
+
   <permissionSwitch v-else-if="item.renderType === 'deiceTimeInput'" slot-scope="scope" role="edit-actual-STime">
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="HHmm" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="deiceTimeInputBlur(item, scope)" v-model="deiceTimeInputValue"></el-input>
@@ -36,9 +43,21 @@
     </div>
   </permissionSwitch>
 
-  <permissionSwitch v-else-if="item.renderType === 'radio'" slot-scope="scope" role="edit-actual-STime">
-    <el-radio :value="'1'" label="1"></el-radio>
+  <permissionSwitch v-else-if="item.renderType === 'radio'" :noRoleDes="(scope.row[item.key] === '--' || !scope.row[item.key]) ? '否' : '是' " slot-scope="scope" :role="item.role">
+    <template>
+      <el-popconfirm
+          :title="`是否确认${scope.row[item.key] == '1' ? '取消' : '设置'}航班${scope.row.flightNo}为${item.text}`"
+          @confirm="radioConfirm(scope.row, item)"
+      >
+        <div  slot="reference">
+          <el-radio @click.native.prevent="radioClick($event)" :value="scope.row[item.key]" label="1"></el-radio>
+        </div>
+      </el-popconfirm>
+    </template>
+
   </permissionSwitch>
+
+
 
   <div slot-scope="scope" v-else-if="item.formatter" v-html="item.formatter(scope.row)">
   </div>
@@ -54,6 +73,7 @@ import {memoryStore} from "@/worker/lib/memoryStore";
 import moment from "moment";
 import {get} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
+import {hasRole} from "@/ui/lib/common";
 
 let postalStore = new PostalStore()
 export default {
@@ -80,6 +100,7 @@ export default {
       row: this.scope.row,
       deiceTimeInputValue: '',
       timeInputValue: '',
+      abnormalCategoryValue:''
     }
   },
   methods: {
@@ -150,12 +171,35 @@ export default {
       }
       value = moment(now).set('hour',value.substr(0,2)).set('minute',value.substr(2,2)).startOf('minute').valueOf()
       const row = scope.row;
-      console.log({key: item.referenceTo, value: value})
       this.$request.post('adverse',`deice/deiceAction?flightId=${row.flightId}`, [{key: item.referenceTo, value: value}]).then(res => {
           if (res.code == 200){
             this.$emit('update:inputField', '')
           }
       }).catch()
+    },
+    radioConfirm: function (row, headerItem){
+      console.log('ssss')
+      let oldV = row[headerItem.key]
+      console.log(oldV)
+      this.$request.post('flight','Flight/tag',{flightId: row.flightId, [headerItem.key]: oldV === '1' ? '0' : '1'}).then(res => {
+        if (res.code === 200){
+          this.$message({ message: '操作成功!', type: 'success' })
+        }
+      }).catch()
+      // console.log(row)
+    },
+    radioClick: function (e){
+      console.log('radioClick')
+    },
+
+    // 延误分类事件
+    abnormalCategoryChange: function (v, row){
+      let options = { delayMainReason: `${v[0]}`, delaySubReason: `${v[1]}`, flightId: row.flightId };
+      this.$request.post('situation', 'runningState/edit', options, true).then(res => {
+        if (res.code === 200){
+          this.$message({message: '操作成功!', type: 'success'})
+        }
+      })
     }
   },
   computed: {
@@ -173,6 +217,14 @@ export default {
           break;
       }
       return flightLabel
+    },
+    delayOptions: function (){
+      return this.$store.state.flight.delayOptions
+    },
+    hasRole: function (){
+      return (role) => {
+        hasRole(role, false)
+      }
     }
   }
 }

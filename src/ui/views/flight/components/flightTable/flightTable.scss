@@ -23,6 +23,11 @@
       //top: -3px;
       position: relative;
     }
+    .el-cascader{
+      .el-input__inner{
+        padding: 0 0 0 5px;
+      }
+    }
     .el-radio__label{
       display: none;
     }

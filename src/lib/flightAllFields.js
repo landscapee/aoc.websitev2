@@ -361,11 +361,11 @@ export const allField = {
 	displayEstimateEndTime: { text: '除冰预计结束', width: 120, renderType: 'deiceTimeInput', referenceTo: 'estimateEndTime'  }, //
 	// EDIT: { text: '除冰预计持续', width: 120 }, //
 	showVideo: { text: '播放视频', search: false, unConfigurable: true },
-	preDeicing: { text: '预除冰', renderType: 'timeInput' }, // 预除冰
-	preRefueling: { text: '预加油' }, // 预加油
+	preDeicing: { text: '预除冰', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio', role: 'edit-pre-deice' }, // 预除冰
+	preRefueling: { text: '预加油', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio', role: 'edit-pre-fuel' }, // 预加油
 	// expectRunWay: { text: '计划使用跑道', width: 120 }, // 预加油
 	milestoneStatusCn: { text: '空地里程碑', width: 120 }, //
-	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio' }, //
+	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio', role:'edit-qualification' }, //
 	displayDSGT: { text: '放行标准保障时间', width: 140 },
 	displayTSGT: { text: '起飞标准保障时间', width: 140 },
 	displayDSTT: { text: '放行标准起飞时间', width: 140 },
@@ -377,7 +377,8 @@ export const allField = {
 	airportDesc: { text: '机场延误备注', search: { type: 'text' }, width: 120 },
 	airlineDesc: { text: '航司延误备注', search: { type: 'text' }, width: 120 },
 	abnormalCategory: {
-		text: '不正常分类',
+		width: 200,
+		text: '延误原因分类',
 		referenceTo: 'delayReasonMerge',
 		search: {
 			type: 'cascader',

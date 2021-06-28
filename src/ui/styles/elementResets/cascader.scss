@@ -1,0 +1,32 @@
+.el-cascader{
+  height: 30px;
+  line-height: 30px;
+  .el-input__inner{
+    height: 30px;
+    line-height: 30px;
+    padding-left: 5px;
+  }
+}
+.el-cascader__dropdown{
+  $backgroundColor: #504f4f;
+  background-color: $backgroundColor;
+  border-color: $backgroundColor;
+  .el-cascader-menu{
+    color: #fff;
+    border-right-color: #3b3c3e;
+  }
+  .popper__arrow{
+    &::after{
+      border-bottom-color: $backgroundColor!important;
+    }
+    border-bottom-color: $backgroundColor!important;
+  }
+  .el-cascader-node{
+    &:hover{
+      background-color: #666565;
+    }
+  }
+  .el-cascader-node:not(.is-disabled):focus{
+    background-color: #666565;
+  }
+}

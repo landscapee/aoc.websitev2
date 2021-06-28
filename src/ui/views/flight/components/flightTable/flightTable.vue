@@ -20,7 +20,7 @@
             >
 
               <complex-column :inputField.sync="inputField" slot-scope="scope" :item="item" :scope="scope"/>
-<!--              自定义表头 -->
+              <!--              自定义表头 -->
               <template slot="header" slot-scope="scope">
                 <div>
                   <i v-if="scope.column.fixed" @click="changeLockStatus(scope.column,scope.column.fixed)" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
@@ -145,14 +145,14 @@ export default {
       let lockColumnsLength = _.filter(this.columns, item => item.lock).length
       let newColumns = this.columns;
       if ((!lock && lockColumnsLength <= 14) || (lock && lockColumnsLength >= 0)) {
-      some(newColumns, (c) => {
-        if (c.key == column.property) {
-          c.lock = !c.lock;
-          return true;
-        }
-      });
-      this.setColumns(newColumns)
-      updateListHeader(newColumns);
+        some(newColumns, (c) => {
+          if (c.key == column.property) {
+            c.lock = !c.lock;
+            return true;
+          }
+        });
+        this.setColumns(newColumns)
+        updateListHeader(newColumns);
       }
     },
   }
