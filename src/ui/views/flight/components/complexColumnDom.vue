@@ -23,6 +23,20 @@
       :options="delayOptions"
       @change="(v) => abnormalCategoryChange(v, scope.row)"></el-cascader>
 
+  <permissionSwitch v-else-if="['airportDesc','airlineDesc'].includes(item.key)" slot-scope="scope" :role="item.role">
+    <div v-if="inputField === item.key + scope.row.flightId">
+      <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="delayInputBlur(item, scope)" v-model="delayInputValue"></el-input>
+    </div>
+    <div v-else  @click="delayClick(item,scope)" class="d-flex flex-justify-center">
+      <i class="iconfont icon-bianji text-blue" ></i>
+      <div>{{scope.row[item.key]}}</div>
+    </div>
+  </permissionSwitch>
+
+  <span v-else-if="item.key === 'showVideo'" class="cursor text-blue" @click="playVideo(scope.row)">
+    播放
+  </span>
+
   <permissionSwitch v-else-if="item.renderType === 'deiceTimeInput'" slot-scope="scope" role="edit-actual-STime">
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="HHmm" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="deiceTimeInputBlur(item, scope)" v-model="deiceTimeInputValue"></el-input>
@@ -63,7 +77,7 @@
   </div>
   <div v-else slot-scope="scope">
     <div>
-      {{scope.row[item.key]}}
+      {{scope.row[item.key] || ''}}
     </div>
   </div>
 </template>
@@ -100,7 +114,8 @@ export default {
       row: this.scope.row,
       deiceTimeInputValue: '',
       timeInputValue: '',
-      abnormalCategoryValue:''
+      abnormalCategoryValue:'',
+      delayInputValue:'',
     }
   },
   methods: {
@@ -177,6 +192,35 @@ export default {
           }
       }).catch()
     },
+
+    // 延误类输入框提交事件
+    delayInputBlur: function (item, scope){
+      let now = memoryStore.getItem('global').now;
+      let value = this.delayInputValue
+      if (!value) {
+        this.$emit('update:inputField', '')
+        return;
+      }
+      const row = scope.row;
+      this.$request.post('situation',`situation/runningState/edit`, {flightId: row.flightId, [item.key]: value}, true).then(res => {
+          if (res.code == 200){
+            this.$emit('update:inputField', '')
+          }
+      }).catch()
+    },
+
+    delayClick: function (item,scope){
+      if (scope.row.movement !== 'D'){
+        return
+      }
+      let value = scope.row[item.key]
+      value = (value === '--' || !value) ? '' : value;
+      this.$emit('update:inputField', item.key + scope.row.flightId);
+      this.delayInputValue = value
+      this.$nextTick(()=> {
+        this.$refs[item.key + scope.row.flightId].focus()
+      });
+    },
     radioConfirm: function (row, headerItem){
       console.log('ssss')
       let oldV = row[headerItem.key]
@@ -198,6 +242,15 @@ export default {
       this.$request.post('situation', 'runningState/edit', options, true).then(res => {
         if (res.code === 200){
           this.$message({message: '操作成功!', type: 'success'})
+        }
+      })
+    },
+
+    // 播放视频
+    playVideo: function (row){
+      this.$request.post('flight', 'Flight/video/' + row.flightId).then(res => {
+        if (res.code === 200){
+          this.$message({message:'播放成功!',type: 'success'})
         }
       })
     }
