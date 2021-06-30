@@ -1,52 +1,39 @@
 <template>
-    <div class="home_number2" :class="options.position">
-        <div class="box_content" @click="flightDialogHandle">
-            <div class="left">
-                <div class="top fo">
-                    {{activeData}}
-                </div>
-                <div class="footer">
-                    {{options.title}}
-                </div>
+    <el-dialog :visible.sync="dialogShow" class="nodeDialog" center width="700px" :append-to-body="true">
+        <template slot="title">
+            <div class="homeNumber2Title">
+                <div class="title alib">{{title}}航班<span class="alir">{{getTitleSpan}}</span></div>
+                <div class="blankDiv fo">{{this.today + ' 00:00:00'}} - {{this.today + ' 23:59:59'}}</div>
             </div>
-            <div class="right">
-                <icon-svg :iconClass="options.icon" />
-            </div>
+        </template>
+        <div class="homeNumber2contentbox">
+            <ele-table :columnConfig="columnConfig" :tableData="tableData" :tableMaxHeight="460"></ele-table>
         </div>
-
-    </div>
+    </el-dialog>
 </template>
-
 <script>
 export default {
-    props: ['options', 'flight_home'],
     data() {
         return {
-            select: 0,
-            activeData: 0,
-            detail: [],
-            stat: {},
+            dialogShow: false,
+            columnConfig: [],
+            tableData: [],
+            today: this.$moment().format('YYYY-MM-DD'),
+            getTitleSpan: '',
+            title: '',
         }
     },
-    created() {},
-    mounted() {},
-    watch: {
-        flight_home: function () {
-            this.load_flight_home()
-        },
-    },
     methods: {
-        load_flight_home() {
-            this.activeData = this.options.value(this.flight_home)
-        },
-        flightDialogHandle() {
-            this.$emit('flight-dialog-handle', this.options)
-            return false
+        initData({ key, toolTip, title }) {
+            this.title = title
+            this.tableData = []
+            this.columnConfig = []
+            this.getTitleSpan = ''
 
             this.$request
                 .post(
                     'situation',
-                    `runningState/${this.options.toolTip}`,
+                    `runningState/${toolTip}`,
                     {
                         startTime: this.today + ' 00:00:00',
                         endTime: this.today + ' 23:59:59',
@@ -57,11 +44,10 @@ export default {
                     this.dialogShow = true
                     this.tableData = res.data.detail || []
                     this.stat = res.data.stat || {}
-
-                    this.loadColumnConfig()
+                    this.loadColumnConfig(key)
                 })
         },
-        loadColumnConfig() {
+        loadColumnConfig(key) {
             this.columnConfig = [
                 { key: 'ind', label: '序号', type: 'index', width: '50px' },
                 {
@@ -69,8 +55,7 @@ export default {
                     label: '航班号',
                 },
             ]
-            console.log(this.options)
-            switch (this.options.key) {
+            switch (key) {
                 case 'flightReturn':
                     this.columnConfig = _.concat(this.columnConfig, [
                         {
@@ -163,11 +148,8 @@ export default {
                 case 'cancel':
                     this.columnConfig = _.concat(this.columnConfig, [
                         {
-                            key: 'movement',
-                            label: '进/离港',
-                            display: ({ row }) => {
-                                return row.movement == 'A' ? '进' : '离'
-                            },
+                            key: 'aircraftNo',
+                            label: '机尾号',
                         },
                         {
                             key: 'routing',
@@ -193,6 +175,24 @@ export default {
                     ])
                     this.getTitleSpan = `连班:${this.stat.sucession} 单进:${this.stat.in} 单出:${this.stat.out}`
                     break
+                case 'delay':
+                    this.columnConfig = _.concat(this.columnConfig, [
+                        {
+                            key: 'aircraftNo',
+                            label: '机尾号',
+                        },
+                        {
+                            key: 'actualTime',
+                            label: '实际起飞',
+                            display: ({ row }) => {
+                                return row.actualTime
+                                    ? this.$moment(row.actualTime).format('HH:mm')
+                                    : '--'
+                            },
+                        },
+                    ])
+                    this.getTitleSpan = ``
+                    break
                 default:
                     break
             }
@@ -200,67 +200,5 @@ export default {
     },
 }
 </script>
-
-<style scoped lang='scss'>
-.home_number2 {
-    padding: 4px;
-    position: absolute;
-    .box_content {
-        padding: 20px 10px 20px 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        cursor: pointer;
-        .left {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .top {
-            color: #fff;
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-        .footer {
-            color: #909090 !important;
-        }
-        .right {
-            svg {
-                font-size: 50px;
-            }
-        }
-    }
-}
-</style>
-<style lang='scss'>
-.homeNumber2Title {
-    display: flex;
-    color: #fff;
-    padding: 0 50px 0 10px;
-    justify-content: space-between;
-
-    .title {
-        color: #fff;
-        line-height: 20px;
-        display: flex;
-        align-items: center;
-        span {
-            margin-left: 10px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-        }
-    }
-    .title:before {
-        content: '';
-        display: inline-block;
-        height: 16px;
-        width: 5px;
-        background: #0566ff;
-        border-radius: 1px;
-        margin-right: 5px;
-    }
-}
-.homeNumber2contentbox {
-    overflow: auto;
-}
+<style lang="scss" scoped>
 </style>

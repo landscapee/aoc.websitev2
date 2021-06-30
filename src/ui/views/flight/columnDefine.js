@@ -19,7 +19,7 @@ export default {
     formatter: (item) => {
       return(
         `
-        <div style="color: #f0f">${item.direction}</div>
+        <div>${item.direction}</div>
         `
       )
     }
@@ -155,4 +155,28 @@ export default {
       );
     },
   },
+  milestoneStatusCn: {
+    formatter: (item) => {
+      let milestoneStatusCn = get(item, 'milestoneStatusCn', '--');
+      let milestoneStatusType = get(item, 'milestoneStatusType');
+      let color = '#fff';
+      if (milestoneStatusType === 'elec') {
+        // 电子进程单
+        color = '#f0f';
+      } else if (milestoneStatusType === 'guarantee') {
+        // 地面保障
+        color = '#0041ff';
+      }
+      return(
+        `
+        <div style="color: ${color}">${milestoneStatusCn}</div>
+        `
+      )
+    }
+  },
+  isDelay: {
+    formatter: (item) => {
+      return item.isDelay === true ? '是' : '否';
+    }
+  }
 }

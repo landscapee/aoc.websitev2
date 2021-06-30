@@ -3,7 +3,7 @@
       <toolBar :toggleFieldSetting="toggleFieldSetting"/>
       <fieldSetting :refreshColumn="refreshColumn" :toggleFieldSetting="toggleFieldSetting" v-if="showFieldSetting"/>
       <div class="flightWrapper">
-        <flightTable :flights="flights" :columns="columns">
+        <flightTable :setColumns="setColumns" :flights="flights" :columns="columns">
         </flightTable>
       </div>
       <TOBTTooltip v-if="getTOBTVisibility"></TOBTTooltip>
@@ -46,14 +46,21 @@
       postalStore.sub('Flight.Sync',data=>{
         this.flights = data.flights
       })
+      let header = getListHeader();
       postal.publish({
         channel: 'Worker',
         topic: 'Page.Flight.Start',
-        data: getListHeader()
+        data: _.map(header, item => {return _.pick(item, ['text' , 'key', 'reference', 'referenceTo'])})
       });
-      let header = getListHeader();
+
+      // let header = getListHeader();
       // debugger;
       // postalStore.pub('Worker','Flight.UpdateHeader', header)
+      // 获取延误分类options
+      this.$request.get('situation', 'runningState/delayCode').then(res => {
+        this.$store.commit('flight/getAbnormalOptions', res.data)
+      })
+
     },
     beforeDestroy() {
       postal.publish({
@@ -128,8 +135,6 @@
     z-index: 10;
     padding: 15px;
     color: #fff;
-    top: 0;
-    right: 0;
     .tableContainer{
       display: flex;
       align-items: center;

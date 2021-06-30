@@ -70,7 +70,7 @@
     "classnames": "^2.3.1",
     "debug": "^4.3.1",
     "echarts": "^5.1.2",
-    "element-ui": "^2.13.0",
+    "element-ui": "^2.15.2",
     "lib-flexible": "^0.3.2",
     "lodash": "^4.17.15",
     "lokijs": "^1.5.8",

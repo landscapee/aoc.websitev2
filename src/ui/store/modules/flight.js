@@ -2,12 +2,19 @@
 const flight = {
     namespaced: true,
     state: {
-       showTOBTToolTip: false
+        showTOBTToolTip: false,
+        delayOptions: []
     },
     mutations: {
         toggleTOBTVisibility: (state,data)=>{
             state.showTOBTToolTip = data
         },
+        getAbnormalOptions: (state, data) => {
+            state.delayOptions = data
+        }
+
+    },
+    actions: {
 
     },
     getters: {

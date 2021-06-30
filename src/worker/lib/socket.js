@@ -144,10 +144,10 @@ class Sock {
 				data: { serverName: server.name, error: e },
 			});
 			server.socket = null;
-			// server.recTimer = setInterval(function() {
-			// 	server.client.disconnect();
-			// 	self.connectSock(server);
-			// }, 2000);
+			server.recTimer = setInterval(function() {
+				server.client.disconnect();
+				self.connectSock(server);
+			}, 10 * 1000);
 		};
 	}
 	reConnectSock(server) {

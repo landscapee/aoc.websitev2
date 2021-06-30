@@ -76,14 +76,16 @@ new Vue({
         //     myWorker = new Worker();
         // }
         let token = sessionStorage.token;
-        memoryStore.setItem('global',{token});
+        let now = moment().valueOf()
+        memoryStore.setItem('global',{token, now});
         postal.publish({
             channel: 'Worker',
             topic: 'init',
             data: {
                 servers,
                 httpConfig,
-                token
+                token,
+                now
             },
         });
     }

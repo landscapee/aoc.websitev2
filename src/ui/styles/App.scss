@@ -1,5 +1,6 @@
 @import "./common";
 @import "utils";
+
 /*svg图标样式*/
 .svg-icon {
 	width: 1em;
@@ -41,6 +42,7 @@
 
 .alir {
 	font-family: 'ALiR' !important;
+	font-weight: 400;
 }
 
 .alib {
@@ -61,7 +63,7 @@
 	font-weight: 600;
 }
 
-.ms-b{
+.ms-b {
 	font-family: 'MicrosoftYaHei-Bold' !important;
 	font-weight: 600;
 }

@@ -2,7 +2,7 @@
   <div v-if="hasRole">
     <slot></slot>
   </div>
-  <div v-else-if="!hasRole">{{'--' }}</div>
+  <div v-else-if="!hasRole">{{noRoleDes || '--' }}</div>
 </template>
 
 <script>
@@ -14,7 +14,7 @@ export default {
   props: ['role', 'noRoleDes'],
   computed:{
     hasRole: function (){
-      return hasRole(this.role)
+      return hasRole(this.role, false)
     }
   }
 }

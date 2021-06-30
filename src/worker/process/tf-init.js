@@ -84,6 +84,7 @@ postal.subscribe({
         memoryStore.setItem('global', {
           token: user.token,
           roleFlights,
+          now: user.now
         });
       }
     })

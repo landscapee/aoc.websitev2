@@ -139,7 +139,7 @@ export default class HttpRequest {
     })
   }
 
-  get(channel, url){
+  get(channel, url, params){
     let serverPath = this.httpConfig[channel].path;
     let host = this.httpConfig[channel].host;
     let port = this.httpConfig[channel].port;
@@ -147,6 +147,7 @@ export default class HttpRequest {
       axios({
         url:`http://${host}:${port}/${serverPath}/${url}`,
         method: 'GET',
+        params: params
       }).then(response => {
         resolve(response)
       }).catch(err=>reject(err))

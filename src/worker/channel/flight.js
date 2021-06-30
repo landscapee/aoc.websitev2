@@ -2,11 +2,13 @@ import {memoryStore} from '../lib/memoryStore'
 import {flightStart, flightStop} from "../manage/flight";
 import {saveToFlightDB} from "../lib/storage";
 import Logger from "../../lib/logger";
-import {values, extend, forEach} from 'lodash';
+import {values, extend, forEach, map} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 
 let worker;
 let clientObj = {};
+let retainsFlightWs; // 页面销毁连接不断的client
+let retainsSituationWs; // 页面销毁连接不断的client
 const log = new Logger('connect.flight');
 
 /*
@@ -24,7 +26,7 @@ export const checkClient = (clientField) => {
 
 // 长时间连接的ws 不管页面是否存续
 const subRetainWs = () => {
-  let client = clientObj.flightClient;
+  let client = retainsFlightWs
 
   let changes = {};
   client.sub('/Flight/Change', (data) => {
@@ -45,7 +47,6 @@ const subRetainWs = () => {
         lastUpdateFinish = false;
         saveToFlightDB(_changes).then(() => {
           lastUpdateFinish = true;
-          console.log('ws sync')
           worker.publish('Flight.Change.Sync');
         });
       }
@@ -53,6 +54,16 @@ const subRetainWs = () => {
   }, 1000);
 
 };
+
+const subSituationRetainsWS = () => {
+  retainsSituationWs.sub('/Flight/delayReason', (data) => {
+    memoryStore.setItem('delayFlight', data);
+    let datas = map(data, (item) => ({ ...item, isDelay: true }));
+    saveToFlightDB(datas).then((res) => {
+      worker.publish('Flight.Change.Sync');
+    });
+  });
+}
 
 // flight服务的连接
 const subWSEvent = () => {
@@ -70,10 +81,23 @@ const subDelayWSEvent = () => {
     // memoryStore.setItem('ExecutableFlights', flights, true);
   })
 };
+
+// adverse服务的连接
+const subAdverseClient = () => {
+  let client = clientObj.adverseClient;
+  // 除冰的连接
+  client.sub('/adverse-condition/deice/dynamic/flight',(data)=>{
+    console.log(data);
+    saveToFlightDB(data).then(() => {
+      worker.publish('Flight.Change.Sync');
+    });
+  })
+};
 export const init = (worker_) => {
   worker = worker_;
   worker.subscribe('Flight.Network.Connected', (c) => {
     clientObj.flightClient = new SocketWrapper(c);
+    retainsFlightWs = c
     subRetainWs()
   });
   worker.subscribe('Delays.Network.Connected', (c) => {
@@ -81,26 +105,41 @@ export const init = (worker_) => {
     // subWidespreadWSEvent();
   });
 
+  worker.subscribe('Adverse.Network.Connected', (c) => {
+    clientObj.adverseClient = new SocketWrapper(c);
+    // subWidespreadWSEvent();
+  });
+
+  worker.subscribe('Situation.Network.Connected', (c) => {
+    // clientObj.adverseClient = new SocketWrapper(c);
+    retainsSituationWs = c;
+    subSituationRetainsWS();
+  });
 
 
 
-  worker.subscribe('Page.Flight.Start',(myHeader)=>{
-    flightStart(worker, myHeader);
+
+  worker.subscribe('Page.Flight.Start',(header)=>{
+    flightStart(worker, header);
     checkClient('flightClient').then(()=>{
       subWSEvent();
-      console.log('flight连接成功')
     });
 
     checkClient('delaysClient').then(()=>{
       subDelayWSEvent();
       console.log('Widespread连接成功')
     })
+
+    checkClient('adverseClient').then(()=>{
+      subAdverseClient();
+      console.log('adverseClient')
+    })
   });
 
   worker.subscribe('Page.Flight.Stop',()=>{
     flightStop(worker);
     forEach(clientObj,item=>{
-      console.log(item)
+      console.log('flight销毁',item)
       item.unSubAll()
     })
   })
