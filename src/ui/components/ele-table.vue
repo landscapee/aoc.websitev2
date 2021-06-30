@@ -1,6 +1,6 @@
 <template>
     <div class="eleTableBox" ref="ref_eleTableBox">
-        <el-table ref="ref_table" :data="tableData" :style="{'width':tableWidth}" :height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName">
+        <el-table ref="ref_table" :span-method="spanMethod" :data="tableData" :style="{'width':tableWidth}" :height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName">
             <el-table-column v-for="(col,idx) in columnConfig" :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
                 <template slot-scope="scope">
                     <template v-if="col.type=='index'">{{scope.$index+1}}</template>
@@ -35,6 +35,10 @@ export default {
             },
         },
         setRowClassName: {
+            type: Function,
+        },
+        // 合并行列
+        spanMethod: {
             type: Function,
         },
     },
