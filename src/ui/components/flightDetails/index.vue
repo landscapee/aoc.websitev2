@@ -4,9 +4,10 @@
 				   :visible.sync="dialogFormVisible"
 				   :before-close="close">
 			<div class="top">
-				<span class="topItem" v-for="(opt,index) in topData" :key="index">
+				<span @click="aircraftNoClick(opt)" class="topItem" :class="opt.click?'cursor':''" v-for="(opt,index) in topData" :key="index">
 					<icon-svg :iconClass="opt.svg"></icon-svg>{{opt.name}}{{getValue(opt)}}
 				</span>
+				<AircraftNoPage v-show="showAircraftNoPage" :data="aircraftNoData" :aircraftNo="data.aircraftNo"></AircraftNoPage>
 			</div>
 			<div class="middle">
 				<div class="divBox " :class="index==1?'divBox2':''" v-for="(opt,index) in flightAD" :key="index">
@@ -83,24 +84,26 @@
 	</div>
 </template>
 <script>
-
     import VIPImg from '../../assets/img/VIP.svg'
     import moment from 'moment'
     import {flightStateColor} from './help'
-
-    let ipObj = {
-        'fpms.test': 'http://173.101.1.30:6068', // 双流测试
-        // dev: devIp, // 开发
-        'fpms.dev': 'http://173.101.1.30:6068', // 开发
-        'fpms.prod': 'http://10.33.64.1:6076', // 天府机场
-    };
+	import AircraftNoPage from './aircraftNoPage'
     export default {
         name: "warning",
+		components:{AircraftNoPage},
         data() {
+            let ipObj = {
+                'fpms.test': 'http://173.101.1.30:6068', // 双流测试
+                // dev: devIp, // 开发
+                'fpms.dev': 'http://173.101.1.30:6068', // 开发
+                'fpms.prod': 'http://10.33.64.1:6076', // 天府机场
+            };
             return {
                 iframeIp: ipObj[PROGRAM],
                 VIPImg,
                 data: {},
+                showAircraftNoPage:false,
+                aircraftNoData:[],
                 flightAD: {},
                 shareListA: [
                     [
@@ -144,7 +147,7 @@
                     ],
                 ],
                 topData: [
-                    {name: '机号：', key: 'aircraftNo', svg: 'jihao1'},
+                    {name: '机号：',click:true, key: 'aircraftNo', svg: 'jihao1'},
                     {name: '机型：', key: 'aircraftType', svg: 'jixing'},
                     {name: '翼展：', key: 'typeWidth', svg: 'yizhan'},
                     {name: '机长：', key: 'typeLength', svg: 'jichang'},
@@ -197,6 +200,18 @@
             }
         },
         methods: {
+            aircraftNoClick(opt){
+				if(!opt.click){
+				    return false
+				}
+                this.$request.post('flight', 'Flight/getTodayAircraftInfo', {aircraftNo:this.data[opt.key]}, true).then((res) => {
+                    if (res.code == 200 && res?.data) {
+                        this.aircraftNoData = JSON.parse(res.data)
+                         console.log(this.aircraftNoData);
+                    }
+                })
+				this.showAircraftNoPage=!this.showAircraftNoPage
+			},
             sendToken() {
                 const iframe = document.getElementById('iframe');
                 const token = sessionStorage.getItem('token');
