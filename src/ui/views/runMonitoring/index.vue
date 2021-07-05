@@ -170,7 +170,7 @@
         },
         methods: {
             toDetails(row){
-				this.$openFlightDetais({id:1},this)
+				this.$FlightDetais.open({flightId:row.flightId},true)
 			},
             openBangzhu({name, key}){
 				this.$refs.Bangzhu.open({name, key})

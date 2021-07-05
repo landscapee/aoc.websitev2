@@ -26,7 +26,7 @@ export const setting = {
          },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
+            type: 'slot',width: '40px',label: '航班号',
 
          },
         {
@@ -57,7 +57,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
+            type: 'slot',width: '40px',label: '航班号',
 
         },
         {
@@ -101,7 +101,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
+            type: 'slot',width: '40px',label: '航班号',
 
         },
         {
@@ -136,15 +136,8 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
-            display:(data)=> {
-                return (
-                    `<div class ="flightTypeBox">
-                    <span>${data['flightNo']||''}</span>
-                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
-                    </div>`
-                );
-            }
+            type: 'slot',width: '40px',label: '航班号',
+
         },
         {
             key: 'displayCOBT',
@@ -169,15 +162,8 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
-            display:(data)=> {
-                return (
-                    `<div class ="flightTypeBox">
-                    <span>${data['flightNo']||''}</span>
-                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
-                    </div>`
-                );
-            }
+            type: 'slot',width: '40px',label: '航班号',
+
 
         },
         {
@@ -209,15 +195,8 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
-            display:(data)=> {
-                return (
-                    `<div class ="flightTypeBox">
-                    <span>${data['flightNo']||''}</span>
-                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
-                    </div>`
-                );
-            }
+            type: 'slot',width: '40px',label: '航班号',
+
         },
         {
             key: 'displayCOBT',
@@ -243,16 +222,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
-            display:(data)=> {
-                return (
-                    `<div class ="flightTypeBox">
-                    <span>${data['flightNo']||''}</span>
-                    <span class="flightType">${data['overStationType'] ? '实' : '预'}</span>
-                    </div>`
-                );
-            }
-
+            type: 'slot',width: '40px',label: '航班号',
         },
         {
             key: 'displayCOBT',
@@ -284,7 +254,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'simple',width: '40px',label: '航班号',
+            type: 'slot',width: '40px',label: '航班号',
 
         },
         {

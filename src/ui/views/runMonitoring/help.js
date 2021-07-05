@@ -69,7 +69,7 @@ export const setting = {
         {
             key: 'flightNo',
             width: '50px', label: '航班号',
-            type: 'simple'
+            type: 'slot'
         },
         {
             key: 'movement',
@@ -129,7 +129,7 @@ export const setting = {
         {
             key: 'flightNo',
             width: '50px', label: '航班号',
-            type: 'simple'
+            type: 'slot'
         },
         {
             key: 'seat',
@@ -162,7 +162,7 @@ export const setting = {
         {
             key: 'flightNo',
             width: '50px', label: '航班号',
-            type: 'simple'
+            type: 'slot'
         },
         {
             key: 'movement',

@@ -2,7 +2,7 @@ import FlightDetails from './index.vue';
 
 const FlightDetailsObj = {};
 let checkObj = (obj) => {
-    return Object.prototype.toString.call(obj) === "[object Object]" && obj.id;
+    return Object.prototype.toString.call(obj) === "[object Object]" && obj.flightId;
 }
 FlightDetailsObj.install = function (Vue) {
     const FlightDetailsExtend = Vue.extend(FlightDetails)
@@ -16,33 +16,32 @@ FlightDetailsObj.install = function (Vue) {
     let removeEle=(vm)=>{
          let ele=FlightInstance.$mount().$el
         document.body.removeChild(ele)
+        FlightInstance=null
      }
-    if (!FlightInstance) {
-        initInstance()
-    }
-    FlightInstance.open({})
-    //  Vue.prototype.$removeFlight=removeEle
-    Vue.prototype.$FlightDetais = {
-        open:function (obj, vm) {
-            // if (!vm) {
-            //     throw  '使用 function $openFlightDetais 请传入当前VM实例';
-            // }
+
+
+     Vue.prototype.$FlightDetais = {
+        open:function (obj, blo) {
+            //  校验object是否 包含 flightId
             if (checkObj(obj)) {
                 if (!FlightInstance) {
                     initInstance()
                 }
+                // FlightInstance.open 返回的是一个promise  关闭弹窗会 resolve()
                 FlightInstance.open({...obj}).then((d)=>{
-                    removeEle()
-                    FlightInstance=null
+                    //blo为true的话  关闭弹窗就会 移除这个 弹窗组件，
+                    if(blo){
+                        removeEle()
+                    }
                 })
             } else {
-                throw  '使用 function $openFlightDetais 请传入一个包含 id 的 object';
+                throw  '使用  $FlightDetais.open 请传入一个包含 flightId 的 object';
             }
         },
-        // destroy(){
-         //     removeEle()
-        //     FlightInstance=null
-        // }
+         // 这个方法是手动移除 弹窗组件
+        destroy(){
+             removeEle()
+         }
     }
-}
+ }
 export default FlightDetailsObj
