@@ -65,7 +65,7 @@
 								<div class="ListItem" v-for="(shareOptC,shareIndexC) in shareOpt"
 									 :key="shareIndexC+'C'">
 									<div>
-										{{shareOptC.time?getTime(opt[shareOptC.key]):opt[shareOptC.key]}}{{shareOptC.text}}
+										{{shareOptC.time?getTime(opt[shareOptC.key]):(opt[shareOptC.key]||'--')}}{{shareOptC.text}}
 									</div>
 									<div>{{shareOptC.name}}</div>
 								</div>
