@@ -24,7 +24,7 @@ import FlightDecrease from './components/flightDecrease.vue'
 import FlightDelay from './components/flightDelay.vue'
 import SureDecrease from './components/sureDecrease.vue'
 
-import PostalStore from '/src/ui/lib/postalStore'
+import PostalStore from '@/ui/lib/postalStore'
 let postalStore = new PostalStore()
 export default {
     components: {
