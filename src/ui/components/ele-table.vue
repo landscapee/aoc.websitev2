@@ -5,6 +5,9 @@
             <el-table-column v-for="(col,idx) in columnConfig" :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
                 <template slot-scope="scope">
                     <template v-if="col.type=='index'">{{scope.$index+1}}</template>
+                    <template v-if="col.slot">
+                        <slot   :name="col.slot"   :row="scope.row" :index="scope.$index"   ></slot>
+                    </template>
                     <template v-else-if="col.type=='operate'">
                         <el-button type='text' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope)" @click="item.click?item.click(scope):''" :disabled="col.click?col.disabled(scope):''"></el-button>
                     </template>

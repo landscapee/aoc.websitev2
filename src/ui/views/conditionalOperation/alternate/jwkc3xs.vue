@@ -45,6 +45,10 @@
 </script>
 
 <style lang="scss" scoped>
+	*{
+
+
+	}
 	.jwkc3xs {
 		box-sizing: border-box;
 	}
@@ -66,12 +70,12 @@
 			border: 1px solid;
 			display: inline-block;
  			border-radius: 50%;
-			padding: 1px;
+			padding: 2px;
 			&>span{
 				display: flex;
  				border-radius: 100%;
-				width: 41px;
-				height:41px;
+				width: 40px;
+				height:40px;
 			 	justify-content: center;
 				align-items: center;
 				&>span>span:first-child{
@@ -93,12 +97,16 @@
 		.second{
 			margin: 0 30px;
 			display: inline-block;
- 			height: 23px;
+ 			height: 22px;
  			border-right: 1px solid #979797;
 		}
 		.third{
-			span{
-				font-size: 24px;margin-right: 3px;
+			display: inline-block;
+			text-align: center;
+			width: 70px;
+ 			span{
+				font-family: FjallaOne;
+				font-size: 28px;margin-right: 3px;
 			}
 		}
 	}
