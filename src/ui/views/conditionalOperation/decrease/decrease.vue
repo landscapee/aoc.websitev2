@@ -6,7 +6,7 @@
         </div>
         <div class="decrease_mid">
             <MDRS-warning />
-            <flight-decrease />
+            <flight-decrease ref="ref_flightDecrease" :decreaseFlights="decreaseFlights" />
             <flight-delay />
         </div>
         <div class="decrease_right">
@@ -23,6 +23,9 @@ import MDRSWarning from './components/MDRSWarning.vue'
 import FlightDecrease from './components/flightDecrease.vue'
 import FlightDelay from './components/flightDelay.vue'
 import SureDecrease from './components/sureDecrease.vue'
+
+import PostalStore from '/src/ui/lib/postalStore'
+let postalStore = new PostalStore()
 export default {
     components: {
         setting: Setting,
@@ -37,10 +40,19 @@ export default {
             type: 1,
             currentReduce: {},
             currentReduceLists: [],
+            decreaseFlights: [],
         }
     },
     mounted() {
         this.getCurrentReduce()
+
+        postalStore.pub('Worker', 'AdverseCondition.GetFlight', '')
+        postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
+            this.decreaseFlights = flights.splice(0, 30) || []
+            this.$nextTick(() => {
+                this.$refs.ref_flightDecrease.navHandle(0)
+            })
+        })
     },
     methods: {
         logg(row) {

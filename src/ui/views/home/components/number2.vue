@@ -10,7 +10,8 @@
                 </div>
             </div>
             <div class="right">
-                <icon-svg :iconClass="options.icon" />
+                <img :src="'/src/ui/views/home/static/imgs/'+options.icon+'.png'" alt="">
+                <!-- <icon-svg :iconClass="options.icon" /> -->
             </div>
         </div>
 

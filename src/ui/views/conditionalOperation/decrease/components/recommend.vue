@@ -14,6 +14,16 @@
     </div>
 </template>
 <script>
+const airLines = [
+    { key: 'total', cnName: '全部' },
+    { key: 'CA', cnName: '国航' },
+    { key: '3U', cnName: '川航' },
+    { key: 'MU', cnName: '东航' },
+    { key: 'CZ', cnName: '南航' },
+    { key: 'EU', cnName: '成航' },
+    { key: '8L', cnName: '祥航' },
+    { key: 'other', cnName: '其他' },
+]
 export default {
     props: ['currentReduce'],
     data() {
@@ -77,6 +87,7 @@ export default {
     },
     watch: {
         currentReduce: function (val) {
+            if (!val) return
             this.plan = val.plan
             this.tableData = this.formatSuggestForEdit(val.plan)
             this.feedBackTime = val.reduceInfo ? val.reduceInfo.feedbackTime : 30
@@ -101,16 +112,7 @@ export default {
                     total: { A: totalA, R: totalR },
                 }
             }
-            const airLines = [
-                { key: 'total', cnName: '全部' },
-                { key: 'CA', cnName: '国航' },
-                { key: '3U', cnName: '川航' },
-                { key: 'MU', cnName: '东航' },
-                { key: 'CZ', cnName: '南航', AInputShow: false, RInputShow: false },
-                { key: 'EU', cnName: '成航', AInputShow: false, RInputShow: false },
-                { key: '8L', cnName: '祥航', AInputShow: false, RInputShow: false },
-                { key: 'other', cnName: '其他', AInputShow: false, RInputShow: false },
-            ]
+
             let formated = formatData(suggestForEdit)
             return _.map(airLines, (item, key) => {
                 let current = formated[item.key]
