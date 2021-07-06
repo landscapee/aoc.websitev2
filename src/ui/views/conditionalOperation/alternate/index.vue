@@ -14,20 +14,34 @@
 					</div>
 				</div>
 				<div class="tableBox" v-if="opt.tableConfig">
-					<ele-table :columnConfig="opt.tableConfig" :tableData="getData(opt)"></ele-table>
+
+					<ele-table :columnConfig="opt.tableConfig" :tableData="getData(opt)">
+						<!--备降航班统计-->
+						<div class="hangxian" slot="displayRouter" slot-scope="{row,index}">
+							<div v-for="(opt,index) in row.routes" :key="index" >
+								<span v-if="index!==0"><icon-svg iconClass="jiantou"></icon-svg></span>
+								<span>{{opt}}</span>
+							</div>
+ 						</div>
+						<div  class="optionq"  slot="option1" slot-scope="{row,index}">
+							<span class="cursor" @click="editHandle(row)">编辑</span>
+						</div>
+						<!--临时机位-->
+					</ele-table>
 				</div>
 				<div class="other" v-else>
-					<!--<component :data="getData(opt)" :is="opt.component"></component>-->
-					<component   :is="opt.component"></component>
+					<component v-if="opt.key=='seatEvaluate'" :data="getData(opt)" :is="opt.component"></component>
+					<!--<component    :is="opt.component"></component>-->
 				</div>
 			</div>
 
 		</div>
-
+		<Edit ref="Edit"></Edit>
 	</div>
 </template>
 
 <script>
+	import Edit from './edit'
     import {LandingConfig, tempSeatConfig, exigencyConfig} from './help'
     import myEcharts from './echarts'
     import jjjyjw from './jjjyjw.vue'
@@ -42,7 +56,7 @@
     let postalStore = new PostalStore();
     export default {
         components: {
-            myEcharts, jjjyjw, jwkc3xs
+            myEcharts, jjjyjw, jwkc3xs,Edit
         },
         data() {
             let _this = this
@@ -119,16 +133,19 @@
 			},
 		},
         methods: {
+            editHandle(row){
+              this.$refs.Edit.open({...row})
+			},
             JWKCtimeChange(val) {
                 if (!this.timetextFlag) {
-                    this.timetext = moment(val).format('yyyy-MM-DD HH:mm')
+                    this.timetext = moment(val).format('yyyy-MM-DD HH:mm:ss')
                 }
                 this.timetextFlag = false
                 let obj = {
                     type: 3,
-                    queryDate: moment(val).format('yyyy-MM-DD HH:mm')
+                    queryDate: moment(val).format('yyyy-MM-DD HH:mm:ss')
                 }
-                this.$request.post('adverse', 'stat/seatEvaluate', obj, false).then((res) => {
+                this.$request.post('adverse', 'stat/seatEvaluate', obj, true).then((res) => {
                     if (res.code != 200) {
                         this.$message.warning(res.message)
                         return
@@ -149,8 +166,15 @@
         mounted() {
 
             postalStore.sub('alternateData', ({data, key}) => {
-                console.log('alternateData,data', data);
-                this.$set(this.dataObj, key, data)
+             key=='alternateLanding'&&   console.log('alternateData,data', data);
+             let data1=data
+             if(key=='seatEvaluate'){
+                 data1={}
+                    map(data.info,(k,l)=>{
+                     data1[k.seatType]={idleNum:k.idleNum}
+				 })
+			 }
+                this.$set(this.dataObj, key, data1)
             });
 
         },
@@ -175,19 +199,37 @@
 		margin-top: 15px;
 		width: 100%;
 		height: calc(100% - 30px);
-
-		.cell {
-			font-size: 12px;
-			font-weight: 400;
+		.hangxian{
+			display: flex;
+			justify-content: center;
+			svg{
+				margin: 0 2px;
+				width: 10px;
+ 				fill: #3b639a;
+			}
+		}
+		.optionq{
+			span{
+				display: inline-block;
+				background: #0566ff;
+				padding: 0px 11px;
+				border-radius: 10px;
+			}
 		}
 		table {
 			width: 100% !important;
+
 		}
 
 		::v-deep .cell {
-			font-size: 12px;
+
 			font-weight: 400;
+			font-family: FjallaOne !important;
 			padding: 0 2px !important;
+			div{
+				font-size: 12px!important;
+				font-family: FjallaOne !important;
+			}
 		}
 
 	}
