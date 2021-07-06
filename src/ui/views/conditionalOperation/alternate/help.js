@@ -1,63 +1,65 @@
 import {displayTimeDate} from '@/lib/helper/utility.js'
 import {map} from 'lodash'
-
+import moment from 'moment'
 // 备降航班统计
 export const LandingConfig=	 [
 
-    {key: 'flightNo', label: '航班号',width:'50px'},
-    {key: 'aircraftNo', label: '机号',width:'50px' },
-    {key: 'flightStatus', label: '状态',width:'50px'},
-    {key: 'seat', label: '机位',width:'50px'},
-    {key: 'ata', label: '落地时间', width:'60px'  },
-    {key: 'waitTime', label: '机上等待',
+    {slot: 'flightNo', type: 'slot',label: '航班号',width:'45px'},
+    {key: 'aircraftNo', type: 'simple',label: '机号',width:'45px' },
+    {key: 'flightStatus', type: 'simple',label: '状态',width:'45px'},
+    {key: 'seat', type: 'simple',label: '机位',width:'40px'},
+    {key: 'ata', type: 'simple',label: '落地时间', width:'60px'  ,
+        display: ({row}) => {
+            return( row.ata||row.atd)?moment(row.ata||row.atd).format('HH:mm'):'--'   ;
+        },},
+    {key: 'waitTime', type: 'simple',label: '机上等待', width:'60px',
         display: ({row}) => {
              return `${row.waitTime||'--'}(M)`;
         },
     },
     {
-        key: 'dropOffTime', label: '下客时间', width:'60px',
+        key: 'dropOffTime', type: 'simple',label: '下客时间', width:'60px',
         display: ({row}) => {
             return displayTimeDate(row.dropOffTime);
         },
     },
     {
-        slot: 'displayRouter', label: '航线', width:'200px',
-
-
+        slot: 'displayRouter', type: 'slot',label: '航线', width:'255px',
     },
-    {key: 'dropOffNum', label: '下客人数',},
+    {key: 'dropOffNum', type: 'simple',label: '下客人数', width:'50px'},
     {
-        key: 'securityCheck', label: '使用安检',
+        key: 'securityCheck', type: 'simple',label: '使用安检', width:'50px',
         display: ({row}) => {
             return row.securityCheck === 0 ? '是' : row.securityCheck === 1 ? '否' : '--';
         },
     },
-    {key: 'isCancel', label: '是否取消',display: ({row}) => {
+    {key: 'isCancel', type: 'simple',label: '是否取消', width:'50px',
+        display: ({row}) => {
             return `${row.isCancel?'是':'否'}`;
         },},
-    {slot: 'option1', label: '操作', width:'60px'},
+    {slot: 'option1', type: 'slot',label: '操作', width:'50px'},
 ];
 // 临时机位
 export const tempSeatConfig=[
 
     {
         key: 'seat',
-        label: '临时机位',
+        type: 'simple',label: '临时机位',
         width:'70px'
     },
     {
         key: 'aircraftNo',
-        label: '机号',
+        type: 'simple',label: '机号',
         width:'55px'
     },
     {
-        key: 'flightNo',
-        label: '航班号',
+        slot: 'flightNo',
+        type: 'simple',label: '航班号',
         width:'60px'
     },
     {
         key: 'timeStartReal',
-        label: '拖行到位时间',
+        type: 'simple',label: '拖行到位时间',
         width:'90px',
         display: ({row}) => {
             return displayTimeDate(row.timeStartReal);
@@ -65,21 +67,21 @@ export const tempSeatConfig=[
     },
     {
         key: 'waitTime',
-        label: '使用时长(分)',
+        type: 'simple',label: '使用时长(分)',
     },
     {
         key: 'leaveSeat',
-        label: '空出机位',
+        type: 'simple',label: '空出机位',
         width:'70px'
     },
     {
         key: 'leaveFlightNo',
-        label: '预计保障航班/机号',
+        type: 'simple',label: '预计保障航班/机号',
         width:'110px',
     },
     {
         key: 'usedFlag',
-        label: '启用结束',
+        type: 'simple',label: '启用结束',
         display: ({row}) => {
             return row.usedFlag == '1' ? '是' : '否';
         },
@@ -90,42 +92,45 @@ export const exigencyConfig=[
 
     {
         key: 'seat',
-        label: '机位', width:'55px'
+        type: 'simple',label: '机位', width:'55px'
     },
     {
-        key: 'flightNo',
-        label: '航班号', width:'65px'
+        slot: 'flightNo',
+        type: 'simple',label: '航班号', width:'65px'
         
     },
     {
         key: 'aircraftNo',
-        label: '机号', width:'55px'
+        type: 'simple',label: '机号', width:'55px'
         
     },
     {
-        key: 'ata-atd',
-        label: '落地时间',
-        width:'65px'
+        key: 'ata',
+        type: 'simple',label: '落地时间',
+        width:'65px',
+        display: ({row}) => {
+            return ( row.ata||row.atd)?moment(row.ata||row.atd).format('HH:mm'):'--'   ;
+        },
     },
     {
         key: 'waitTime',
-        label: '已等待时间',
+        type: 'simple',label: '已等待时间',
     },
     {
         key: 'dropOffFlag',
-        label: '已下客',
+        type: 'simple',label: '已下客',
     },
     {
         key: 'dropOffNum',
-        label: '下客人数',
+        type: 'simple',label: '下客人数',
     },
     {
         key: 'securityCheck',
-        label: '使用安检',
+        type: 'simple',label: '使用安检',
         display: ({row}) => {
             return row.securityCheck === 0 ? '是' : row.securityCheck === 1 ? '否' : '--';
         },
     },
-    {slot: 'option1', label: '操作', width:'60px'},
+    {slot: 'option1', type: 'slot',label: '操作', width:'60px'},
 
 ];
