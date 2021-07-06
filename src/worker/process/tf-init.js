@@ -56,7 +56,7 @@ const myPostal = (channel) => {
 postal.subscribe({
     channel: 'Worker',
     topic: 'LoginSuccess',
-    callback: (user) => {
+    callback: (data) => {
         //登录成功
         // 根据权限过滤航班
         let posWorker = myPostal('Worker');

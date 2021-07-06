@@ -8,14 +8,14 @@ export const LandingConfig=	 [
     {key: 'aircraftNo', label: '机号',width:'50px' },
     {key: 'flightStatus', label: '状态',width:'50px'},
     {key: 'seat', label: '机位',width:'50px'},
-    {key: 'ata', label: '落地时间',   },
+    {key: 'ata', label: '落地时间', width:'60px'  },
     {key: 'waitTime', label: '机上等待',
         display: ({row}) => {
              return `${row.waitTime||'--'}(M)`;
         },
     },
     {
-        key: 'dropOffTime', label: '下客时间',
+        key: 'dropOffTime', label: '下客时间', width:'60px',
         display: ({row}) => {
             return displayTimeDate(row.dropOffTime);
         },
