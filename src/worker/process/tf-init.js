@@ -55,8 +55,11 @@ const myPostal = (channel) => {
 
 postal.subscribe({
 
-
-  channel: 'Worker',
+     channel: 'Worker',
+    topic: 'init',
+    callback: (data) => {
+        //
+   channel: 'Worker',
   topic: 'init',
   callback: (data) => {
     //

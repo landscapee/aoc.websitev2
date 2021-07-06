@@ -222,7 +222,7 @@
 		}
 
 		::v-deep .cell {
-
+			font-size: 12px!important;
 			font-weight: 400;
 			font-family: FjallaOne !important;
 			padding: 0 2px !important;
