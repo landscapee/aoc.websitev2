@@ -34,7 +34,7 @@ export default {
         getData() {
             this.$request.get('msg', 'notice/findCurrentNotice').then((res) => {
                 if (res.data) {
-                    this.dataCotent = res.data ? res.data[0] : {}
+                    this.dataCotent = res.data ? _.find(res.data, { category: 'MDRS预警' }) : {}
                     this.mdrsWarn = this.mdrsWarnOpt[this.dataCotent.status]
                 }
             })

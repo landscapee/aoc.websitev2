@@ -7,7 +7,9 @@ import {init as monitorInit} from '../channel/runMonitor'
 import {init as resourceMonitorInit} from '../channel/resourceMonitor'
 import {init as MonitorWithRunwayInit} from '../channel/poolMonitorWithRunway'
 import {init as TOBTConfigInit} from '../channel/TOBTConfig'
-import {init as alternateConfigInit} from '../channel/alternate'
+import { init as alternateConfigInit } from '../channel/alternate'
+import { init as decreaseInit } from '../channel/decrease'
+
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
 import HttpRequest from "../../lib/axios";
@@ -66,6 +68,7 @@ postal.subscribe({
     resourceMonitorInit(posWorker, httpRequest);
     flightHttp(posWorker, httpRequest);
     homeInit(posWorker, httpRequest)
+    decreaseInit(posWorker, httpRequest)
     delaysInit(posWorker, httpRequest)
     getSysConfigHttp(posWorker, httpRequest);
     TOBTConfigInit(posWorker, httpRequest)

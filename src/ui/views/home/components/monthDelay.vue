@@ -89,14 +89,14 @@ export default {
     ],
     data() {
         return {
-            select: 'arriveNormal',
+            select: 'takeOffNormal',
             selectArr: [
-                { name: '落地正常率', value: 'arriveNormal' },
-                { name: '起飞正常率', value: 'departureNormal' },
-                { name: '航班正常率', value: 'normal' },
-                { name: '始发正常率', value: 'originalAllowTakeOff' },
-                { name: '早高峰正常率', value: 'originalInMorning' },
-                { name: '放行正常率', value: 'takeOffNormal' },
+                { name: '放行延误', value: 'takeOffNormal' },
+                { name: '始发延误', value: 'originalAllowTakeOff' },
+                { name: '航班延误', value: 'normal' },
+                { name: '起飞延误', value: 'departureNormal' },
+                { name: '落地延误', value: 'arriveNormal' },
+                { name: '早高峰延误', value: 'originalInMorning' },
             ],
             activeData: {
                 gtTwoHour: 0,
