@@ -17,7 +17,8 @@
 					<ele-table :columnConfig="opt.tableConfig" :tableData="getData(opt)"></ele-table>
 				</div>
 				<div class="other" v-else>
-					<component :data="getData(opt)" :is="opt.component"></component>
+					<!--<component :data="getData(opt)" :is="opt.component"></component>-->
+					<component   :is="opt.component"></component>
 				</div>
 			</div>
 
@@ -63,7 +64,7 @@
                         {name: '临时机位', key: 'tempSeat', tableConfig: tempSeatConfig, class: 'alternateTopDiv div2'},
                         {
                             name: '机位空出3小时',
-                            time: true,
+                            time: true,data:{},
                             key: 'seatEvaluate',
                             component: 'jwkc3xs',
                             class: 'alternateTopDiv div3'
@@ -77,7 +78,7 @@
                             tableConfig: exigencyConfig,
                             class: 'alternateTopDiv div2'
                         },
-                        {name: '紧急加油机位', key: 'exigencyRefuelSeat', component: 'jjjyjw', class: 'alternateTopDiv div3'},
+                        {name: '紧急加油机位', key: 'exigencyRefuelSeat',data:{}, component: 'jjjyjw', class: 'alternateTopDiv div3'},
                     ],
                 },
                 pickerOptions: {
@@ -113,7 +114,7 @@
 		computed:{
             getData(){
               return (opt)=>{
-                  return this.dataObj[opt.key]||[]
+                  return this.dataObj[opt.key]||opt.data||[]
 			  }
 			},
 		},

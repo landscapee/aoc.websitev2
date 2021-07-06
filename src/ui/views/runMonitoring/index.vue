@@ -26,12 +26,17 @@
 							<icon-svg  iconClass="warning" ></icon-svg>
 						</span>
  						<i @click="openSetting(opt)" class="el-icon-setting"></i>
+						<icon-svg @click.native="openBangzhu(opt)" v-if="!opt.bangzhu" iconClass="bangzhu" ></icon-svg>
 					</div>
 
 				</div>
 				<div class="tablediv">
 					<AdvTable :tab-data="opt.data" @rowClassExtend="rowClassExtend(...arguments,opt)" :columnConfig="opt.tableConfig" >
- 						<template slot="batchSet" slot-scope="{row,index}">
+ 						<template slot="flightNo" slot-scope="{row,index}">
+							<!--<div>航班号</div>-->
+							 <span class="cursor" @click="toDetails(row)">{{row.flightNo}}</span>
+						</template>
+						<template slot="batchSet" slot-scope="{row,index}">
 							<!--<div>批量预警</div>-->
 							<el-checkbox class="labelNone" v-model="allCheckWarn[opt.key]" :label="row.flightId">
 								<span  >1</span>
@@ -57,10 +62,12 @@
 		</div>
 		<Setting :setting="setting" ref="Setting" col="7" @getCol="getCol"></Setting>
 		<Warning ref="Warning" ></Warning>
+		<Bangzhu ref="Bangzhu" ></Bangzhu>
 	</div>
 </template>
 
 <script>
+	import Bangzhu from './bangzhu'
     import postal from 'postal';
     import {map,keyBy} from 'lodash';
     import {setting} from './help';
@@ -72,7 +79,7 @@
 	import AdvTable from "@/ui/components/advTable.vue"
     export default {
         name: "runMonitoringIndex",
-        components: {Setting,AdvTable,Warning},
+        components: {Setting,Bangzhu,AdvTable,Warning},
         data() {
             return {
                 setting,
@@ -84,7 +91,7 @@
                     vvpFlights:[],
                 },
                 pageListObj: {
-                    batchConcern: {name: '批量航班关注池',key:'batchConcern', data: [ ], show: true, tableConfig: [ ]},
+                    batchConcern: {bangzhu:true,name: '批量航班关注池',key:'batchConcern', data: [ ], show: true, tableConfig: [ ]},
                     advanceArrive:{name: '提前落地航班',key:'advanceArrive', data: [], show: true, tableConfig: []},
                     guaranteeWarn:{name: '地面保障告警池',key:'guaranteeWarn', data: [], show: true, tableConfig: []},
                     vvpFlights:{name: '要客航班池',key:'vvpFlights', data: [], show: true, tableConfig: []},
@@ -162,6 +169,12 @@
             postalStore.unsubAll()
         },
         methods: {
+            toDetails(row){
+				this.$FlightDetais.open({flightId:row.flightId},true)
+			},
+            openBangzhu({name, key}){
+				this.$refs.Bangzhu.open({name, key})
+			},
             rowClassExtend(row,key,opt){
                 if(this.isWarning(opt)&&row.hightLightStatus){
                       row[key]='warningRow'

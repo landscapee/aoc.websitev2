@@ -370,12 +370,12 @@ export const allField = {
 	displayTSGT: { text: '起飞标准保障时间', width: 140 },
 	displayDSTT: { text: '放行标准起飞时间', width: 140 },
 	displayTSTT: { text: '起飞标准起飞时间', width: 140 },
-	displayOverStationMinTime: { text: '最小过站时间', width: 120 },
-	displayOverStationScheduleTime: { text: ' 计划过站时间', width: 120 },
+	overStationMinTime: { text: '最小过站时间(分钟)', width: 140 },
+	overStationScheduleTime: { text: ' 计划过站时间(分钟)', width: 140 },
 	isDelay: { text: '是否延误', search: { type: 'select', options: { true: '是', false: '否' } } },
 	delayBasis: { text: '延误依据', search: { type: 'text' }, auto: true },
-	airportDesc: { text: '机场延误备注', search: { type: 'text' }, width: 120 },
-	airlineDesc: { text: '航司延误备注', search: { type: 'text' }, width: 120 },
+	airportDesc: { text: '机场延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason' },
+	airlineDesc: { text: '航司延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason-airline' },
 	abnormalCategory: {
 		width: 200,
 		text: '延误原因分类',
@@ -451,8 +451,8 @@ export const defaultColumns = [
 	{ key: 'displayTSTT' },
 	{ key: 'displayDSTT' },
 	{ key: 'displayTSGT' },
-	{ key: 'displayOverStationMinTime' },
-	{ key: 'displayOverStationScheduleTime' },
+	{ key: 'overStationMinTime' },
+	{ key: 'overStationScheduleTime' },
 	{ key: 'planRoute' },
 	{ key: 'abnormalCategory' }, // 不正常分类
 	{ key: 'delayBasis' }, // 延误依据

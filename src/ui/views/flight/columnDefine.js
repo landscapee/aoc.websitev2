@@ -173,5 +173,10 @@ export default {
         `
       )
     }
+  },
+  isDelay: {
+    formatter: (item) => {
+      return item.isDelay === true ? '是' : '否';
+    }
   }
 }

@@ -28,13 +28,13 @@ Vue.prototype.$logger = Logger;
 
 
 import {servers,httpConfig} from "@/lib/interfaces"
-
+import FlightDetails from './src/ui/components/flightDetails/index.js'
 
 //日期插件
 moment.locale('zh-cn')
 // let request = new HttpRequest(httpConfig);
 Vue.use(ElementUI,{locale});
-
+Vue.use(FlightDetails);
 Vue.prototype.postal = postal
 Vue.prototype.$hasRole = hasRole
 // Vue.prototype.$axios = axios

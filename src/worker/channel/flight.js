@@ -58,7 +58,6 @@ const subRetainWs = () => {
 const subSituationRetainsWS = () => {
   retainsSituationWs.sub('/Flight/delayReason', (data) => {
     memoryStore.setItem('delayFlight', data);
-    console.log(data)
     let datas = map(data, (item) => ({ ...item, isDelay: true }));
     saveToFlightDB(datas).then((res) => {
       worker.publish('Flight.Change.Sync');

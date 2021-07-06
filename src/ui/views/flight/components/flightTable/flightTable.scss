@@ -23,6 +23,15 @@
       //top: -3px;
       position: relative;
     }
+    ::-webkit-scrollbar{
+      height: 18px!important;
+    }
+    .el-table__fixed{
+      height: 822px!important;
+    }
+    .el-table__fixed-right::before, .el-table__fixed::before{
+      background-color:transparent;
+    }
     .el-cascader{
       .el-input__inner{
         padding: 0 0 0 5px;
