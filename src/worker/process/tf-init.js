@@ -64,7 +64,8 @@ postal.subscribe({
         flightInit(posWorker, httpRequest);
         monitorInit(posWorker, httpRequest);
         MonitorWithRunwayInit(posWorker, httpRequest);
-        resourceMonitorInit(posWorker, httpRequest);
+        alternateConfigInit(posWorker, httpRequest);
+         resourceMonitorInit(posWorker, httpRequest);
         flightHttp(posWorker, httpRequest);
         homeInit(posWorker, httpRequest)
         delaysInit(posWorker, httpRequest)
