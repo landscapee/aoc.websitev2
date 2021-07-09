@@ -59,6 +59,7 @@ postal.subscribe({
     callback: (data) => {
         //登录成功
         // 根据权限过滤航班
+        //
         let posWorker = myPostal('Worker');
         let mySockets = socket(data.servers);
         let httpRequest = new HttpRequest(data.httpConfig);
@@ -85,6 +86,8 @@ postal.subscribe({
                 let roleData = find(user.roles, (item) => item.code.indexOf('DATA') > -1);
                 let roleFlights = get(roleData, 'menus.0.path');
                 roleFlights = roleFlights ? JSON.parse(roleFlights)[0] : { reversal: true, data: [] };
+                let posWorker = myPostal('Worker');
+                // let mySockets = socket(data.servers);
                 memoryStore.setItem('global', {
                     token: user.token,
                     roleFlights,

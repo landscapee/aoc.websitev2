@@ -1,7 +1,7 @@
 <template>
 	<div id="alternate">
 		<div :class="key" v-for="(item,key) in pagObj" :key="key">
-			<div :class="opt.class" v-for="opt in item" :key="opt.name">
+			<div :class="opt.class" v-for="opt in item" :key="opt.key">
 				<div class="title">
 					<span></span>
 					<span> {{opt.name}}</span>
@@ -15,24 +15,27 @@
 				</div>
 				<div class="tableBox" v-if="opt.tableConfig">
 
-					<ele-table :columnConfig="opt.tableConfig" :tableData="getData(opt)">
+					<ele-table :columnConfig="opt.tableConfig"  :table-data="getData(opt)">
 						<!--备降航班统计-->
 						<div class="hangxian" slot="displayRouter" slot-scope="{row,index}">
-							<div v-for="(opt,index) in row.routes" :key="index" >
+
+							<div v-for="(opt,index) in row.displayRouter" :key="index">
 								<span v-if="index!==0"><icon-svg iconClass="jiantou"></icon-svg></span>
-								<span>{{opt}}</span>
+								<span>{{opt}} </span>
 							</div>
- 						</div>
-						<div  class="optionq"  slot="option1" slot-scope="{row,index}">
+						</div>
+						<div class="optionq" slot="option1" slot-scope="{row,index}">
 							<span class="cursor" @click="editHandle(row)">编辑</span>
+						</div>
+						<div   slot="flightNo" slot-scope="{row,index}">
+							<span class="cursor" @click="toFlight(row)">{{row.flightNo}}</span>
 						</div>
 						<!--临时机位-->
 					</ele-table>
 				</div>
 				<div class="other" v-else>
-					<component v-if="opt.key=='seatEvaluate'" :data="getData(opt)" :is="opt.component"></component>
-					<!--<component    :is="opt.component"></component>-->
-				</div>
+					<component   :data="getData(opt)" :is="opt.component"></component>
+ 				</div>
 			</div>
 
 		</div>
@@ -41,7 +44,7 @@
 </template>
 
 <script>
-	import Edit from './edit'
+    import Edit from './edit'
     import {LandingConfig, tempSeatConfig, exigencyConfig} from './help'
     import myEcharts from './echarts'
     import jjjyjw from './jjjyjw.vue'
@@ -50,13 +53,12 @@
     import {map, mapKeys} from 'lodash';
     import postal from 'postal';
     import PostalStore from "../../../lib/postalStore";
-    import * as echarts from 'echarts'
-    import {getBarLineOption} from './options'
+    import AdvTable from "@/ui/components/advTable.vue"
 
     let postalStore = new PostalStore();
     export default {
         components: {
-            myEcharts, jjjyjw, jwkc3xs,Edit
+            myEcharts, jjjyjw, jwkc3xs, Edit,AdvTable,
         },
         data() {
             let _this = this
@@ -65,8 +67,8 @@
                 timetext: '当前',
                 timetextFlag: false,
                 dataObj: {//key跟 pagObj的item的key关联
-                    alternateLanding:[{securityCheck:0,flightNo:'121',waitTime:121}],
-				},
+                    alternateLanding: [{securityCheck: 0, flightNo: '121', waitTime: 121}],
+                },
                 pagObj: {
                     alternateTop: [
                         {
@@ -78,21 +80,27 @@
                         {name: '临时机位', key: 'tempSeat', tableConfig: tempSeatConfig, class: 'alternateTopDiv div2'},
                         {
                             name: '机位空出3小时',
-                            time: true,data:{},
+                            time: true, data: {},
                             key: 'seatEvaluate',
                             component: 'jwkc3xs',
                             class: 'alternateTopDiv div3'
                         },
                     ],
                     alternateBottom: [
-                        {name: '临时等待区', key: 'tempWaitArea', component: 'myEcharts', class: 'alternateTopDiv div1'},
+                        {name: '临时等待区',data:{}, key: 'tempWaitArea', component: 'myEcharts', class: 'alternateTopDiv div1'},
                         {
                             name: '应急下客区',
                             key: 'exigencyDropOffArea',
                             tableConfig: exigencyConfig,
                             class: 'alternateTopDiv div2'
                         },
-                        {name: '紧急加油机位', key: 'exigencyRefuelSeat',data:{}, component: 'jjjyjw', class: 'alternateTopDiv div3'},
+                        {
+                            name: '紧急加油机位',
+                            key: 'exigencyRefuelSeat',
+                            data: [],
+                            component: 'jjjyjw',
+                            class: 'alternateTopDiv div3'
+                        },
                     ],
                 },
                 pickerOptions: {
@@ -105,8 +113,7 @@
                             date = date.setMinutes(0)
                             date = new Date(date).setSeconds(0)
                             date = new Date(date).setMilliseconds(0);
-                            console.log(222, new Date(date));
-                            picker.$emit('pick', date);
+                             picker.$emit('pick', date);
                         }
                     }, {
                         text: '半小时后',
@@ -118,24 +125,26 @@
                             date = date.setMilliseconds(0);
                             date = new Date(date).setSeconds(0)
                             date = new Date(date).setMinutes(30)
-                            console.log(222, new Date(date));
-                            picker.$emit('pick', date);
+                             picker.$emit('pick', date);
                         }
                     }]
                 },
             }
         },
-		computed:{
-            getData(){
-              return (opt)=>{
-                  return this.dataObj[opt.key]||opt.data||[]
-			  }
-			},
-		},
+        computed: {
+            getData() {
+                return (opt) => {
+                    return this.dataObj[opt.key] || opt.data || []
+                }
+            },
+        },
         methods: {
-            editHandle(row){
-              this.$refs.Edit.open({...row})
+            toFlight(row){
+                 this.$FlightDetais.open({flightId:row.flightId})
 			},
+            editHandle(row) {
+                this.$refs.Edit.open({...row})
+            },
             JWKCtimeChange(val) {
                 if (!this.timetextFlag) {
                     this.timetext = moment(val).format('yyyy-MM-DD HH:mm:ss')
@@ -166,19 +175,20 @@
         mounted() {
 
             postalStore.sub('alternateData', ({data, key}) => {
-             key=='alternateLanding'&&   console.log('alternateData,data', data);
-             let data1=data
-             if(key=='seatEvaluate'){
-                 data1={}
-                    map(data.info,(k,l)=>{
-                     data1[k.seatType]={idleNum:k.idleNum}
-				 })
-			 }
+                key == 'tempWaitArea' && console.log(key, data);
+                let data1 = data
+                if (key == 'seatEvaluate') {
+                    data1 = {}
+                    map(data.info, (k, l) => {
+                        data1[k.seatType] = {idleNum: k.idleNum}
+                    })
+                }
                 this.$set(this.dataObj, key, data1)
             });
 
         },
         beforeDestroy() {
+            this.$FlightDetais.destroy()
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.alternate.Stop',
@@ -192,24 +202,25 @@
 	::v-deep .el-table__header,
 	::v-deep .el-table__body {
 		width: 100% !important;
-		
+
 	}
 
 	.tableBox {
 		margin-top: 15px;
 		width: 100%;
 		height: calc(100% - 30px);
-		.hangxian{
+		position: relative;
+		.hangxian {
 			display: flex;
 			justify-content: center;
-			svg{
+			svg {
 				margin: 0 2px;
 				width: 10px;
- 				fill: #3b639a;
+				fill: #3b639a;
 			}
 		}
-		.optionq{
-			span{
+		.optionq {
+			span {
 				display: inline-block;
 				background: #0566ff;
 				padding: 0px 11px;
@@ -220,16 +231,21 @@
 			width: 100% !important;
 
 		}
+		::v-deep table {
+			width: 100% !important;
+
+		}
 
 		::v-deep .cell {
-
+			font-size: 12px !important;
 			font-weight: 400;
 			font-family: FjallaOne !important;
 			padding: 0 2px !important;
-			div{
-				font-size: 12px!important;
+			*{
+				font-size: 12px !important;
 				font-family: FjallaOne !important;
 			}
+
 		}
 
 	}
@@ -322,6 +338,9 @@
 			.div3 {
 				width: 654px;
 			}
+		}
+		.other{
+			height: calc(100% -  20px);
 		}
 	}
 </style>

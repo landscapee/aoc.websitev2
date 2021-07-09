@@ -1,9 +1,10 @@
 
 import {alternateConfigStop,alternateConfigStart} from "../manage/alternate";
- import { mapKeys,map, forEach} from 'lodash';
+ import { mapKeys,map, extend,forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
  let clientObj = {};
  let   worker, client, ajax;
+import { flightDB } from '@/worker/lib/storage';
 
 /*
 * 检查服务是否在线
@@ -56,6 +57,15 @@ const subWSEvent = () => {
                 // 机位空出2小时(点对点)
                 // let obj = mapKeys(data.info, (item) => item.seatType);
             // }
+            // 合并航班动态的数据
+            if(key=='alternateLanding'||key=='exigencyDropOffArea'||key=='tempSeat'){
+                myDate=map(myDate,(k,l)=>{
+                    let f = flightDB.by('flightId', k.flightId);
+                   return extend(f,k)
+                })
+
+            }
+
             worker.publish('Web','alternateData',{data:myDate,key:mykey})
         })
     })

@@ -19,8 +19,8 @@ import { forEach,flow,mapValues} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 
 import { flightDB } from '../lib/storage';
-import { proFlightFields } from '/src/lib/helper/proFlightFields';
-import { checkWebsocketResponseDataFinish, getFlightByIds,filterRoleFlights,addSerialNumber } from '/src/lib/helper/flight';
+import { proFlightFields } from '@/lib/helper/proFlightFields';
+import { checkWebsocketResponseDataFinish, getFlightByIds,filterRoleFlights,addSerialNumber } from '@/lib/helper/flight';
 
 let worker;
 let clientObj = {};

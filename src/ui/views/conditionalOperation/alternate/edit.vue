@@ -51,7 +51,7 @@
             return {
 
                 title: 'ww',
-                form: {securityCheck: 0, dropOffFlag: 0,dropOffTimeLong:new Date().getTime()},
+                form: {},
                 dialogFormVisible: false,
                 rules: {
                     title: [{trigger: "blur", required: true, message: '请选择'}],
@@ -74,11 +74,20 @@
             save(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$request.post('msg', 'notice/save', obj, false).then((res) => {
+                        let obj={...this.form}
+                        let dropOffTimeLong
+                        if(obj.dropOffTimeLong){
+                            obj.dropOffTimeLong=new Date(obj.dropOffTimeLong).getTime()
+                            obj.dropOffTime=new Date(obj.dropOffTimeLong).getTime()
+                        }
+                        if(obj.cancelTimeLong){
+                            obj.cancelTimeLong=new Date(obj.cancelTimeLong).getTime()
+                        }
+                        this.$request.post('adverse', 'deal/dropOff', obj, true).then((res) => {
                             if (res.code == 200) {
-                                this.$message.success('发布成功')
+                                this.$message.success('编辑成功')
                                 this.close()
-                                this.$emit('getList')
+                                // this.$emit('getList')
                             } else {
                                 this.$message.warning(res.message)
                             }
@@ -104,12 +113,13 @@
                 if(row.cancelTime){
                     cancelTimeLong=new Date(row.cancelTime).getTime()
                 }
-                delete row.cancelTime
-                delete row.dropOffTime
-                this.form = {
-                    securityCheck: 0, dropOffFlag: 0,
-                    ...row,
-					dropOffTimeLong,cancelTimeLong,
+                 this.form = {
+                    securityCheck: row.securityCheck||0,
+					dropOffFlag: row.dropOffFlag||0,
+                     dropOffNum: row.dropOffNum,
+					dropOffTimeLong,
+                     flightId: row.flightId,
+					 cancelTimeLong,
 
 				},
 
