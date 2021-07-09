@@ -88,10 +88,8 @@ export const init = (worker_,httpRequest_) => {
         transRunwayData(worker,time )
     });
 
-
     worker.subscribe('Page.poolMonitorWithRunway.Start',()=>{
         worker.publish('worker', 'Get.runway.Data')
-
         situationStart(worker);
         checkClient('situationClient').then(()=>{
             subWSEvent();
@@ -102,8 +100,7 @@ export const init = (worker_,httpRequest_) => {
     worker.subscribe('Page.poolMonitorWithRunway.Stop',()=>{
         situationStop(worker);
         forEach(clientObj,item=>{
-            console.log(item)
-            item.unSubAll()
+             item.unSubAll()
         })
     })
 };

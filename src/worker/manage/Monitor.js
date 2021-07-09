@@ -127,9 +127,8 @@ export const transRunwayData = (worker, time) => {
 
 
 export const situationStart = (posWorker) => {
-
     posWorker.subscribe('push.runway.Data', () => {
-        transRunwayData(worker )
+        transRunwayData(posWorker )
     });
 }
 

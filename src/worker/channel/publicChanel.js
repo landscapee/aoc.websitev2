@@ -1,7 +1,6 @@
 // import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 import {memoryStore} from "../lib/memoryStore";
-import {transRunwayData} from "../manage/Monitor";
 
 let clientObj = {};
 let worker, client, ajax;
@@ -37,8 +36,8 @@ const subWSEventRunwey = (clientId) => {
     //跑道模式和禁用状态
     runweyClient.sub('/Flight/runwayModels', (res) => {
         memoryStore.setItem('Pools', {runwayModels: res})
-        transRunwayData(worker)
-        worker.publish('Web', 'push.runway.Data', res)
+         worker.publish('Web', 'push.runway.Data', res)
+         worker.publish('push.runway.Data', res)
     })
 };
 
@@ -80,6 +79,7 @@ export const init = (worker_, httpRequest_, clientId) => {
     worker.subscribe('Get.runway.Data', (() => {
             let runwayData = memoryStore.getItem('Pools').runwayData
             worker.publish('Web', 'push.runway.Data', runwayData)
+            worker.publish('push.runway.Data', runwayData)
         })
     )
 
