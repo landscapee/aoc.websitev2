@@ -9,6 +9,8 @@ import {init as MonitorWithRunwayInit} from '../channel/poolMonitorWithRunway'
 import {init as TOBTConfigInit} from '../channel/TOBTConfig'
 import { init as alternateConfigInit } from '../channel/alternate'
 import { init as decreaseInit } from '../channel/decrease'
+import { init as runningNew } from '../channel/runningNew'
+import { init as messageInit } from '../channel/message'
 
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
@@ -58,19 +60,21 @@ postal.subscribe({
     topic: 'init',
     callback: (data) => {
         //
-        let posWorker = myPostal('Worker');
+         let posWorker = myPostal('Worker');
         let mySockets = socket(data.servers);
         let httpRequest = new HttpRequest(data.httpConfig);
         flightInit(posWorker, httpRequest);
         monitorInit(posWorker, httpRequest);
         MonitorWithRunwayInit(posWorker, httpRequest);
         alternateConfigInit(posWorker, httpRequest);
+        runningNew(posWorker, httpRequest);
          resourceMonitorInit(posWorker, httpRequest);
         flightHttp(posWorker, httpRequest);
         homeInit(posWorker, httpRequest)
         delaysInit(posWorker, httpRequest)
         getSysConfigHttp(posWorker, httpRequest);
         TOBTConfigInit(posWorker, httpRequest)
+        messageInit(posWorker, httpRequest,data.clientId)
         memoryStore.setItem('global', {token: data.token});
         postal.subscribe({
             channel: 'Worker',

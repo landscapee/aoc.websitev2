@@ -90,6 +90,9 @@
             }
             console.log(' ele', ele);
         },
+		beforeDestroy(){
+            this.echartsInstance.dispose()
+		}
     }
 </script>
 

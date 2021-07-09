@@ -46,9 +46,6 @@ const specialTreatment = () => import(/*webpackChunkName:"specialTreatment"*/ '.
 const resourceMonitoring = () => import(/*webpackChunkName:"resourceMonitoring"*/ '../views/resourceMonitoring/index')
 //tobt配置
 const tobtConfig = () => import(/*webpackChunkName:"tobtConfig"*/ '../views/tobtConfig/index')
-//  运行保障KPI
-//正常到位配置
-const normalPlaceConfig = () => import(/*webpackChunkName:"normalPlaceConfig"*/ '../views/runSecurityKPI/normalPlaceConfig/index')
 
 
 var routes = [
@@ -81,13 +78,7 @@ var routes = [
 
         ]
     },
-    //  运行保障KPI
 
-    {
-        path: '/runSecurityKPI',redirect:'/normalPlaceConfig', name: 'runSecurityKPI', component: index, children: [
-            {path: '/normalPlaceConfig', name: 'normalPlaceConfig', component: normalPlaceConfig},
-        ]
-    },
 
 
 ]
