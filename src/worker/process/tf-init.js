@@ -10,7 +10,7 @@ import {init as TOBTConfigInit} from '../channel/TOBTConfig'
 import { init as alternateConfigInit } from '../channel/alternate'
 import { init as decreaseInit } from '../channel/decrease'
 import { init as runningNew } from '../channel/runningNew'
-import { init as messageInit } from '../channel/message'
+import { init as publicChanelInit } from '../channel/publicChanel'
 
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
@@ -79,7 +79,7 @@ postal.subscribe({
         delaysInit(posWorker, httpRequest)
         getSysConfigHttp(posWorker, httpRequest);
         TOBTConfigInit(posWorker, httpRequest)
-         messageInit(posWorker, httpRequest,data.clientId)
+        publicChanelInit(posWorker, httpRequest,data.clientId)
         memoryStore.setItem('global', {token: data.token});
 
         postal.subscribe({

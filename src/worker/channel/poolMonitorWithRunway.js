@@ -87,9 +87,7 @@ export const init = (worker_,httpRequest_) => {
     worker.subscribe('QueuesMonitor.TimeFilter', (time) => {
         transRunwayData(worker,time )
     });
-    worker.subscribe('push.runway.Data', () => {
-        transRunwayData(worker )
-    });
+
 
     worker.subscribe('Page.poolMonitorWithRunway.Start',()=>{
         worker.publish('worker', 'Get.runway.Data')

@@ -127,13 +127,14 @@ export const transRunwayData = (worker, time) => {
 
 
 export const situationStart = (posWorker) => {
-    posWorker.subscribe('Situation.Change.Sync', (data) => {
 
-    })
+    posWorker.subscribe('push.runway.Data', () => {
+        transRunwayData(worker )
+    });
 }
 
 export const situationStop = (posWorker) => {
-    posWorker.unsubscribe('Situation.Change.Sync')
+    posWorker.unsubscribe('push.runway.Data')
 }
 
 
