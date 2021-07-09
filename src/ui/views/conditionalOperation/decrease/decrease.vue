@@ -1,16 +1,16 @@
 <template>
     <div id="decrease">
         <div class="decrease_left">
-            <setting :type='type' @change-type="changeType" @change-planno="changePlanno" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
-            <recommend :type='type' :currentReduce="currentReduce" />
+            <setting :currentType='currentType' @change-type="changeType" @change-planno="changePlanno" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
+            <recommend :currentReduce="currentReduce" :airLinesGroup="airLinesGroup" />
         </div>
         <div class="decrease_mid">
             <MDRS-warning />
-            <flight-decrease ref="ref_flightDecrease" :decreaseFlights="decreaseFlights" />
-            <flight-delay />
+            <flight-decrease ref="ref_flightDecrease" :decreaseFlights="decreaseFlights" :airLinesGroup="airLinesGroup" />
+            <flight-delay :currentReduce="currentReduce" />
         </div>
         <div class="decrease_right">
-            <sure-decrease />
+            <sure-decrease :currentReduce="currentReduce" :reduceFlight="reduceFlight" :airLinesGroup="airLinesGroup" />
         </div>
 
     </div>
@@ -37,53 +37,154 @@ export default {
     },
     data() {
         return {
-            type: 1,
             currentReduce: {},
+            reduceFlight: {},
             currentReduceLists: [],
             decreaseFlights: [],
+            currentType: 1,
+            airLinesGroup: {
+                all: '全部',
+                CA: '国航',
+                '3U': '川航',
+                MU: '东航',
+                CZ: '南航',
+                EU: '成航',
+                '8L': '祥航',
+                other: '其他',
+            },
         }
     },
     mounted() {
-        this.getCurrentReduce()
+        this.getCurrentDelayType()
 
-        postalStore.pub('Worker', 'AdverseCondition.GetFlight', '')
-        postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
-            this.decreaseFlights = flights.splice(0, 30) || []
-            this.$nextTick(() => {
-                this.$refs.ref_flightDecrease.navHandle(0)
-            })
-        })
+        // //173.101.1.30:6075/api/adverse-condition/adjust/getCurrentDelayType
+        // http: this.getCurrentReduce()
+
+        // let tempAirport = airport;
+        // direction = direction.value === 'All' || !direction.value ? '' : direction.value;
+        // movement = movement.value === 'All' || !movement.value ? '' : movement.value;
+        // airport = get(airport, 'value') === 'All' || !get(airport, 'value') ? '' : get(airport, 'label');
+        // let filter = [{ scheduleTime: { $gt: moment(effectRangeS).format('x') } }, { scheduleTime: { $lte: moment(effectRangeE).format('x') } }];
+        // movement && filter.push({ movement });
+        // airport && filter.push({ preOrNxtAirportCn: airport });
+        // direction && filter.push({ direction });
+
+        // postalStore.pub('Worker', 'AdverseCondition.GetFlight', '')
+        // postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
+        //     this.decreaseFlights = flights.splice(0, 30) || []
+        //     this.$nextTick(() => {
+        //         this.$refs.ref_flightDecrease.navHandle(0)
+        //     })
+        // })
     },
     methods: {
         logg(row) {
             console.log(row)
         },
-        changeType(type) {
-            this.type = type
+        changeType(currentType) {
+            this.currentType = currentType
             this.getCurrentReduce()
+        },
+        getCurrentDelayType() {
+            this.$request.get('adverse', 'adjust/getCurrentDelayType').then((res) => {
+                this.currentType = res.data && res.data.type > 0 ? res.data.type : 1
+                this.getCurrentReduce()
+            })
         },
         getCurrentReduce() {
             this.$request
-                .get('adverse', 'adjust/getCurrentReduce?type=' + this.type)
+                .get('adverse', 'adjust/getCurrentReduce?type=' + this.currentType)
                 .then((res) => {
                     if (res.data) {
-                        console.log(res.data)
                         this.currentReduceLists = _.sortBy(res.data, 'reduceInfo.reduceplanNo')
-                        this.changePlanno(0)
+
+                        let index = _.findIndex(this.currentReduceLists, (list) => {
+                            return list.reduceInfo.status === 0
+                        })
+                        this.changePlanno(index >= 0 ? index : 0)
                     }
                 })
         },
         changePlanno(idx) {
-            console.log(idx)
             this.currentReduce = this.currentReduceLists[idx]
+            this.getAirlineFromDb()
+            this.getReduceFlights()
         },
         addPlanno() {
             this.currentReduceLists.push({
+                plan: {},
+                planDetail: {},
                 reduceInfo: {
-                    reduceplanNo: this.currentReduceLists.length,
+                    reduceplanNo: this.currentReduceLists.length + 1,
+                    airports: '',
+                    directions: '',
+                    movement: '',
+                    declineRatio: '',
+                    recoverBeginTime: new Date().getTime(),
+                    recoverEndTime: new Date().getTime(),
+                    beginTime: new Date().getTime(),
+                    endTime: new Date().getTime(),
+                    status: 1,
                 },
+                suggest: {},
+                suggestTime: {},
             })
             this.changePlanno(this.currentReduceLists.length - 1)
+        },
+        getReduceFlights() {
+            // 发送状态 0:未发送 1:已发送给航司 2:航司已发给指挥室
+            let planDetail = _.get(this.currentReduce, 'planDetail', {})
+            let plan = _.get(this.currentReduce, 'plan', {})
+            let reduceShouldShow = _.mapValues(planDetail, (item, key) => {
+                if (plan[key].sendType == 2) {
+                    return item
+                }
+                return []
+            })
+            console.log(reduceShouldShow)
+            postalStore.pub('Worker', 'Decrease.GetReduceFlights', reduceShouldShow)
+            postalStore.sub('Web', 'Decrease.GetReduceFlights.Response', (flightWithAirline) => {
+                console.log(flightWithAirline)
+                // this.setState({ reduceFlight: flightWithAirline });
+                this.reduceFlight = flightWithAirline
+            })
+        },
+        getAirlineFromDb() {
+            let reduceInfo = this.currentReduce.reduceInfo
+
+            let direction = reduceInfo.directions
+            let movement = reduceInfo.movement
+            let airport = reduceInfo.airports
+            let filter = [
+                { scheduleTime: { $gt: this.$moment(reduceInfo.beginTime).format('x') } },
+                { scheduleTime: { $lte: this.$moment(reduceInfo.endTime).format('x') } },
+                { cancel: { $nin: [true] } },
+            ]
+            movement && filter.push({ movement })
+            airport && filter.push({ preOrNxtAirportCn: { $regex: airport } })
+            direction && filter.push({ direction })
+
+            //最右边列表
+            //     this.sub('Web', 'Decrease.GetReduceFlights.Response', (flightWithAirline) => {
+            // 	this.setState({ reduceFlight: flightWithAirline });
+            // });
+            // 获取航司航班列表
+            postalStore.pub('Worker', 'AdverseCondition.GetFlight', [...filter])
+            postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
+                // map(flights, (item, index) => {
+                //     if (map(allReduceFlightByType.R, (item) => item.flightId).indexOf(parseInt(item.flightId)) > -1) {
+                //         item.level = 'reduce';
+                //     }
+                //     if (map(allReduceFlightByType.A, (item) => item.flightId).indexOf(parseInt(item.flightId)) > -1) {
+                //         item.level = 'exchange';
+                //     }
+                // });
+
+                this.decreaseFlights = flights
+                this.$nextTick(() => {
+                    this.$refs.ref_flightDecrease.navHandle(0)
+                })
+            })
         },
     },
 }

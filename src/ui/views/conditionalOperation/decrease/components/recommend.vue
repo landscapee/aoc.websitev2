@@ -4,8 +4,7 @@
             <div class="name alib">推荐调时调减架次</div>
             <div class="right">
                 <span style="margin-right:6px">反馈时长</span>
-                <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" />
-                <!-- <span style="margin:0 15px 0 5px;color: #60779b;">分钟</span> -->
+                <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" :disabled="!$hasRole('edit-handle-suggest',false)" />
             </div>
         </div>
         <div class="table">
@@ -14,21 +13,10 @@
     </div>
 </template>
 <script>
-const airLines = [
-    { key: 'total', cnName: '全部' },
-    { key: 'CA', cnName: '国航' },
-    { key: '3U', cnName: '川航' },
-    { key: 'MU', cnName: '东航' },
-    { key: 'CZ', cnName: '南航' },
-    { key: 'EU', cnName: '成航' },
-    { key: '8L', cnName: '祥航' },
-    { key: 'other', cnName: '其他' },
-]
 export default {
-    props: ['currentReduce'],
+    props: ['currentReduce', 'airLinesGroup'],
     data() {
         return {
-            airLines: [],
             tableKey: 0,
             feedBackTime: 30,
             columnConfig: [
@@ -90,6 +78,7 @@ export default {
             if (!val) return
             this.plan = val.plan
             this.tableData = this.formatSuggestForEdit(val.plan)
+            console.log(this.tableData)
             this.feedBackTime = val.reduceInfo ? val.reduceInfo.feedbackTime : 30
         },
     },
@@ -109,14 +98,20 @@ export default {
                         A: item.totalPlanAdjust,
                         R: item.totalPlanReduce,
                     })),
-                    total: { A: totalA, R: totalR },
+                    all: { A: totalA, R: totalR },
                 }
             }
 
             let formated = formatData(suggestForEdit)
-            return _.map(airLines, (item, key) => {
-                let current = formated[item.key]
-                return { ...current, airline: item.cnName, A: current.A, R: current.R }
+
+            return _.map(this.airLinesGroup, (item, key) => {
+                let current = formated[key]
+                return {
+                    ...current,
+                    airline: item,
+                    A: current ? current.A : 0,
+                    R: current ? current.R : 0,
+                }
             })
         },
         trHandle(row, type) {

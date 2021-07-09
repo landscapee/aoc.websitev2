@@ -216,10 +216,10 @@ export default {
         position: absolute;
     }
 
-    $columnTotal: 25;
-    $rowTotal: 10;
-    $unitWidth: 100% / $columnTotal;
-    $unitHeight: 100% / $rowTotal;
+    // $columnTotal: 25;
+    // $rowTotal: 10;
+    $unitWidth: 4%;
+    $unitHeight: 10%;
 
     @for $row from 0 through 10 {
         @for $col from 0 through 25 {
