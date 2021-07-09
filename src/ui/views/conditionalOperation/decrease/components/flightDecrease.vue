@@ -22,24 +22,12 @@
     </div>
 </template>
 <script>
-const airLinesShort = {
-    CA: '国航',
-    '3U': '川航',
-    MU: '东航',
-    CZ: '南航',
-    EU: '成航',
-    '8L': '祥航',
-    other: '其他',
-}
-const flightIndicator = {
-    D: '国内',
-    M: '混合',
-    R: '地区',
-    I: '国际',
-}
-
+import { mapGetters } from 'vuex'
 export default {
-    props: ['decreaseFlights'],
+    props: ['decreaseFlights', 'airLinesGroup'],
+    computed: {
+        ...mapGetters(['getFlightIndicator']),
+    },
     data() {
         return {
             navLists: [
@@ -58,10 +46,12 @@ export default {
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    width: '80px',
                 },
                 {
                     key: '',
                     label: '计划',
+                    width: '90px',
                     display: ({ row }) => {
                         return this.$moment(row.scheduleTime).format('HH:mm(DD)')
                     },
@@ -69,39 +59,41 @@ export default {
                 {
                     key: '',
                     label: '航司',
+                    width: '160px',
                     display: ({ row }) => {
-                        return airLinesShort[row.airlineCode]
-                            ? airLinesShort[row.airlineCode]
-                            : '其他'
+                        return row.airlineCnName
                     },
                 },
                 {
                     key: 'flightType',
                     label: '航班类型',
+                    width: '80px',
                 },
                 {
                     key: '',
                     label: '航线',
                     display: ({ row }) => {
-                        return `成都-${row.direction ? row.direction : row.displayRouter[1]}`
+                        return row.displayRouter.join('-')
                     },
                 },
                 {
                     key: 'flightIndicator',
                     label: '国际性质',
+                    width: '80px',
                     display: ({ row }) => {
-                        return flightIndicator[row.flightIndicator]
-                            ? flightIndicator[row.flightIndicator]
+                        return this.getFlightIndicator[row.flightIndicator]
+                            ? this.getFlightIndicator[row.flightIndicator]
                             : '其他'
                     },
                 },
-                {
-                    key: 'level',
-                    label: '调时/调减',
-                    display: ({ row }) => {
-                        return row.level ? (row.level == 'reduce' ? '调减' : '调时') : '-'
-                    },
-                },
+                // {
+                //     key: 'level',
+                //     label: '调时/调减',
+                //     width: '90px',
+                //     display: ({ row }) => {
+                //         return row.level ? (row.level == 'reduce' ? '调减' : '调时') : '-'
+                //     },
+                // },
             ],
             flightsGroup: {},
             tableData: [],
@@ -130,7 +122,7 @@ export default {
             })
 
             this.flightsGroup = _.groupBy(val, (list) => {
-                if (airLinesShort[list.airlineCode]) {
+                if (this.airLinesGroup[list.airlineCode]) {
                     return list.airlineCode
                 } else {
                     return 'other'
@@ -147,7 +139,7 @@ export default {
             if (idx == 0) {
                 this.tableData = this.decreaseFlights
             } else {
-                this.tableData = this.flightsGroup[this.navLists[idx].code]
+                this.tableData = this.flightsGroup[this.navLists[idx].code] || []
             }
         },
         setRowClassName({ row }) {
@@ -163,7 +155,9 @@ export default {
                 if (list.code == 'all') {
                     list.count = this.decreaseFlights.length
                 } else {
-                    list.count = this.flightsGroup[list.code].length || 0
+                    list.count = this.flightsGroup[list.code]
+                        ? this.flightsGroup[list.code].length
+                        : 0
                 }
             })
         },

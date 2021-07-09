@@ -6,104 +6,167 @@
             </div>
         </div>
         <el-row tag="ul" class="showDetails">
-            <el-col tag="li" :span="6">全部(27/27)</el-col>
-            <el-col tag="li" :span="6">川航(7/7)</el-col>
-            <el-col tag="li" :span="6">东航(7/7)</el-col>
-            <el-col tag="li" :span="6">南航(7/7)</el-col>
-        </el-row>
-        <el-row tag="ul" class="showDetails">
-            <el-col tag="li" :span="6">成航(7/7)</el-col>
-            <el-col tag="li" :span="6">藏航(7/7)</el-col>
-            <el-col tag="li" :span="6">深航(7/7)</el-col>
-            <el-col tag="li" :span="6">祥航(7/7)</el-col>
+            <el-col tag="li" :span="6" v-for="(value,key) in airLinesGroup" :key="key">{{value}}({{getKeyNum(key)}}/{{getTotleNum(key)}})</el-col>
         </el-row>
         <div class="tab">
-            调时航班(23/20)
+            调时航班({{get(reduceFlightObj,'A.length', 0)}}/{{APlanLength}})
         </div>
         <div class="tableBox">
-            <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+            <ele-table :columnConfig="columnConfig1" :tableData="reduceFlightObj.A"></ele-table>
         </div>
         <div class="tab">
-            调减航班(23/20)
+            调减航班({{get(reduceFlightObj,'R.length', 0)}}/{{RPlanLength}})
         </div>
         <div class="tableBox">
-            <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+            <ele-table :columnConfig="columnConfig2" :tableData="reduceFlightObj.R"></ele-table>
         </div>
         <div class="buttonBox">
-            <el-button type="primary" size="mini">发布</el-button>
+            <el-button type="danger" size="mini" :disabled="!$hasRole('edit-audit',false)">驳回</el-button>
+            <!-- ||currentReduce.reduceInfo.status==1 -->
+            <el-button type="primary" size="mini" @click="submitData" :disabled="!$hasRole('edit-audit',false)">发布</el-button>
         </div>
     </div>
 </template>
 <script>
 export default {
+    props: ['currentReduce', 'reduceFlight', 'airLinesGroup'],
     data() {
         return {
-            columnConfig: [
+            columnConfig1: [
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    width: '80px',
                 },
                 {
-                    key: 'sta',
-                    label: '计划',
+                    key: '',
+                    label: '计划时间',
+                    width: '90px',
+                    display: ({ row }) => {
+                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
+                    },
                 },
                 {
-                    key: 'code',
-                    label: '航司',
+                    key: '',
+                    label: '航线',
+                    display: ({ row }) => {
+                        return row.displayRouter.join('-')
+                    },
                 },
                 {
                     key: 'flightType',
                     label: '航班类型',
+                    width: '90px',
                 },
             ],
-            tableData: [],
+            columnConfig2: [
+                {
+                    key: 'flightNo',
+                    label: '航班号',
+                    width: '80px',
+                },
+                {
+                    key: '',
+                    label: '计划时间',
+                    width: '90px',
+                    display: ({ row }) => {
+                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
+                    },
+                },
+                {
+                    key: '',
+                    label: '航线',
+                    display: ({ row }) => {
+                        return row.displayRouter.join('-')
+                    },
+                },
+                {
+                    key: '',
+                    label: '调减时刻',
+                    width: '90px',
+                    display: ({ row }) => {
+                        return this.$moment(row.updateScheduleTime).format('HH:mm(DD)')
+                    },
+                },
+            ],
+            reduceFlightObj: {
+                A: [],
+                R: [],
+            },
+            RPlanLength: 0,
+            APlanLength: 0,
+            get: _.get,
         }
     },
-    mounted() {
-        setTimeout(() => {
-            this.tableData = [
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-            ]
-        }, 1000)
+    mounted() {},
+    watch: {
+        currentReduce: function (val) {
+            this.RPlanLength = 0
+            this.APlanLength = 0
+            ;(this.reduceFlightObj = {
+                A: [],
+                R: [],
+            }),
+                this.getAllReduceFlight()
+            this.getPlanLength()
+        },
+    },
+    methods: {
+        submitData() {
+            this.$confirm('确认发送到fims?', '提示', {
+                type: 'warning',
+                center: true,
+            }).then(() => {
+                this.$request
+                    .post(
+                        'adverse',
+                        'adjust/sendToFims',
+                        {
+                            reduceId: this.currentReduce.reduceId,
+                        },
+                        false,
+                        'PUT'
+                    )
+                    .then((res) => {})
+            })
+        },
+        getKeyNum(key) {
+            let num = this.reduceFlight[key] ? this.reduceFlight[key].length : 0
+            if (key == 'all') {
+                _.map(this.reduceFlight, (value, key) => {
+                    num += value.length
+                })
+            }
+            return num
+        },
+        getTotleNum(key) {
+            let totalPlanAdjust = _.get(this.currentReduce, `plan.${key}.totalPlanAdjust`, 0)
+            let totalPlanReduce = _.get(this.currentReduce, `plan.${key}.totalPlanReduce`, 0)
+
+            let num = totalPlanAdjust + totalPlanReduce
+            if (key == 'all') {
+                num = this.RPlanLength + this.APlanLength
+            }
+            return num
+        },
+        getPlanLength() {
+            _.map(this.currentReduce.plan, (item) => {
+                this.RPlanLength += item.totalPlanReduce
+                this.APlanLength += item.totalPlanAdjust
+            })
+        },
+        getAllReduceFlight() {
+            let allReduceFlight = []
+            _.map(this.reduceFlight, (item, key) => {
+                _.map(item, (flight) => {
+                    allReduceFlight.push({ ...flight, airlineCode: key })
+                })
+            })
+            allReduceFlight.map((flight) => {
+                this.reduceFlightObj[flight.type].push(flight)
+            })
+            console.log(this.reduceFlightObj)
+        },
     },
 }
 </script>

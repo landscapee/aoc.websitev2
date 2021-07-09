@@ -15,7 +15,7 @@ import {
   flight_runwayModels
 } from "../manage/home";
 import Logger from "../../lib/logger";
-import { forEach,flow} from 'lodash';
+import { forEach,flow,mapValues} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 
 import { flightDB } from '../lib/storage';
@@ -91,6 +91,13 @@ const subWSEvent = () => {
 
 };
 
+let getReduceFlights = (reduceFlight) => {
+	checkWebsocketResponseDataFinish().then(() => {
+		let flightsWithAirline = mapValues(reduceFlight, (item) => flow([proFlightFields, addSerialNumber])(getFlightByIds(item)));
+		worker.publish('Web', 'Decrease.GetReduceFlights.Response', flightsWithAirline);
+	});
+};
+
 
 let getFlight = (query) => {
 	checkWebsocketResponseDataFinish().then(() => {
@@ -104,6 +111,7 @@ export const init = (worker_) => {
     worker = worker_;
     console.log(111)
     worker.subscribe(`AdverseCondition.GetFlight`, getFlight);
+    worker.subscribe(`Decrease.GetReduceFlights`, getReduceFlights);
 //   worker.subscribe('Situation.Network.Connected', (c) => {
 //     clientObj.homeClient = new SocketWrapper(c);
 //   });

@@ -15,7 +15,7 @@
             <div class="form">
                 <el-form label-width="80px">
                     <el-form-item label="轮次">
-                        <el-col :span="18">
+                        <el-col :span="16">
                             <el-dropdown trigger="click" @command="handleReducePlanNo">
                                 <span class="el-dropdown-link">
                                     第{{chineseNum[subData.reduceplanNo-1]}}轮<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
@@ -26,12 +26,12 @@
                                 </el-dropdown-menu>
                             </el-dropdown>
                         </el-col>
-                        <el-col :span="4">
-                            <el-button round type="danger" size="mini" @click="restar">重新开始</el-button>
+                        <el-col :span="8">
+                            <el-button round type="danger" size="mini" @click="restar" :disabled="!$hasRole('edit-new-round',false)">重新开始第一轮</el-button>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="影响时间">
-                        <el-date-picker :disabled="editDisabled" v-model="influenceTime" style="width:100%" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="timestamp"></el-date-picker>
+                        <el-date-picker :disabled="editDisabled" v-model="influenceTime" style="width:100%" type="datetimerange" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="timestamp" format="yyyy-MM-dd HH:mm"></el-date-picker>
                     </el-form-item>
                     <el-row>
                         <el-col :span="12">
@@ -43,7 +43,7 @@
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="方向">
-                                <el-select :disabled="editDisabled" v-model="subData.directions" placeholder="请选择" size="mini">
+                                <el-select :disabled="editDisabled" v-model="subData.direction" placeholder="请选择" size="mini">
                                     <el-option v-for="item in directionOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                                 </el-select>
                             </el-form-item>
@@ -52,7 +52,7 @@
                     <el-row>
                         <el-col :span="12">
                             <el-form-item label="机场">
-                                <el-select :disabled="editDisabled" v-model="subData.airports" placeholder="请选择" size="mini" filterable>
+                                <el-select :disabled="editDisabled" v-model="subData.airport" placeholder="请选择" size="mini" filterable>
                                     <el-option label="全部" value=""></el-option>
                                     <el-option v-for="(value,key) in allAirportOptions" :key="key" :label="value" :value="key"></el-option>
                                 </el-select>
@@ -60,20 +60,20 @@
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="下降比例">
-                                <el-input :disabled="editDisabled" type="number" v-model="subData.declineRatio" placeholder="下降比例" size="mini"></el-input>
+                                <el-input :disabled="editDisabled||!$hasRole('edit-decline-ratio', false)" type="number" v-model="subData.rate" placeholder="下降比例" size="mini" @blur="rateChange" @keyup.enter.native="rateChange"></el-input>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
                     <el-form-item label="恢复时间">
-                        <el-date-picker :disabled="editDisabled" v-model="recoverTime" type="datetimerange" style="width:100%" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="timestamp"></el-date-picker>
+                        <el-date-picker :disabled="editDisabled" v-model="recoverTime" type="datetimerange" style="width:100%" range-separator="-" start-placeholder="开始日期" end-placeholder="结束日期" value-format="timestamp" format="yyyy-MM-dd HH:mm"></el-date-picker>
                     </el-form-item>
                 </el-form>
             </div>
             <div class="table">
                 <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
                 <div class="buttonBox">
-                    <el-button type="primary" size="mini" @click="submitData">提交</el-button>
+                    <el-button type="primary" size="mini" @click="submitData" :disabled="editDisabled||!$hasRole('edit-submit-calc',false)">提交</el-button>
                 </div>
             </div>
         </div>
@@ -84,7 +84,7 @@
 import PostalStore from '@/ui/lib/postalStore'
 let postalStore = new PostalStore()
 export default {
-    props: ['currentReduce', 'currentReduceLists'],
+    props: ['currentReduce', 'currentReduceLists', 'currentType'],
     data() {
         return {
             navFalg: 1,
@@ -95,41 +95,49 @@ export default {
                     key: 'adjust',
                     label: '调时/调减',
                     width: '90px',
+                    nullValue: '-',
                 },
                 {
                     key: 'total',
                     label: '总数',
                     width: '57px',
+                    nullValue: '-',
                 },
                 {
                     key: 'CA',
                     label: '国航',
                     width: '57px',
+                    nullValue: '-',
                 },
                 {
                     key: '3U',
                     label: '川航',
                     width: '57px',
+                    nullValue: '-',
                 },
                 {
                     key: 'MU',
                     label: '东航',
                     width: '57px',
+                    nullValue: '-',
                 },
                 {
                     key: 'CZ',
                     label: '南航',
                     width: '57px',
+                    nullValue: '-',
                 },
                 {
                     key: 'EU',
                     label: '成航',
                     width: '57px',
+                    nullValue: '-',
                 },
                 {
                     key: '8L',
                     label: '祥鹏',
                     width: '57px',
+                    nullValue: '-',
                 },
             ],
             tableData: [{ adjust: '计划调时' }, { adjust: '计划调减' }],
@@ -151,10 +159,10 @@ export default {
             chineseNum: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一'],
 
             subData: {
-                airports: '',
-                directions: '',
+                airport: '',
+                direction: '',
                 movement: '',
-                declineRatio: '',
+                rate: '',
                 recoverBeginTime: '',
                 recoverEndTime: '',
                 startTime: '',
@@ -162,8 +170,8 @@ export default {
                 reduceplanNo: 1,
                 status: 1,
             },
-            recoverTime: [],
-            influenceTime: [],
+            recoverTime: [new Date().getTime(), new Date().getTime()],
+            influenceTime: [new Date().getTime(), new Date().getTime()],
             editDisabled: false,
         }
     },
@@ -179,10 +187,20 @@ export default {
                 return
             }
             console.log(val)
-            this.subData = val.reduceInfo
-            console.log(this.subData)
 
-            this.resetReduceInfo(val.reduceInfo)
+            this.subData = {
+                airport: val.reduceInfo.airports,
+                direction: val.reduceInfo.directions,
+                movement: val.reduceInfo.movement,
+                rate: val.reduceInfo.declineRatio,
+                recoverBeginTime: val.reduceInfo.recoverBeginTime,
+                recoverEndTime: val.reduceInfo.recoverEndTime,
+                startTime: val.reduceInfo.beginTime,
+                endTime: val.reduceInfo.endTime,
+                reduceplanNo: val.reduceInfo.reduceplanNo,
+                status: val.reduceInfo.status,
+            }
+            console.log(this.subData)
 
             if (this.subData.status == 1) {
                 this.editDisabled = false
@@ -192,23 +210,51 @@ export default {
 
             this.recoverTime = [val.reduceInfo.recoverBeginTime, val.reduceInfo.recoverEndTime]
             this.influenceTime = [val.reduceInfo.beginTime, val.reduceInfo.endTime]
-            this.tableData = [
-                {
-                    adjust: '计划调时',
-                    ..._.mapValues(val.suggest, (item) => item.A || 0),
-                },
-                {
-                    adjust: '计划调减',
-                    ..._.mapValues(val.suggest, (item) => item.R || 0),
-                },
-            ]
+            this.setSuggest(val.suggest)
+        },
+        currentType: function (val) {
+            this.navFalg = val
         },
     },
     methods: {
-        resetReduceInfo(reduceInfo) {},
+        rateChange() {
+            if (
+                this.subData.rate < 25 ||
+                !_.isInteger(parseInt(this.subData.rate)) ||
+                this.subData.rate > 100
+            ) {
+                this.$message.error('请输入25-100之间的整数')
+                return false
+            }
+            let data = {
+                direction: this.subData.direction,
+                movement: this.subData.movement,
+                rate: this.subData.rate,
+                startTime: this.influenceTime[0],
+                endTime: this.influenceTime[1],
+            }
+
+            this.$request.post('adverse', 'adjust/getSuggestReduce', data).then((res) => {
+                if (res.data) {
+                    this.setSuggest(res.data)
+                }
+            })
+        },
+        setSuggest(suggest) {
+            this.tableData = [
+                {
+                    adjust: '计划调时',
+                    ..._.mapValues(suggest, (item) => item.A || 0),
+                },
+                {
+                    adjust: '计划调减',
+                    ..._.mapValues(suggest, (item) => item.R || 0),
+                },
+            ]
+            console.log(this.tableData)
+        },
         navHandle(idx) {
-            if (this.judgeStatus()) {
-                //判断是否有未结束
+            if (_.get(this.currentReduce, 'reduceInfo.status') === 0) {
                 this.$alert('当前轮次尚未结束,不能切换!', '提示', {
                     type: 'warning',
                     center: true,
@@ -220,45 +266,55 @@ export default {
             this.$emit('change-type', idx)
         },
         submitData() {
-            this.subData.recoverBeginTime = this.recoverTime[0]
-            this.subData.recoverEndTime = this.recoverTime[1]
-            this.subData.beginTime = this.influenceTime[0]
-            this.subData.endTime = this.influenceTime[1]
+            if (
+                this.subData.rate < 25 ||
+                !_.isInteger(parseInt(this.subData.rate)) ||
+                this.subData.rate > 100
+            ) {
+                this.$message.error('下降比例请输入25-100之间的整数')
+                return false
+            }
+            let data = _.cloneDeep(this.subData)
+
+            data.recoverBeginTime = this.recoverTime[0]
+            data.recoverEndTime = this.recoverTime[0]
+            data.startTime = this.recoverTime[0]
+            data.endTime = this.recoverTime[0]
+            data.type = this.navFalg
+
+            console.log(data)
+
+            this.$request.post('adverse', 'adjust/newReduce', data).then((res) => {
+                if (res.data) {
+                }
+            })
 
             console.log(this.subData)
         },
         handleReducePlanNo(reduceplanNo) {
+            if (_.get(this.currentReduce, 'reduceInfo.status') === 0) {
+                this.$alert('当前轮次尚未结束,不能切换!', '提示', {
+                    type: 'warning',
+                    center: true,
+                })
+                return
+            }
             if (reduceplanNo != 'add') {
                 this.$emit('change-planno', reduceplanNo)
             } else {
-                this.$emit('add-planno')
+                if (this.$hasRole('edit-add-round', true)) {
+                    this.$emit('add-planno')
+                }
             }
         },
         restar() {
-            if (this.judgeStatus()) {
-                //判断是否有未结束
+            if (_.get(this.currentReduce, 'reduceInfo.status') === 0) {
                 this.$alert('当前轮次尚未结束,不能重新开始!', '提示', {
                     type: 'warning',
                     center: true,
                 })
                 return
             }
-        },
-        judgeStatus() {
-            let result = false
-            this.currentReduceLists.map((list) => {
-                if (list.reduceInfo.status != 1) {
-                    result = true
-                }
-            })
-            if (result) {
-                this.$alert('当前轮次尚未结束,不能新增轮次!', '提示', {
-                    type: 'warning',
-                    center: true,
-                })
-            }
-
-            return result
         },
     },
 }
