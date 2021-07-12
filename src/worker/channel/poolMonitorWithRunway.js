@@ -68,13 +68,13 @@ const subWSEvent = () => {
         // worker.publish('Web','monitor.queue',{data:res})
     });
     //跑道模式和禁用状态
-    client.sub('/Flight/runwayModels',(res)=>{
-        memoryStore.setItem('Pools', { runwayModels: res })
-
-        let data=transRunwayData(worker )
-        // let data=getFlightDatas(res)
-        // worker.publish('Web','runwayModels',{data:res})
-    })
+    // client.sub('/Flight/runwayModels',(res)=>{
+    //     memoryStore.setItem('Pools', { runwayModels: res })
+    //
+    //     let data=transRunwayData(worker )
+    //     // let data=getFlightDatas(res)
+    //     // worker.publish('Web','runwayModels',{data:res})
+    // })
 
 };
 
@@ -89,6 +89,7 @@ export const init = (worker_,httpRequest_) => {
     });
 
     worker.subscribe('Page.poolMonitorWithRunway.Start',()=>{
+        worker.publish('worker', 'Get.runway.Data')
         situationStart(worker);
         checkClient('situationClient').then(()=>{
             subWSEvent();
@@ -99,8 +100,7 @@ export const init = (worker_,httpRequest_) => {
     worker.subscribe('Page.poolMonitorWithRunway.Stop',()=>{
         situationStop(worker);
         forEach(clientObj,item=>{
-            console.log(item)
-            item.unSubAll()
+             item.unSubAll()
         })
     })
 };

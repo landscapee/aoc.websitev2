@@ -3,7 +3,7 @@ import App from '@/ui/App.vue';
 import WorkerRegist from './workerRegist.js';//注册worker
 import store from './src/ui/store'//vuex
 import postal from 'postal';//广播
-// import Worker from 'worker/manage/tf-init';
+ // import Worker from 'worker/manage/tf-init';
 //引入全套element
 import ElementUI from 'element-ui';
 import locale from 'element-ui/lib/locale/lang/en'
@@ -21,7 +21,7 @@ import {memoryStore} from "./src/worker/lib/memoryStore";
 import '@/ui/config/vuecomponent'
 import Logger from "@/lib/logger";
 
-import {v4 as uuidv4} from "uuid";
+import   {v4 as uuidv4} from "uuid";
 Vue.prototype.$uuid = uuidv4;
 Vue.prototype.$logger = Logger;
 
@@ -69,6 +69,8 @@ new Vue({
     i18n,
     template: '<App />',
     created () {
+         let clientId = uuidv4();
+         console.log('clientId',clientId);
         const workerProces = new WorkerRegist();
         workerProces.start();
         // let myWorker;
@@ -77,7 +79,7 @@ new Vue({
         // }
         let token = sessionStorage.token;
         let now = moment().valueOf()
-        memoryStore.setItem('global',{token, now});
+        memoryStore.setItem('global',{token, now,clientId});
         postal.publish({
             channel: 'Worker',
             topic: 'init',
@@ -85,7 +87,8 @@ new Vue({
                 servers,
                 httpConfig,
                 token,
-                now
+                now,
+                clientId
             },
         });
     }

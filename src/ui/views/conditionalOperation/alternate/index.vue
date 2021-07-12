@@ -34,7 +34,7 @@
 					</ele-table>
 				</div>
 				<div class="other" v-else>
-					<component   :data="getData(opt)" :is="opt.component"></component>
+					<component  :data="getData(opt)" :is="opt.component"></component>
  				</div>
 			</div>
 

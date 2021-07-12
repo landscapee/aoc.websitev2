@@ -83,6 +83,7 @@ export const transRunwayData = (worker, time) => {
 
         let classifyFn = (data, key) => {
             let len = key + 'Len'
+
             let checkObj = {}
             // let zIndex = 1000 //设置层级 时间越小 层级越高
             map(data, (k, l) => {
@@ -120,31 +121,19 @@ export const transRunwayData = (worker, time) => {
         })
         usage && endObj.push(usage)
         worker.publish('Web', 'runwayModels', endObj)
-        // worker.publish('Web','runwayModels',{monitorQueue,runwayModels})
 
-        // map(monitorQueue.normal,(k,l)=>{
-        //     let time=moment(k.ctot).format('HH:mm')
-        //     let o=normalTimeObj[k.runway][k.ctot]
-        //     if(o){
-        //         runwayObj[k.runway].delay[o.len].push({...k,displayCTOT:time})
-        //     }else{
-        //         normalTimeObj[k.runway][k.ctot]={len:num}
-        //         runwayObj[k.runway].delay=[[{...k,displayCTOT:time}]]
-        //         num++
-        //     }
-        // });
     }
 }
 
 
 export const situationStart = (posWorker) => {
-    posWorker.subscribe('Situation.Change.Sync', (data) => {
-
-    })
+    posWorker.subscribe('push.runway.Data', () => {
+        transRunwayData(posWorker )
+    });
 }
 
 export const situationStop = (posWorker) => {
-    posWorker.unsubscribe('Situation.Change.Sync')
+    posWorker.unsubscribe('push.runway.Data')
 }
 
 

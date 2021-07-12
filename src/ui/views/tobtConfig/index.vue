@@ -4,7 +4,7 @@
 			<div class="itemTitle ">
 				<div class="div1">
 					<span></span>
-					<span> 实时停机位使用情况</span>
+					<span  > TOBT配置</span>
 
 				</div>
 				<div class="div2 cursor" @click="add(null)"><span  >新增</span></div>
