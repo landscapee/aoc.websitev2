@@ -212,7 +212,7 @@ export default {
                                 // }
 
                                 if (
-                                    (res.responseCode == 30003 || res.responseCode == 1000) &&
+                                    (res.responseCode == 30003 ||res.responseCode == 30002 || res.responseCode == 1000) &&
                                     res.data
                                 ) {
                                   let storageData = {
@@ -226,6 +226,9 @@ export default {
                                         'userData',
                                         JSON.stringify(_.omit(res.data, 'token'))
                                     )
+                                    if(res.responseCode == 30002){
+                                        this.$message({ message: res.responseMessage, type: 'warning' })
+                                    }
                                     this.$router.push('/menu')
                                     // this.routerHandle(res.data.menus || [])
                                 } else {

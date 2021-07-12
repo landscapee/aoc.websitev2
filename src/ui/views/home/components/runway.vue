@@ -5,7 +5,7 @@
                 跑道运行模式
             </div>
             <div class="direction">
-                <el-select v-model="selectDirection" placeholder="请选择" @change="loadSelectObj">
+                <el-select v-model="selectDirection" placeholder="请选择" @change="loadSelectObj" :disabled="true">
                     <el-option label="北" value="north"></el-option>
                     <el-option label="南" value="south"></el-option>
                 </el-select>
@@ -13,11 +13,11 @@
             <div>
                 <div class="selectGroup" v-for="(item,idx) in selectArr" :key="idx">
                     <div class="label">{{item.label}}</div>
-                    <el-select v-model="item.select" placeholder="请选择">
+                    <el-select v-model="item.select" placeholder="请选择" :disabled="true">
                         <el-option :label="value" :value="key" v-for="(value,key) in item.value" :key="key"></el-option>
                     </el-select>
                 </div>
-                <button @click="runwayHandle">提 交</button>
+                <!-- <button @click="runwayHandle">提 交</button> -->
             </div>
         </div>
     </div>

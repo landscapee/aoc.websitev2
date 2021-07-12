@@ -6,104 +6,211 @@
             </div>
         </div>
         <el-row tag="ul" class="showDetails">
-            <el-col tag="li" :span="6">全部(27/27)</el-col>
-            <el-col tag="li" :span="6">川航(7/7)</el-col>
-            <el-col tag="li" :span="6">东航(7/7)</el-col>
-            <el-col tag="li" :span="6">南航(7/7)</el-col>
-        </el-row>
-        <el-row tag="ul" class="showDetails">
-            <el-col tag="li" :span="6">成航(7/7)</el-col>
-            <el-col tag="li" :span="6">藏航(7/7)</el-col>
-            <el-col tag="li" :span="6">深航(7/7)</el-col>
-            <el-col tag="li" :span="6">祥航(7/7)</el-col>
+            <el-col tag="li" :span="6" v-for="(value,key) in airLinesGroup" :class="key==confirmAdjustFilter?'active':''" @click.native="navHandle(key)" :key="key">{{value}}({{getKeyNum(key)}}/{{getTotleNum(key)}})</el-col>
         </el-row>
         <div class="tab">
-            调时航班(23/20)
+            调时航班({{get(reduceFlightObj,'A.length', 0)}}/{{APlanLength}})
         </div>
         <div class="tableBox">
-            <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+            <ele-table :columnConfig="columnConfig1" :tableData="reduceFlightObj.A"></ele-table>
         </div>
         <div class="tab">
-            调减航班(23/20)
+            调减航班({{get(reduceFlightObj,'R.length', 0)}}/{{RPlanLength}})
         </div>
         <div class="tableBox">
-            <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+            <ele-table :columnConfig="columnConfig2" :tableData="reduceFlightObj.R"></ele-table>
         </div>
         <div class="buttonBox">
-            <el-button type="primary" size="mini">发布</el-button>
+            <el-button type="danger" size="mini" :disabled="!$hasRole('edit-audit',false)||getBack()">驳回</el-button>
+            <!-- ||currentReduce.reduceInfo.status==1 -->
+            <el-button type="primary" size="mini" @click="submitData" :disabled="!$hasRole('edit-audit',false)">发布</el-button>
         </div>
     </div>
 </template>
 <script>
 export default {
+    props: ['currentReduce', 'reduceFlight', 'airLinesGroup'],
     data() {
         return {
-            columnConfig: [
+            columnConfig1: [
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    width: '80px',
                 },
                 {
-                    key: 'sta',
-                    label: '计划',
+                    key: '',
+                    label: '计划时间',
+                    width: '90px',
+                    display: ({ row }) => {
+                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
+                    },
                 },
                 {
-                    key: 'code',
-                    label: '航司',
+                    key: '',
+                    label: '航线',
+                    display: ({ row }) => {
+                        return row.displayRouter.join('-')
+                    },
                 },
                 {
                     key: 'flightType',
                     label: '航班类型',
+                    width: '90px',
                 },
             ],
-            tableData: [],
+            columnConfig2: [
+                {
+                    key: 'flightNo',
+                    label: '航班号',
+                    width: '80px',
+                },
+                {
+                    key: '',
+                    label: '计划时间',
+                    width: '90px',
+                    display: ({ row }) => {
+                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
+                    },
+                },
+                {
+                    key: '',
+                    label: '航线',
+                    display: ({ row }) => {
+                        return row.displayRouter.join('-')
+                    },
+                },
+                {
+                    key: '',
+                    label: '调减时刻',
+                    width: '90px',
+                    display: ({ row }) => {
+                        return this.$moment(row.updateScheduleTime).format('HH:mm(DD)')
+                    },
+                },
+            ],
+            reduceFlightObj: {
+                A: [],
+                R: [],
+            },
+            RPlanLength: 0,
+            APlanLength: 0,
+            get: _.get,
+            confirmAdjustFilter: '',
         }
     },
-    mounted() {
-        setTimeout(() => {
-            this.tableData = [
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-                {
-                    flightNo: '3U8888',
-                    sta: '09:00(23)',
-                    code: ' 国航',
-                    flightType: '正班',
-                    flightLine: ' 成都-上海',
-                    type: '地区',
-                    in: '调时',
-                    inType: 0,
-                },
-            ]
-        }, 1000)
+    mounted() {},
+    watch: {
+        currentReduce: function (val) {
+            this.RPlanLength = 0
+            this.APlanLength = 0
+            this.reduceFlightObj = {
+                A: [],
+                R: [],
+            }
+            this.getAllReduceFlight()
+            this.getPlanLength()
+        },
+    },
+    methods: {
+        navHandle(key) {
+            this.confirmAdjustFilter = key == this.confirmAdjustFilter ? '' : key
+
+            this.getAllReduceFlight()
+            this.getPlanLength()
+        },
+        submitData() {
+            this.$confirm('确认发送到fims?', '提示', {
+                type: 'warning',
+                center: true,
+            }).then(() => {
+                this.$request
+                    .post(
+                        'adverse',
+                        'adjust/sendToFims?reduceId=' + this.currentReduce.reduceId,
+                        null,
+                        false,
+                        'PUT'
+                    )
+                    .then((res) => {
+                        this.$alert(res.message, '提示', {
+                            type: 'success',
+                            center: true,
+                        })
+                    })
+            })
+        },
+        getKeyNum(key) {
+            let num = this.reduceFlight[key] ? this.reduceFlight[key].length : 0
+            if (key == 'all') {
+                _.map(this.reduceFlight, (value, key) => {
+                    num += value.length
+                })
+            }
+            return num
+        },
+        getTotleNum(key) {
+            let totalPlanAdjust = 0
+            let totalPlanReduce = 0
+
+            if (key == 'all') {
+                _.map(this.currentReduce.plan, (item) => {
+                    totalPlanAdjust += item.totalPlanAdjust
+                    totalPlanReduce += item.totalPlanReduce
+                })
+            } else {
+                totalPlanAdjust = _.get(this.currentReduce, `plan.${key}.totalPlanAdjust`, 0)
+                totalPlanReduce = _.get(this.currentReduce, `plan.${key}.totalPlanReduce`, 0)
+            }
+            return totalPlanAdjust + totalPlanReduce
+        },
+        getPlanLength() {
+            this.APlanLength = 0
+            this.RPlanLength = 0
+
+            if (this.confirmAdjustFilter && this.confirmAdjustFilter != 'all') {
+                this.APlanLength = _.get(
+                    this.currentReduce,
+                    `plan.${this.confirmAdjustFilter}.totalPlanAdjust`,
+                    0
+                )
+                this.RPlanLength = _.get(
+                    this.currentReduce,
+                    `plan.${this.confirmAdjustFilter}.totalPlanReduce`,
+                    0
+                )
+            } else {
+                _.map(this.currentReduce.plan, (item) => {
+                    this.RPlanLength += item.totalPlanReduce
+                    this.APlanLength += item.totalPlanAdjust
+                })
+            }
+        },
+        getAllReduceFlight() {
+            let allReduceFlight = []
+            _.map(this.reduceFlight, (item, key) => {
+                _.map(item, (flight) => {
+                    allReduceFlight.push({ ...flight, airlineCode: key })
+                })
+            })
+
+            allReduceFlight.map((flight) => {
+                console.log(flight)
+                if (this.confirmAdjustFilter) {
+                    // flight
+                } else {
+                    this.reduceFlightObj[flight.type].push(flight)
+                }
+            })
+            console.log(this.reduceFlightObj)
+        },
+        getBack() {
+            return (
+                !this.confirmAdjustFilter ||
+                _.get(this.currentReduce, 'reduceInfo.status') === 1 ||
+                _.get(this.currentReduce, ['plan', this.confirmAdjustFilter, 'sendType']) !== 2
+            )
+        },
     },
 }
 </script>
@@ -144,6 +251,7 @@ export default {
             display: flex;
             align-items: center;
             height: 20px;
+            cursor: pointer;
         }
         li:before {
             content: '';
@@ -153,6 +261,9 @@ export default {
             background: #4181e9;
             border-radius: 2px;
             margin-right: 5px;
+        }
+        li.active {
+            color: #4181e9;
         }
     }
     .tab {

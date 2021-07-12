@@ -4,23 +4,22 @@
             <div class="name alib">推荐调时调减架次</div>
             <div class="right">
                 <span style="margin-right:6px">反馈时长</span>
-                <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" />
-                <!-- <span style="margin:0 15px 0 5px;color: #60779b;">分钟</span> -->
+                <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" :disabled="!$hasRole('edit-handle-suggest',false)" />
             </div>
         </div>
         <div class="table">
-            <ele-table :columnConfig="columnConfig" :tableData="tableData" :key="tableKey" @table-input-change="tableInputChange"></ele-table>
+            <ele-table :columnConfig="columnConfig" :tableData="tableData" :key="tableKey"></ele-table>
         </div>
     </div>
 </template>
 <script>
 export default {
-    props: ['currentReduce'],
+    props: ['currentReduce', 'airLinesGroup'],
     data() {
         return {
-            airLines: [],
             tableKey: 0,
             feedBackTime: 30,
+            showInput: '',
             columnConfig: [
                 {
                     key: 'airline',
@@ -29,20 +28,47 @@ export default {
                 {
                     key: 'R',
                     label: '计划调减',
-                    input: true,
-                    inputShow: 'RInputShow',
+                    display: ({ row }) => {
+                        if (this.showInput == `R${row.airline}` && row.airline != '全部') {
+                            window.decRecommendInputHandle = this.decRecommendInputHandle(row, 'R')
+                            return `<input value="${row.R}" class="decRecommendInput" onchange="decRecommendInputHandle(this)"/>`
+                        } else {
+                            return row.R
+                        }
+                    },
                     click: ({ row }) => {
-                        this.trHandle(row, 'R')
+                        if (
+                            !this.$hasRole('edit-handle-suggest', false) ||
+                            row.airline === '全部' ||
+                            row.sendType !== 0
+                        ) {
+                            return
+                        }
+
+                        this.showInput = `R${row.airline}`
                     },
                 },
                 {
                     key: 'A',
                     label: '计划调整',
-                    input: true,
-                    inputShow: 'AInputShow',
+                    display: ({ row }) => {
+                        if (this.showInput == `A${row.airline}` && row.airline != '全部') {
+                            window.decRecommendInputHandle = this.decRecommendInputHandle(row, 'A')
+                            return `<input value="${row.A}" class="decRecommendInput" onchange="decRecommendInputHandle(this)"/>`
+                        } else {
+                            return row.R
+                        }
+                    },
 
                     click: ({ row }) => {
-                        this.trHandle(row, 'A')
+                        if (
+                            !this.$hasRole('edit-handle-suggest', false) ||
+                            row.airline === '全部' ||
+                            row.sendType !== 0
+                        ) {
+                            return
+                        }
+                        this.showInput = `A${row.airline}`
                     },
                 },
                 {
@@ -54,18 +80,31 @@ export default {
                             display: () => {
                                 return '<i class="iconfont icon-fasong"></i>'
                             },
-                            disabled: (row) => {
+                            disabled: ({ row }) => {
                                 let result = false
+                                let hasFinish = _.get(this.currentReduce, 'reduceInfo.status') == 1
+                                let isTotalClickAble = _.some(
+                                    this.currentReduce.suggestForEdit,
+                                    (item) => item.sendType == '0' && item.airline !== '全部'
+                                )
+                                isTotalClickAble = isTotalClickAble && row.airline === '全部'
+
+                                if (isTotalClickAble) {
+                                    row.sendType = 0
+                                } else if (row.airline === '全部') {
+                                    row.sendType = 1
+                                }
+
                                 if (
+                                    !this.$hasRole('edit-handle-suggest', false) ||
                                     row.sendType != 0 ||
-                                    this.currentReduce.reduceInfo.status == 1
+                                    hasFinish
                                 ) {
                                     result = true
                                 }
                                 return result
                             },
                             click: ({ row }) => {
-                                console.log(row)
                                 this.rowSend(row)
                             },
                         },
@@ -77,13 +116,21 @@ export default {
     },
     watch: {
         currentReduce: function (val) {
+            if (!val) return
             this.plan = val.plan
-            this.tableData = this.formatSuggestForEdit(val.plan)
+            this.tableData =
+                JSON.stringify(val.plan) != '{}' ? this.formatSuggestForEdit(val.plan) : []
             this.feedBackTime = val.reduceInfo ? val.reduceInfo.feedbackTime : 30
         },
     },
     mounted() {},
     methods: {
+        decRecommendInputHandle(row, type) {
+            return (event) => {
+                row[type] = event.value ? parseInt(event.value) : 0
+                this.tableInputChange(row)
+            }
+        },
         formatSuggestForEdit(suggestForEdit) {
             const formatData = (data) => {
                 let totalA = 0
@@ -98,37 +145,22 @@ export default {
                         A: item.totalPlanAdjust,
                         R: item.totalPlanReduce,
                     })),
-                    total: { A: totalA, R: totalR },
+                    all: { A: totalA, R: totalR },
                 }
             }
-            const airLines = [
-                { key: 'total', cnName: '全部' },
-                { key: 'CA', cnName: '国航' },
-                { key: '3U', cnName: '川航' },
-                { key: 'MU', cnName: '东航' },
-                { key: 'CZ', cnName: '南航', AInputShow: false, RInputShow: false },
-                { key: 'EU', cnName: '成航', AInputShow: false, RInputShow: false },
-                { key: '8L', cnName: '祥航', AInputShow: false, RInputShow: false },
-                { key: 'other', cnName: '其他', AInputShow: false, RInputShow: false },
-            ]
+
             let formated = formatData(suggestForEdit)
-            return _.map(airLines, (item, key) => {
-                let current = formated[item.key]
-                return { ...current, airline: item.cnName, A: current.A, R: current.R }
+            return _.map(this.airLinesGroup, (item, key) => {
+                let current = formated[key]
+                return {
+                    ...current,
+                    airline: item,
+                    A: current ? current.A : 0,
+                    R: current ? current.R : 0,
+                }
             })
         },
-        trHandle(row, type) {
-            let index = _.findIndex(this.tableData, { id: row.id })
-            if (!this.tableData[index][type + 'InputShow']) {
-                this.tableData.map((list) => {
-                    list.AInputShow = false
-                    list.RInputShow = false
-                })
-                this.tableData[index][type + 'InputShow'] = true
-                this.tableKey++
-            }
-        },
-        tableInputChange({ row }) {
+        tableInputChange(row) {
             this.$request
                 .post(
                     'adverse',
@@ -146,25 +178,21 @@ export default {
                         message: res.message,
                         type: 'success',
                     })
-                    this.tableData.map((list) => {
-                        list.AInputShow = false
-                        list.RInputShow = false
-                    })
-                    this.tableKey++
+                    this.showInput = ''
                 })
         },
         rowSend(row) {
-            console.log(row)
             let idArrs = []
             if (row.airline == '全部') {
                 this.tableData.map((list) => {
-                    if (list) {
+                    if (list && list.id) {
                         idArrs.push(list.id)
                     }
                 })
             } else {
                 idArrs.push(row.id)
             }
+
             this.$confirm('确认发送调时调减计划到航司?', '提示', {
                 type: 'warning',
                 center: true,
@@ -176,11 +204,6 @@ export default {
                             message: res.message,
                             type: 'success',
                         })
-                        this.tableData.map((list) => {
-                            list.AInputShow = false
-                            list.RInputShow = false
-                        })
-                        this.tableKey++
                     })
             })
         },
@@ -241,5 +264,16 @@ export default {
     }
     .table {
     }
+}
+</style>
+<style lang="scss">
+.decRecommendInput {
+    background: #101c2f;
+    border: 1px solid #37455c;
+    width: 100%;
+    text-align: center;
+    height: 30px;
+    color: #fff;
+    border-radius: 2px;
 }
 </style>

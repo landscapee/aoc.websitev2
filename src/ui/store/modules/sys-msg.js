@@ -316,8 +316,7 @@ const sysMsg = {
             return value
         },
         getFlightIndicator:(state)=>{
-            let value = state.language=='zh'?state.flightIndicator:state.flightIndicatorEn
-            return value
+            return state.flightIndicator
         },
         getMovement:(state)=>{
             let value = state.language=='zh'?state.movement:state.movementEn

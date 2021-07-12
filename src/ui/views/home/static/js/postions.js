@@ -31,22 +31,22 @@ export const postions = {
 	},
 	return: {//返航
 		position: 'p-0x1 s-3x1',
-		icon: 'return',
+		icon: 'fanhang',
 		toolTip: 'Flight/getReturnFlight',
 	},
 	alternateInner: {//备降本场
 		position: 'p-3x1 s-3x1',
-		icon: 'alternate',
+		icon: 'benchang',
 		toolTip: 'Flight/getAlternateFlight',
 	},
 	alternateOuter: {//备降外场
 		position: 'p-6x1 s-3x1',
-		icon: 'alternateOut',
+		icon: 'waichang',
 		toolTip: 'flight/getAlternateOtherCityFlight',
 	},
 	cancel: {//取消
 		position: 'p-9x1 s-3x1',
-		icon: 'cancel',
+		icon: 'quxiao',
 		toolTip: 'Flight/getCancelFlight',
 	},
 	monthStatistics: {//月度统计

@@ -73,7 +73,8 @@ export const transRunwayData = (worker, time) => {
             k.zIndex=zIndex
         })
         map(runwayModels, (k, l) => {
-            let o = {...k, runway: k.runway, delayLen: 0, normalLen: 0, delay: [], normal: []}
+            // delayLen: 0, normalLen: 0,
+            let o = {...k, runway: k.runway, delay: [], normal: []}
             runwayObj[k.runway] = o
             duo_one[k.runway] = k.runway
             runwayObj[obj[k.runway]] = o
@@ -82,10 +83,13 @@ export const transRunwayData = (worker, time) => {
         // 分类
 
         let classifyFn = (data, key) => {
-            let len = key + 'Len'
+            // let len = key + 'Len'
             let checkObj = {}
-            // let zIndex = 1000 //设置层级 时间越小 层级越高
-            map(data, (k, l) => {
+             map(data, (k, l) => {
+               // 过滤 未匹配 跑到
+                if(!duo_one[k.runway]){
+                    return
+                }
                 // 转换跑到
                 let paodao = duo_one[k.runway]
                 let shifen = moment(k.actualTime || k.eta || k.ctot).format('HH_mm')
@@ -93,15 +97,17 @@ export const transRunwayData = (worker, time) => {
                 if (o) {
                     // 同一 跑到 同一 shifen 的放入一个数组
                     runwayObj[paodao][key][o.len].push({...k})
-                    // zIndex--
-                } else {
+                 } else {
+                    // runwayObj[paodao][key]=[[{},{}],[[{}]]
+                    // runwayObj[paodao][key] 表示同一个跑到的 delay 或 normal a[index]表示同一 时分 段的数据 合
+
                     //记录 同一个跑到 不同 shifen 的大数组下标
                     checkObj[paodao] = checkObj[paodao] || {}
-                    checkObj[paodao][shifen] = {len: runwayObj[paodao][len]}
-                    runwayObj[paodao][key].push([{...k}])
-                    runwayObj[paodao][len] = runwayObj[paodao][len] + 1
-                    // zIndex--
-                }
+                    checkObj[paodao][shifen] = {len: runwayObj[paodao][key].length}
+
+                     runwayObj[paodao][key].push([{...k}])
+                    // runwayObj[paodao][len] = runwayObj[paodao][len] + 1
+                 }
             });
             // checkObj
             // debugger
@@ -120,31 +126,19 @@ export const transRunwayData = (worker, time) => {
         })
         usage && endObj.push(usage)
         worker.publish('Web', 'runwayModels', endObj)
-        // worker.publish('Web','runwayModels',{monitorQueue,runwayModels})
 
-        // map(monitorQueue.normal,(k,l)=>{
-        //     let time=moment(k.ctot).format('HH:mm')
-        //     let o=normalTimeObj[k.runway][k.ctot]
-        //     if(o){
-        //         runwayObj[k.runway].delay[o.len].push({...k,displayCTOT:time})
-        //     }else{
-        //         normalTimeObj[k.runway][k.ctot]={len:num}
-        //         runwayObj[k.runway].delay=[[{...k,displayCTOT:time}]]
-        //         num++
-        //     }
-        // });
     }
 }
 
 
 export const situationStart = (posWorker) => {
-    posWorker.subscribe('Situation.Change.Sync', (data) => {
-
-    })
+    posWorker.subscribe('push.runway.Data', () => {
+        transRunwayData(posWorker )
+    });
 }
 
 export const situationStop = (posWorker) => {
-    posWorker.unsubscribe('Situation.Change.Sync')
+    posWorker.unsubscribe('push.runway.Data')
 }
 
 

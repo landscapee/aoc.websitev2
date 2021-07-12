@@ -6,7 +6,7 @@ export const flightHttp = (worker,httpRequest) => {
     httpRequest.get('flight', 'getWebSocketResponseData').then(response => {
       saveToFlightDB(JSON.parse(response.responseData)).then(() => {
         memoryStore.setItem('global', { websocketDataFinish: true });
-        worker.publish('Worker','Flight.Change.Sync',response)
+        worker.publish('','Flight.Change.Sync',response)
       });
     }).catch()
   }

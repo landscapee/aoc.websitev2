@@ -2,10 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 
-
 const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
-　　return originalPush.call(this, location).catch(err => err)
+    return originalPush.call(this, location).catch(err => err)
 }
 
 Vue.use(Router)
@@ -49,46 +48,42 @@ const resourceMonitoring = () => import(/*webpackChunkName:"resourceMonitoring"*
 const tobtConfig = () => import(/*webpackChunkName:"tobtConfig"*/ '../views/tobtConfig/index')
 
 
-
 var routes = [
-  { path: '/', name: 'login', component:login},
-  { path: '/menu', name: 'menu', component:menu},
-  {
-    path: '/index', name: 'index', component: index, children: [
-      { path: '/home', name: 'home', component:home},
-      { path: '/flight', name: 'flight', component:flight},
-      { path: '/runMonitoring', name: 'runMonitoring', component:runMonitoring},
-      { path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component:poolMonitorWithRunway},
-      { path: '/resourceMonitoring', name: 'resourceMonitoring', component:resourceMonitoring},
-      { path: '/adv', name: 'adv', component: adv },
-      {
-        path: '/conditionalOperation', name: 'conditionalOperation', component: conditionalOperation, children: [
-           { path: '/alternate', name: 'alternate', component: alternate },
-           { path: '/runningNew', name: 'runningNew', component: runningNew },
-           { path: '/deice', name: 'deice', component: deice },
-           { path: '/weatherNew', name: 'weatherNew', component: weatherNew },
-           { path: '/delayNew', name: 'delayNew', component: delayNew },
-           { path: '/decrease', name: 'decrease', component: decrease },
+    {path: '/', name: 'login', component: login},
+    {path: '/menu', name: 'menu', component: menu},
+    {
+        path: '/index', name: 'index', component: index, children: [
+            {path: '/home', name: 'home', component: home},
+            {path: '/flight', name: 'flight', component: flight},
+            {path: '/runMonitoring', name: 'runMonitoring', component: runMonitoring},
+            {path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component: poolMonitorWithRunway},
+            {path: '/resourceMonitoring', name: 'resourceMonitoring', component: resourceMonitoring},
+            {path: '/adv', name: 'adv', component: adv},
+            {
+                path: '/conditionalOperation',
+                name: 'conditionalOperation',
+                component: conditionalOperation,
+                children: [
+                    {path: '/alternate', name: 'alternate', component: alternate},
+                    {path: '/runningNew', name: 'runningNew', component: runningNew},
+                    {path: '/deice', name: 'deice', component: deice},
+                    {path: '/weatherNew', name: 'weatherNew', component: weatherNew},
+                    {path: '/delayNew', name: 'delayNew', component: delayNew},
+                    {path: '/decrease', name: 'decrease', component: decrease},
+                ]
+            },
+            {path: '/adjustmentReduction', name: 'adjustmentReduction', component: adjustmentReduction},
+            {path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment},
+            {path: '/tobtConfig', name: 'tobtConfig', component: tobtConfig},
+
         ]
-      },
-      { path: '/adjustmentReduction', name: 'adjustmentReduction', component: adjustmentReduction },
-          { path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment },
-          { path: '/tobtConfig', name: 'tobtConfig', component: tobtConfig },
-
-      ]
-  },
-
-
-
-
-
-
+    },
 
 
 
 ]
 
 export default new Router({
-	fallback:false,
-	routes:routes
+    fallback: false,
+    routes: routes
 })

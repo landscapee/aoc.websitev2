@@ -43,7 +43,7 @@
                         <div class="top fob" :style="{color:getPercentColor(rate2)}">
                             {{getPercent(rate2)}}%
                         </div>
-                        <div class="line" :style="{background:getPercentColor(rate1)}"></div>
+                        <div class="line" :style="{background:getPercentColor(rate2)}"></div>
                         <div class="bottom fo" :style="{color:getPercentColor(rate2)}">
                             {{rate2.numerator}}/{{rate2.denominator}}
                         </div>
@@ -53,7 +53,7 @@
             <div class="rateBox">
                 <div v-for="item in rateLists" :key="item.rateType" v-show="item.show">
                     <div class="title">
-                        <span>{{rateTypeName[item.rateType]}}</span>
+                        <span :style="{color:getPercentColor(item)}">{{rateTypeName[item.rateType]}}</span>
                         <span class="span1 fo" :style="{color:getPercentColor(item)}">{{getPercent(item)}}%</span>
                     </div>
                     <el-progress :percentage="getPercent(item)" :show-text="false" :color="colors"></el-progress>
@@ -184,6 +184,7 @@ export default {
             this['rate' + num] = arr
             let options = _.cloneDeep(this.options[percent].options)
             let series = this.options.takeOffPercent.options.series(arr)
+            series[0].data[0].color = this.getPercentColor(arr)
             options.series = series
             this.loading = true
             this.chart = Highcharts.chart(box, options)

@@ -2,7 +2,7 @@
 	<div class="poolMonitorWithRunway">
 		<span class="buttonDiv">
 			<span class="left" @click="move(-15)"><span></span></span>
-			<span :class="moveNum!==0?'middle':'middle middleNow' "   @click="middle"><span></span></span>
+			<span :class="moveNum!==0?'middle':'middle middleNow' " @click="middle"><span></span></span>
 			<span class="right" @click="move(15)"><span></span></span>
 		</span>
 		<span class="jlg">
@@ -33,39 +33,49 @@
 				<div class="title">{{opt.runway}}</div>
 				<div :class="`zhezhao ${opt.usage==3?'zhezhaoWarn':''}`" :style="zhezhaoWidth"></div>
 				<div :class="`flights ${opt.usage==3?'flightsWarn':''}`">
- 					<div v-if="isShowFlight(item[0].movement)" :class="'feiji fiji'+item[0].movement" :style="getLeft(item[0],index)"
+					<div v-if="isShowFlight(item[0].movement)" :class="'feiji fiji'+item[0].movement"
+						 :style="getLeft(item[0],index)"
 						 v-for="(item,index) in opt.normal" :key="index+'qaz'">
-						<div class="status" :style="getFoldStyle(item,opt.runway)"  @click="unfoldFlightInfo(item[0],opt.runway)">
-							<span class="unfoldSpan" v-for="flightData in getFlightDatas(item,opt.runway)" :key="flightData.flightNo+'q'">{{flightData.elecFlightStatus || '未激活'}}</span>
-							<span  v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
-								<icon-svg iconClass="paixu"></icon-svg>
-							</span>
-						</div>
-						<div class="flightNo" :style="getFoldStyle(item,opt.runway)"   @click="unfoldFlightInfo(item[0],opt.runway)">
-							<span  class="unfoldSpan" v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)" :key="indexunfold+'w'">{{flightData.flightNo}}</span>
+						<div class="status" :style="getFoldStyle(item,opt.runway)"
+							 @click="unfoldFlightInfo(item[0],opt.runway)">
+							<span class="unfoldSpan" v-for="flightData in getFlightDatas(item,opt.runway)"
+								  :key="flightData.flightNo+'q'">{{flightData.elecFlightStatus || '未激活'}}</span>
 							<span v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
 								<icon-svg iconClass="paixu"></icon-svg>
 							</span>
 						</div>
- 						<div class="icon">
+						<div class="flightNo" :style="getFoldStyle(item,opt.runway)"
+							 @click="unfoldFlightInfo(item[0],opt.runway)">
+							<span class="unfoldSpan" v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
+								  :key="indexunfold+'w'">{{flightData.flightNo}}</span>
+							<span v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
+								<icon-svg iconClass="paixu"></icon-svg>
+							</span>
+						</div>
+						<div class="icon">
 							<icon-svg iconClass="feiji3"></icon-svg>
 						</div>
 					</div>
-					<div v-if="isShowFlight(item[0].movement)" :class="'feiji fijiYC'+item[0].movement" :style="getLeft(item[0],index)"
+					<div v-if="isShowFlight(item[0].movement)" :class="'feiji fijiYC'+item[0].movement"
+						 :style="getLeft(item[0],index)"
 						 v-for="(item,index) in opt.delay" :key="item.flightNo">
-						<div class="status" :style="getFoldStyle(item,opt.runway)"  @click="unfoldFlightInfo(item[0],opt.runway)">
-							<span class="unfoldSpan" v-for="flightData in getFlightDatas(item,opt.runway)" :key="flightData.flightNo+'q'">{{flightData.elecFlightStatus || '未激活'}}</span>
-							<span  v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
-								<icon-svg iconClass="paixu"></icon-svg>
-							</span>
-						</div>
-						<div class="flightNo" :style="getFoldStyle(item,opt.runway)"   @click="unfoldFlightInfo(item[0],opt.runway)">
-							<span  class="unfoldSpan" v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)" :key="indexunfold+'w'">{{flightData.flightNo}}</span>
+						<div class="status" :style="getFoldStyle(item,opt.runway)"
+							 @click="unfoldFlightInfo(item[0],opt.runway)">
+							<span class="unfoldSpan" v-for="flightData in getFlightDatas(item,opt.runway)"
+								  :key="flightData.flightNo+'q'">{{flightData.elecFlightStatus || '未激活'}}</span>
 							<span v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
 								<icon-svg iconClass="paixu"></icon-svg>
 							</span>
 						</div>
- 						<div class="icon">
+						<div class="flightNo" :style="getFoldStyle(item,opt.runway)"
+							 @click="unfoldFlightInfo(item[0],opt.runway)">
+							<span class="unfoldSpan" v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
+								  :key="indexunfold+'w'">{{flightData.flightNo}}</span>
+							<span v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
+								<icon-svg iconClass="paixu"></icon-svg>
+							</span>
+						</div>
+						<div class="icon">
 							<icon-svg iconClass="feiji3"></icon-svg>
 						</div>
 					</div>
@@ -108,6 +118,15 @@
 						<div class="T_title">{{optItem.name}}</div>
 						<div class="tablediv">
 							<AdvTable :tab-data="optItem.data" :columnConfig="optItem.tableConfig">
+								<template slot="flightNo" slot-scope="{row,index}">
+									<!--<div>航班号</div>-->
+
+									<div class="flightTypeBox cursor" @click="toDetails(row)">
+										<span>{{row['flightNo']||''}}</span>
+										<span class="flightType">{{row['overStationType'] ? '实' : '预'}}</span>
+									</div>
+
+								</template>
 								<template slot="noRequestedHandle" slot-scope="{row,index}">
 									<!--<div> 过站时间不足 操作 </div>-->
 									<span @click="jiantou(row,opt.key,opt.name) " class="jiantouSpan cursor">
@@ -122,7 +141,8 @@
 											  v-if="row[xietiaoObj[opt.key]]==0" :title="row.descript">
 											协调
 										</span>
-										<span class="xietiaoC2 " v-else-if="row[xietiaoObj[opt.key]]==1" :title="'备注信息：'+row.descript">
+										<span class="xietiaoC2 " v-else-if="row[xietiaoObj[opt.key]]==1"
+											  :title="'备注信息：'+row.descript">
 											已协调
 										</span>
 										<span class="xietiaoC2 " v-else :title="row.descript">
@@ -136,7 +156,10 @@
 				</div>
 				<div class="tablediv tabledivWC" v-else>
 					<AdvTable :tab-data="getData(opt)" :columnConfig="opt.tableConfig">
-
+						<template slot="flightNo" slot-scope="{row,index}">
+							<!--<div>航班号</div>-->
+							<span class="cursor" @click="toDetails(row)">{{row.flightNo}}</span>
+						</template>
 					</AdvTable>
 				</div>
 			</div>
@@ -173,8 +196,8 @@
         components: {AdvTable, Setting, Bangzhu, Coordination},
         data() {
             return {
-                moveNum:0,
-                unfoldObj:{},//同一个时间的多个航班是否展开
+                moveNum: 0,
+                unfoldObj: {},//同一个时间的多个航班是否展开
                 timerInterval: null,
                 nowTime: null,
                 runway: [{}, {}, {}],
@@ -184,10 +207,10 @@
                 lg: true,
                 delayFlights: 'unNormal',
                 delayFlightsData: {},
-				xietiaoObj:{
-                    fastEnter:'overStationStatus',
-                    critical:'criticalDelayStatus',
-				},
+                xietiaoObj: {
+                    fastEnter: 'overStationStatus',
+                    critical: 'criticalDelayStatus',
+                },
                 pageListObj: {
                     delayFlights2: {
                         name: '已延误池',
@@ -249,51 +272,51 @@
             }
         },
         computed: {
-            getFlightDatas(){
-               return (item,runway)=>{
-                   let blo=this.isUnfold(item[0],runway)
-                    return blo?item:[item[0]]
-			   }
-			},
-			getFoldStyle(){
-               return (item,runway)=>{
-                   let blo=this.isUnfold(item[0],runway)
+            getFlightDatas() {
+                return (item, runway) => {
+                    let blo = this.isUnfold(item[0], runway)
+                    return blo ? item : [item[0]]
+                }
+            },
+            getFoldStyle() {
+                return (item, runway) => {
+                    let blo = this.isUnfold(item[0], runway)
                     return {
-                       width:blo?item.length*62/100+'rem':'0.62rem',
-						filter: `brightness(${item[0].actualTime ? '65%' : '100%'})`
-					}
-			   }
-			},
-            isShowFlight(){
-                return (movement)=>{
-                  let blo=  movement=='A'&&this.jg||(movement=='D'&&this.lg)
+                        width: blo ? item.length * 62 / 100 + 'rem' : '0.62rem',
+                        filter: `brightness(${item[0].actualTime ? '65%' : '100%'})`
+                    }
+                }
+            },
+            isShowFlight() {
+                return (movement) => {
+                    let blo = movement == 'A' && this.jg || (movement == 'D' && this.lg)
                     return blo
-				}
-			},
-            getUnfoldBtnClass(){
-               return (item,runway)=>{
-                   let blo=this.isUnfold(item,runway)
-                    return blo?'unfoldBtn':'foldBtn'
-			   }
-			},
+                }
+            },
+            getUnfoldBtnClass() {
+                return (item, runway) => {
+                    let blo = this.isUnfold(item, runway)
+                    return blo ? 'unfoldBtn' : 'foldBtn'
+                }
+            },
             getLeft() {
                 return (opt) => {
-                      let num = Math.floor(this.runwayTime / 2) - 1;
+                    let num = Math.floor(this.runwayTime / 2) - 1;
                     let time = this.nowTime.getTime() - num * 60 * 1000;
                     let time1 = opt.actualTime || opt.eta || opt.ctot;
                     let time2 = Math.ceil((time1 - time) / 60 / 1000) * 62
-                    console.log(time1,time1/60);
-                    return {left: time2/100 + 'rem', zIndex:opt.zIndex,}
+                    // console.log(time1, time1 / 60);
+                    return {left: time2 / 100 + 'rem', zIndex: opt.zIndex,}
                 }
             },
             zhezhaoWidth() {
-                let num = Math.floor(this.runwayTime / 2) - 1-this.moveNum;
-                if(num>this.runwayTime){
-					num=this.runwayTime
-				}else if(num<0){
-                    num=0
-				}
-                return {width: num * 62 /100+ 'rem'}
+                let num = Math.floor(this.runwayTime / 2) - 1 - this.moveNum;
+                if (num > this.runwayTime) {
+                    num = this.runwayTime
+                } else if (num < 0) {
+                    num = 0
+                }
+                return {width: num * 62 / 100 + 'rem'}
             },
             notSeting() {
                 return (opt) => {
@@ -307,9 +330,9 @@
             },
             getTime() {
                 return (opt) => {
-                    let num = Math.floor(this.runwayTime / 2)-this.moveNum;
+                    let num = Math.floor(this.runwayTime / 2) - this.moveNum;
                     let time = new Date(this.nowTime.getTime() + (opt - num) * 60 * 1000);
-                   return moment(time).format('HH:mm')
+                    return moment(time).format('HH:mm')
                 }
             },
             getLength() {
@@ -338,49 +361,51 @@
 
         },
         methods: {
+            toDetails(row) {
+                this.$FlightDetais.open({flightId: row.flightId})
+            },
             move(num) {
-				this.moveNum+=num
-                console.log(this.moveNum);
-				let time= this.nowTime.getTime() -( Math.floor(this.runwayTime / 2)-1 -this.moveNum)*60*1000
-                console.log(moment(time).format('HH:mm'));
+                this.moveNum += num
+                // console.log(this.moveNum);
+                let time = this.nowTime.getTime() - (Math.floor(this.runwayTime / 2) - 1 - this.moveNum) * 60 * 1000
+                // console.log(moment(time).format('HH:mm'));
                 postal.publish({
                     channel: 'Worker',
                     topic: 'QueuesMonitor.TimeFilter',
-					data:{startTime:time}
+                    data: {startTime: time}
                 });
             },
             filterData(key) {
                 this[key] = !this[key]
             },
             middle() {
-                if(this.moveNum!==0){
-                    this.moveNum=0
+                if (this.moveNum !== 0) {
+                    this.moveNum = 0
                     this.nowTime = new Date()
                     postal.publish({
                         channel: 'Worker',
                         topic: 'QueuesMonitor.TimeFilter',
                     });
-				}
+                }
             },
 
             //同一跑到同一时间多个航班 是否展开 runway为null时返回格式化时间
-            isUnfold(item,runway){
-                let time= moment(item.actualTime||item.eta||item.ctot).format('HH_mm')
-                 if(!runway){
-				    return time
+            isUnfold(item, runway) {
+                let time = moment(item.actualTime || item.eta || item.ctot).format('HH_mm')
+                if (!runway) {
+                    return time
                 }
-				return this.unfoldObj[time+'_'+runway]
-			},
-            unfoldFlightInfo(item,runway){
-                 let time=this.isUnfold(item,null)
-                 this.$set(this.unfoldObj,time+'_'+runway,!this.isUnfold(item,runway))
+                return this.unfoldObj[time + '_' + runway]
+            },
+            unfoldFlightInfo(item, runway) {
+                let time = this.isUnfold(item, null)
+                this.$set(this.unfoldObj, time + '_' + runway, !this.isUnfold(item, runway))
             },
             getRunwayTime() {
                 let time = document.getElementsByClassName('time')[0]
                 let timeitem = document.getElementsByClassName('timespan')[0]
                 let timewidth = parseInt(getComputedStyle(time)['width'])
                 let timeItemWidth = parseInt(getComputedStyle(timeitem)['width'])
-                // console.log(parseInt(timewidth / timeItemWidth));
                 return Math.ceil(timewidth / timeItemWidth)
             },
 
@@ -459,11 +484,10 @@
             setTimeout(() => {
                 this.nowTime = new Date(this.nowTime.getTime() + time)
                 this.timerInterval = setInterval(() => {
-                    let num=Math.floor(this.runwayTime / 2)- 1-this.moveNum
-					if(this.runwayTime>num&&num >0){
-                        console.log(222);
+                    let num = Math.floor(this.runwayTime / 2) - 1 - this.moveNum
+                    if (this.runwayTime > num && num > 0) {
                         this.nowTime = new Date(this.nowTime.getTime() + 1000 * 60)
-					}
+                    }
                 }, 1000 * 60)
             }, time)
             map(this.pageListObj, (k, l) => {
@@ -492,9 +516,7 @@
                 topic: 'Page.poolMonitorWithRunway.Start',
             });
         },
-        destroyed() {
-            clearInterval(this.timerInterval)
-        },
+
         mounted() {
             this.runwayTime = this.getRunwayTime();
             // 已延误池 delayFlights2; 快速过站池 fastEnter;临界延误池 critical
@@ -502,13 +524,13 @@
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
 
             postalStore.sub('runwayModels', (data) => {
-                console.log('runwayModels', data);
+                // console.log(22);
                 this.runway = data;
             })
 
             postalStore.sub('poolMonitorWithRunway.table', (data) => {
                 let obj = this.pageListObj[data.key]
-                data.key=='critical'&&  console.log('critical', data['data'], data.key);
+                // data.key == 'critical' && console.log('critical', data['data'], data.key);
                 if (!data.data || !obj) {
                     return
                 }
@@ -530,6 +552,8 @@
             });
         },
         beforeDestroy() {
+            this.$FlightDetais.destroy()
+            clearInterval(this.timerInterval)
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.poolMonitorWithRunway.Stop',
@@ -584,7 +608,7 @@
 						border-radius: 4px 4px 0px 0px;
 						font-size: 12px;
 					}
-					.jiantouSpan{
+					.jiantouSpan {
 						padding: 3px 8px;
 						border-radius: 2px;
 						background: rgba(220, 222, 224, 0.2);
@@ -664,7 +688,7 @@
 					border-radius: 50%;
 				}
 			}
-			.middleNow{
+			.middleNow {
 				/*background: #1E2A3D!important;*/
 				/*background: rgba(59, 59, 59, 0.52);*/
 			}
@@ -760,7 +784,7 @@
 							font-family: FjallaOne, FjallaOne-Regular;
 							text-align: center;
 						}
-						.icon{
+						.icon {
 							width: 62px;
 						}
 						.flightNo {
@@ -779,29 +803,29 @@
 
 						}
 
-						.status,.flightNo{
+						.status, .flightNo {
 							width: 63px;
-							white-space:nowrap;
+							white-space: nowrap;
 							line-height: 14px;
-							.unfoldSpan{
+							.unfoldSpan {
 								font-size: 12px !important;
 								padding: 0 3px;
 								display: inline-block;
 								border-left: 1px solid rgba(255, 255, 255, 0.51);
 							}
-							.unfoldSpan:first-child{
-								border: none!important;
+							.unfoldSpan:first-child {
+								border: none !important;
 							}
-							.foldBtn,.unfoldBtn{
+							.foldBtn, .unfoldBtn {
 								/*width: 15px;*/
- 								margin-left: -5px;
-								svg{
+								margin-left: -5px;
+								svg {
 									font-size: 12px;
-  									transform: rotate(90deg);
+									transform: rotate(90deg);
 								}
-									}
-							.unfoldBtn{
-								svg{
+							}
+							.unfoldBtn {
+								svg {
 									transform: rotate(270deg);
 								}
 							}
@@ -954,7 +978,7 @@
 						width: 120px;
 						.el-input__inner {
 							background: rgba(0, 124, 215, 0.55) !important;
-							border: 1px solid rgba(255, 255, 255, 0.45)!important;
+							border: 1px solid rgba(255, 255, 255, 0.45) !important;
 							color: #ffffff;
 						}
 					}

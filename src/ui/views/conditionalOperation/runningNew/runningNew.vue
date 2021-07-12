@@ -1,19 +1,75 @@
 <template>
-    <div id="runningNew">
-        runningNew
-    </div>
+	<div id="runningNew">
+		<div class="top">
+			<Top></Top>
+		</div>
+		<div class="bottom">
+			<div class="left">
+				<BottomLeft></BottomLeft>
+			</div>
+			<div class="right">
+				<BottomLeft></BottomLeft>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
-export default {
-    data() {
-        return {}
-    },
-    mounted() {},
-    methods: {},
-}
+    import postal from 'postal';
+
+     import PostalStore from "@ui_lib/postalStore";
+
+    let postalStore = new PostalStore();
+    import Top from "./components/top/index"
+    import BottomLeft from "./components/bottomLeft/index"
+    import BottomRight from "./components/bottomRight/index"
+
+    export default {
+        data() {
+            return {}
+        },
+        components: {
+            BottomRight, BottomLeft, Top
+        },
+        methods: {},
+        created() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.runningNew.Start',
+            });
+        },
+        mounted() {
+
+        },
+        beforeDestroy() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.runningNew.Stop',
+            })
+            postalStore.unsubAll()
+        },
+    }
 </script>
 <style scoped lang="scss">
-#runningNew {
-}
+	#runningNew {
+		padding-bottom: 15px;
+		.top {
+			height: 100px;
+			border: 1px #fff solid;
+		}
+		.bottom {
+			margin-top: 15px;
+			height: calc(100% - 115px);
+			display: flex;
+			.right,
+			.left {
+				height: 100%;
+				border: 1px #fff solid;
+				width: calc(50% - 7px);
+			}
+			.left {
+				margin-right: 14px;
+			}
+		}
+	}
 </style>

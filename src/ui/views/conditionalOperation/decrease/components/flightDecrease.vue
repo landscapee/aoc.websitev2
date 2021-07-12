@@ -5,7 +5,7 @@
                 <li v-for="(nav,idx) in navLists" :key="idx" :class="navFalg==idx?'active':''" @click="navHandle(idx)">{{nav.name}}({{nav.count}})</li>
             </ul>
             <div class="right">
-                <el-input placeholder="请输入航班号" style="width:150px" size="mini" />
+                <el-input placeholder="请输入航班号" style="width:150px" size="mini" v-model="searchFlightNo" @blur="searchFlight" @keyup.enter.native="searchFlight" />
                 <div class="div1">
                     <div></div>
                     调时
@@ -22,18 +22,23 @@
     </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
+    props: ['decreaseFlights', 'airLinesGroup', 'currentReduce', 'reduceFlight'],
+    computed: {
+        ...mapGetters(['getFlightIndicator']),
+    },
     data() {
         return {
             navLists: [
-                { name: '全部', count: '5' },
-                { name: '国航', count: '5' },
-                { name: '川航', count: '5' },
-                { name: '东航', count: '5' },
-                { name: '成航', count: '5' },
-                { name: '南航', count: '5' },
-                { name: '祥鹏', count: '5' },
-                { name: '其他', count: '5' },
+                { name: '全部', code: 'all', count: 0 },
+                { name: '国航', code: 'CA', count: 0 },
+                { name: '川航', code: '3U', count: 0 },
+                { name: '东航', code: 'MU', count: 0 },
+                { name: '成航', code: 'EU', count: 0 },
+                { name: '南航', code: 'CZ', count: 0 },
+                { name: '祥鹏', code: '8L', count: 0 },
+                { name: '其他', code: 'other', count: 0 },
             ],
             navFalg: 0,
             columnConfig: [
@@ -41,187 +46,137 @@ export default {
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    width: '80px',
                 },
                 {
-                    key: 'sta',
+                    key: '',
                     label: '计划',
+                    width: '90px',
+                    display: ({ row }) => {
+                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
+                    },
                 },
                 {
-                    key: 'code',
+                    key: '',
                     label: '航司',
+                    width: '160px',
+                    display: ({ row }) => {
+                        return row.airlineCnName
+                    },
                 },
                 {
                     key: 'flightType',
                     label: '航班类型',
+                    width: '80px',
                 },
                 {
-                    key: 'flightLine',
+                    key: '',
                     label: '航线',
+                    display: ({ row }) => {
+                        return row.displayRouter.join('-')
+                    },
                 },
                 {
-                    key: 'type',
+                    key: 'flightIndicator',
                     label: '国际性质',
+                    width: '80px',
+                    display: ({ row }) => {
+                        return this.getFlightIndicator[row.flightIndicator]
+                            ? this.getFlightIndicator[row.flightIndicator]
+                            : '其他'
+                    },
                 },
-                {
-                    key: 'in',
-                    label: '调时/调减',
-                },
+                // {
+                //     key: 'level',
+                //     label: '调时/调减',
+                //     width: '90px',
+                //     display: ({ row }) => {
+                //         return row.level ? (row.level == 'reduce' ? '调减' : '调时') : '-'
+                //     },
+                // },
             ],
+            flightsGroup: {},
             tableData: [],
+            searchFlightNo: '',
         }
     },
-    mounted() {
-        this.tableData = [
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-                inType: 0,
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-                inType: 1,
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-        ]
+    watch: {
+        decreaseFlights: function (val) {
+            let allReduceFlight = []
+            _.map(this.reduceFlight, (item, key) => {
+                _.map(item, (flight) => {
+                    allReduceFlight.push({ ...flight, airlineCode: key })
+                })
+            })
+
+            let allReduceFlightByType = _.groupBy(allReduceFlight, 'type')
+            _.map(val, (item, index) => {
+                item.flightIndex = index + 1
+                if (
+                    _.map(allReduceFlightByType.R, (item) => item.flightId).indexOf(
+                        parseInt(item.flightId)
+                    ) > -1
+                ) {
+                    item.level = 'reduce'
+                }
+                if (
+                    _.map(allReduceFlightByType.A, (item) => item.flightId).indexOf(
+                        parseInt(item.flightId)
+                    ) > -1
+                ) {
+                    item.level = 'exchange'
+                }
+            })
+
+            this.flightsGroup = _.groupBy(val, (list) => {
+                if (this.airLinesGroup[list.airlineCode]) {
+                    return list.airlineCode
+                } else {
+                    return 'other'
+                }
+            })
+            this.resetNav()
+        },
     },
+    mounted() {},
     methods: {
         navHandle(idx) {
+            this.searchFlightNo = ''
             this.navFalg = idx
-        },
-        setRowClassName(data) {
-            if (data.row.inType === 0) {
-                return 'row0'
+            if (idx == 0) {
+                this.tableData = this.decreaseFlights
+            } else {
+                this.tableData = this.flightsGroup[this.navLists[idx].code] || []
             }
-            if (data.row.inType === 1) {
+        },
+        setRowClassName({ row }) {
+            if (row.level === 'reduce') {
                 return 'row1'
             }
+            if (row.level === 'exchange') {
+                return 'row0'
+            }
+        },
+        resetNav() {
+            this.navLists.map((list) => {
+                if (list.code == 'all') {
+                    list.count = this.decreaseFlights.length
+                } else {
+                    list.count = this.flightsGroup[list.code]
+                        ? this.flightsGroup[list.code].length
+                        : 0
+                }
+            })
+        },
+        searchFlight() {
+            let datas =
+                this.navFalg == 0
+                    ? this.decreaseFlights
+                    : this.flightsGroup[this.navLists[this.navFalg].code]
+
+            this.tableData = datas.filter((data) => {
+                return _.includes(data.flightNo, this.searchFlightNo)
+            })
         },
     },
 }
@@ -288,7 +243,7 @@ export default {
 .flightDecrease {
     .row0 {
         td {
-            background-color: #2c3f6d;
+            background-color: #2c3f6d !important;
         }
     }
     .row1 {

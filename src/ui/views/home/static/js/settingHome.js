@@ -37,7 +37,8 @@ let getCityRoutes = (chinaCity) => {
 		};
 	});
 };
-const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#00DFFF'], [1, '#004EFF']] };
+// const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#17bdff'], [1, '#17bdff']] };
+let chartColor = "rgb(71, 123, 255)"
 const chartColor1 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#0566FF'], [1, '#0C9FFF']] };
 const chartColorRed = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#BF0B23'], [1, '#ff0002']] };
 const chartColorOrg = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#ff7300'], [1, '#ffa517']] };
@@ -1095,6 +1096,7 @@ export const settings = {
 					title: {
 						text: '',
 					},
+					visible:false,
 					minPadding: 0,
 					maxPadding: 0,
 					max: 100,
@@ -1103,6 +1105,7 @@ export const settings = {
 					gridLineColor: 'rgba(216,214,214,0.24)', //Dot
 					labels: {
 						format: '{value}%',
+
 					},
 				},
 			],
@@ -1190,8 +1193,6 @@ export const settings = {
 						// color: '#ff9f00',
 						lineColor: chartColor3,
 						lineWidth: 0,
-
-						// fillOpacity: 0.05,
 						dataLabels: {
 							enabled: true,
 							verticalAlign: 'top',
