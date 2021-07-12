@@ -105,8 +105,6 @@ export default {
       //   lockW += parseInt(c.width)
       // })
       let clientW = document.documentElement.clientWidth || document.clientWidth
-      console.log('clientW',pxtorem(clientW))
-      console.log('this.lockWidth',this.lockWidth)
       return pxtorem(fixPxBySc(clientW)) - this.lockWidth // 减去滚动条
     }
 
