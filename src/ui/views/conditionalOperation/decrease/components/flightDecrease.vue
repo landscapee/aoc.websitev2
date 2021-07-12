@@ -24,7 +24,7 @@
 <script>
 import { mapGetters } from 'vuex'
 export default {
-    props: ['decreaseFlights', 'airLinesGroup'],
+    props: ['decreaseFlights', 'airLinesGroup', 'currentReduce', 'reduceFlight'],
     computed: {
         ...mapGetters(['getFlightIndicator']),
     },
@@ -102,23 +102,30 @@ export default {
     },
     watch: {
         decreaseFlights: function (val) {
-            console.log(val)
-            _.map(val, (item) => {
-                // item.level = 'exchange'
-                // if (
-                //     map(allReduceFlightByType.R, (item) => item.flightId).indexOf(
-                //         parseInt(item.flightId)
-                //     ) > -1
-                // ) {
-                //     item.level = 'reduce'
-                // }
-                // if (
-                //     map(allReduceFlightByType.A, (item) => item.flightId).indexOf(
-                //         parseInt(item.flightId)
-                //     ) > -1
-                // ) {
-                //     item.level = 'exchange'
-                // }
+            let allReduceFlight = []
+            _.map(this.reduceFlight, (item, key) => {
+                _.map(item, (flight) => {
+                    allReduceFlight.push({ ...flight, airlineCode: key })
+                })
+            })
+
+            let allReduceFlightByType = _.groupBy(allReduceFlight, 'type')
+            _.map(val, (item, index) => {
+                item.flightIndex = index + 1
+                if (
+                    _.map(allReduceFlightByType.R, (item) => item.flightId).indexOf(
+                        parseInt(item.flightId)
+                    ) > -1
+                ) {
+                    item.level = 'reduce'
+                }
+                if (
+                    _.map(allReduceFlightByType.A, (item) => item.flightId).indexOf(
+                        parseInt(item.flightId)
+                    ) > -1
+                ) {
+                    item.level = 'exchange'
+                }
             })
 
             this.flightsGroup = _.groupBy(val, (list) => {

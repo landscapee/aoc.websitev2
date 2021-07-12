@@ -5,19 +5,15 @@
             <el-table-column v-for="(col,idx) in columnConfig" :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
                 <template slot-scope="scope">
                     <template v-if="col.type=='index'">{{scope.$index+1}}</template>
-                    <template v-if="col.slot">
+                    <template v-else-if="col.slot">
                         <slot :name="col.slot" :row="scope.row" :index="scope.$index"></slot>
                     </template>
                     <template v-else-if="col.type=='operate'">
-                        <el-button type='text' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope)" @click="item.click?item.click(scope):''" :disabled="col.click?col.disabled(scope):''"></el-button>
+                        <el-button type='text' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope)" @click="item.click?item.click(scope):''" :disabled="item.disabled?item.disabled(scope):false"></el-button>
                     </template>
                     <template v-else>
-                        <div v-if="col.input" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">
-                            <el-input v-if="scope.row[col.inputShow]" v-model='scope.row[col.key]' size="mini" autofocus @change="inputChange(col,scope.row)" />
-                            <span v-else>{{scope.row[col.key]!==null?scope.row[col.key]:(col.nullValue?col.nullValue:'')}}</span>
-                        </div>
-                        <div v-else-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
-                        <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{scope.row[col.key]!==null?scope.row[col.key]:(col.nullValue?col.nullValue:'')}}</div>
+                        <div v-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
+                        <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{!!scope.row[col.key]?scope.row[col.key]:(col.nullValue?col.nullValue:'-')}}</div>
                     </template>
                 </template>
             </el-table-column>
@@ -83,9 +79,6 @@ export default {
         },
     },
     methods: {
-        inputChange(col, row) {
-            this.$emit('table-input-change', { col, row })
-        },
         loadTableStyle() {
             this.$nextTick(function () {
                 let refTable = this.$refs.ref_table.$el

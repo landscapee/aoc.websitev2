@@ -109,7 +109,6 @@ let getFlight = (query) => {
 
 export const init = (worker_) => {
     worker = worker_;
-    console.log(111)
     worker.subscribe(`AdverseCondition.GetFlight`, getFlight);
     worker.subscribe(`Decrease.GetReduceFlights`, getReduceFlights);
 //   worker.subscribe('Situation.Network.Connected', (c) => {

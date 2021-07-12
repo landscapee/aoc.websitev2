@@ -395,6 +395,7 @@ export default {
     flex: 1;
     margin: 15px 0;
     padding: 15px;
+    height: 0;
     .title {
         display: flex;
         align-items: center;
