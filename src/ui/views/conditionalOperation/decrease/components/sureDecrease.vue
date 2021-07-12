@@ -6,7 +6,7 @@
             </div>
         </div>
         <el-row tag="ul" class="showDetails">
-            <el-col tag="li" :span="6" v-for="(value,key) in airLinesGroup" :key="key">{{value}}({{getKeyNum(key)}}/{{getTotleNum(key)}})</el-col>
+            <el-col tag="li" :span="6" v-for="(value,key) in airLinesGroup" :class="key==confirmAdjustFilter?'active':''" @click.native="navHandle(key)" :key="key">{{value}}({{getKeyNum(key)}}/{{getTotleNum(key)}})</el-col>
         </el-row>
         <div class="tab">
             调时航班({{get(reduceFlightObj,'A.length', 0)}}/{{APlanLength}})
@@ -21,7 +21,7 @@
             <ele-table :columnConfig="columnConfig2" :tableData="reduceFlightObj.R"></ele-table>
         </div>
         <div class="buttonBox">
-            <el-button type="danger" size="mini" :disabled="!$hasRole('edit-audit',false)">驳回</el-button>
+            <el-button type="danger" size="mini" :disabled="!$hasRole('edit-audit',false)||getBack()">驳回</el-button>
             <!-- ||currentReduce.reduceInfo.status==1 -->
             <el-button type="primary" size="mini" @click="submitData" :disabled="!$hasRole('edit-audit',false)">发布</el-button>
         </div>
@@ -96,6 +96,7 @@ export default {
             RPlanLength: 0,
             APlanLength: 0,
             get: _.get,
+            confirmAdjustFilter: '',
         }
     },
     mounted() {},
@@ -103,15 +104,21 @@ export default {
         currentReduce: function (val) {
             this.RPlanLength = 0
             this.APlanLength = 0
-            ;(this.reduceFlightObj = {
+            this.reduceFlightObj = {
                 A: [],
                 R: [],
-            }),
-                this.getAllReduceFlight()
+            }
+            this.getAllReduceFlight()
             this.getPlanLength()
         },
     },
     methods: {
+        navHandle(key) {
+            this.confirmAdjustFilter = key == this.confirmAdjustFilter ? '' : key
+
+            this.getAllReduceFlight()
+            this.getPlanLength()
+        },
         submitData() {
             this.$confirm('确认发送到fims?', '提示', {
                 type: 'warning',
@@ -120,14 +127,17 @@ export default {
                 this.$request
                     .post(
                         'adverse',
-                        'adjust/sendToFims',
-                        {
-                            reduceId: this.currentReduce.reduceId,
-                        },
+                        'adjust/sendToFims?reduceId=' + this.currentReduce.reduceId,
+                        null,
                         false,
                         'PUT'
                     )
-                    .then((res) => {})
+                    .then((res) => {
+                        this.$alert(res.message, '提示', {
+                            type: 'success',
+                            center: true,
+                        })
+                    })
             })
         },
         getKeyNum(key) {
@@ -140,20 +150,41 @@ export default {
             return num
         },
         getTotleNum(key) {
-            let totalPlanAdjust = _.get(this.currentReduce, `plan.${key}.totalPlanAdjust`, 0)
-            let totalPlanReduce = _.get(this.currentReduce, `plan.${key}.totalPlanReduce`, 0)
+            let totalPlanAdjust = 0
+            let totalPlanReduce = 0
 
-            let num = totalPlanAdjust + totalPlanReduce
             if (key == 'all') {
-                num = this.RPlanLength + this.APlanLength
+                _.map(this.currentReduce.plan, (item) => {
+                    totalPlanAdjust += item.totalPlanAdjust
+                    totalPlanReduce += item.totalPlanReduce
+                })
+            } else {
+                totalPlanAdjust = _.get(this.currentReduce, `plan.${key}.totalPlanAdjust`, 0)
+                totalPlanReduce = _.get(this.currentReduce, `plan.${key}.totalPlanReduce`, 0)
             }
-            return num
+            return totalPlanAdjust + totalPlanReduce
         },
         getPlanLength() {
-            _.map(this.currentReduce.plan, (item) => {
-                this.RPlanLength += item.totalPlanReduce
-                this.APlanLength += item.totalPlanAdjust
-            })
+            this.APlanLength = 0
+            this.RPlanLength = 0
+
+            if (this.confirmAdjustFilter && this.confirmAdjustFilter != 'all') {
+                this.APlanLength = _.get(
+                    this.currentReduce,
+                    `plan.${this.confirmAdjustFilter}.totalPlanAdjust`,
+                    0
+                )
+                this.RPlanLength = _.get(
+                    this.currentReduce,
+                    `plan.${this.confirmAdjustFilter}.totalPlanReduce`,
+                    0
+                )
+            } else {
+                _.map(this.currentReduce.plan, (item) => {
+                    this.RPlanLength += item.totalPlanReduce
+                    this.APlanLength += item.totalPlanAdjust
+                })
+            }
         },
         getAllReduceFlight() {
             let allReduceFlight = []
@@ -162,10 +193,23 @@ export default {
                     allReduceFlight.push({ ...flight, airlineCode: key })
                 })
             })
+
             allReduceFlight.map((flight) => {
-                this.reduceFlightObj[flight.type].push(flight)
+                console.log(flight)
+                if (this.confirmAdjustFilter) {
+                    // flight
+                } else {
+                    this.reduceFlightObj[flight.type].push(flight)
+                }
             })
             console.log(this.reduceFlightObj)
+        },
+        getBack() {
+            return (
+                !this.confirmAdjustFilter ||
+                _.get(this.currentReduce, 'reduceInfo.status') === 1 ||
+                _.get(this.currentReduce, ['plan', this.confirmAdjustFilter, 'sendType']) !== 2
+            )
         },
     },
 }
@@ -207,6 +251,7 @@ export default {
             display: flex;
             align-items: center;
             height: 20px;
+            cursor: pointer;
         }
         li:before {
             content: '';
@@ -216,6 +261,9 @@ export default {
             background: #4181e9;
             border-radius: 2px;
             margin-right: 5px;
+        }
+        li.active {
+            color: #4181e9;
         }
     }
     .tab {

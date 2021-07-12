@@ -27,7 +27,7 @@
                             </el-dropdown>
                         </el-col>
                         <el-col :span="8">
-                            <el-button round type="danger" size="mini" @click="restar" :disabled="!$hasRole('edit-new-round',false)">重新开始第一轮</el-button>
+                            <el-button round type="danger" size="mini" @click="restart" :disabled="!$hasRole('edit-new-round',false)">重新开始第一轮</el-button>
                         </el-col>
                     </el-form-item>
                     <el-form-item label="影响时间">
@@ -202,11 +202,13 @@ export default {
             }
             console.log(this.subData)
 
-            if (this.subData.status == 1) {
-                this.editDisabled = false
-            } else {
-                this.editDisabled = true
-            }
+            // if (this.subData.status == 1) {
+            //     this.editDisabled = false
+            // } else {
+            //     this.editDisabled = true
+            // }
+
+            this.editDisabled = !!val.reduceId
 
             this.recoverTime = [val.reduceInfo.recoverBeginTime, val.reduceInfo.recoverEndTime]
             this.influenceTime = [val.reduceInfo.beginTime, val.reduceInfo.endTime]
@@ -274,16 +276,32 @@ export default {
                 this.$message.error('下降比例请输入25-100之间的整数')
                 return false
             }
+
+            if (this.recoverTime[0] < this.influenceTime[1]) {
+                this.$message.error('下降比例请输入25-100之间的整数')
+                return false
+            }
+
             let data = _.cloneDeep(this.subData)
 
             data.recoverBeginTime = this.recoverTime[0]
-            data.recoverEndTime = this.recoverTime[0]
-            data.startTime = this.recoverTime[0]
-            data.endTime = this.recoverTime[0]
+            data.recoverEndTime = this.recoverTime[1]
+            data.startTime = this.influenceTime[0]
+            data.endTime = this.influenceTime[1]
             data.type = this.navFalg
-
+            delete data.status
             console.log(data)
-
+            return false
+            //             airport: ""
+            // direction: ""
+            // endTime: "1625846400000"
+            // movement: ""
+            // rate: "50"
+            // recoverBeginTime: "1625986800000"
+            // recoverEndTime: "1626073200000"
+            // reducePlanNo: 1
+            // startTime: "1625760000000"
+            // type: "1"
             this.$request.post('adverse', 'adjust/newReduce', data).then((res) => {
                 if (res.data) {
                 }
@@ -303,11 +321,21 @@ export default {
                 this.$emit('change-planno', reduceplanNo)
             } else {
                 if (this.$hasRole('edit-add-round', true)) {
+                    let newList = _.find(this.currentReduceLists, { reduceId: '' })
+                    console.log(this.currentReduceLists, newList)
+                    if (newList) {
+                        this.$alert('当前已有新增轮次，不能再次新增!', '提示', {
+                            type: 'warning',
+                            center: true,
+                        })
+                        return
+                    }
+
                     this.$emit('add-planno')
                 }
             }
         },
-        restar() {
+        restart() {
             if (_.get(this.currentReduce, 'reduceInfo.status') === 0) {
                 this.$alert('当前轮次尚未结束,不能重新开始!', '提示', {
                     type: 'warning',
@@ -315,6 +343,7 @@ export default {
                 })
                 return
             }
+            this.$emit('restart')
         },
     },
 }

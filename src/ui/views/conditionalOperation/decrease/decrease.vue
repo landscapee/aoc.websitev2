@@ -1,12 +1,12 @@
 <template>
     <div id="decrease">
         <div class="decrease_left">
-            <setting :currentType='currentType' @change-type="changeType" @change-planno="changePlanno" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
+            <setting :currentType='currentType' @restart="restart" @change-type="changeType" @change-planno="changePlanno" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
             <recommend :currentReduce="currentReduce" :airLinesGroup="airLinesGroup" />
         </div>
         <div class="decrease_mid">
             <MDRS-warning />
-            <flight-decrease ref="ref_flightDecrease" :decreaseFlights="decreaseFlights" :airLinesGroup="airLinesGroup" />
+            <flight-decrease ref="ref_flightDecrease" :currentReduce='currentReduce' :reduceFlight="reduceFlight" :decreaseFlights="decreaseFlights" :airLinesGroup="airLinesGroup" />
             <flight-delay :currentReduce="currentReduce" />
         </div>
         <div class="decrease_right">
@@ -81,6 +81,10 @@ export default {
         logg(row) {
             console.log(row)
         },
+        restart() {
+            this.currentReduceLists = []
+            this.addPlanno()
+        },
         changeType(currentType) {
             this.currentType = currentType
             this.getCurrentReduce()
@@ -101,7 +105,7 @@ export default {
                         let index = _.findIndex(this.currentReduceLists, (list) => {
                             return list.reduceInfo.status === 0
                         })
-                        this.changePlanno(index >= 0 ? index : 0)
+                        this.changePlanno(index >= 0 ? index : this.currentReduceLists.length - 1)
                     }
                 })
         },
@@ -114,6 +118,7 @@ export default {
             this.currentReduceLists.push({
                 plan: {},
                 planDetail: {},
+                reduceId: '',
                 reduceInfo: {
                     reduceplanNo: this.currentReduceLists.length + 1,
                     airports: '',
@@ -141,7 +146,6 @@ export default {
                 }
                 return []
             })
-            console.log(reduceShouldShow)
             postalStore.pub('Worker', 'Decrease.GetReduceFlights', reduceShouldShow)
             postalStore.sub('Web', 'Decrease.GetReduceFlights.Response', (flightWithAirline) => {
                 console.log(flightWithAirline)
