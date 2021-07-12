@@ -206,6 +206,7 @@ module.exports = {
             'vue$': 'vue/dist/vue.esm.js',
             '@': path.join(__dirname, 'src'),
             '@components': path.join(__dirname, 'src/ui/components'),
+            '@ui_lib': path.join(__dirname, 'src/ui/lib'),
         }
     },
 }
