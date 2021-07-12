@@ -26,6 +26,22 @@
     ::-webkit-scrollbar{
       height: 18px!important;
     }
+    .el-table__row{
+
+    }
+    .hover-row{
+      background-color: transparent;
+    }
+    .hover-row.hoverD td{
+      background-color: rgba(105,134,191,.5)!important
+    }
+
+    .hover-row.hoverA td{
+      background-color: rgba(87,220,149,.5)!important;
+    }
+    .hover-row td{
+      background-color: transparent;
+    }
     .el-table__fixed{
       height: 822px!important;
     }
@@ -192,11 +208,13 @@
   .scrollBox{
     //width: 1px;
     background-color: transparent;
+    z-index: 3;
   }
   .virtualFlight{
-    width: 98%;
-    position: absolute;
-    top: 0;
+    width: 99%;
+    position: fixed;
+    top: 0.9rem;
+
   }
   ::v-deep.icon-arrow {
     width: 12px;

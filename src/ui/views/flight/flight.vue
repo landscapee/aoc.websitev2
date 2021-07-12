@@ -1,8 +1,8 @@
 <template>
     <div id="flight">
-      <toolBar :toggleFieldSetting="toggleFieldSetting"/>
+      <toolBar :statistics="statistics" :toggleFieldSetting="toggleFieldSetting"/>
       <fieldSetting :refreshColumn="refreshColumn" :toggleFieldSetting="toggleFieldSetting" v-if="showFieldSetting"/>
-      <div class="flightWrapper">
+      <div id="flightWrapper" class="flightWrapper">
         <flightTable :setColumns="setColumns" :flights="flights" :columns="columns">
         </flightTable>
       </div>
@@ -13,17 +13,19 @@
 <script>
     import postal from 'postal';
     import PostalStore from "../../lib/postalStore";
-    import {getListHeader} from "@/ui/views/flight/components/flightTable/handleColumn";
+    import {getListHeader} from "@/ui/views/flight/components/handleColumn";
     import _ from 'lodash';
     import ColumnsDefine from './columnDefine'
     import {mapGetters, mapState} from "vuex";
     let postalStore = new PostalStore();
+    let itemH = 36;
   export default {
     data() {
       return {
         columns: [],
         flights: [],
         showFieldSetting: false,
+        statistics: {}
       }
     },
     components: {
@@ -42,9 +44,11 @@
       this.setColumns(getListHeader())
     },
     mounted() {
-
+      // let globalHead = document.getElementById('com_glob_head');
+      // globalHead && (globalHead.style.position = 'fixed')
       postalStore.sub('Flight.Sync',data=>{
-        this.flights = data.flights
+        this.flights = data.flights;
+        this.statistics = data.statistics
       })
       let header = getListHeader();
       postal.publish({
@@ -63,6 +67,8 @@
 
     },
     beforeDestroy() {
+      // let globalHead = document.getElementById('com_glob_head');
+      // globalHead && (globalHead.style.position = 'relative')
       postal.publish({
         channel: 'Worker',
         topic: 'Page.Flight.Stop',
@@ -80,7 +86,8 @@
             return h;
           }
         });
-        this.columns = newColumns
+        this.columns = newColumns;
+        this.calcColumnWidth()
       },
 
       toggleFieldSetting: function (){
@@ -92,12 +99,10 @@
         this.calcColumnWidth(this.flights)
       },
 
-      calcColumnWidth: function (flights){
+      calcColumnWidth: function (){
         let oldC = this.columns;
         _.map(oldC,item => {
-          if (item.widthCalc){
-            item.width = item.widthCalc.call(null, flights)
-          }
+          item.width = item.width || 90
         })
         this.columns = oldC
       }
@@ -111,18 +116,24 @@
       // ...mapGetters(['flight/getTOBTVisibility']),
       ...mapState({
         getTOBTVisibility: state => state.flight.showTOBTToolTip
-      })
+      }),
+      // totalHeight: function(){
+      //   let heightOfPx = (this.flights.length + 1) * itemH // 头部原因加1
+      //   return heightOfPx / 100
+      // },
     }
   }
 </script>
 
 <style lang="scss">
   #flight{
-    padding-left: 15px;
+    //padding-left: 15px;
+    background: #111926;
   }
   .flightWrapper{
-    height: calc(100% - 50px);
+    //height: calc(100% - 50px);
     position: relative;
+    background: #111926;
   }
   .TOBTTooltip{
     width: 301px;

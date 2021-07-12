@@ -384,6 +384,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    z-index: 10;
+    position: fixed;
     .logo_left {
         height: 40px;
         display: flex;

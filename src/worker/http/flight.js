@@ -19,4 +19,12 @@ export const flightHttp = (worker,httpRequest) => {
     });
   })
 
+  worker.subscribe('Flight.GetMore',(options)=>{
+    httpRequest.post('flight','Flight/Screening', options, true).then(res=>{
+      saveToFlightDB(JSON.parse(res.responseData)).then(() => {
+        worker.publish('Worker','Flight.Change.Sync','')
+      })
+    });
+  })
+
 }

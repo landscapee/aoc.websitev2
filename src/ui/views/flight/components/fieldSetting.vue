@@ -34,7 +34,7 @@
 
 <script>
 import draggable from "vuedraggable";
-import {getListHeader, reSetHeader, updateListHeader} from "@/ui/views/flight/components/flightTable/handleColumn";
+import {getListHeader, reSetHeader, updateListHeader} from "@/ui/views/flight/components/handleColumn";
 import {keyBy, map} from "lodash";
 import {allField} from "@/lib/flightAllFields";
 export default {
