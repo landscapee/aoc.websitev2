@@ -5,15 +5,17 @@ import store from '../store'
 import postal from 'postal';
 import axios from "axios";
 import {httpConfig} from "@/lib/interfaces";
+import {getUserSerializ,clearCookie} from '../lib/localStorageTemp'
 let loginFlag = 0;
 let hasIfm = self!=top//是否被镶嵌
 let socketInterfaceType = window.webConfig.socketInterfaceType
+let token=getUserSerializ()?.token
 router.beforeEach((to, from, next) => {
 
-    if(to.name=="login"){//登陆页清空信息
+    if(to.name=="login"||to.name=="/"){//登陆页清空信息
         loginFlag=0
-        sessionStorage.clear()
-		store.commit("resetStore",null)
+        clearCookie()
+ 		store.commit("resetStore",null)
 
 		postal.publish({
             channel: 'worker.aoc',
@@ -28,7 +30,8 @@ router.beforeEach((to, from, next) => {
         if(hasIfm){
             next()
         }else{
-            if(sessionStorage.token&&sessionStorage.token!=undefined){
+
+            if(token ){
                 let host = httpConfig['login'].host;
                 let port = httpConfig['login'].port;
                 axios({
@@ -36,7 +39,7 @@ router.beforeEach((to, from, next) => {
                     // url:httpConfig['login'] 'api-login/sso/login/authorizeToken',
                     url:`http://${host}:${port}/${httpConfig['login'].path}/authorizeToken`,
                     dataType:"text",
-                    data:sessionStorage.token,
+                    data:token,
                     async:false,
                     headers:{
                         'Content-Type':'application/json;charset=utf-8'
@@ -47,7 +50,7 @@ router.beforeEach((to, from, next) => {
                         postal.publish({
                             channel: 'Worker',
                             topic: 'LoginSuccess',
-                            data: {...res.data, token: sessionStorage.token}
+                            data: {...res.data, token:token}
                         })
                         next()
                     }
@@ -63,13 +66,13 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach(()=>{
-    if(sessionStorage.token&&loginFlag==0){
+    if(token&&loginFlag==0){
         loginFlag = 1
         postal.publish({//建立socket
             channel:'worker.aoc',
             topic:'build_socket_connect',
             data:{
-                token:sessionStorage.token,
+                token:token,
                 origin,
                 path:'/'+socketInterfaceType+'/websocket/socket.io'
             }

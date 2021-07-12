@@ -164,7 +164,7 @@ export default {
             })
                 .then(() => {
                     this.$router.push('/')
-                    sessionStorage.clear()
+                    // sessionStorage.clear()
                 })
                 .catch(() => {})
         },

@@ -1,7 +1,7 @@
 import postal from 'postal'
 import {isObject, isString, has, isFunction} from 'lodash';
  import {Message} from 'element-ui';
-
+import {getUserSerializ} from './localStorageTemp'
 /**
  * @describe 去抖函数
  * @param { Function } [action] 抖动执行函数
@@ -105,7 +105,7 @@ export const getUrlParam = function (name) {
 // 判断是否有某 权限 （资源）
 export const hasRole = function (key,isMessage=true) {
     let blo=false
-    let userInfo= JSON.parse(sessionStorage.getItem('userData')).menus
+    let menus=getUserSerializ().menus
     function f(arr) {
         for(let i=0;i<arr.length;i++){
             if(arr[i].code===key){
@@ -114,7 +114,7 @@ export const hasRole = function (key,isMessage=true) {
             }
         }
     }
-    f(userInfo)
+    f(menus)
     if(isMessage&&!blo){
         Message.warning('您暂无该权限，请联系管理员配置')
     }

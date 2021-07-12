@@ -88,6 +88,8 @@
     import moment from 'moment'
     import {flightStateColor} from './help'
 	import AircraftNoPage from './aircraftNoPage'
+    import {getUserSerializ} from '../../lib/localStorageTemp'
+
     export default {
         name: "warning",
 		components:{AircraftNoPage},
@@ -214,7 +216,7 @@
 			},
             sendToken() {
                 const iframe = document.getElementById('iframe');
-                const token = sessionStorage.getItem('token');
+                const token =getUserSerializ.token;
 
                 iframe.contentWindow.postMessage({source: 'ACDM', token: token,}, `*`,);
             },

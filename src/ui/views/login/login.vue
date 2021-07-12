@@ -75,6 +75,7 @@ import { memoryStore } from '../../../worker/lib/memoryStore'
 import PostalStore from '@/ui/lib/postalStore'
 import {find, get} from "lodash";
 let postalStore = new PostalStore()
+import {getUser,setUser}from '../../lib/localStorageTemp'
 export default {
     name: 'login',
     data() {
@@ -221,11 +222,13 @@ export default {
                                     postalStore.pub('Worker', 'LoginSuccess', res.data)
                                     memoryStore.setItem('global', storageData)
                                     this.$store.commit('setUserMsg', res.data)
-                                    sessionStorage.setItem('token', res.data.token)
-                                    sessionStorage.setItem(
-                                        'userData',
-                                        JSON.stringify(_.omit(res.data, 'token'))
-                                    )
+                                    // sessionStorage.setItem('token', res.data.token)
+                                    // sessionStorage.setItem(
+                                    //     'User',
+                                    //     JSON.stringify(res.data)
+                                    // )
+                                    // 登录信息保存本地
+                                    setUser(res.data)
                                     if(res.responseCode == 30002){
                                         this.$message({ message: res.responseMessage, type: 'warning' })
                                     }
