@@ -9,8 +9,11 @@
     "dev": "webpack-dev-server --config webpack.dev.js --Program fpms.dev --type tianfu",
     "dev:tianfu": "webpack-dev-server --config webpack.dev.js --Program fpms.dev --type tianfu",
     "deploy": "scp -r website/*  root@173.100.1.137:/var/www/com.aoc.websitev2",
+    "deploy.test83": "npm run build.test&&scp -r website/*  root@173.101.1.83:/var/www/com.aoc.websitev2",
+    "deploy.test84": "scp -r website/*  root@173.101.1.84:/var/www/com.aoc.websitev2",
     "dev:shuangliu": "webpack-dev-server --config webpack.dev.js --Program fpms.dev --type shuangliu",
     "build": "webpack --config webpack.prod.js --Program fpms.website --type tianfu",
+    "build.test": "webpack --config webpack.prod.js --Program fpms.website --type tianfu",
     "build:tianfu": "webpack --config webpack.prod.js --Program fpms.website --type tianfu",
     "build:shuangliu": "webpack --config webpack.prod.js --Program fpms.website --type shuangliu"
   },
