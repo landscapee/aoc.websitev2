@@ -82,7 +82,7 @@ export default {
       isScrolling: false, // 是否在滚动
       offSetY: 0,
       topCount: 0,
-      showCount: 22,
+      showCount: 23,
       value: '',
       showFlights: []
     }
@@ -136,7 +136,7 @@ export default {
 
       let rowHeight = fixPx(itemH);
       let begin = Math.floor(window.scrollY / rowHeight);
-      let end = Math.ceil((window.innerHeight - fixPx(120 + 30 + 40 )) / rowHeight);
+      let end = Math.ceil((window.innerHeight - fixPx(120 + 40 )) / rowHeight);
       flights = slice(flights, begin, begin + end);
       this.showFlights = flights
     },
