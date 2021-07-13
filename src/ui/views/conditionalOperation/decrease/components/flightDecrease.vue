@@ -23,8 +23,10 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
+import PostalStore from '@/ui/lib/postalStore'
+let postalStore = new PostalStore()
 export default {
-    props: ['decreaseFlights', 'airLinesGroup', 'currentReduce', 'reduceFlight'],
+    props: ['airLinesGroup', 'currentReduce', 'reduceFlight'],
     computed: {
         ...mapGetters(['getFlightIndicator']),
     },
@@ -57,12 +59,9 @@ export default {
                     },
                 },
                 {
-                    key: '',
+                    key: 'airlineCnName',
                     label: '航司',
                     width: '160px',
-                    display: ({ row }) => {
-                        return row.airlineCnName
-                    },
                 },
                 {
                     key: 'flightType',
@@ -86,57 +85,54 @@ export default {
                             : '其他'
                     },
                 },
-                // {
-                //     key: 'level',
-                //     label: '调时/调减',
-                //     width: '90px',
-                //     display: ({ row }) => {
-                //         return row.level ? (row.level == 'reduce' ? '调减' : '调时') : '-'
-                //     },
-                // },
             ],
             flightsGroup: {},
             tableData: [],
             searchFlightNo: '',
+            decreaseFlights: [],
         }
     },
     watch: {
-        decreaseFlights: function (val) {
-            let allReduceFlight = []
-            _.map(this.reduceFlight, (item, key) => {
-                _.map(item, (flight) => {
-                    allReduceFlight.push({ ...flight, airlineCode: key })
-                })
-            })
-
-            let allReduceFlightByType = _.groupBy(allReduceFlight, 'type')
-            _.map(val, (item, index) => {
-                item.flightIndex = index + 1
-                if (
-                    _.map(allReduceFlightByType.R, (item) => item.flightId).indexOf(
-                        parseInt(item.flightId)
-                    ) > -1
-                ) {
-                    item.level = 'reduce'
-                }
-                if (
-                    _.map(allReduceFlightByType.A, (item) => item.flightId).indexOf(
-                        parseInt(item.flightId)
-                    ) > -1
-                ) {
-                    item.level = 'exchange'
-                }
-            })
-
-            this.flightsGroup = _.groupBy(val, (list) => {
-                if (this.airLinesGroup[list.airlineCode]) {
-                    return list.airlineCode
-                } else {
-                    return 'other'
-                }
-            })
-            this.resetNav()
+        currentReduce: function (val) {
+            this.getAirlineFromDb()
         },
+        // decreaseFlights: function (val) {
+        //     let allReduceFlight = []
+        //     _.map(this.reduceFlight, (item, key) => {
+        //         _.map(item, (flight) => {
+        //             allReduceFlight.push({ ...flight, airlineCode: key })
+        //         })
+        //     })
+
+        //     let allReduceFlightByType = _.groupBy(allReduceFlight, 'type')
+        //     console.log(this.reduceFlight)
+        //     _.map(val, (item, index) => {
+        //         item.flightIndex = index + 1
+        //         if (
+        //             _.map(allReduceFlightByType.R, (item) => item.flightId).indexOf(
+        //                 parseInt(item.flightId)
+        //             ) > -1
+        //         ) {
+        //             item.level = 'reduce'
+        //         }
+        //         if (
+        //             _.map(allReduceFlightByType.A, (item) => item.flightId).indexOf(
+        //                 parseInt(item.flightId)
+        //             ) > -1
+        //         ) {
+        //             item.level = 'exchange'
+        //         }
+        //     })
+
+        //     this.flightsGroup = _.groupBy(val, (list) => {
+        //         if (this.airLinesGroup[list.airlineCode]) {
+        //             return list.airlineCode
+        //         } else {
+        //             return 'other'
+        //         }
+        //     })
+        //     this.resetNav()
+        // },
     },
     mounted() {},
     methods: {
@@ -176,6 +172,57 @@ export default {
 
             this.tableData = datas.filter((data) => {
                 return _.includes(data.flightNo, this.searchFlightNo)
+            })
+        },
+        getAirlineFromDb() {
+            let reduceInfo = this.currentReduce.reduceInfo
+
+            let direction = reduceInfo.directions
+            let movement = reduceInfo.movement
+            let airport = reduceInfo.airports
+            let filter = [
+                { scheduleTime: { $gt: this.$moment(reduceInfo.beginTime).format('x') } },
+                { scheduleTime: { $lte: this.$moment(reduceInfo.endTime).format('x') } },
+                { cancel: { $nin: [true] } },
+            ]
+            movement && filter.push({ movement })
+            airport && filter.push({ preOrNxtAirportCn: { $regex: airport } })
+            direction && filter.push({ direction })
+            // 获取航司航班列表
+            postalStore.pub('Worker', 'AdverseCondition.GetFlight', [...filter])
+            postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
+                console.log(flights)
+                let planDetail = this.currentReduce.planDetail
+
+                _.map(flights, (flight) => {
+                    _.map(planDetail, (value) => {
+                        _.map(value, (list) => {
+                            if (list.flightId == flight.flightId) {
+                                if (list.type == 'R') {
+                                    flight.level = 'reduce'
+                                }
+                                if (list.type == 'A') {
+                                    flight.level = 'exchange'
+                                }
+                            }
+                        })
+                    })
+                })
+
+                this.decreaseFlights = flights
+
+                this.flightsGroup = _.groupBy(flights, (list) => {
+                    if (this.airLinesGroup[list.airlineCode]) {
+                        return list.airlineCode
+                    } else {
+                        return 'other'
+                    }
+                })
+                this.resetNav()
+
+                this.$nextTick(() => {
+                    this.navHandle(this.navFalg)
+                })
             })
         },
     },

@@ -67,8 +67,9 @@ export default {
 
 <style scoped lang='scss'>
 .home_number {
-    padding: 4px;
-    position: absolute;
+    padding: 7px;
+    width: 20%;
+    height: 100%;
     .box_content {
         display: flex;
         flex-direction: column;
@@ -96,28 +97,29 @@ export default {
             }
             .num {
                 color: #fff;
-                margin-bottom: 4px;
                 .actual {
-                    font-size: 24px;
+                    font-size: 20px;
+                }
+                .plan {
+                    font-size: 16px;
                 }
             }
             .name {
                 color: #fff;
-                font-size: 12px;
             }
             .right {
                 svg,
                 use {
-                    font-size: 44px;
+                    font-size: 50px;
                 }
             }
         }
         .footer {
             width: 100%;
-            height: 5px;
+            height: 8px;
             .bar {
                 height: 100%;
-                border-radius: 0 5px 5px 0;
+                border-radius: 0 8px 8px 0;
             }
         }
     }

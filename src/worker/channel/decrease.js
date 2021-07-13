@@ -93,7 +93,7 @@ const subWSEvent = () => {
 
 let getReduceFlights = (reduceFlight) => {
 	checkWebsocketResponseDataFinish().then(() => {
-		let flightsWithAirline = mapValues(reduceFlight, (item) => flow([proFlightFields, addSerialNumber])(getFlightByIds(item)));
+    let flightsWithAirline = mapValues(reduceFlight, (item) => flow([addSerialNumber])(getFlightByIds(item)));
 		worker.publish('Web', 'Decrease.GetReduceFlights.Response', flightsWithAirline);
 	});
 };

@@ -69,10 +69,10 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { encryptedData } from '../lib/des-coder.js';
-import {routes} from '../router/index'
-let url= require('../assets/img/'+sysEdition+'/logoTitle.png')
-import {map} from 'lodash'
+import { encryptedData } from '../lib/des-coder.js'
+import { routes } from '../router/index'
+let url = require('../assets/img/' + sysEdition + '/logoTitle.png')
+import { map } from 'lodash'
 export default {
     data() {
         var validateName = (rule, value, callback) => {
@@ -274,25 +274,38 @@ export default {
             return true
         },
         getNavList() {
-            this.navList=[]
-             let route=routes[2].children
+            this.navList = []
+            let route = routes[2].children
             let menus = this.getUserMsg?.menus || []
-            let codeObj={}
-            map(menus,(list) => {
-                 codeObj[list.code]=1
+            let codeObj = {}
+            map(menus, (list) => {
+                codeObj[list.code] = 1
             })
-            map(route,(k,l)=>{
-                if(codeObj[k.role]){
+            map(route, (k, l) => {
+                if (codeObj[k.role]) {
                     this.navList.push(k)
                 }
             })
             this.setNavFlag()
-
-
         },
         setNavFlag() {
+            console.log(this.navList, this.path, this.$route)
+
+            let path = this.path
+
+            if (
+                path == 'decrease' ||
+                path == 'delayNew' ||
+                path == 'weatherNew' ||
+                path == 'deice' ||
+                path == 'runningNew' ||
+                path == 'alternate'
+            ) {
+                path = 'conditionalOperation'
+            }
+
             this.navList.forEach((list, index) => {
-                if (list.path == this.path) {
+                if (list.path == path) {
                     this.navFlag = index
                 }
             })
@@ -300,7 +313,6 @@ export default {
         navHandle(path, idx) {
             this.navFlag = idx
             this.$router.push(path)
-
         },
     },
 }
@@ -325,11 +337,11 @@ export default {
         box-shadow: 0px 0px 6px 0px rgba(47, 61, 142, 1);
         border-radius: 0px 0 100px 0px;
         color: #fff;
-        padding: 0 20px;
+        padding: 0 30px 0 15px;
 
         div {
-            height: 100%;
-            width: 110px;
+            height: 20px;
+            width: 60px;
             background-size: 100% auto;
             background-repeat: no-repeat;
             background-position: center left;

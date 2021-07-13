@@ -4,18 +4,18 @@
             <div class="left">
                 <div class="top">
                     <icon-svg iconClass="monthdelay" />
-                    <span class="name alib">月度放行正常率目标:{{flight_monthClearance.targetRate}}%</span>
+                    <span class="name alib">月度放行正常率目标：{{flight_monthClearance.targetRate}}%</span>
                     <el-input class="iconshowInput" v-model="monthRate" size="mini" v-show="monthDRateInput" @keyup.enter.native="editMonthRateHandle"></el-input>
                     <i class="iconfont icon-bianji" @click="monthDRateInput = true" v-show="!monthDRateInput"></i>
                 </div>
                 <div class="mid">
                     <div>
                         <p>当月累计放行正常率:{{flight_monthClearance.value?flight_monthClearance.value.average:0}}%</p>
-                        <p>后续每日放行正常率最低目标:{{flight_monthClearance.value?flight_monthClearance.value.lowest:0}}%</p>
+                        <p>后续每日放行正常率最低目标：{{flight_monthClearance.value?flight_monthClearance.value.lowest:0}}%</p>
                     </div>
                     <div>
-                        <p>今天限制延误架次:{{flight_monthClearance.value?flight_monthClearance.value.limitDelay:0}}</p>
-                        <p>今日已延误架次:<span @click="flightDialogHandle">{{flight_monthClearance.value?flight_monthClearance.value.delay:0}}</span></p>
+                        <p class="p2">今天限制延误架次：{{flight_monthClearance.value?flight_monthClearance.value.limitDelay:0}}</p>
+                        <p class="p2">今日已延误架次：<span @click="flightDialogHandle">{{flight_monthClearance.value?flight_monthClearance.value.delay:0}}</span></p>
                     </div>
                 </div>
                 <div class="footer">
@@ -55,7 +55,7 @@
                         <icon-svg iconClass="intitle" />
                     </div>
                     <el-row v-for="flight in flight_lastestAta" :key="flight.flightId" tag="ul">
-                        <el-col tag="li" :span="12">{{flight.flightNo}}</el-col>
+                        <el-col tag="li" :span="10">{{flight.flightNo}}</el-col>
                         <el-col tag="li" :span="6">{{flight.runway}}</el-col>
                         <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('HH:mm')}}</el-col>
                     </el-row>
@@ -66,7 +66,7 @@
                         <icon-svg iconClass="movementD" />
                     </div>
                     <el-row v-for="flight in flight_lastestAtd" :key="flight.flightId" tag="ul">
-                        <el-col tag="li" :span="12">{{flight.flightNo}}</el-col>
+                        <el-col tag="li" :span="10">{{flight.flightNo}}</el-col>
                         <el-col tag="li" :span="6">{{flight.runway}}</el-col>
                         <el-col tag="li" :span="6">{{$moment(flight.actualTime).format('HH:mm')}}</el-col>
                     </el-row>
@@ -144,30 +144,31 @@ export default {
 
 <style scoped lang='scss'>
 .monthDelay {
-    padding: 4px;
+    padding: 7px;
     position: absolute;
     .box_content {
         display: flex;
         justify-content: space-between;
+        padding: 15px;
         .left {
             display: flex;
             flex-direction: column;
-            padding: 0 30px;
             border-right: 2px dashed rgba(179, 189, 220, 0.2);
-            width: calc(100% - 200px);
-            margin: 20px 0;
+            width: 80%;
+            padding-right: 30px;
             .top {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 border-bottom: 2px dashed rgba(179, 189, 220, 0.2);
                 padding-bottom: 10px;
+                height: 40px;
                 i {
-                    font-size: 14px;
+                    font-size: 16px;
                     color: #ccc;
                 }
                 svg {
-                    font-size: 24px;
+                    font-size: 25px;
                 }
                 .name {
                     flex: 1;
@@ -181,18 +182,34 @@ export default {
                         background: #39404b;
                     }
                 }
+                span {
+                    font-size: 16px;
+                }
             }
             .mid {
-                padding: 20px 0;
+                padding: 16px 0;
                 border-bottom: 2px dashed rgba(179, 189, 220, 0.2);
                 & > div {
                     display: flex;
                     p {
                         width: 50%;
                         color: #fff;
+                        font-size: 16px;
+                        margin: 0;
                         span {
                             cursor: pointer;
+                            font-size: 16px;
+                            display: inline-block;
+                            height: 24px;
+                            width: 24px;
+                            border-radius: 24px;
+                            background: #940d5b;
+                            line-height: 24px;
+                            text-align: center;
                         }
+                    }
+                    .p2 {
+                        margin-top: 16px;
                     }
                 }
             }
@@ -201,6 +218,9 @@ export default {
                 .top {
                     border: none;
                     margin-bottom: 20px;
+                    span {
+                        font-size: 16px;
+                    }
                 }
                 table {
                     width: 100%;
@@ -215,14 +235,14 @@ export default {
                         color: #fff;
                         height: 40px;
                         text-align: center;
+                        font-weight: 400;
                     }
                 }
             }
         }
         .right {
-            padding: 0 14px;
-            width: 200px;
-            margin: 20px 0;
+            padding-left: 8px;
+            width: 20%;
             & > div {
                 height: 50%;
                 width: 100%;
@@ -237,8 +257,9 @@ export default {
                     }
                 }
                 ul {
+                    height: 17%;
                     li {
-                        color: rgba(255, 255, 255, 0.8);
+                        color: #fff;
                         height: 24px;
                         line-height: 24px;
                     }
@@ -255,13 +276,6 @@ export default {
 
         input {
             background: #39404b;
-            border: none;
-            color: #fff;
-        }
-    }
-    .el-select {
-        input {
-            background-color: rgba(216, 216, 216, 0.1);
             border: none;
             color: #fff;
         }

@@ -6,11 +6,11 @@
         </div>
         <div class="decrease_mid">
             <MDRS-warning />
-            <flight-decrease ref="ref_flightDecrease" :currentReduce='currentReduce' :reduceFlight="reduceFlight" :decreaseFlights="decreaseFlights" :airLinesGroup="airLinesGroup" />
+            <flight-decrease ref="ref_flightDecrease" :currentReduce='currentReduce' :airLinesGroup="airLinesGroup" />
             <flight-delay :currentReduce="currentReduce" />
         </div>
         <div class="decrease_right">
-            <sure-decrease :currentReduce="currentReduce" :reduceFlight="reduceFlight" :airLinesGroup="airLinesGroup" />
+            <sure-decrease :currentReduce="currentReduce" :reduceFlight="reduceFlight" :airLinesGroup="airLinesGroup" @updateNowCur="updateNowCur" />
         </div>
 
     </div>
@@ -24,8 +24,6 @@ import FlightDecrease from './components/flightDecrease.vue'
 import FlightDelay from './components/flightDelay.vue'
 import SureDecrease from './components/sureDecrease.vue'
 
-import PostalStore from '@/ui/lib/postalStore'
-let postalStore = new PostalStore()
 export default {
     components: {
         setting: Setting,
@@ -40,7 +38,6 @@ export default {
             currentReduce: {},
             reduceFlight: {},
             currentReduceLists: [],
-            decreaseFlights: [],
             currentType: 1,
             airLinesGroup: {
                 all: '全部',
@@ -56,26 +53,6 @@ export default {
     },
     mounted() {
         this.getCurrentDelayType()
-
-        // //173.101.1.30:6075/api/adverse-condition/adjust/getCurrentDelayType
-        // http: this.getCurrentReduce()
-
-        // let tempAirport = airport;
-        // direction = direction.value === 'All' || !direction.value ? '' : direction.value;
-        // movement = movement.value === 'All' || !movement.value ? '' : movement.value;
-        // airport = get(airport, 'value') === 'All' || !get(airport, 'value') ? '' : get(airport, 'label');
-        // let filter = [{ scheduleTime: { $gt: moment(effectRangeS).format('x') } }, { scheduleTime: { $lte: moment(effectRangeE).format('x') } }];
-        // movement && filter.push({ movement });
-        // airport && filter.push({ preOrNxtAirportCn: airport });
-        // direction && filter.push({ direction });
-
-        // postalStore.pub('Worker', 'AdverseCondition.GetFlight', '')
-        // postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
-        //     this.decreaseFlights = flights.splice(0, 30) || []
-        //     this.$nextTick(() => {
-        //         this.$refs.ref_flightDecrease.navHandle(0)
-        //     })
-        // })
     },
     methods: {
         logg(row) {
@@ -95,24 +72,34 @@ export default {
                 this.getCurrentReduce()
             })
         },
-        getCurrentReduce() {
+        getCurrentReduce(type) {
             this.$request
                 .get('adverse', 'adjust/getCurrentReduce?type=' + this.currentType)
                 .then((res) => {
                     if (res.data) {
                         this.currentReduceLists = _.sortBy(res.data, 'reduceInfo.reduceplanNo')
-
-                        let index = _.findIndex(this.currentReduceLists, (list) => {
-                            return list.reduceInfo.status === 0
-                        })
-                        this.changePlanno(index >= 0 ? index : this.currentReduceLists.length - 1)
+                        if (!type) {
+                            let index = _.findIndex(this.currentReduceLists, (list) => {
+                                return list.reduceInfo.status === 0
+                            })
+                            this.changePlanno(
+                                index >= 0 ? index : this.currentReduceLists.length - 1
+                            )
+                        }
                     }
                 })
         },
+        updateNowCur(nowData) {
+            this.getCurrentReduce('update')
+            let index = _.findIndex(this.currentReduceLists, (list) => {
+                return list.reduceId === nowData.reduceId
+            })
+            this.changePlanno(index)
+        },
         changePlanno(idx) {
             this.currentReduce = this.currentReduceLists[idx]
-            this.getAirlineFromDb()
-            this.getReduceFlights()
+            // this.getReduceFlights()
+            // this.getAirlineFromDb()
         },
         addPlanno() {
             this.currentReduceLists.push({
@@ -135,60 +122,6 @@ export default {
                 suggestTime: {},
             })
             this.changePlanno(this.currentReduceLists.length - 1)
-        },
-        getReduceFlights() {
-            // 发送状态 0:未发送 1:已发送给航司 2:航司已发给指挥室
-            let planDetail = _.get(this.currentReduce, 'planDetail', {})
-            let plan = _.get(this.currentReduce, 'plan', {})
-            let reduceShouldShow = _.mapValues(planDetail, (item, key) => {
-                if (plan[key].sendType == 2) {
-                    return item
-                }
-                return []
-            })
-            postalStore.pub('Worker', 'Decrease.GetReduceFlights', reduceShouldShow)
-            postalStore.sub('Web', 'Decrease.GetReduceFlights.Response', (flightWithAirline) => {
-                console.log(flightWithAirline)
-                // this.setState({ reduceFlight: flightWithAirline });
-                this.reduceFlight = flightWithAirline
-            })
-        },
-        getAirlineFromDb() {
-            let reduceInfo = this.currentReduce.reduceInfo
-
-            let direction = reduceInfo.directions
-            let movement = reduceInfo.movement
-            let airport = reduceInfo.airports
-            let filter = [
-                { scheduleTime: { $gt: this.$moment(reduceInfo.beginTime).format('x') } },
-                { scheduleTime: { $lte: this.$moment(reduceInfo.endTime).format('x') } },
-                { cancel: { $nin: [true] } },
-            ]
-            movement && filter.push({ movement })
-            airport && filter.push({ preOrNxtAirportCn: { $regex: airport } })
-            direction && filter.push({ direction })
-
-            //最右边列表
-            //     this.sub('Web', 'Decrease.GetReduceFlights.Response', (flightWithAirline) => {
-            // 	this.setState({ reduceFlight: flightWithAirline });
-            // });
-            // 获取航司航班列表
-            postalStore.pub('Worker', 'AdverseCondition.GetFlight', [...filter])
-            postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
-                // map(flights, (item, index) => {
-                //     if (map(allReduceFlightByType.R, (item) => item.flightId).indexOf(parseInt(item.flightId)) > -1) {
-                //         item.level = 'reduce';
-                //     }
-                //     if (map(allReduceFlightByType.A, (item) => item.flightId).indexOf(parseInt(item.flightId)) > -1) {
-                //         item.level = 'exchange';
-                //     }
-                // });
-
-                this.decreaseFlights = flights
-                this.$nextTick(() => {
-                    this.$refs.ref_flightDecrease.navHandle(0)
-                })
-            })
         },
     },
 }

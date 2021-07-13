@@ -38,12 +38,18 @@ let getCityRoutes = (chinaCity) => {
 	});
 };
 // const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#17bdff'], [1, '#17bdff']] };
-let chartColor = "rgb(71, 123, 255)"
+const chartColor = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#00DFFF'], [1, '#004EFF']] };
 const chartColor1 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#0566FF'], [1, '#0C9FFF']] };
 const chartColorRed = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#BF0B23'], [1, '#ff0002']] };
+
+
 const chartColorOrg = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#ff7300'], [1, '#ffa517']] };
 const chartColorYellow = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#d99c00'], [1, '#ffd700']] };
 const chartColor2 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#00CD49'], [1, '#009F23']] };
+
+const chartColorP = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#03831F'], [1, '#05FF5E']] };
+const chartColorP2 = { linearGradient: { x1: 0, x2: 0, y1: 0, y2: 1 }, stops: [[0, '#00FFDE'], [1, '#004EFF']] };
+const chartColorOrg2 = { linearGradient: { x1: 0, x2: 0, y1: 1, y2: 0 }, stops: [[0, '#ff7300'], [1, '#ffc700']] };
 // #0576E3 0% hex
 // #00CD48 100% hex
 // #009F23 100% hex
@@ -487,6 +493,10 @@ export const settings = {
 				} else {
 					value = Math.round((count * 10000) / total) / 100;
 				}
+				let color = chartColorRed;
+				if (value >= 80) color = chartColorOrg2;
+				// if (value >= 85) color = chartColorP;
+				if (value >= 90) color = chartColorP2;
 				return [
 					{
 						name: '放行正常率',
@@ -496,7 +506,7 @@ export const settings = {
 						},
 						data: [
 							{
-								color: chartColor,
+								color: color,
 								radius: '106%',
 								innerRadius: '89%',
 								name: `${count}/${total}`,
@@ -1643,7 +1653,7 @@ export const settings = {
 				let guiyang = renderColor(['Guizhou', 'Guangxi', 'Guangdong', 'Hainan'], directions[5]);
 				let kunming = renderColor(['Yunnan', 'Sichuan'], directions[6]);
 				let lasa = renderColor(['Xizang'], directions[1]);
-
+				console.log(lasa)
 				let result = [
 					{
 						colorByPoint: true,
@@ -1683,11 +1693,9 @@ export const settings = {
 								percent = Math.round(percent * 1000) / 10;
 								if (data) {
 									return `<div class="direction">
-                                        <div class="percent"  style="color:#fff">${percent}%</div>
+                                        <div class="percent fo"  style="color:#fff;font-size:20px;font-weight:400;">${percent}%</div>
 										<div class="cityname"  style="color:#fff">${self.point.name}
-										<span>
-											${normal}/${total}
-										</span>
+										<span class="fo">${normal}/${total}</span>
 										</div>
 									</div>`;
 								} else {
