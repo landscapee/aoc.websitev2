@@ -31,27 +31,28 @@ router.beforeEach((to, from, next) => {
             if(sessionStorage.token&&sessionStorage.token!=undefined){
                 let host = httpConfig['login'].host;
                 let port = httpConfig['login'].port;
-                axios({
-                    method:"post",
-                    // url:httpConfig['login'] 'api-login/sso/login/authorizeToken',
-                    url:`http://${host}:${port}/${httpConfig['login'].path}/authorizeToken`,
-                    dataType:"text",
-                    data:sessionStorage.token,
-                    async:false,
-                    headers:{
-                        'Content-Type':'application/json;charset=utf-8'
-                    }
-                })
-                .then(res=>{
-                    if(res&&res.responseCode=='1000'){
-                        postal.publish({
-                            channel: 'Worker',
-                            topic: 'LoginSuccess',
-                            data: {...res.data, token: sessionStorage.token}
-                        })
-                        next()
-                    }
-                })
+                // axios({
+                //     method:"post",
+                //     // url:httpConfig['login'] 'api-login/sso/login/authorizeToken',
+                //     url:`http://${host}:${port}/${httpConfig['login'].path}/authorizeToken`,
+                //     dataType:"text",
+                //     data:sessionStorage.token,
+                //     async:false,
+                //     headers:{
+                //         'Content-Type':'application/json;charset=utf-8'
+                //     }
+                // })
+                // .then(res=>{
+                //     if(res&&res.responseCode=='1000'){
+                //         postal.publish({
+                //             channel: 'Worker',
+                //             topic: 'LoginSuccess',
+                //             data: {...res.data, token: sessionStorage.token}
+                //         })
+                //         next()
+                //     }
+                // })
+                next()
 
             }else{
                 next()

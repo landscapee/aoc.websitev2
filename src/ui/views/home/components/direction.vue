@@ -84,11 +84,6 @@
             </div>
         </div>
         <el-dialog :title="layerName" :visible.sync="flightDetilShow" class="nodeDialog" center width="700px" :append-to-body="true">
-            <!-- <template slot="title">
-                <div class="blankDiv"></div>
-                <div class="el-dialog__title"> {{layerName}}</div>
-                <div class="blankDiv"><i class="el-icon-circle-close" @click="flightDetilShow = false"></i></div>
-            </template> -->
             <div class="contentbox">
                 <ele-table :columnConfig="columnConfig" :tableData="flightDetilLists"></ele-table>
             </div>
@@ -273,6 +268,8 @@ export default {
                 options.series[2].color = '#397DFF'
                 options.series[1].data[0].marker.lineColor = '#397DFF'
                 options.series[0].nullColor = '#e4f7ff'
+
+                console.log(options)
                 this.chart = Highcharts.mapChart('direction_chart_box', options)
             } else {
                 this.chart.update({ series: series })

@@ -1,8 +1,8 @@
 <template>
     <div id="com_glob_head">
         <div class="logo_left">
-            <div :style="'background-image:url(/src/ui/assets/img/'+sysEdition+'/logoTitle.png);'"></div>
-            <span class="sansB">{{$t('message.sysName')}}</span>
+            <div :style="'background-image:url('+logoTitleSrc+');'"></div>
+            <span class="sansB">成都天府国际机场协同决策系统</span>
         </div>
         <ul class="nav_middle">
             <li v-for="(item,idx) in navList" :key="idx" :class="{active:navFlag==idx}" @click="navHandle(item.path,idx)">
@@ -70,6 +70,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { encryptedData } from '../lib/des-coder.js'
+const tianfuLogoTitle = require('../assets/img/tianfu/logoTitle.png')
+const shuangliuLogoTitle = require('../assets/img/shuangliu/logoTitle.png')
 export default {
     data() {
         var validateName = (rule, value, callback) => {
@@ -135,6 +137,9 @@ export default {
             lagnuage: 'zh',
             dropLists: [],
             path: '',
+            logoTitleSrc: '',
+            tianfuLogoTitle,
+            shuangliuLogoTitle,
         }
     },
     props: ['seatFalg', 'planConfig', 'activeUserStatus'],
@@ -156,6 +161,8 @@ export default {
         this.path = this.$route.name
         this.getNavList()
         this.lagnuage = localStorage.lang || 'zh'
+
+        this.logoTitleSrc = this.sysEdition == 'tianfu' ? tianfuLogoTitle : shuangliuLogoTitle
     },
     methods: {
         outLogin() {
@@ -346,13 +353,27 @@ export default {
                     list.name = 'TOBT配置'
                     this.navList.push(list)
                 }
-
             })
             this.setNavFlag()
         },
         setNavFlag() {
+            console.log(this.navList, this.path, this.$route)
+
+            let path = this.path
+
+            if (
+                path == 'decrease' ||
+                path == 'delayNew' ||
+                path == 'weatherNew' ||
+                path == 'deice' ||
+                path == 'runningNew' ||
+                path == 'alternate'
+            ) {
+                path = 'conditionalOperation'
+            }
+
             this.navList.forEach((list, index) => {
-                if (list.path == this.path) {
+                if (list.path == path) {
                     this.navFlag = index
                 }
             })
@@ -393,11 +414,11 @@ export default {
         box-shadow: 0px 0px 6px 0px rgba(47, 61, 142, 1);
         border-radius: 0px 0 100px 0px;
         color: #fff;
-        padding: 0 20px;
+        padding: 0 30px 0 15px;
 
         div {
-            height: 100%;
-            width: 110px;
+            height: 20px;
+            width: 60px;
             background-size: 100% auto;
             background-repeat: no-repeat;
             background-position: center left;

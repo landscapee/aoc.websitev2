@@ -2,7 +2,29 @@
     <div class="home_rate" :class="options.rate.position">
         <div class="box_content">
             <div class="selectBox">
-                <el-select v-model="stateTypeSelect" placeholder="请选择" size="mini" @change="loadRate">
+                <el-dropdown trigger="click" @command="stateTypeSelectHandle" style="margin-right:15px">
+                    <span class="el-dropdown-link">
+                        全场<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="1">全场</el-dropdown-item>
+                        <el-dropdown-item command="2">定期</el-dropdown-item>
+                        <el-dropdown-item command="3">客运</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <el-dropdown trigger="click" @command="timeSelectHandle">
+                    <span class="el-dropdown-link">
+                        年<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                    </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="1">年</el-dropdown-item>
+                        <el-dropdown-item command="2">月</el-dropdown-item>
+                        <el-dropdown-item command="3">周</el-dropdown-item>
+                        <el-dropdown-item command="4">日</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+
+                <!-- <el-select v-model="stateTypeSelect" placeholder="请选择" size="mini" @change="loadRate">
                     <el-option label="全场" :value="1"></el-option>
                     <el-option label="定期" :value="2"></el-option>
                     <el-option label="客运" :value="3"></el-option>
@@ -12,7 +34,7 @@
                     <el-option label="月" :value="2"></el-option>
                     <el-option label="周" :value="3"></el-option>
                     <el-option label="日" :value="4"></el-option>
-                </el-select>
+                </el-select> -->
             </div>
             <div class="charBox">
                 <div class="title">
@@ -22,11 +44,11 @@
                     <div class="rotateBox"></div>
                     <div id="takeOffBox" class="chartBox"></div>
                     <div class="center">
-                        <div class="top fob" :style="{color:getPercentColor(rate1)}">
+                        <div class="top fo">
                             {{getPercent(rate1)}}%
                         </div>
-                        <div class="line" :style="{background:getPercentColor(rate1)}"></div>
-                        <div class="bottom fo" :style="{color:getPercentColor(rate1)}">
+                        <div class=" line"></div>
+                        <div class="bottom fo">
                             {{rate1.numerator}}/{{rate1.denominator}}
                         </div>
                     </div>
@@ -40,11 +62,11 @@
                     <div class="rotateBox"></div>
                     <div id="originatedBox" class="chartBox"></div>
                     <div class="center">
-                        <div class="top fob" :style="{color:getPercentColor(rate2)}">
+                        <div class="top fo">
                             {{getPercent(rate2)}}%
                         </div>
-                        <div class="line" :style="{background:getPercentColor(rate2)}"></div>
-                        <div class="bottom fo" :style="{color:getPercentColor(rate2)}">
+                        <div class="line"></div>
+                        <div class="bottom fo">
                             {{rate2.numerator}}/{{rate2.denominator}}
                         </div>
                     </div>
@@ -52,11 +74,14 @@
             </div>
             <div class="rateBox">
                 <div v-for="item in rateLists" :key="item.rateType" v-show="item.show">
-                    <div class="title">
+                    <!-- <div class="title">
                         <span :style="{color:getPercentColor(item)}">{{rateTypeName[item.rateType]}}</span>
                         <span class="span1 fo" :style="{color:getPercentColor(item)}">{{getPercent(item)}}%</span>
-                    </div>
+                    </div> -->
+                    <div class="title">{{rateTypeName[item.rateType]}}</div>
+                    <div class="per fo">{{getPercent(item)}}%</div>
                     <el-progress :percentage="getPercent(item)" :show-text="false" :color="colors"></el-progress>
+                    <div class="process fo">{{item.numerator}}/{{item.denominator}}</div>
                 </div>
             </div>
         </div>
@@ -76,9 +101,9 @@ export default {
             stateTypeSelect: 1,
             timeSelect: 4,
             colors: [
-                { color: '#477bff', percentage: 100 },
-                { color: '#17bdff', percentage: 90 },
-                { color: '#e8419b', percentage: 80 },
+                { color: 'rgb(255, 255, 255)', percentage: 100 },
+                { color: 'rgb(255, 199, 0)', percentage: 90 },
+                { color: 'rgb(191, 11, 35)', percentage: 80 },
             ],
             rateLists: [
                 { rateType: 8, numerator: 0, denominator: 0, show: true },
@@ -122,6 +147,14 @@ export default {
         },
     },
     methods: {
+        stateTypeSelectHandle(command) {
+            this.stateTypeSelect = command
+            this.loadRate()
+        },
+        timeSelectHandle(command) {
+            this.timeSelect = command
+            this.loadRate()
+        },
         getPercent(data) {
             let count = _.get(data, 'numerator', 0)
             let total = _.get(data, 'denominator', 0)
@@ -138,11 +171,11 @@ export default {
         getPercentColor(data) {
             let num = this.getPercent(data)
             if (num >= 90) {
-                return '#17bdff'
+                return 'rgb(255, 255, 255)'
             } else if (num < 80) {
-                return '#e8419b'
+                return 'rgb(191, 11, 35)'
             } else {
-                return '#17bdff'
+                return 'rgb(255, 199, 0)'
             }
         },
         loadRate(data) {
@@ -184,7 +217,7 @@ export default {
             this['rate' + num] = arr
             let options = _.cloneDeep(this.options[percent].options)
             let series = this.options.takeOffPercent.options.series(arr)
-            series[0].data[0].color = this.getPercentColor(arr)
+            // series[0].data[0].color = this.getPercentColor(arr)
             options.series = series
             this.loading = true
             this.chart = Highcharts.chart(box, options)
@@ -214,9 +247,9 @@ export default {
                 background: url(../static/imgs/buttonBg.png);
                 background-repeat: no-repeat;
                 background-size: 100% 100%;
-                width: 90px;
-                height: 20px;
-                line-height: 20px;
+                width: 100px;
+                height: 30px;
+                line-height: 30px;
                 text-align: center;
                 color: #fff;
                 margin: 10px 0 0;
@@ -271,41 +304,66 @@ export default {
                     .line {
                         height: 1px;
                         width: 100%;
-                        background: #fff;
+                        background: rgba(255, 255, 255, 0.1);
                         margin: 5px 0;
                     }
                     .top {
-                        font-size: 22px;
+                        font-size: 26px;
+                        color: #fff;
+                    }
+                    .bottom {
+                        color: #477bff;
                     }
                 }
             }
         }
         .rateBox {
-            width: 50%;
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            padding: 40px 0 10px;
-            & > div {
-                width: 50%;
-                padding-right: 10px;
-                .title {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    span {
-                        color: #31c2fc;
-                    }
 
-                    .span1 {
-                        font-size: 20px;
-                    }
+            padding: 40px 0 10px;
+            margin-left: 20px;
+            & > div {
+                width: 23%;
+                background: rgba(0, 0, 0, 0.15);
+                border-radius: 5px;
+                height: 48%;
+                padding: 6px;
+                margin: 0 2% 2% 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                .title {
+                    color: #31c2fc;
                 }
-            }
-            & > div:last-child {
-                width: 100%;
+                .per {
+                    color: #fff;
+                    font-size: 20px;
+                }
+                .process {
+                    color: #4181e9;
+                }
+
+                // .title {
+                //     display: flex;
+                //     align-items: center;
+                //     justify-content: space-between;
+                //     span {
+                //         color: #31c2fc;
+                //     }
+
+                //     .span1 {
+                //         font-size: 20px;
+                //     }
+                // }
             }
         }
     }
+}
+</style>
+<style>
+.rateBox .el-progress-bar__outer {
+    background-color: #2a3440;
 }
 </style>

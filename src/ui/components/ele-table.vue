@@ -13,7 +13,7 @@
                     </template>
                     <template v-else>
                         <div v-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
-                        <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{!!scope.row[col.key]?scope.row[col.key]:(col.nullValue?col.nullValue:'-')}}</div>
+                        <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{!!scope.row[col.key]?scope.row[col.key]:(col.nullValue?col.nullValue:'--')}}</div>
                     </template>
                 </template>
             </el-table-column>

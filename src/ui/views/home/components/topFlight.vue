@@ -111,8 +111,9 @@ export default {
             .text {
                 color: #fff;
                 margin: 0 10px;
-                height: 30px;
-                width: 30px;
+                height: 36px;
+                width: 36px;
+                font-size: 16px;
                 background-size: 100% 100%;
                 background-repeat: no-repeat;
                 display: flex;
@@ -130,7 +131,8 @@ export default {
                 width: 50%;
                 display: flex;
                 flex-direction: column;
-                padding: 20px 0 20px 10px;
+                justify-content: center;
+                height: 75px;
                 div {
                     color: #fff;
                     font-size: 12px;
@@ -153,6 +155,7 @@ export default {
             }
             .moveD {
                 border-bottom: 2px dashed rgba(179, 189, 220, 0.2);
+                padding-left: 10px;
                 div:nth-child(1) {
                     color: #44adff;
                 }

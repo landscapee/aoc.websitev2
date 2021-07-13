@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="92px" height="24px" viewBox="0 0 92 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 151</title>
+    <defs>
+        <rect id="path-1" x="0" y="3.55271368e-15" width="90" height="22"></rect>
+        <filter x="-5.6%" y="-22.7%" width="111.1%" height="145.5%" filterUnits="objectBoundingBox" id="filter-2">
+            <feGaussianBlur stdDeviation="5" in="SourceAlpha" result="shadowBlurInner1"></feGaussianBlur>
+            <feOffset dx="0" dy="0" in="shadowBlurInner1" result="shadowOffsetInner1"></feOffset>
+            <feComposite in="shadowOffsetInner1" in2="SourceAlpha" operator="arithmetic" k2="-1" k3="1" result="shadowInnerInner1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.164705882   0 0 0 0 0.262745098   0 0 0 0 0.498039216  0 0 0 1 0" type="matrix" in="shadowInnerInner1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="综合查询" transform="translate(-901.000000, -90.000000)">
+            <g id="编组-108" transform="translate(867.000000, 91.000000)">
+                <g id="编组-116" transform="translate(35.000000, 0.000000)">
+                    <g id="编组-151" transform="translate(0.000000, -0.000000)">
+                        <g id="矩形">
+                            <use fill="#152A4B" fill-rule="evenodd" xlink:href="#path-1"></use>
+                            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        </g>
+                        <polyline id="路径-9" stroke="#0082FF" points="85 0 89.9875783 0 89.9875783 4.9471876"></polyline>
+                        <polyline id="路径-9" stroke="#0082FF" transform="translate(2.493789, 2.473594) scale(-1, 1) translate(-2.493789, -2.473594) " points="1.19629591e-13 0 4.98757827 0 4.98757827 4.9471876"></polyline>
+                        <polyline id="路径-9" stroke="#0082FF" transform="translate(87.493789, 19.473594) scale(1, -1) translate(-87.493789, -19.473594) " points="85 17 89.9875783 17 89.9875783 21.9471876"></polyline>
+                        <polyline id="路径-9" stroke="#0082FF" transform="translate(2.493789, 19.473594) scale(-1, -1) translate(-2.493789, -19.473594) " points="1.19629591e-13 17 4.98757827 17 4.98757827 21.9471876"></polyline>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

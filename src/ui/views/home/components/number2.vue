@@ -10,15 +10,17 @@
                 </div>
             </div>
             <div class="right">
-                <img :src="'/src/ui/views/home/static/imgs/'+options.icon+'.png'" alt="">
-                <!-- <icon-svg :iconClass="options.icon" /> -->
+                <img :src="src" alt="">
             </div>
         </div>
-
     </div>
 </template>
 
 <script>
+const fanhang = require('../../../assets/img/home/fanhang.png')
+const benchang = require('../../../assets/img/home/benchang.png')
+const waichang = require('../../../assets/img/home/waichang.png')
+const quxiao = require('../../../assets/img/home/quxiao.png')
 export default {
     props: ['options', 'flight_home'],
     data() {
@@ -27,10 +29,17 @@ export default {
             activeData: 0,
             detail: [],
             stat: {},
+            fanhang,
+            benchang,
+            waichang,
+            quxiao,
+            src: '',
         }
     },
     created() {},
-    mounted() {},
+    mounted() {
+        this.src = this[this.options.icon]
+    },
     watch: {
         flight_home: function () {
             this.load_flight_home()
@@ -204,10 +213,10 @@ export default {
 
 <style scoped lang='scss'>
 .home_number2 {
-    padding: 4px;
+    padding: 7px;
     position: absolute;
     .box_content {
-        padding: 20px 10px 20px 30px;
+        padding: 8px 20px 8px 8px;
         display: flex;
         justify-content: space-between;
         align-items: center;
