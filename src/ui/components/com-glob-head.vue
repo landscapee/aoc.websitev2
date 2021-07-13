@@ -1,14 +1,14 @@
 <template>
     <div id="com_glob_head">
         <div class="logo_left">
-            <div :style="'background-image:url(/src/ui/assets/img/'+sysEdition+'/logoTitle.png);'"></div>
+            <div :style="'background-image:url('+url+');'"></div>
             <span class="sansB">{{$t('message.sysName')}}</span>
         </div>
         <ul class="nav_middle">
             <li v-for="(item,idx) in navList" :key="idx" :class="{active:navFlag==idx}" @click="navHandle(item.path,idx)">
                 <div>
                     <icon-svg :iconClass="item.icon" :iconColor="'#fff'" />
-                    <span>{{item.name}}</span>
+                    <span>{{item.title}}</span>
                 </div>
             </li>
         </ul>
@@ -69,7 +69,10 @@
 </template>
 <script>
 import { mapGetters } from 'vuex'
-import { encryptedData } from '../lib/des-coder.js'
+import { encryptedData } from '../lib/des-coder.js';
+import {routes} from '../router/index'
+let url= require('../assets/img/'+sysEdition+'/logoTitle.png')
+import {map} from 'lodash'
 export default {
     data() {
         var validateName = (rule, value, callback) => {
@@ -102,6 +105,7 @@ export default {
             }
         }
         return {
+            url,
             navList: [],
             navFlag: 0,
             date: {
@@ -270,85 +274,97 @@ export default {
             return true
         },
         getNavList() {
-            let menus = this.getUserMsg.menus || []
-            this.navList
-            menus.map((list) => {
-                let nav = _.find(this.navList, { code: list.code })
-                let drop = _.find(this.dropLists, { code: list.code })
-                if (nav || drop) {
-                    return false
+            this.navList=[]
+             let route=routes[2].children
+            let menus = this.getUserMsg?.menus || []
+            let codeObj={}
+            map(menus,(list) => {
+                 console.log(list.name,list.code);
+                codeObj[list.code]=1
+            })
+            map(route,(k,l)=>{
+                if(codeObj[k.role]){
+                    this.navList.push(k)
                 }
-
-                // if (list.name.indexOf('tobt') >= 0) {
-                //     console.log(list, 1111111111)
-                // }
-                //运行态势
-                if (list.code == 'situation-all') {
-                    list.icon = 'yunxingtaishi'
-                    list.path = 'home'
-                    this.navList.push(list)
-                }
-                //航班动态
-                if (list.code == 'flight') {
-                    list.icon = 'hangbandongtai1'
-                    list.path = 'flight'
-                    this.navList.push(list)
-                }
-                //航班正常监控
-                if (list.code == 'normal_monitoring_runway') {
-                    list.icon = 'hbzcjk'
-                    list.path = 'poolMonitorWithRunway'
-                    list.name = '航班正常监控'
-                    this.navList.push(list)
-                }
-                //运行监控
-                if (list.code == 'run_monitoring') {
-                    list.icon = 'yunxingjiankong'
-                    list.path = 'runMonitoring'
-                    this.navList.push(list)
-                }
-                //动态调整
-                if (list.code == 'flight_schedule_dynamic_adjustment') {
-                    list.icon = 'tiaozheng1'
-                    list.path = 'flightAdjustment'
-                    this.navList.push(list)
-                }
-                //不利条件运行
-                if (list.code == 'conditionalOperationMain') {
-                    list.icon = 'bulitiaojian'
-                    list.path = 'conditionalOperation'
-                    this.navList.push(list)
-                }
-                //资源监控
-                if (list.code == 'resourceMonitoring') {
-                    list.icon = 'ziyuanjiankong'
-                    list.path = 'resourceMonitoring'
-                    list.name = '资源监控'
-                    this.navList.push(list)
-                }
-                //调整调减
-                if (list.code == 'adjustReduction') {
-                    list.icon = 'tiaozhengtiaojian'
-                    list.path = 'adjustmentReduction'
-                    this.navList.push(list)
-                }
-                //消息管理
-                if (list.code == 'news_releaseAll') {
-                    list.icon = 'xiaoxifabu'
-                    list.path = 'specialTreatment'
-                    list.name = '消息发布'
-                    this.navList.push(list)
-                }
-                //消息管理
-                if (list.code == 'TOBTConfig') {
-                    list.icon = 'tiaozhengtiaojian'
-                    list.path = 'tobtConfig'
-                    list.name = 'TOBT配置'
-                    this.navList.push(list)
-                }
-
             })
             this.setNavFlag()
+            //  menus.map((list) => {
+            //     let nav = _.find(this.navList, { code: list.code })
+            //     let drop = _.find(this.dropLists, { code: list.code })
+            //     if (nav || drop) {
+            //         return false
+            //     }
+            //
+            //     // if (list.name.indexOf('tobt') >= 0) {
+            //     //     console.log(list, 1111111111)
+            //     // }
+            //     //运行态势
+            //     if (list.code == 'situation-all') {
+            //         list.icon = 'yunxingtaishi'
+            //         list.path = 'home'
+            //         this.navList.push(list)
+            //     }
+            //     //航班动态
+            //     if (list.code == 'flight') {
+            //         list.icon = 'hangbandongtai1'
+            //         list.path = 'flight'
+            //         this.navList.push(list)
+            //     }
+            //     //航班正常监控
+            //     if (list.code == 'normal_monitoring_runway') {
+            //         list.icon = 'hbzcjk'
+            //         list.path = 'poolMonitorWithRunway'
+            //         list.name = '航班正常监控'
+            //         this.navList.push(list)
+            //     }
+            //     //运行监控
+            //     if (list.code == 'run_monitoring') {
+            //         list.icon = 'yunxingjiankong'
+            //         list.path = 'runMonitoring'
+            //         this.navList.push(list)
+            //     }
+            //     //动态调整
+            //     if (list.code == 'flight_schedule_dynamic_adjustment') {
+            //         list.icon = 'tiaozheng1'
+            //         list.path = 'flightAdjustment'
+            //         this.navList.push(list)
+            //     }
+            //     //不利条件运行
+            //     if (list.code == 'conditionalOperationMain') {
+            //         list.icon = 'bulitiaojian'
+            //         list.path = 'conditionalOperation'
+            //         this.navList.push(list)
+            //     }
+            //     //资源监控
+            //     if (list.code == 'resourceMonitoring') {
+            //         list.icon = 'ziyuanjiankong'
+            //         list.path = 'resourceMonitoring'
+            //         list.name = '资源监控'
+            //         this.navList.push(list)
+            //     }
+            //     //调整调减
+            //     if (list.code == 'adjustReduction') {
+            //         list.icon = 'tiaozhengtiaojian'
+            //         list.path = 'adjustmentReduction'
+            //         this.navList.push(list)
+            //     }
+            //     //消息管理
+            //     if (list.code == 'news_releaseAll') {
+            //         list.icon = 'xiaoxifabu'
+            //         list.path = 'specialTreatment'
+            //         list.name = '消息发布'
+            //         this.navList.push(list)
+            //     }
+            //     //消息管理
+            //     if (list.code == 'TOBTConfig') {
+            //         list.icon = 'tiaozhengtiaojian'
+            //         list.path = 'tobtConfig'
+            //         list.name = 'TOBT配置'
+            //         this.navList.push(list)
+            //     }
+            //
+            // })
+
         },
         setNavFlag() {
             this.navList.forEach((list, index) => {

@@ -22,7 +22,6 @@ const flight = () => import(/*webpackChunkName:"flight"*/ '../views/flight/fligh
 //运行监控
 const runMonitoring = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonitoring')
 const poolMonitorWithRunway = () => import(/*webpackChunkName:"poolMonitorWithRunway"*/ '../views/poolMonitorWithRunway')
-const adv = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonitoring/adv')
 
 //不利条件运行
 const conditionalOperation = () => import(/*webpackChunkName:"conditionalOperation"*/ '../views/conditionalOperation/conditionalOperation')
@@ -48,21 +47,39 @@ const resourceMonitoring = () => import(/*webpackChunkName:"resourceMonitoring"*
 const tobtConfig = () => import(/*webpackChunkName:"tobtConfig"*/ '../views/tobtConfig/index')
 
 
-var routes = [
+export var routes = [
     {path: '/', name: 'login', component: login},
     {path: '/menu', name: 'menu', component: menu},
     {
         path: '/index', name: 'index', component: index, children: [
-            {path: '/home', name: 'home', component: home},
-            {path: '/flight', name: 'flight', component: flight},
-            {path: '/runMonitoring', name: 'runMonitoring', component: runMonitoring},
-            {path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component: poolMonitorWithRunway},
-            {path: '/resourceMonitoring', name: 'resourceMonitoring', component: resourceMonitoring},
-            {path: '/adv', name: 'adv', component: adv},
+            {
+                path: '/home', name: 'home', component: home,
+                title:'运行态势',icon:'yunxingtaishi',role:'situation-all'
+            },
+            {
+                path: '/flight', name: 'flight', component: flight,
+                title:'航班动态',icon:'hangbandongtai1',role:'flight'
+            },
+            {
+                path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component: poolMonitorWithRunway,
+                title:'航班正常监控',icon:'hbzcjk',role:'normal_monitoring_runway'
+            },
+            {
+                path: '/runMonitoring', name: 'runMonitoring', component: runMonitoring,
+                title:'运行监控',icon:'yunxingjiankong',role:'run_monitoring'
+            },
+
+            {
+                path: '/flightAdjustment', name: 'flightAdjustment', component: resourceMonitoring,
+                title:'动态调整',icon:'tiaozheng1',role:'flight_schedule_dynamic_adjustment'
+            },
+
+
             {
                 path: '/conditionalOperation',
                 name: 'conditionalOperation',
                 component: conditionalOperation,
+                title:'不利条件运行',icon:'bulitiaojian',role:'conditionalOperationMain',
                 children: [
                     {path: '/alternate', name: 'alternate', component: alternate},
                     {path: '/runningNew', name: 'runningNew', component: runningNew},
@@ -72,9 +89,23 @@ var routes = [
                     {path: '/decrease', name: 'decrease', component: decrease},
                 ]
             },
-            {path: '/adjustmentReduction', name: 'adjustmentReduction', component: adjustmentReduction},
-            {path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment},
-            {path: '/tobtConfig', name: 'tobtConfig', component: tobtConfig},
+            {
+                path: '/resourceMonitoring', name: 'resourceMonitoring', component: resourceMonitoring,
+                title:'资源监控',icon:'ziyuanjiankong',role:'resourceMonitoring'
+            },
+            {
+                path: '/adjustmentReduction', name: 'adjustmentReduction', component: adjustmentReduction,
+                title:'调整调减',icon:'tiaozhengtiaojian',role:'adjustReduction'
+            },
+            {
+                path: '/tobtConfig', name: 'tobtConfig', component: tobtConfig,
+                title:'TOBT配置',icon:'tiaozhengtiaojian',role:'TOBTConfig'
+            },
+            {
+                path: '/specialTreatment', name: 'specialTreatment', component: specialTreatment,
+                title:'消息发布',icon:'xiaoxifabu',role:'news_releaseAll'
+            },
+
 
         ]
     },
