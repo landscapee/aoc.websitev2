@@ -54,18 +54,16 @@
 	#runningNew {
 		padding-bottom: 15px;
 		.top {
-			height: 100px;
-			border: 1px #fff solid;
-		}
+			height: 80px;
+ 		}
 		.bottom {
 			margin-top: 15px;
-			height: calc(100% - 115px);
+			height: calc(100% - 95px);
 			display: flex;
 			.right,
 			.left {
 				height: 100%;
-				border: 1px #fff solid;
-				width: calc(50% - 7px);
+ 				width: calc(50% - 7px);
 			}
 			.left {
 				margin-right: 14px;

@@ -2,7 +2,7 @@ import zhLocale from 'element-ui/lib/locale/lang/zh-CN'
 const cn = {
     ...zhLocale,
     message: {
-        "sysName":"地面保障监控",
+        "sysName":"成都天府国际机场协同决策系统",
 
         "submit":"提交",
         "cancel":"取消",
