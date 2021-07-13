@@ -279,8 +279,7 @@ export default {
             let menus = this.getUserMsg?.menus || []
             let codeObj={}
             map(menus,(list) => {
-                 console.log(list.name,list.code);
-                codeObj[list.code]=1
+                 codeObj[list.code]=1
             })
             map(route,(k,l)=>{
                 if(codeObj[k.role]){
@@ -288,82 +287,7 @@ export default {
                 }
             })
             this.setNavFlag()
-            //  menus.map((list) => {
-            //     let nav = _.find(this.navList, { code: list.code })
-            //     let drop = _.find(this.dropLists, { code: list.code })
-            //     if (nav || drop) {
-            //         return false
-            //     }
-            //
-            //     // if (list.name.indexOf('tobt') >= 0) {
-            //     //     console.log(list, 1111111111)
-            //     // }
-            //     //运行态势
-            //     if (list.code == 'situation-all') {
-            //         list.icon = 'yunxingtaishi'
-            //         list.path = 'home'
-            //         this.navList.push(list)
-            //     }
-            //     //航班动态
-            //     if (list.code == 'flight') {
-            //         list.icon = 'hangbandongtai1'
-            //         list.path = 'flight'
-            //         this.navList.push(list)
-            //     }
-            //     //航班正常监控
-            //     if (list.code == 'normal_monitoring_runway') {
-            //         list.icon = 'hbzcjk'
-            //         list.path = 'poolMonitorWithRunway'
-            //         list.name = '航班正常监控'
-            //         this.navList.push(list)
-            //     }
-            //     //运行监控
-            //     if (list.code == 'run_monitoring') {
-            //         list.icon = 'yunxingjiankong'
-            //         list.path = 'runMonitoring'
-            //         this.navList.push(list)
-            //     }
-            //     //动态调整
-            //     if (list.code == 'flight_schedule_dynamic_adjustment') {
-            //         list.icon = 'tiaozheng1'
-            //         list.path = 'flightAdjustment'
-            //         this.navList.push(list)
-            //     }
-            //     //不利条件运行
-            //     if (list.code == 'conditionalOperationMain') {
-            //         list.icon = 'bulitiaojian'
-            //         list.path = 'conditionalOperation'
-            //         this.navList.push(list)
-            //     }
-            //     //资源监控
-            //     if (list.code == 'resourceMonitoring') {
-            //         list.icon = 'ziyuanjiankong'
-            //         list.path = 'resourceMonitoring'
-            //         list.name = '资源监控'
-            //         this.navList.push(list)
-            //     }
-            //     //调整调减
-            //     if (list.code == 'adjustReduction') {
-            //         list.icon = 'tiaozhengtiaojian'
-            //         list.path = 'adjustmentReduction'
-            //         this.navList.push(list)
-            //     }
-            //     //消息管理
-            //     if (list.code == 'news_releaseAll') {
-            //         list.icon = 'xiaoxifabu'
-            //         list.path = 'specialTreatment'
-            //         list.name = '消息发布'
-            //         this.navList.push(list)
-            //     }
-            //     //消息管理
-            //     if (list.code == 'TOBTConfig') {
-            //         list.icon = 'tiaozhengtiaojian'
-            //         list.path = 'tobtConfig'
-            //         list.name = 'TOBT配置'
-            //         this.navList.push(list)
-            //     }
-            //
-            // })
+
 
         },
         setNavFlag() {
@@ -375,18 +299,8 @@ export default {
         },
         navHandle(path, idx) {
             this.navFlag = idx
-            this.$router.push('/' + path)
-            // if (path == 'flight_full') {
-            //     setTimeout(() => {
-            //         let ele = $('.flight_full_contariner')[0]
-            //         const func =
-            //             ele.requestFullscreen ||
-            //             ele.mozRequestFullScreen ||
-            //             ele.webkitRequestFullscreen ||
-            //             ele.msRequestFullscreen
-            //         func.call(ele)
-            //     }, 500)
-            // }
+            this.$router.push(path)
+
         },
     },
 }
