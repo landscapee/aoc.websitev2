@@ -1,14 +1,14 @@
 <template>
     <div id="com_glob_head">
         <div class="logo_left">
-            <div :style="'background-image:url('+logoTitleSrc+');'"></div>
-            <span class="sansB">成都天府国际机场协同决策系统</span>
+            <div :style="'background-image:url('+url+');'"></div>
+            <span class="sansB">{{$t('message.sysName')}}</span>
         </div>
         <ul class="nav_middle">
             <li v-for="(item,idx) in navList" :key="idx" :class="{active:navFlag==idx}" @click="navHandle(item.path,idx)">
                 <div>
                     <icon-svg :iconClass="item.icon" :iconColor="'#fff'" />
-                    <span>{{item.name}}</span>
+                    <span>{{item.title}}</span>
                 </div>
             </li>
         </ul>
@@ -70,8 +70,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import { encryptedData } from '../lib/des-coder.js'
-const tianfuLogoTitle = require('../assets/img/tianfu/logoTitle.png')
-const shuangliuLogoTitle = require('../assets/img/shuangliu/logoTitle.png')
+import { routes } from '../router/index'
+let url = require('../assets/img/' + sysEdition + '/logoTitle.png')
+import { map } from 'lodash'
 export default {
     data() {
         var validateName = (rule, value, callback) => {
@@ -104,6 +105,7 @@ export default {
             }
         }
         return {
+            url,
             navList: [],
             navFlag: 0,
             date: {
@@ -137,9 +139,6 @@ export default {
             lagnuage: 'zh',
             dropLists: [],
             path: '',
-            logoTitleSrc: '',
-            tianfuLogoTitle,
-            shuangliuLogoTitle,
         }
     },
     props: ['seatFalg', 'planConfig', 'activeUserStatus'],
@@ -161,8 +160,6 @@ export default {
         this.path = this.$route.name
         this.getNavList()
         this.lagnuage = localStorage.lang || 'zh'
-
-        this.logoTitleSrc = this.sysEdition == 'tianfu' ? tianfuLogoTitle : shuangliuLogoTitle
     },
     methods: {
         outLogin() {
@@ -171,7 +168,7 @@ export default {
             })
                 .then(() => {
                     this.$router.push('/')
-                    sessionStorage.clear()
+                    // sessionStorage.clear()
                 })
                 .catch(() => {})
         },
@@ -277,81 +274,16 @@ export default {
             return true
         },
         getNavList() {
-            let menus = this.getUserMsg.menus || []
-            this.navList
-            menus.map((list) => {
-                let nav = _.find(this.navList, { code: list.code })
-                let drop = _.find(this.dropLists, { code: list.code })
-                if (nav || drop) {
-                    return false
-                }
-
-                // if (list.name.indexOf('tobt') >= 0) {
-                //     console.log(list, 1111111111)
-                // }
-                //运行态势
-                if (list.code == 'situation-all') {
-                    list.icon = 'yunxingtaishi'
-                    list.path = 'home'
-                    this.navList.push(list)
-                }
-                //航班动态
-                if (list.code == 'flight') {
-                    list.icon = 'hangbandongtai1'
-                    list.path = 'flight'
-                    this.navList.push(list)
-                }
-                //航班正常监控
-                if (list.code == 'normal_monitoring_runway') {
-                    list.icon = 'hbzcjk'
-                    list.path = 'poolMonitorWithRunway'
-                    list.name = '航班正常监控'
-                    this.navList.push(list)
-                }
-                //运行监控
-                if (list.code == 'run_monitoring') {
-                    list.icon = 'yunxingjiankong'
-                    list.path = 'runMonitoring'
-                    this.navList.push(list)
-                }
-                //动态调整
-                if (list.code == 'flight_schedule_dynamic_adjustment') {
-                    list.icon = 'tiaozheng1'
-                    list.path = 'flightAdjustment'
-                    this.navList.push(list)
-                }
-                //不利条件运行
-                if (list.code == 'conditionalOperationMain') {
-                    list.icon = 'bulitiaojian'
-                    list.path = 'conditionalOperation'
-                    this.navList.push(list)
-                }
-                //资源监控
-                if (list.code == 'resourceMonitoring') {
-                    list.icon = 'ziyuanjiankong'
-                    list.path = 'resourceMonitoring'
-                    list.name = '资源监控'
-                    this.navList.push(list)
-                }
-                //调整调减
-                if (list.code == 'adjustReduction') {
-                    list.icon = 'tiaozhengtiaojian'
-                    list.path = 'adjustmentReduction'
-                    this.navList.push(list)
-                }
-                //消息管理
-                if (list.code == 'news_releaseAll') {
-                    list.icon = 'xiaoxifabu'
-                    list.path = 'specialTreatment'
-                    list.name = '消息发布'
-                    this.navList.push(list)
-                }
-                //消息管理
-                if (list.code == 'TOBTConfig') {
-                    list.icon = 'tiaozhengtiaojian'
-                    list.path = 'tobtConfig'
-                    list.name = 'TOBT配置'
-                    this.navList.push(list)
+            this.navList = []
+            let route = routes[2].children
+            let menus = this.getUserMsg?.menus || []
+            let codeObj = {}
+            map(menus, (list) => {
+                codeObj[list.code] = 1
+            })
+            map(route, (k, l) => {
+                if (codeObj[k.role]) {
+                    this.navList.push(k)
                 }
             })
             this.setNavFlag()
@@ -380,18 +312,7 @@ export default {
         },
         navHandle(path, idx) {
             this.navFlag = idx
-            this.$router.push('/' + path)
-            // if (path == 'flight_full') {
-            //     setTimeout(() => {
-            //         let ele = $('.flight_full_contariner')[0]
-            //         const func =
-            //             ele.requestFullscreen ||
-            //             ele.mozRequestFullScreen ||
-            //             ele.webkitRequestFullscreen ||
-            //             ele.msRequestFullscreen
-            //         func.call(ele)
-            //     }, 500)
-            // }
+            this.$router.push(path)
         },
     },
 }
@@ -405,6 +326,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    z-index: 10;
+    position: fixed;
     .logo_left {
         height: 40px;
         display: flex;

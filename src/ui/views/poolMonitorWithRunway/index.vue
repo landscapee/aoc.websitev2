@@ -305,7 +305,7 @@
                     let time = this.nowTime.getTime() - num * 60 * 1000;
                     let time1 = opt.actualTime || opt.eta || opt.ctot;
                     let time2 = Math.ceil((time1 - time) / 60 / 1000) * 62
-                    console.log(time1, time1 / 60);
+                    // console.log(time1, time1 / 60);
                     return {left: time2 / 100 + 'rem', zIndex: opt.zIndex,}
                 }
             },
@@ -366,9 +366,9 @@
             },
             move(num) {
                 this.moveNum += num
-                console.log(this.moveNum);
+                // console.log(this.moveNum);
                 let time = this.nowTime.getTime() - (Math.floor(this.runwayTime / 2) - 1 - this.moveNum) * 60 * 1000
-                console.log(moment(time).format('HH:mm'));
+                // console.log(moment(time).format('HH:mm'));
                 postal.publish({
                     channel: 'Worker',
                     topic: 'QueuesMonitor.TimeFilter',
@@ -406,7 +406,6 @@
                 let timeitem = document.getElementsByClassName('timespan')[0]
                 let timewidth = parseInt(getComputedStyle(time)['width'])
                 let timeItemWidth = parseInt(getComputedStyle(timeitem)['width'])
-                // console.log(parseInt(timewidth / timeItemWidth));
                 return Math.ceil(timewidth / timeItemWidth)
             },
 
@@ -487,7 +486,6 @@
                 this.timerInterval = setInterval(() => {
                     let num = Math.floor(this.runwayTime / 2) - 1 - this.moveNum
                     if (this.runwayTime > num && num > 0) {
-                        console.log(222);
                         this.nowTime = new Date(this.nowTime.getTime() + 1000 * 60)
                     }
                 }, 1000 * 60)
@@ -526,13 +524,13 @@
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
 
             postalStore.sub('runwayModels', (data) => {
-                console.log('runwayModels', data);
+                // console.log(22);
                 this.runway = data;
             })
 
             postalStore.sub('poolMonitorWithRunway.table', (data) => {
                 let obj = this.pageListObj[data.key]
-                data.key == 'critical' && console.log('critical', data['data'], data.key);
+                // data.key == 'critical' && console.log('critical', data['data'], data.key);
                 if (!data.data || !obj) {
                     return
                 }

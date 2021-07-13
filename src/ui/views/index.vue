@@ -25,6 +25,8 @@ export default {
     .index_content {
         height: calc(100% - 40px);
         width: 100%;
+        position: relative;
+        top: 40px;
     }
 }
 </style>

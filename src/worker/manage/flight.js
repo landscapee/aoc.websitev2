@@ -207,6 +207,39 @@ const sortFlights = (cacheFlights) => {
   flights = orderBy(flights, 'setTop', 'desc');
   return flights;
 };
+
+/**
+ * 统计 返航 备降 取消
+ */
+const getStatistics = (flights) => {
+  flights = filterRoleFlights(flights);
+  let result = {
+    total: get(flights, 'length', 0),
+    movementA: 0,
+    movementD: 0,
+    return: 0,
+    alternate: 0,
+    cancel: 0,
+    concern: 0,
+    isAlternateLandingFlight: 0,
+    isPassagerFlight: 0,
+    originated: 0,
+    isExecutableFlight: 0,
+  };
+  map(flights, (f) => {
+    if (f.return) result.return += 1;
+    if (f.alternate) result.alternate += 1;
+    if (f.cancel) result.cancel += 1;
+    if (f.concern) result.concern += 1;
+    if (f.isAlternateLandingFlight) result.isAlternateLandingFlight += 1;
+    if (f.isPassagerFlight) result.isPassagerFlight += 1;
+    if (f.originated) result.originated += 1;
+    if (f.isExecutableFlight) result.isExecutableFlight += 1;
+    if (f.movement === 'A') result.movementA += 1;
+    if (f.movement === 'D') result.movementD += 1;
+  });
+  return result;
+};
 /**
  * 获得页面展示的航班列表数据
  * @returns {*}
@@ -220,7 +253,7 @@ export const refreshFlights = (arg) => {
     flights = result.flights;
   } else {
     flights = loadDefaultFlights();
-    // result = getStatistics(flights);
+    result.statistics = getStatistics(flights);
   }
   // if (now !== lastRunTime || immediately) {
   // lastRunTime = parseInt(new Date().getTime() / 1000 / refreshRate);
@@ -233,7 +266,13 @@ export const refreshFlights = (arg) => {
   // }
 };
 
+export const setFilterOption = (data) => {
+  Options = data ? extend(Options, data) : {};
+  //return refreshFlights(true);
+};
+
 export const flightStart = (posWorker, myHeader) => {
+  let hasGetYesterday;
   // ui线程传过来的header 先存进内存
   memoryStore.setItem('global',{flightHeader: myHeader})
   // 这里从内存里面取出来 加上了convert的header
@@ -246,6 +285,18 @@ export const flightStart = (posWorker, myHeader) => {
   posWorker.subscribe('Flight.Change.Sync',(data)=>{
     flightStart()
   })
+
+  //航班过滤
+  posWorker.subscribe(`Flight.Filter`, (data) => {
+    if (data.day === 'Yesterday' && !hasGetYesterday) {
+      posWorker.publish('Worker', 'Flight.GetMore', { day: 'Yesterday' });
+      hasGetYesterday = true;
+    } else if (data.day === 'Tomorrow') {
+      posWorker.publish('Worker', 'Flight.GetMore', data);
+    }
+    setFilterOption(data);
+    flightStart(true);
+  });
 
   //修改表头
   posWorker.subscribe('Flight.UpdateHeader', (newColumns) => {
@@ -265,5 +316,8 @@ export const flightStart = (posWorker, myHeader) => {
 
 export const flightStop = (posWorker) => {
   posWorker.unsubscribe('Flight.Change.Sync')
+  posWorker.unsubscribe('Flight.Filter')
+  posWorker.unsubscribe('Flight.UpdateHeader')
+  posWorker.unsubscribe('Flight.Personal.SetTop')
   // const data = memoryStore.getItem('ExecutableFlights')
 }

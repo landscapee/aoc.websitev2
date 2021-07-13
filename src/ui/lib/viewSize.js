@@ -2,6 +2,7 @@ import { isString } from 'lodash';
 const DEFAULT_WIDTH = 1920;
 const DEFAULT_HEIGHT = 1080;
 const DEFAULT_FONTSIZE = 100;
+let radix = 19.2;
 var currentScreenFontSize;
 
 // const p2r = (valueOfPX, sizePx) => {
@@ -29,9 +30,7 @@ var currentScreenFontSize;
  * 基于设计稿的转换
  */
 export const pxtorem = (valueOfPX) => {
-	let currentFs = window.document.documentElement.style.fontSize;
-	currentFs = parseFloat(currentFs)
-	return (currentFs / DEFAULT_FONTSIZE ) * valueOfPX / 100;
+	return valueOfPX / 100;
 };
 
 // /**
@@ -63,4 +62,17 @@ export const fixPx = (valueOfPX) => {
 	let currentFs = window.document.documentElement.style.fontSize;
 	currentFs = parseFloat(currentFs)
 	return (currentFs / DEFAULT_FONTSIZE) * px;
+};
+
+
+/**
+ * 实际px转设计稿px
+ * @param valueOfPX
+ * @returns {number}
+ */
+export const fixPxBySc = (valueOfPX) => {
+	let px = parseFloat(valueOfPX);
+	let currentFs = window.document.documentElement.style.fontSize;
+	currentFs = parseFloat(currentFs)
+	return (DEFAULT_FONTSIZE / currentFs) * px;
 };

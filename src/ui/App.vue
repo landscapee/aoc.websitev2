@@ -27,12 +27,13 @@ export default {
     },
   mounted(){
     postalStore.sub('Web','Login.Out',()=>{
-      Vue.prototype.$alert('用户已过期，请重新登录！', '提示', {
-        type: 'warning',
-        center: true
-      }).then(() => {
         router.replace("/")
-      })
+      // Vue.prototype.$alert('用户已过期，请重新登录！', '提示', {
+      //   type: 'warning',
+      //   center: true
+      // }).then(() => {
+      //   router.replace("/")
+      // })
     });
     postalStore.sub('Web','Global.Alert',(opts)=>{
       Vue.prototype.$alert(...opts)

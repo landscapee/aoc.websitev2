@@ -22,6 +22,7 @@ import '@/ui/config/vuecomponent'
 import Logger from "@/lib/logger";
 
 import   {v4 as uuidv4} from "uuid";
+import {getUser} from './src/ui/lib/localStorageTemp'
 Vue.prototype.$uuid = uuidv4;
 Vue.prototype.$logger = Logger;
 
@@ -55,8 +56,8 @@ Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 //     store.commit('setLanguage',localStorage.lang)
 // }
 
-if(sessionStorage.userData){//刷新或者丢失用户信息，使用token获取用户信息
-    store.commit('setUserMsg',JSON.parse(sessionStorage.userData))
+if(getUser()){//刷新或者丢失用户信息，使用token获取用户信息
+    store.commit('setUserMsg',JSON.parse(getUser()))
 }
 
 
@@ -77,7 +78,7 @@ new Vue({
         // if (!myWorker){
         //     myWorker = new Worker();
         // }
-        let token = sessionStorage.token;
+        let token = JSON.parse(getUser()).token;
         let now = moment().valueOf()
         memoryStore.setItem('global',{token, now,clientId});
         postal.publish({
