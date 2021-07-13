@@ -204,7 +204,6 @@ export default {
     },
     methods: {
         cityHandle(city) {
-            console.log(city)
             this.layerName = city.cityName + '方向延误'
             this.flightDetilShow = true
             let flightids = city.flightIdList.join(',')
@@ -219,7 +218,6 @@ export default {
                 )
                 .then((res) => {
                     if (res.data) {
-                        console.log(res.data)
                         this.flightDetilShow = true
                         this.flightDetilLists = res.data
                     }
@@ -296,7 +294,6 @@ export default {
             })
         },
         loadDataBoxAni(idx, direction) {
-            console.log(idx)
             if (this['marqueeVar' + idx]) {
                 clearInterval(this['marqueeVar' + idx])
                 this['marqueeVar' + idx] = null
@@ -376,7 +373,7 @@ export default {
     .box_content {
         display: flex;
         .left {
-            width: 75%;
+            width: calc(100% - 250px);
             height: 100%;
             border-right: 2px dashed rgba(179, 189, 220, 0.2);
             .chartBox {
@@ -494,7 +491,7 @@ export default {
             }
         }
         .right {
-            width: 25%;
+            width: 250px;
             & > div {
                 height: 50%;
                 padding: 15px;

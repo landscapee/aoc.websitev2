@@ -257,7 +257,7 @@ export default {
                     }
                 }
                 ul {
-                    height: 17%;
+                    height: 16%;
                     li {
                         color: #fff;
                         height: 24px;
