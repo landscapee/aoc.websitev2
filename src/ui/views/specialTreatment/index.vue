@@ -45,8 +45,9 @@
 
 <script>
     import moment from 'moment';
+    sessionStorage
     import Add from './add'
-
+import {getUserSerializ} from '../../lib/localStorageTemp'
     export default {
         name: "index",
         components: {Add},
@@ -54,7 +55,7 @@
             return {
                 moment,
                 activeObj: {},
-                deptName: JSON.parse(sessionStorage.getItem('userData')).deptName,
+                deptName: getUserSerializ().deptName,
                 colorObj: {
                     '无': '#111926',
                     'T1': '#FFBC00',

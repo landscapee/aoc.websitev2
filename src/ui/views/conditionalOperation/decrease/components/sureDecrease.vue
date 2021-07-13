@@ -23,13 +23,15 @@
         <div class="buttonBox">
             <el-button type="danger" size="mini" :disabled="!$hasRole('edit-audit',false)||getBack()">驳回</el-button>
             <!-- ||currentReduce.reduceInfo.status==1 -->
-            <el-button type="primary" size="mini" @click="submitData" :disabled="!$hasRole('edit-audit',false)">发布</el-button>
+            <el-button type="primary" size="mini" @click="submitData" :disabled="!$hasRole('edit-audit',false)||sureShow">发布</el-button>
         </div>
     </div>
 </template>
 <script>
+import PostalStore from '@/ui/lib/postalStore'
+let postalStore = new PostalStore()
 export default {
-    props: ['currentReduce', 'reduceFlight', 'airLinesGroup'],
+    props: ['currentReduce', 'airLinesGroup'],
     data() {
         return {
             columnConfig1: [
@@ -97,6 +99,8 @@ export default {
             APlanLength: 0,
             get: _.get,
             confirmAdjustFilter: '',
+            sureShow: false,
+            reduceFlight: {},
         }
     },
     mounted() {},
@@ -108,13 +112,21 @@ export default {
                 A: [],
                 R: [],
             }
-            this.getAllReduceFlight()
+            this.sureShow = _.get(val, 'reduceInfo.status') === 1
+            this.getReduceFlights()
             this.getPlanLength()
         },
     },
     methods: {
         navHandle(key) {
             this.confirmAdjustFilter = key == this.confirmAdjustFilter ? '' : key
+
+            this.RPlanLength = 0
+            this.APlanLength = 0
+            this.reduceFlightObj = {
+                A: [],
+                R: [],
+            }
 
             this.getAllReduceFlight()
             this.getPlanLength()
@@ -137,6 +149,7 @@ export default {
                             type: 'success',
                             center: true,
                         })
+                        this.$emit('updateNowCur', this.currentReduce)
                     })
             })
         },
@@ -188,21 +201,19 @@ export default {
         },
         getAllReduceFlight() {
             let allReduceFlight = []
-            _.map(this.reduceFlight, (item, key) => {
-                _.map(item, (flight) => {
-                    allReduceFlight.push({ ...flight, airlineCode: key })
+            if (this.confirmAdjustFilter && this.confirmAdjustFilter != 'all') {
+                allReduceFlight = this.reduceFlight[this.confirmAdjustFilter] || []
+            } else {
+                _.map(this.reduceFlight, (item, key) => {
+                    _.map(item, (flight) => {
+                        allReduceFlight.push({ ...flight, airlineCode: key })
+                    })
                 })
-            })
+            }
 
             allReduceFlight.map((flight) => {
-                console.log(flight)
-                if (this.confirmAdjustFilter) {
-                    // flight
-                } else {
-                    this.reduceFlightObj[flight.type].push(flight)
-                }
+                this.reduceFlightObj[flight.type].push(flight)
             })
-            console.log(this.reduceFlightObj)
         },
         getBack() {
             return (
@@ -210,6 +221,22 @@ export default {
                 _.get(this.currentReduce, 'reduceInfo.status') === 1 ||
                 _.get(this.currentReduce, ['plan', this.confirmAdjustFilter, 'sendType']) !== 2
             )
+        },
+        getReduceFlights() {
+            // 发送状态 0:未发送 1:已发送给航司 2:航司已发给指挥室
+            let planDetail = _.get(this.currentReduce, 'planDetail', {})
+            let plan = _.get(this.currentReduce, 'plan', {})
+            let reduceShouldShow = _.mapValues(planDetail, (item, key) => {
+                if (plan[key].sendType == 2) {
+                    return item
+                }
+                return []
+            })
+            postalStore.pub('Worker', 'Decrease.GetReduceFlights', reduceShouldShow)
+            postalStore.sub('Web', 'Decrease.GetReduceFlights.Response', (flightWithAirline) => {
+                this.reduceFlight = flightWithAirline
+                this.getAllReduceFlight()
+            })
         },
     },
 }

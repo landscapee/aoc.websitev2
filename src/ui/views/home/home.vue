@@ -201,6 +201,7 @@ export default {
 <style scoped lang='scss'>
 #home {
     display: flex;
+    padding: 7.5px;
     .home_left {
         width: calc(100% - 265px);
         height: 100%;
@@ -214,15 +215,14 @@ export default {
     }
     .numberBox {
         position: absolute;
+        display: flex;
     }
 
-    // $columnTotal: 25;
-    // $rowTotal: 10;
-    $unitWidth: 4%;
+    $unitWidth: 100%/24;
     $unitHeight: 10%;
 
     @for $row from 0 through 10 {
-        @for $col from 0 through 25 {
+        @for $col from 0 through 24 {
             .p-#{$col}x#{$row} {
                 left: $col * $unitWidth;
                 top: $row * $unitHeight;

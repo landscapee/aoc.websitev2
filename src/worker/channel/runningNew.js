@@ -20,9 +20,8 @@ export const checkClient = (clientField) => {
 };
 // situation 服务的连接
 const subWSEvent = () => {
-    let client = clientObj.alternateClient;
-    // import { displayTimeHour } from 'helper/utility';
-    // let emergencyCfg = {
+    let client = clientObj.runNewClient;
+     // let emergencyCfg = {
     //     准备阶段: 'ready',
     //     实施阶段: 'doing',
     //     结束阶段: 'finish',

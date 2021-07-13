@@ -1,14 +1,14 @@
 <template>
     <div id="com_glob_head">
         <div class="logo_left">
-            <div :style="'background-image:url(/src/ui/assets/img/'+sysEdition+'/logoTitle.png);'"></div>
+            <div :style="'background-image:url('+url+');'"></div>
             <span class="sansB">{{$t('message.sysName')}}</span>
         </div>
         <ul class="nav_middle">
             <li v-for="(item,idx) in navList" :key="idx" :class="{active:navFlag==idx}" @click="navHandle(item.path,idx)">
                 <div>
                     <icon-svg :iconClass="item.icon" :iconColor="'#fff'" />
-                    <span>{{item.name}}</span>
+                    <span>{{item.title}}</span>
                 </div>
             </li>
         </ul>
@@ -70,6 +70,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import { encryptedData } from '../lib/des-coder.js'
+import { routes } from '../router/index'
+let url = require('../assets/img/' + sysEdition + '/logoTitle.png')
+import { map } from 'lodash'
 export default {
     data() {
         var validateName = (rule, value, callback) => {
@@ -102,6 +105,7 @@ export default {
             }
         }
         return {
+            url,
             navList: [],
             navFlag: 0,
             date: {
@@ -164,7 +168,7 @@ export default {
             })
                 .then(() => {
                     this.$router.push('/')
-                    sessionStorage.clear()
+                    // sessionStorage.clear()
                 })
                 .catch(() => {})
         },
@@ -270,107 +274,45 @@ export default {
             return true
         },
         getNavList() {
-            let menus = this.getUserMsg.menus || []
-            this.navList
-            menus.map((list) => {
-                let nav = _.find(this.navList, { code: list.code })
-                let drop = _.find(this.dropLists, { code: list.code })
-                if (nav || drop) {
-                    return false
+            this.navList = []
+            let route = routes[2].children
+            let menus = this.getUserMsg?.menus || []
+            let codeObj = {}
+            map(menus, (list) => {
+                codeObj[list.code] = 1
+            })
+            map(route, (k, l) => {
+                if (codeObj[k.role]) {
+                    this.navList.push(k)
                 }
-
-                // if (list.name.indexOf('tobt') >= 0) {
-                //     console.log(list, 1111111111)
-                // }
-                //运行态势
-                if (list.code == 'situation-all') {
-                    list.icon = 'yunxingtaishi'
-                    list.path = 'home'
-                    this.navList.push(list)
-                }
-                //航班动态
-                if (list.code == 'flight') {
-                    list.icon = 'hangbandongtai1'
-                    list.path = 'flight'
-                    this.navList.push(list)
-                }
-                //航班正常监控
-                if (list.code == 'normal_monitoring_runway') {
-                    list.icon = 'hbzcjk'
-                    list.path = 'poolMonitorWithRunway'
-                    list.name = '航班正常监控'
-                    this.navList.push(list)
-                }
-                //运行监控
-                if (list.code == 'run_monitoring') {
-                    list.icon = 'yunxingjiankong'
-                    list.path = 'runMonitoring'
-                    this.navList.push(list)
-                }
-                //动态调整
-                if (list.code == 'flight_schedule_dynamic_adjustment') {
-                    list.icon = 'tiaozheng1'
-                    list.path = 'flightAdjustment'
-                    this.navList.push(list)
-                }
-                //不利条件运行
-                if (list.code == 'conditionalOperationMain') {
-                    list.icon = 'bulitiaojian'
-                    list.path = 'conditionalOperation'
-                    this.navList.push(list)
-                }
-                //资源监控
-                if (list.code == 'resourceMonitoring') {
-                    list.icon = 'ziyuanjiankong'
-                    list.path = 'resourceMonitoring'
-                    list.name = '资源监控'
-                    this.navList.push(list)
-                }
-                //调整调减
-                if (list.code == 'adjustReduction') {
-                    list.icon = 'tiaozhengtiaojian'
-                    list.path = 'adjustmentReduction'
-                    this.navList.push(list)
-                }
-                //消息管理
-                if (list.code == 'news_releaseAll') {
-                    list.icon = 'xiaoxifabu'
-                    list.path = 'specialTreatment'
-                    list.name = '消息发布'
-                    this.navList.push(list)
-                }
-                //消息管理
-                if (list.code == 'TOBTConfig') {
-                    list.icon = 'tiaozhengtiaojian'
-                    list.path = 'tobtConfig'
-                    list.name = 'TOBT配置'
-                    this.navList.push(list)
-                }
-
             })
             this.setNavFlag()
         },
         setNavFlag() {
+            console.log(this.navList, this.path, this.$route)
+
+            let path = this.path
+
+            if (
+                path == 'decrease' ||
+                path == 'delayNew' ||
+                path == 'weatherNew' ||
+                path == 'deice' ||
+                path == 'runningNew' ||
+                path == 'alternate'
+            ) {
+                path = 'conditionalOperation'
+            }
+
             this.navList.forEach((list, index) => {
-                if (list.path == this.path) {
+                if (list.path == path) {
                     this.navFlag = index
                 }
             })
         },
         navHandle(path, idx) {
             this.navFlag = idx
-            this.$router.push('/' + path)
-            // if (path == 'flight_full') {
-            //     setTimeout(() => {
-            //         let ele = $('.flight_full_contariner')[0]
-            //         const func =
-            //             ele.requestFullscreen ||
-            //             ele.mozRequestFullScreen ||
-            //             ele.webkitRequestFullscreen ||
-            //             ele.msRequestFullscreen
-            //         func.call(ele)
-            //     }, 500)
-            // }
+            this.$router.push(path)
         },
     },
 }
@@ -378,7 +320,8 @@ export default {
 
 <style lang="scss" scoped>
 #com_glob_head {
-    height: 40px;
+
+    height: 36px;
     width: 100%;
     background: linear-gradient(90deg, #183d71 0%, #0172cf 100%);
     display: flex;
@@ -386,8 +329,15 @@ export default {
     justify-content: space-between;
     z-index: 10;
     position: fixed;
+    .nav_middle,
+    .logo_left{
+        span,li{
+            font-family: MicrosoftYaHei-Bold!important;
+        }
+
+    }
     .logo_left {
-        height: 40px;
+        height: 36px;
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -395,17 +345,17 @@ export default {
         box-shadow: 0px 0px 6px 0px rgba(47, 61, 142, 1);
         border-radius: 0px 0 100px 0px;
         color: #fff;
-        padding: 0 20px;
+        padding: 0 30px 0 15px;
 
         div {
-            height: 100%;
-            width: 110px;
+            height: 20px;
+            width: 60px;
             background-size: 100% auto;
             background-repeat: no-repeat;
             background-position: center left;
         }
         span {
-            font-size: 18px;
+            font-size: 16px;
             margin-left: 15px;
         }
     }
@@ -418,7 +368,7 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 38px;
+            height: 34px;
             cursor: pointer;
 
             div {
@@ -431,12 +381,12 @@ export default {
                 align-items: center;
 
                 span {
-                    font-size: 16px;
+                    font-size: 12px;
                     color: #fff;
                     margin-left: 6px;
                 }
                 svg {
-                    font-size: 18px;
+                    font-size: 14px;
                 }
             }
         }
@@ -449,33 +399,33 @@ export default {
         align-items: center;
         & > div {
             margin: 0 12px;
-            height: 40px;
+            height: 36px;
             display: flex;
             justify-content: flex-start;
             align-items: center;
 
             span {
                 color: #fff;
-                font-size: 16px;
+                font-size: 12px;
                 margin-left: 8px;
             }
         }
         .timeBox {
-            width: 80px;
+            width: 60px;
             span {
-                font-size: 18px;
+                font-size: 12px;
             }
         }
         .dateBox {
             span {
-                font-size: 18px;
+                font-size: 12px;
             }
         }
 
         .logoutBox,
         .setBox {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: rgba(14, 52, 113, 1);
             opacity: 0.6;
             cursor: pointer;

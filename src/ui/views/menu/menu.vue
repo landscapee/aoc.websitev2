@@ -32,7 +32,9 @@ export default {
                 {
                     name: '运行保障KPI',
                     src: require('@/ui/assets/img/menu/operation.png'),
-                    path: '/home',
+                    path: '/runSecurityKPI',
+                    isOther:true,
+
                 },
                 { name: '综合统计', src: require('@/ui/assets/img/menu/statistics.png'), path: '/home' },
                 { name: 'ASOMS', src: require('@/ui/assets/img/menu/flightRout.png'), path: '/home' },
@@ -40,7 +42,14 @@ export default {
             ]
         },
         toPage(nav) {
-            this.$router.push(nav.path)
+            if(nav.isOther){
+                let url ='http://'+location.hostname+':'+location.port+'/kpi/#'+nav.path
+                // let url ='http://173.101.1.30:6075' +'/kpi/#'+nav.path
+                window.open(url,'_self')
+            }else{
+                this.$router.push(nav.path)
+
+            }
         },
     },
 }

@@ -201,10 +201,6 @@ export default {
                 status: val.reduceInfo.status,
             }
             console.log(this.subData)
-
-            // if (this.subData.status == 1) {
-            //     this.editDisabled = false
-            // } else {
             //     this.editDisabled = true
             // }
 

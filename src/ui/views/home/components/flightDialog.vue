@@ -1,5 +1,5 @@
 <template>
-    <el-dialog :visible.sync="dialogShow" class="nodeDialog" center width="700px" :append-to-body="true">
+    <el-dialog :visible.sync="dialogShow" class="nodeDialog" center width="960px" :append-to-body="true">
         <template slot="title">
             <div class="homeNumber2Title">
                 <div class="title alib">{{title}}航班<span class="alir">{{getTitleSpan}}</span></div>
@@ -106,6 +106,7 @@ export default {
                         {
                             key: 'routing',
                             label: '航线',
+                            width: '340px',
                             display: ({ row }) => {
                                 return row.routing.join('-')
                             },
@@ -154,6 +155,7 @@ export default {
                         {
                             key: 'routing',
                             label: '航线',
+                            width: '340px',
                             display: ({ row }) => {
                                 return row.routing.join('-')
                             },
