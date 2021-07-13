@@ -38,7 +38,10 @@
                                             <div>{{list.cityName}}<span>{{list.count}}</span></div>
                                         </li>
                                     </ul>
-                                    <ul :class="'dataBox'+index+'_2'">
+                                    <ul :class="'dataBox'+index+'_2'" style="display:none;">
+                                        <li v-for="list in activeData[item].citys" :key="list.cityCode" @click="cityHandle(list)">
+                                            <div>{{list.cityName}}<span>{{list.count}}</span></div>
+                                        </li>
                                     </ul>
                                 </div>
 
@@ -61,7 +64,11 @@
                                 {{item.content}}
                             </li>
                         </ul>
-                        <ul class="dataBox6_2"></ul>
+                        <ul class="dataBox6_2" style="display:none;">
+                            <li v-for="item in noticeData['流控信息']" :key="item.id">
+                                {{item.content}}
+                            </li>
+                        </ul>
                     </div>
 
                 </div>
@@ -77,13 +84,17 @@
                                 {{item.content}}
                             </li>
                         </ul>
-                        <ul class="dataBox7_2"></ul>
+                        <ul class="dataBox7_2" style="display:none;">
+                            <li v-for="item in noticeData['MDRS预警']" :key="item.id">
+                                {{item.content}}
+                            </li>
+                        </ul>
                     </div>
 
                 </div>
             </div>
         </div>
-        <el-dialog :title="layerName" :visible.sync="flightDetilShow" class="nodeDialog" center width="700px" :append-to-body="true">
+        <el-dialog :title="layerName" :visible.sync="flightDetilShow" class="nodeDialog" center width="900px" :append-to-body="true">
             <div class="contentbox">
                 <ele-table :columnConfig="columnConfig" :tableData="flightDetilLists"></ele-table>
             </div>
@@ -124,6 +135,7 @@ export default {
                 {
                     key: 'displayRouter',
                     label: '航线',
+                    width: '340px',
                     display: ({ row }) => {
                         return row.displayRouter ? row.displayRouter.join('->') : '-'
                     },
@@ -163,8 +175,6 @@ export default {
             marqueeVar3: null,
             marqueeVar4: null,
             marqueeVar5: null,
-            marqueeVar6: null,
-            marqueeVar7: null,
             noticeData: {
                 流控信息: [],
                 MDRS预警: [],
@@ -186,7 +196,7 @@ export default {
         },
     },
     destroyed() {
-        for (var i = 0; i <= 7; i++) {
+        for (var i = 0; i <= 5; i++) {
             if (this['marqueeVar' + i]) {
                 clearInterval(this['marqueeVar' + i])
             }
@@ -194,6 +204,7 @@ export default {
     },
     methods: {
         cityHandle(city) {
+            console.log(city)
             this.layerName = city.cityName + '方向延误'
             this.flightDetilShow = true
             let flightids = city.flightIdList.join(',')
@@ -268,8 +279,6 @@ export default {
                 options.series[2].color = '#397DFF'
                 options.series[1].data[0].marker.lineColor = '#397DFF'
                 options.series[0].nullColor = '#e4f7ff'
-
-                console.log(options)
                 this.chart = Highcharts.mapChart('direction_chart_box', options)
             } else {
                 this.chart.update({ series: series })
@@ -287,25 +296,25 @@ export default {
             })
         },
         loadDataBoxAni(idx, direction) {
+            console.log(idx)
             if (this['marqueeVar' + idx]) {
                 clearInterval(this['marqueeVar' + idx])
+                this['marqueeVar' + idx] = null
             }
             var obj = document.getElementsByClassName('dataBox' + idx)[0]
             var obj1 = document.getElementsByClassName('dataBox' + idx + '_1')[0]
             var obj2 = document.getElementsByClassName('dataBox' + idx + '_2')[0]
-
+            obj2.style['display'] = 'none'
             if (direction == 'transverse') {
                 if (obj1.clientWidth > obj.clientWidth) {
                     this.loadRoll(idx, direction)
                 } else {
-                    obj2.innerHTML = ''
                     obj.scrollLeft = 0
                 }
             } else {
                 if (obj1.clientHeight > obj.clientHeight) {
                     this.loadRoll(idx, direction)
                 } else {
-                    obj2.innerHTML = ''
                     obj.scrollLeft = 0
                 }
             }
@@ -314,42 +323,46 @@ export default {
             var obj = document.getElementsByClassName('dataBox' + idx)[0]
             var obj1 = document.getElementsByClassName('dataBox' + idx + '_1')[0]
             var obj2 = document.getElementsByClassName('dataBox' + idx + '_2')[0]
-
-            obj2.innerHTML = obj1.innerHTML
+            obj2.style['display'] = 'block'
+            clearInterval(this['marqueeVar' + idx])
+            this['marqueeVar' + idx] = null
             this['marqueeVar' + idx] = setInterval(() => {
                 if (direction == 'transverse') {
                     if (obj2.offsetWidth <= obj.scrollLeft) {
-                        obj.scrollLeft = 1
+                        obj.scrollLeft = 0
                     } else {
                         obj.scrollLeft++
                     }
                 } else {
                     if (obj.scrollTop >= obj1.scrollHeight) {
-                        obj.scrollTop = 1
+                        obj.scrollTop = 0
                     } else {
                         obj.scrollTop++
                     }
                 }
-            }, 30)
+            }, 40)
             obj.onmouseover = () => {
                 clearInterval(this['marqueeVar' + idx])
+                this['marqueeVar' + idx] = null
             }
             obj.onmouseout = () => {
+                clearInterval(this['marqueeVar' + idx])
+                this['marqueeVar' + idx] = null
                 this['marqueeVar' + idx] = setInterval(() => {
                     if (direction == 'transverse') {
                         if (obj2.offsetWidth <= obj.scrollLeft) {
-                            obj.scrollLeft = 1
+                            obj.scrollLeft = 0
                         } else {
                             obj.scrollLeft++
                         }
                     } else {
                         if (obj.scrollTop >= obj1.scrollHeight) {
-                            obj.scrollTop = 1
+                            obj.scrollTop = 0
                         } else {
                             obj.scrollTop++
                         }
                     }
-                }, 30)
+                }, 40)
             }
         },
     },
@@ -358,7 +371,7 @@ export default {
 
 <style scoped lang='scss'>
 .home_direction {
-    padding: 4px;
+    padding: 7px;
     position: absolute;
     .box_content {
         display: flex;
@@ -389,6 +402,10 @@ export default {
                         border-radius: 1px;
                         margin-right: 5px;
                     }
+                }
+                #direction_chart_box {
+                    height: 100%;
+                    width: 100%;
                 }
             }
             .bottomBox {

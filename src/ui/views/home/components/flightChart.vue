@@ -112,7 +112,7 @@ export default {
 
 <style scoped lang='scss'>
 .flightChart {
-    padding: 4px;
+    padding: 7px;
     position: absolute;
     .box_content {
         display: flex;
@@ -185,7 +185,7 @@ export default {
                 }
             }
         }
-        .flight_chart_box {
+        #flight_chart_box {
             height: 100%;
             width: 100%;
         }

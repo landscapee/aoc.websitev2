@@ -228,7 +228,7 @@ export default {
 
 <style scoped lang='scss'>
 .home_rate {
-    padding: 4px;
+    padding: 7px;
     position: absolute;
     .box_content {
         display: flex;
