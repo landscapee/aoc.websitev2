@@ -320,6 +320,7 @@ export default {
 
 <style lang="scss" scoped>
 #com_glob_head {
+
     height: 36px;
     width: 100%;
     background: linear-gradient(90deg, #183d71 0%, #0172cf 100%);
@@ -328,6 +329,13 @@ export default {
     justify-content: space-between;
     z-index: 10;
     position: fixed;
+    .nav_middle,
+    .logo_left{
+        span,li{
+            font-family: MicrosoftYaHei-Bold!important;
+        }
+
+    }
     .logo_left {
         height: 36px;
         display: flex;
@@ -347,7 +355,7 @@ export default {
             background-position: center left;
         }
         span {
-            font-size: 17px;
+            font-size: 16px;
             margin-left: 15px;
         }
     }
@@ -373,12 +381,12 @@ export default {
                 align-items: center;
 
                 span {
-                    font-size: 13px;
+                    font-size: 12px;
                     color: #fff;
                     margin-left: 6px;
                 }
                 svg {
-                    font-size: 16px;
+                    font-size: 14px;
                 }
             }
         }
@@ -398,19 +406,19 @@ export default {
 
             span {
                 color: #fff;
-                font-size: 13px;
+                font-size: 12px;
                 margin-left: 8px;
             }
         }
         .timeBox {
             width: 60px;
             span {
-                font-size: 13px;
+                font-size: 12px;
             }
         }
         .dateBox {
             span {
-                font-size: 13px;
+                font-size: 12px;
             }
         }
 
