@@ -320,7 +320,8 @@ export default {
 
 <style lang="scss" scoped>
 #com_glob_head {
-    height: 40px;
+
+    height: 36px;
     width: 100%;
     background: linear-gradient(90deg, #183d71 0%, #0172cf 100%);
     display: flex;
@@ -328,8 +329,15 @@ export default {
     justify-content: space-between;
     z-index: 10;
     position: fixed;
+    .nav_middle,
+    .logo_left{
+        span,li{
+            font-family: MicrosoftYaHei-Bold!important;
+        }
+
+    }
     .logo_left {
-        height: 40px;
+        height: 36px;
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -347,7 +355,7 @@ export default {
             background-position: center left;
         }
         span {
-            font-size: 18px;
+            font-size: 16px;
             margin-left: 15px;
         }
     }
@@ -360,7 +368,7 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 38px;
+            height: 34px;
             cursor: pointer;
 
             div {
@@ -373,12 +381,12 @@ export default {
                 align-items: center;
 
                 span {
-                    font-size: 16px;
+                    font-size: 12px;
                     color: #fff;
                     margin-left: 6px;
                 }
                 svg {
-                    font-size: 18px;
+                    font-size: 14px;
                 }
             }
         }
@@ -391,33 +399,33 @@ export default {
         align-items: center;
         & > div {
             margin: 0 12px;
-            height: 40px;
+            height: 36px;
             display: flex;
             justify-content: flex-start;
             align-items: center;
 
             span {
                 color: #fff;
-                font-size: 16px;
+                font-size: 12px;
                 margin-left: 8px;
             }
         }
         .timeBox {
-            width: 80px;
+            width: 60px;
             span {
-                font-size: 18px;
+                font-size: 12px;
             }
         }
         .dateBox {
             span {
-                font-size: 18px;
+                font-size: 12px;
             }
         }
 
         .logoutBox,
         .setBox {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             background: rgba(14, 52, 113, 1);
             opacity: 0.6;
             cursor: pointer;
