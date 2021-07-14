@@ -2,33 +2,30 @@
     <div class="flightChart" :class="options.position">
         <div class="box_content">
             <div class="title">
-                <span class="name">
-                    {{navLists[select].name}}
-                </span>
+                <span class="name">{{getTitle()}}</span>
                 <i class="iconfont icon-qiehuan" v-if="select==1" @click="runTypeToday=!runTypeToday"></i>
                 <ul class="radioBox">
                     <li class="li1" :class="select==0?'active':''" @click="navHandle(0)">积压</li>
                     <li class="li2" :class="select==1?'active':''" @click="navHandle(1)">运行</li>
                 </ul>
                 <div class="det" v-if="select==0">
-                    <div>
-                        <div class="iconBox box1">
-                            <i class="iconfont icon-jiantou1"></i>
-                        </div>
-                        未来1h预计放行正常率:
-                    </div>
+
                     <div>
                         <div class="iconBox box2">
+                            <i class="iconfont icon-jiantou1"></i>
+                        </div>
+                        下一小时预计积压:{{onehoursNum}}
+                    </div>
+                    <div>
+                        <div class="iconBox box1">
                             %
                         </div>
-                        下一小时预计积压:
+                        未来1h预计放行正常率:{{getOneHourTakeoff(flight_home)}}%
                     </div>
 
                 </div>
             </div>
-            <div id="flight_chart_box" class="chart">
-
-            </div>
+            <div id="flight_chart_box" class="chart"></div>
         </div>
     </div>
 </template>
@@ -36,7 +33,7 @@
 <script>
 import Highcharts from 'highcharts/highstock'
 export default {
-    props: ['options', 'flight_FlightStatistic', 'flight_delay_backStatus'],
+    props: ['options', 'flight_FlightStatistic', 'flight_delay_backStatus', 'flight_home'],
     data() {
         return {
             select: 0,
@@ -47,28 +44,47 @@ export default {
             runTypeToday: true,
             chart: null,
             loading: false,
+            onehoursNum: 0,
         }
     },
     created() {},
     mounted() {},
     watch: {
         flight_delay_backStatus: function (val) {
-            if (this.select === 0 && !this.loading) {
+            let nextHour = this.$moment().add(1, 'h').hours()
+            this.onehoursNum = val.prediction[nextHour]
+            if (this.select === 1 && !this.loading) {
                 this.loadChart()
             }
         },
         flight_FlightStatistic: function (val) {
-            if (this.select === 1) {
+            if (this.select === 0) {
                 this.loadChart()
             }
         },
         runTypeToday: function (val) {
+            this.loading = false
             this.setOption()
         },
     },
     methods: {
+        getTitle() {
+            let title = this.navLists[this.select].name
+            if (this.select == 1) {
+                if (this.runTypeToday) {
+                    title = '今日航班实时运行情况'
+                } else {
+                    title = '昨日航班实时运行情况'
+                }
+            }
+            return title
+        },
+        getOneHourTakeoff({ takeOffAfterOneHourNormal, takeOffAfterOneHourTotal }) {
+            let nextHourRate = (takeOffAfterOneHourNormal || 0) / (takeOffAfterOneHourTotal || 1)
+            nextHourRate = (nextHourRate * 100).toFixed(2)
+            return nextHourRate
+        },
         navHandle(index) {
-            console.log(index)
             this.runTypeToday = true
             this.select = index
             this.loading = false
@@ -90,17 +106,14 @@ export default {
         },
         loadChart() {
             // 图表初始化函数
-
             let options = _.cloneDeep(this.options.options)
             let series = this.options.options.series(
                 this.select == 1 ? this.flight_FlightStatistic : this.flight_delay_backStatus
             )
-            options.series = series
 
+            options.series = series
             if (this.loading) {
-                this.chart.update({
-                    series: options.series,
-                })
+                this.chart.update(options)
             } else {
                 this.loading = true
                 this.chart = Highcharts.chart('flight_chart_box', options)

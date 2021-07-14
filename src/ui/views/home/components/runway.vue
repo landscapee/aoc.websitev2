@@ -89,7 +89,6 @@ export default {
                 })
             }
             this.selectArr = selectArr
-            console.log(selectArr)
         },
         runwayHandle() {
             let data = {
