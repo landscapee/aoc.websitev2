@@ -74,7 +74,7 @@ new Vue({
          console.log('clientId',clientId);
         const workerProces = new WorkerRegist();
         workerProces.start();
-        let token = JSON.parse(getUser())?.token;
+        let token = JSON.parse(getUser()).token;
         let now = moment().valueOf()
         memoryStore.setItem('global',{token, now,clientId});
         postal.publish({
