@@ -5,8 +5,8 @@
                 <div class="top">
                     <icon-svg iconClass="monthdelay" />
                     <span class="name alib">月度放行正常率目标：{{flight_monthClearance.targetRate}}%</span>
-                    <el-input class="iconshowInput" v-model="monthRate" size="mini" v-show="monthDRateInput" @keyup.enter.native="editMonthRateHandle"></el-input>
-                    <i class="iconfont icon-bianji" @click="monthDRateInput = true" v-show="!monthDRateInput"></i>
+                    <el-input class="iconshowInput" v-model="monthRate" size="mini" v-show="monthDRateInput&&!flight_monthClearance.targetRate" @keyup.enter.native="editMonthRateHandle"></el-input>
+                    <i class="iconfont icon-bianji" @click="monthDRateInput = true" v-show="!monthDRateInput&&!flight_monthClearance.targetRate"></i>
                 </div>
                 <div class="mid">
                     <div>
@@ -257,7 +257,7 @@ export default {
                     }
                 }
                 ul {
-                    height: 17%;
+                    height: 16%;
                     li {
                         color: #fff;
                         height: 24px;

@@ -61,6 +61,7 @@ const chartColor3 = { linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, stops: [[0
 // #0566FF 100% hex
 // #0576E3
 const chartColor4 = { linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, stops: [[0, 'rgba(5,118,227,0)'], [0.2, '#0C9DFF'], [0.8, '#0566FF'], [1, 'rgba(5,118,227,0)']] };
+const chartColorCancel = { linearGradient: { x1: 0, y1: 0, x2: 1, y2: 0 }, stops: [[0, 'rgba(5,118,227,0)'], [0.2, '#f6a378'], [0.8, '#f37c3e'], [1, 'rgba(5,118,227,0)']] };
 const chartOptions = {
 	chart: {
 		backgroundColor: 'transparent',
@@ -1195,6 +1196,15 @@ export const settings = {
 							},
 						},
 					},
+					{
+						type: 'areaspline',
+						name: '取消航班',
+						color: '#d9836c',
+						lineColor: chartColorCancel,
+						fillOpacity: 0.05,
+						data: get(data, 'today.cancelPlan', []),
+					},
+
 					{
 						// type: 'scatter',
 						type: 'spline',

@@ -5,19 +5,14 @@
                 跑道运行模式
             </div>
             <div class="direction">
-                <el-select v-model="selectDirection" placeholder="请选择" @change="loadSelectObj" :disabled="true">
-                    <el-option label="北" value="north"></el-option>
-                    <el-option label="南" value="south"></el-option>
-                </el-select>
+                <el-input v-model="selectDirectionObj[selectDirection]" :disabled="true"></el-input>
             </div>
             <div>
                 <div class="selectGroup" v-for="(item,idx) in selectArr" :key="idx">
-                    <div class="label">{{item.label}}</div>
-                    <el-select v-model="item.select" placeholder="请选择" :disabled="true">
-                        <el-option :label="value" :value="key" v-for="(value,key) in item.value" :key="key"></el-option>
-                    </el-select>
+                    <el-input v-model="item.value[item.select]" :disabled="true">
+                        <template slot="prepend">{{item.label}}</template>
+                    </el-input>
                 </div>
-                <!-- <button @click="runwayHandle">提 交</button> -->
             </div>
         </div>
     </div>
@@ -34,6 +29,10 @@ export default {
     data() {
         return {
             selectDirection: 'north',
+            selectDirectionObj: {
+                north: '北',
+                south: '南',
+            },
             selectArr: [],
             runwayNorth: [
                 {
@@ -90,6 +89,7 @@ export default {
                 })
             }
             this.selectArr = selectArr
+            console.log(selectArr)
         },
         runwayHandle() {
             let data = {
@@ -123,7 +123,7 @@ export default {
 <style scoped lang='scss'>
 .runway {
     padding: 4px;
-    height: 35%;
+    height: 30%;
     .box_content {
         padding: 5px 15px 0;
         overflow: hidden;
@@ -172,6 +172,19 @@ export default {
             margin-top: 20px;
             color: #fff;
         }
+    }
+}
+</style>
+
+<style lang="scss">
+.selectGroup {
+    .el-input-group__prepend {
+        padding: 0;
+        width: 36px;
+        text-align: center;
+        background: #101c2f;
+        border-color: #37455c;
+        color: #fff;
     }
 }
 </style>

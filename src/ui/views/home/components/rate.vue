@@ -23,18 +23,6 @@
                         <el-dropdown-item command="4">日</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
-
-                <!-- <el-select v-model="stateTypeSelect" placeholder="请选择" size="mini" @change="loadRate">
-                    <el-option label="全场" :value="1"></el-option>
-                    <el-option label="定期" :value="2"></el-option>
-                    <el-option label="客运" :value="3"></el-option>
-                </el-select>
-                <el-select v-model="timeSelect" placeholder="请选择" size="mini" @change="loadRate">
-                    <el-option label="年" :value="1"></el-option>
-                    <el-option label="月" :value="2"></el-option>
-                    <el-option label="周" :value="3"></el-option>
-                    <el-option label="日" :value="4"></el-option>
-                </el-select> -->
             </div>
             <div class="charBox">
                 <div class="title">
@@ -228,7 +216,7 @@ export default {
 
 <style scoped lang='scss'>
 .home_rate {
-    padding: 4px;
+    padding: 7px;
     position: absolute;
     .box_content {
         display: flex;
@@ -243,6 +231,7 @@ export default {
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 0 10px;
             .title {
                 background: url(../static/imgs/buttonBg.png);
                 background-repeat: no-repeat;
