@@ -27,19 +27,22 @@
 
                     </div>
                     <div class="content">
-                        <div v-for="(item,index) in showTable" :key="item.hallway" class="li_content">
+                        <div v-for="(item,index) in activeData" :key="item.hallway" class="li_content">
 
-                            <div class="nameBox" :style="{color:getPercentColor(activeData[item])}"><span>{{activeData[item].displayHallway}}方向</span><span>{{activeData[item].delay}}</span><span class="fo">{{getPercent(activeData[item])}}%</span></div>
-
+                            <div class="nameBox" :style="{color:getPercentColor(item)}" @click="citysHandle(item)">
+                                <span>{{item.displayHallway}}方向</span>
+                                <span>{{item.delay}}</span>
+                                <span class="fo">{{getPercent(item)}}%</span>
+                            </div>
                             <div class="dataBox" :class="'dataBox'+index">
                                 <div style="width:8000px;height:100%;">
                                     <ul :class="'dataBox'+index+'_1'">
-                                        <li v-for="list in activeData[item].citys" :key="list.cityCode" @click="cityHandle(list)">
+                                        <li v-for="list in item.citys" :key="list.cityCode" @click="cityHandle(list)">
                                             <div>{{list.cityName}}<span>{{list.count}}</span></div>
                                         </li>
                                     </ul>
                                     <ul :class="'dataBox'+index+'_2'" style="display:none;">
-                                        <li v-for="list in activeData[item].citys" :key="list.cityCode" @click="cityHandle(list)">
+                                        <li v-for="list in item.citys" :key="list.cityCode" @click="cityHandle(list)">
                                             <div>{{list.cityName}}<span>{{list.count}}</span></div>
                                         </li>
                                     </ul>
@@ -120,14 +123,14 @@ export default {
                 },
                 {
                     key: 'scheduleTime',
-                    label: '计划起飞',
+                    label: '计划时间',
                     display: ({ row }) => {
                         return this.$moment(row.scheduleTime).format('HH:mm')
                     },
                 },
                 {
                     key: 'actualTime',
-                    label: '计划起飞',
+                    label: '实际时间',
                     display: ({ row }) => {
                         return row.actualTime ? this.$moment(row.actualTime).format('HH:mm') : '-'
                     },
@@ -141,14 +144,14 @@ export default {
                     },
                 },
             ],
-            select: 'normal',
+            select: 'takeOffNormal',
             selectArr: [
-                { name: '航班正常率', value: 'normal' },
-                { name: '始发正常率', value: 'originalAllowTakeOff' },
-                { name: '落地正常率', value: 'arriveNormal' },
-                { name: '起飞正常率', value: 'departureNormal' },
-                { name: '早高峰正常率', value: 'originalInMorning' },
                 { name: '放行正常率', value: 'takeOffNormal' },
+                { name: '始发正常率', value: 'originalAllowTakeOff' },
+                { name: '航班正常率', value: 'normal' },
+                { name: '起飞正常率', value: 'departureNormal' },
+                { name: '落地正常率', value: 'arriveNormal' },
+                { name: '早高峰正常率', value: 'originalInMorning' },
             ],
             selectNameObj: {
                 normal: '航班',
@@ -168,7 +171,7 @@ export default {
                 5: {},
                 6: {},
             },
-            showTable: [3, 4, 5, 1, 2, 6],
+            showTable: [4, 3, 5, 1, 2, 6],
             marqueeVar0: null,
             marqueeVar1: null,
             marqueeVar2: null,
@@ -203,10 +206,22 @@ export default {
         }
     },
     methods: {
+        citysHandle(city) {
+            this.layerName = city.displayHallway + '方向延误'
+            let arrIds = []
+            city.citys.map((list) => {
+                arrIds.push(list.flightIdList.join(','))
+            })
+
+            let flightids = arrIds.join(',')
+            this.getCity(flightids)
+        },
         cityHandle(city) {
             this.layerName = city.cityName + '方向延误'
-            this.flightDetilShow = true
             let flightids = city.flightIdList.join(',')
+            this.getCity(flightids)
+        },
+        getCity(flightids) {
             this.$request
                 .post(
                     'situation',
@@ -285,8 +300,8 @@ export default {
         },
         loadActiveData() {
             this.activeData = this.nowShow
-                ? _.keyBy(this.flight_direction.key[this.select], 'hallway')
-                : _.keyBy(this.flight_direction.value[this.select], 'hallway')
+                ? _.sortBy(this.flight_direction.key[this.select], 'delay', '').reverse()
+                : _.sortBy(this.flight_direction.value[this.select], 'delay', '').reverse()
             this.$nextTick(() => {
                 for (var i = 0; i <= 5; i++) {
                     this.loadDataBoxAni(i, 'transverse')
@@ -454,6 +469,7 @@ export default {
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
+                            cursor: pointer;
                         }
                         .dataBox {
                             width: calc(100% - 160px);

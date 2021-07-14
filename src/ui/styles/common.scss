@@ -1,9 +1,11 @@
 //// 滚动条 /////
 ::-webkit-scrollbar {
-    width: 8px; /* 纵向滚动条*/
-    height: 8px; /* 横向滚动条 */
+    width: 8px;
+    /* 纵向滚动条*/
+    height: 8px;
+    /* 横向滚动条 */
     border-radius: 4px;
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
     float: right;
 }
 
@@ -11,7 +13,7 @@
 ::-webkit-scrollbar-track {
     border-radius: 4px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
-    background-color: rgba(255,255,255,0.4);
+    background-color: rgba(255, 255, 255, 0.4);
     float: right;
 
 }
@@ -20,15 +22,26 @@
 ::-webkit-scrollbar-thumb {
     border-radius: 4px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
-    background-color: rgba(0,0,0,0.3);
+    background-color: rgba(0, 0, 0, 0.3);
     float: right;
 }
-.infoSvg{
-    fill:#6c757d!important;cursor: not-allowed;
-    svg{
-        fill:#6c757d;
+
+.infoSvg {
+    fill: #6c757d !important;
+    cursor: not-allowed;
+
+    svg {
+        fill: #6c757d;
     }
 }
-.cursor:hover{
+
+.cursor:hover {
     cursor: pointer;
+}
+
+
+.highcharts-legend {
+    tspan {
+        font-size: 12px;
+    }
 }
