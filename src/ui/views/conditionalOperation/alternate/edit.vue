@@ -6,7 +6,7 @@
 			<el-form :model="form" :rules="rules" ref="form" class="demo-form-inline" :inline="true">
 
 				<el-form-item prop="closeScheme" label="是否下客">
-					<el-radio-group v-model="form.dropOffFlag">
+					<el-radio-group @change="dropOffFlagChange" v-model="form.dropOffFlag">
 						<el-radio :label="0">是</el-radio>
 						<el-radio :label="1">否</el-radio>
 					</el-radio-group>
@@ -14,11 +14,11 @@
 
 
 				<el-form-item prop="content" label="下客时间：">
-					<el-date-picker v-model="form.dropOffTimeLong" type="datetime" placeholder="请选择日期">
+					<el-date-picker :disabled="form.dropOffFlag==1" v-model="form.dropOffTimeLong" type="datetime" placeholder="请选择日期">
 					</el-date-picker>
 				</el-form-item>
 				<el-form-item prop="content" label="下客人数：">
-					<el-input v-model.number="form.dropOffNum" clearable placeholder="请输入"></el-input>
+					<el-input  :disabled="form.dropOffFlag==1"  v-model.number="form.dropOffNum" clearable placeholder="请输入"></el-input>
 				</el-form-item>
 
 				<el-form-item prop="content" label="是否使用安检：">
@@ -67,6 +67,13 @@
         },
         watch: {},
         methods: {
+            dropOffFlagChange(val){
+                console.log(val);
+                if(val==1){
+                    this.$set(this.form,'dropOffTimeLong',null)
+                    this.$set(this.form,'dropOffNum',null)
+				}
+			},
             closeSchemeInput(value) {
 
 
@@ -99,7 +106,7 @@
 
             },
             close() {
-
+					this.form={}
                     this.dialogFormVisible = false
                 this.$refs['form'].clearValidate()
             },

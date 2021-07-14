@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-dialog :title="item.name" :close-on-click-modal="false" center
+		<el-dialog  title="申请快速协调" :close-on-click-modal="false" center
 				   :visible.sync="dialogFormVisible"
 				   :before-close="close">
 			<div  class="content">
