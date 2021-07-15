@@ -8,7 +8,7 @@
 				<BottomLeft></BottomLeft>
 			</div>
 			<div class="right">
-				<BottomLeft></BottomLeft>
+				<BottomRight></BottomRight>
 			</div>
 		</div>
 	</div>
@@ -54,11 +54,11 @@
 	#runningNew {
 		padding-bottom: 15px;
 		.top {
-			height: 80px;
+			height: 74px;
  		}
 		.bottom {
-			margin-top: 15px;
-			height: calc(100% - 95px);
+			margin-top: 10px;
+			height: calc(100% - 84px);
 			display: flex;
 			.right,
 			.left {

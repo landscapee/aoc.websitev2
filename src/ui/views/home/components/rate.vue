@@ -4,23 +4,18 @@
             <div class="selectBox">
                 <el-dropdown trigger="click" @command="stateTypeSelectHandle" style="margin-right:15px">
                     <span class="el-dropdown-link">
-                        全场<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                        {{areaObj[stateTypeSelect]}}<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="1">全场</el-dropdown-item>
-                        <el-dropdown-item command="2">定期</el-dropdown-item>
-                        <el-dropdown-item command="3">客运</el-dropdown-item>
+                        <el-dropdown-item :command="key" v-for="(item,key) in areaObj" :key="key">{{item}}</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
                 <el-dropdown trigger="click" @command="timeSelectHandle">
                     <span class="el-dropdown-link">
-                        年<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                        {{timeObj[timeSelect]}}<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="1">年</el-dropdown-item>
-                        <el-dropdown-item command="2">月</el-dropdown-item>
-                        <el-dropdown-item command="3">周</el-dropdown-item>
-                        <el-dropdown-item command="4">日</el-dropdown-item>
+                        <el-dropdown-item :command="key" v-for="(item,key) in timeObj" :key="key">{{item}}</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </div>
@@ -30,8 +25,8 @@
                 </div>
                 <div class="content">
                     <div class="rotateBox"></div>
-                    <div id="takeOffBox" class="chartBox"></div>
-                    <div class="center">
+                    <div id="takeOffBox" class="chartBox" @click="getFlightHandle(rate1)"></div>
+                    <div class="center" @click="getFlightHandle(rate1)">
                         <div class="top fo">
                             {{getPercent(rate1)}}%
                         </div>
@@ -48,8 +43,8 @@
                 </div>
                 <div class="content">
                     <div class="rotateBox"></div>
-                    <div id="originatedBox" class="chartBox"></div>
-                    <div class="center">
+                    <div id="originatedBox" class="chartBox" @click="getFlightHandle(rate2)"></div>
+                    <div class="center" @click="getFlightHandle(rate2)">
                         <div class="top fo">
                             {{getPercent(rate2)}}%
                         </div>
@@ -61,18 +56,19 @@
                 </div>
             </div>
             <div class="rateBox">
-                <div v-for="item in rateLists" :key="item.rateType" v-show="item.show">
-                    <!-- <div class="title">
-                        <span :style="{color:getPercentColor(item)}">{{rateTypeName[item.rateType]}}</span>
-                        <span class="span1 fo" :style="{color:getPercentColor(item)}">{{getPercent(item)}}%</span>
-                    </div> -->
+                <div v-for="item in rateLists" :key="item.rateType" v-show="item.show" @click="getFlightHandle(item)">
                     <div class="title">{{rateTypeName[item.rateType]}}</div>
                     <div class="per fo">{{getPercent(item)}}%</div>
                     <el-progress :percentage="getPercent(item)" :show-text="false" :color="colors"></el-progress>
-                    <div class="process fo">{{item.numerator}}/{{item.denominator}}</div>
+                    <div class="process fo"><span v-show="item.rateType!=8">{{item.numerator}}/{{item.denominator}}</span></div>
                 </div>
             </div>
         </div>
+        <el-dialog :title="layerName" :visible.sync="flightDetilShow" class="nodeDialog" center width="900px" :append-to-body="true">
+            <div class="contentbox">
+                <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -80,12 +76,43 @@
 import Highcharts from 'highcharts/highstock'
 import highchartsMore from 'highcharts/highcharts-more'
 import solidgauge from 'highcharts/modules/solid-gauge'
+import { calcPercent } from '@/lib/helper/utility'
 highchartsMore(Highcharts)
 solidgauge(Highcharts)
+import PostalStore from '@ui_lib/postalStore'
+let postalStore = new PostalStore()
 export default {
     props: ['options', 'rate_data'],
     data() {
         return {
+            flightDetilShow: false,
+            layerName: '',
+            columnConfig: [
+                { key: 'ind', label: '序号', type: 'index', width: '50px' },
+                {
+                    key: 'flightNo',
+                    label: '航班号',
+                },
+                {
+                    key: 'aircraftNo',
+                    label: '机尾号',
+                },
+                {
+                    key: 'scheduleTime',
+                    label: '计划时间',
+                    display: ({ row }) => {
+                        return this.$moment(row.scheduleTime).format('HH:mm')
+                    },
+                },
+                {
+                    key: 'actualTime',
+                    label: '实际时间',
+                    display: ({ row }) => {
+                        return row.atd ? this.$moment(row.atd).format('HH:mm') : '-'
+                    },
+                },
+            ],
+            tableData: [],
             stateTypeSelect: 1,
             timeSelect: 4,
             colors: [
@@ -115,17 +142,24 @@ export default {
                 8: '考核正常率',
                 9: '预计当天最高放行正常率',
             },
+            areaObj: {
+                1: '全场',
+                2: '定期',
+                3: '客运',
+            },
+            timeObj: {
+                1: '年',
+                2: '月',
+                3: '周',
+                4: '日',
+            },
+
             loading: false,
             rate1: {},
             rate2: {},
         }
     },
     created() {},
-    mounted() {
-        console.log(this.options)
-        //takeOffPercent
-        //originatedDeparturePercent
-    },
 
     watch: {
         rate_data: function (val) {
@@ -154,7 +188,7 @@ export default {
             } else {
                 value = Math.round((count * 10000) / total) / 100
             }
-            return value
+            return data.rateType == 8 ? this.calcCheckNormal() : value
         },
         getPercentColor(data) {
             let num = this.getPercent(data)
@@ -167,30 +201,13 @@ export default {
             }
         },
         loadRate(data) {
-            // timeType 表示4中时间类型  年月周日
-            // numerator 分子
-            // denominator 分母
-            // timeType   1表示年  2表示月 3表示周  4表示日
-            // rateType   1表示航班正常率 2表示放行正常率 3表示始发正常率  4表示早高峰正常率
-            //[{denominator: 26824
-            // id: "95b5cebe794143d490c004c69bb2cf78"
-            // inputRate: 0
-            // numerator: 22935
-            // rateType: 1
-            // time: "2019"
-            // timeType: 1}]
-            // "all": 1 全场航班
-            // "regular": 2 定期航班
-            // "passenger": 3 客运航班
-            // 这里用rateType做了groupBy
             let arrs = _.filter(this.rate_data, (list) => {
                 return list.timeType == this.timeSelect && list.statType == this.stateTypeSelect
             })
             this.rateLists.map((list) => {
                 arrs.map((arr) => {
                     if (arr.rateType == list.rateType) {
-                        list.numerator = arr.numerator
-                        list.denominator = arr.denominator
+                        _.extend(list, arr)
                     }
                 })
             })
@@ -198,6 +215,14 @@ export default {
                 this.loadTakeOff(arrs, 2, 'takeOffPercent', 'takeOffBox', 1)
                 this.loadTakeOff(arrs, 3, 'originatedDeparturePercent', 'originatedBox', 2)
             })
+        },
+        calcCheckNormal() {
+            let takeOffObj = _.find(this.rateLists, { rateType: 2 })
+            let departObj = _.find(this.rateLists, { rateType: 7 })
+            let takeOffPercent = calcPercent(takeOffObj.numerator, takeOffObj.denominator)
+            let departPercent = calcPercent(departObj.numerator, departObj.denominator)
+            let checkNormal = takeOffPercent * 0.7 + departPercent * 0.3
+            return Math.round(checkNormal * 100) / 100
         },
         loadTakeOff(arrs, rateType, percent, box, num) {
             let arr = _.find(arrs, { rateType })
@@ -209,6 +234,17 @@ export default {
             options.series = series
             this.loading = true
             this.chart = Highcharts.chart(box, options)
+        },
+        getFlightHandle(data) {
+            if (this.timeSelect != 4 || data.rateType == 8) {
+                return
+            }
+            postalStore.pub('Worker', 'Home.GetFlightsByIds', data.unNormalList || [])
+
+            postalStore.sub('Home.ToolTip.Return', (data) => {
+                this.flightDetilShow = true
+                this.tableData = data || []
+            })
         },
     },
 }
@@ -277,8 +313,10 @@ export default {
                 .chartBox {
                     width: 140px;
                     height: 140px;
+                    cursor: pointer;
                 }
                 .center {
+                    cursor: pointer;
                     height: 70px;
                     width: 70px;
                     position: absolute;
@@ -314,15 +352,16 @@ export default {
             padding: 40px 0 10px;
             margin-left: 20px;
             & > div {
-                width: 23%;
+                width: 23.5%;
                 background: rgba(0, 0, 0, 0.15);
                 border-radius: 5px;
                 height: 48%;
                 padding: 6px;
-                margin: 0 2% 2% 0;
+                margin: 0 1.5% 1.5% 0;
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                cursor: pointer;
                 .title {
                     color: #31c2fc;
                 }
@@ -332,6 +371,7 @@ export default {
                 }
                 .process {
                     color: #4181e9;
+                    height: 20px;
                 }
 
                 // .title {

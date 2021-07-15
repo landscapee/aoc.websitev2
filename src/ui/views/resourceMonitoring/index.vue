@@ -24,120 +24,125 @@
 			</div>
 		</div>
 		<div class="right">
-			<div class="rightItem rightItem1">
-				<div class="itemTitle ">
-					<div class="div1">
-						<span></span>
-						<span> 实时停机位使用情况({{seatUsageKey=='split'?'拆分':'复合'}})
+			<div class="itemheight1">
+				<div class="rightItem rightItem1">
+					<div class="itemTitle ">
+						<div class="div1">
+							<span></span>
+							<span> 实时停机位使用情况({{seatUsageKey=='split'?'拆分':'复合'}})
 							<span class="cursor" @click="qiehuanSeat">
 								<icon-svg iconClass="qiehuan"></icon-svg>
 							</span>
 						</span>
+						</div>
+					</div>
+					<div class="banner">
+						<div class="bannerItem">
+							<div>
+								<img src="../../assets/img/tianfu/jiwei.png" alt="">
+							</div>
+							<div>
+								<div>{{getSeatNum('total')}}</div>
+								<div>机位总数</div>
+							</div>
+						</div>
+						<div class="bannerItem">
+							<div>
+								<img src="../../assets/img/tianfu/kyjiwei.png" alt="">
+							</div>
+							<div>
+								<div>{{getSeatNum('usable')}}</div>
+								<div>可用机位总数</div>
+							</div>
+						</div>
+						<div class="bannerItem">
+							<div>
+								<img src="../../assets/img/tianfu/bkyjiwei.png" alt="">
+							</div>
+							<div>
+								<div>{{getSeatNum('disabled')}}</div>
+								<div>不可用机位总数</div>
+							</div>
+						</div>
+					</div>
+					<div class="baifenbiBox">
+						<div class="baifenbi" v-for="item in getSeatData('modelList') " :key="item.type+'baifenbi'">
+							<div class="baifenbiLeft">{{item.type}}</div>
+							<div class="baifenbiMiddle">
+								<div>{{item.using}}/{{item.total}}</div>
+								<div>占用数/总数</div>
+							</div>
+							<div class="baifenbiRight">
+								<el-progress :percentage="getProgress(item)"></el-progress>
+							</div>
+						</div>
 
 					</div>
 				</div>
-				<div class="banner">
-					<div class="bannerItem">
-						<div>
-							<img src="../../assets/img/tianfu/jiwei.png" alt="">
-						</div>
-						<div>
-							<div>{{getSeatNum('total')}}</div>
-							<div>机位总数</div>
-						</div>
-					</div>
-					<div class="bannerItem">
-						<div>
-							<img src="../../assets/img/tianfu/kyjiwei.png" alt="">
-						</div>
-						<div>
-							<div>{{getSeatNum('usable')}}</div>
-							<div>可用机位总数</div>
-						</div>
-					</div>
-					<div class="bannerItem">
-						<div>
-							<img src="../../assets/img/tianfu/bkyjiwei.png" alt="">
-						</div>
-						<div>
-							<div>{{getSeatNum('disabled')}}</div>
-							<div>不可用机位总数</div>
+				<div class="rightItem rightItem1_1">
+					<div class="baifenbiBox">
+						<div class="baifenbi" v-for="item in getSeatData('terminalList') " :key="item.type+'baifenbi'">
+							<div class="baifenbiLeft">{{item.type}}</div>
+							<div class="baifenbiMiddle">
+								<div>{{item.using}}/{{item.total}}</div>
+								<div>占用数/总数</div>
+							</div>
+							<div class="baifenbiRight">
+								<el-progress :percentage="getProgress(item)"></el-progress>
+							</div>
 						</div>
 					</div>
 				</div>
-				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="item in getSeatData('modelList') " :key="item.type+'baifenbi'">
-						<div class="baifenbiLeft">{{item.type}}</div>
-						<div class="baifenbiMiddle">
-							<div>{{item.using}}/{{item.total}}</div>
-							<div>占用数/总数</div>
+				<div class="rightItem rightItem1_2">
+					<div class="baifenbiBox">
+						<div class="baifenbi" v-for="item in getSeatData('seatTypeList') " :key="item.type+'baifenbi'">
+							<div class="baifenbiLeft">{{item.type}}</div>
+							<div class="baifenbiMiddle">
+								<div>{{item.using}}/{{item.total}}</div>
+								<div>占用数/总数</div>
+							</div>
+							<div class="baifenbiRight">
+								<el-progress :percentage="getProgress(item)"></el-progress>
+							</div>
 						</div>
-						<div class="baifenbiRight">
-							<el-progress :percentage="getProgress(item)"></el-progress>
-						</div>
+					</div>
+				</div>
+
+
+			</div>
+			<div class="itemheight2">
+				<div class="rightItem rightItem2">
+					<div class="itemTitle">
+						<div class="div1"><span></span><span> 实时登机口使用情况</span></div>
 					</div>
 
-				</div>
-			</div>
-			<div class="rightItem rightItem1_1">
-				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="item in getSeatData('terminalList') " :key="item.type+'baifenbi'">
-						<div class="baifenbiLeft">{{item.type}}</div>
-						<div class="baifenbiMiddle">
-							<div>{{item.using}}/{{item.total}}</div>
-							<div>占用数/总数</div>
-						</div>
-						<div class="baifenbiRight">
-							<el-progress :percentage="getProgress(item)"></el-progress>
+					<div class="baifenbiBox">
+						<div class="baifenbi" v-for="opt in gateUsageData " :key="opt.type+'rightItem2'">
+							<div class="baifenbiLeft">{{opt.type}}</div>
+							<div class="baifenbiMiddle">
+								<div>{{opt.using}}/{{opt.total}}</div>
+								<div>占用数/总数</div>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="rightItem rightItem1_2">
-				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="item in getSeatData('seatTypeList') " :key="item.type+'baifenbi'">
-						<div class="baifenbiLeft">{{item.type}}</div>
-						<div class="baifenbiMiddle">
-							<div>{{item.using}}/{{item.total}}</div>
-							<div>占用数/总数</div>
+				<div class="rightItem rightItem3">
+					<div class="itemTitle">
+						<div class="div1"><span></span><span> 实时行李转盘使用情况</span></div>
+					</div>
+					<div class="baifenbiBox">
+						<div class="baifenbi" v-for="opt in carouselUsageData " :key="opt.type+'rightItem3'">
+							<div class="baifenbiLeft">{{opt.type}}</div>
+							<div class="baifenbiMiddle">
+								<div>{{opt.using}}/{{opt.total}}</div>
+								<div>占用数/总数</div>
+							</div>
 						</div>
-						<div class="baifenbiRight">
-							<el-progress :percentage="getProgress(item)"></el-progress>
-						</div>
+
 					</div>
 				</div>
 			</div>
 
-			<div class="rightItem rightItem2">
-				<div class="itemTitle">
-					<div class="div1"><span></span><span> 实时登机口使用情况</span></div>
-				</div>
-
-				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="opt in gateUsageData " :key="opt.type+'rightItem2'">
-						<div class="baifenbiLeft">{{opt.type}}</div>
-						<div class="baifenbiMiddle">
-							<div>{{opt.using}}/{{opt.total}}</div>
-							<div>占用数/总数</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="rightItem rightItem3">
-				<div class="itemTitle">
-					<div class="div1"><span></span><span> 实时行李转盘使用情况</span></div>
-				</div>
-				<div class="baifenbiBox">
-					<div class="baifenbi" v-for="opt in carouselUsageData " :key="opt.type+'rightItem3'">
-						<div class="baifenbiLeft">{{opt.type}}</div>
-						<div class="baifenbiMiddle">
-							<div>{{opt.using}}/{{opt.total}}</div>
-							<div>占用数/总数</div>
-						</div>
-					</div>
-
-				</div>
-			</div>
 		</div>
 	</div>
 </template>
@@ -336,8 +341,8 @@
 
 			.leftItem {
 				position: relative;
-				/*height: calc(33.3333% - 10px);*/
-				height: 281px;
+				height: calc(33.3333% - 11px);
+				/*height: 281px;*/
 				margin-top: 15px;
 				padding: 18px 19px 11px 6px;
 				background: rgba(25, 37, 60, 0.8);
@@ -414,14 +419,47 @@
 			}
 		}
 		.right {
-			height: calc(100%);
+			height:100%;
 			overflow-y: auto;
 			width: 643px;
 			border-radius: 5px;
 			box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
+			.itemheight2,.itemheight1{
+ 				height: calc(66.6666% - 7px );
+				display: flex;
+				flex-direction: column;
+				.rightItem{
+					flex: 1 1 auto;
+				}
+			}
+			.itemheight1{
+				/*border: 1px #b5d2ff solid;*/
+				.rightItem{
+					/*border: 1px red solid;*/
+ 					height: calc(20% - 5px);
+					.baifenbiBox{
+						height: 100%;
+						display: flex;
+						flex-direction: column;
+						.baifenbi{
+							flex: 1 1 auto;
+						}
+					}
+ 				}
+				.rightItem1{
+					padding-top: 10px;
+ 					height: calc(60% - 15px)!important;
+					.baifenbiBox{
+ 						height: calc(100% - 118px);
+ 					}
+				}
+			}
+			.itemheight2{
+				margin-top: 15px;
+				height: calc(33.33333% - 11px );
+			}
 			.rightItem:first-child {
-				/*border-radius: 5px 5px 0 0;*/
-				margin-top: 0 !important;
+ 				margin-top: 0 !important;
 			}
 			.rightItem {
 				background: rgba(25, 37, 60, 0.8);
@@ -433,7 +471,7 @@
 				}
 				.banner {
 					display: flex;
-					margin-bottom: 12px;
+					margin-bottom: 5px;
 					.bannerItem {
 						width: 190px;
 						height: 66px;
@@ -469,6 +507,7 @@
 
 			}
 			.baifenbiBox {
+				height: 30%;
 				.baifenbi:last-child {
 					border-bottom: 0;
 				}
@@ -526,7 +565,6 @@
 			}
 			.rightItem1_2 {
 				border-radius: 0 0 5px 5px;
-
 			}
 			.rightItem2 {
 				.baifenbi:last-child {
@@ -536,7 +574,6 @@
 					width: calc(20% - 8px);;
 					display: inline-block;
 					margin-right: 5px;
-
 					.baifenbiLeft {
 						width: 100%;
 						height: 31px;

@@ -17,7 +17,8 @@ module.exports = merge(common, {
         port: 9000,
         open: true,
         progress: true, // 打包过程中的进度条
-        host:'127.0.0.1',
+        // host:'127.0.0.1',
+        host:'0.0.0.0',
         hotOnly: true,
         proxy:
           [{

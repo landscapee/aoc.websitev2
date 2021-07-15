@@ -263,6 +263,7 @@ export default {
         }
     }
     .table {
+        height: calc(100% - 60px);
     }
 }
 </style>

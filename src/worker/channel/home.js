@@ -15,8 +15,12 @@ import {
   flight_runwayModels
 } from "../manage/home";
 import Logger from "../../lib/logger";
-import { forEach} from 'lodash';
+import { forEach,map,extend} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
+
+
+import { flightDB } from '../lib/storage';
+import { checkWebsocketResponseDataFinish } from '@/lib/helper/flight';
 
 let worker;
 let clientObj = {};
@@ -74,17 +78,23 @@ const subWSEvent = () => {
 	});
   //跑道
   homeClient.sub('/Flight/runwayModels', (data) => {
-    console.log(data)
     flight_runwayModels(worker,data)
 	});
-
-
   //运行
-  clientObj.homeClient.sub('/Flight/Flight/FlightStatistic', (data) => {
+  homeClient.sub('/Flight/Flight/FlightStatistic', (data) => {
     flight_FlightStatistic(worker,data)
   });
+};
 
-
+let getFlightsByIds = (ids) => {
+	checkWebsocketResponseDataFinish().then(() => {
+			let flights = map(ids, (flightId, index) => {
+				let f = flightDB.by('flightId', flightId + '');
+				f = extend({}, f, { index001: index + 1 });
+				return f;
+      });
+			worker.publish('Web', 'Home.ToolTip.Return', flights);
+		});
 };
 
 export const init = (worker_) => {
@@ -105,6 +115,7 @@ export const init = (worker_) => {
       item.unSubAll()
     })
   })
+  worker.subscribe(`Home.GetFlightsByIds`, getFlightsByIds);
 };
 
 

@@ -6,7 +6,7 @@
             </div>
             <number2 v-for="(item,index) in numbers2Arr" :key="item.type+index" :options="item" :flight_home="flight_home" @flight-dialog-handle="flightDialogHandle" />
             <month-delay :options="monthData" :flight_home="flight_home" :flight_monthClearance="flight_monthClearance" :flight_lastestAta="flight_lastestAta" :flight_lastestAtd="flight_lastestAtd" @flight-dialog-handle="flightDialogHandle" />
-            <flight-chart :options="chartData" :flight_FlightStatistic="flight_FlightStatistic" :flight_delay_backStatus="flight_delay_backStatus" @set-settingcfg="setSettingcfg" />
+            <flight-chart :options="chartData" :flight_home="flight_home" :flight_FlightStatistic="flight_FlightStatistic" :flight_delay_backStatus="flight_delay_backStatus" @set-settingcfg="setSettingcfg" />
             <rate :options="rateData" :rate_data="flight_home.rate" />
             <direction :options="directionData" :flight_direction="flight_direction" />
         </div>
@@ -21,7 +21,7 @@
 <script>
 import { postions } from './static/js/postions.js'
 import { settings as settingsCfg } from './static/js/settingHome'
-import PostalStore from '../../lib/postalStore'
+import PostalStore from '@ui_lib/postalStore'
 let postalStore = new PostalStore()
 import Number from './components/number'
 import Number2 from './components/number2'
@@ -72,9 +72,8 @@ export default {
         this.loadSetting()
 
         postalStore.pub('Worker', 'Page.Home.Start', '')
-
         postalStore.sub('flight.home', (data) => {
-            // console.log(data)
+            console.log(data)
             this.flight_home = data
         })
         // 月度放行正常率目标
@@ -92,7 +91,7 @@ export default {
             // console.log('最近实际起飞航班', data)
             this.flight_lastestAtd = data.splice(0, 5)
         })
-        //积压运行
+        //运行
         postalStore.sub('flight.FlightStatistic', (data) => {
             // console.log('运行', data)
             this.flight_FlightStatistic = data
@@ -119,7 +118,7 @@ export default {
         })
         //跑道
         postalStore.sub('flight.runwayModels', (data) => {
-            console.log('跑道', data)
+            // console.log('跑道', data)
             this.flight_runwayModels = data
         })
 

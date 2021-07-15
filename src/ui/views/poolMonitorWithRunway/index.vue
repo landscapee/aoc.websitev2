@@ -108,7 +108,7 @@
 					</div>
 					<div>
 						<i v-if="!notSeting(opt)" @click="openSetting(opt)" class="el-icon-setting"></i>
-						<span v-if="opt.dig" @click="bangzhu(opt) " style="color:#fff">
+						<span  @click="bangzhu(opt) " style="color:#fff">
 							<icon-svg iconClass="bangzhu"></icon-svg>
 						</span>
 					</div>
@@ -205,7 +205,7 @@
                 setting,
                 jg: true,
                 lg: true,
-                delayFlights: 'unNormal',
+                delayFlights: 'takeOffNormal',
                 delayFlightsData: {},
                 xietiaoObj: {
                     fastEnter: 'overStationStatus',
@@ -262,13 +262,8 @@
                         tableConfig: []
                     },
                 },
-                delayFlightsOptions: [{value: 'unNormal', label: '航班不正常'}, {
-                    value: 'allowtakeOff',
-                    label: '放行不正常'
-                }, {value: 'orignalAllowTakeOff', label: '始发不正常'}, {
-                    value: 'OrignalAllowTakeOffInMorning',
-                    label: '早高峰始发不正常'
-                }, {value: 'departure', label: '起飞不正常'}, {value: 'arrive', label: '落地不正常'}],
+                delayFlightsOptions: [
+                    { value: 'takeOffNormal', label: '放行不正常' }, { value: 'originalAllowTakeOff', label: '始发不正常' }, { value: 'normal', label: '航班不正常' }, { value: 'departureNormal', label: '起飞不正常' }, { value: 'arriveNormal', label: '落地不正常' }, { value: 'originalInMorning', label: '早高峰始发不正常' }],
             }
         },
         computed: {
@@ -544,6 +539,7 @@
                     this.$set(this.pageListObj[data.key].columns[s1], 'data', data.data[s1] || [])
                 } else {
                     if (data.key == 'delayFlights2') {
+
                         this.delayFlightsData = data.data
                     } else {
                         this.$set(this.pageListObj[data.key], 'data', data.data || [])

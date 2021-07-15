@@ -277,10 +277,11 @@ const chartOptionsByHour = {
 		align: 'right',
 		verticalAlign: 'top',
 		enabled: true,
+		itemDistance:5,
 		itemStyle: {
-			color: '#666666',
-			fontSize: '0.12rem',
-			fontWeight: 'light',
+			color: '#ccc',
+			fontSize: '.12rem',
+			fontWeight: 400,
 		},
 		// itemHoverStyle: {
 		// 	color: '#666666',
@@ -1376,6 +1377,15 @@ export const settings = {
 								cb && cb(e.point.category, 'A');
 							},
 						},
+						
+					},
+					{
+						type: 'areaspline',
+						name: '取消航班',
+						color: '#d9836c',
+						lineColor: chartColorCancel,
+						fillOpacity: 0.05,
+						data: get(data, 'yesterday.cancelPlan', []),
 					},
 				];
 				return result;
@@ -1663,7 +1673,6 @@ export const settings = {
 				let guiyang = renderColor(['Guizhou', 'Guangxi', 'Guangdong', 'Hainan'], directions[5]);
 				let kunming = renderColor(['Yunnan', 'Sichuan'], directions[6]);
 				let lasa = renderColor(['Xizang'], directions[1]);
-				console.log(lasa)
 				let result = [
 					{
 						colorByPoint: true,

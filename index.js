@@ -74,10 +74,6 @@ new Vue({
          console.log('clientId',clientId);
         const workerProces = new WorkerRegist();
         workerProces.start();
-        // let myWorker;
-        // if (!myWorker){
-        //     myWorker = new Worker();
-        // }
         let token = JSON.parse(getUser()).token;
         let now = moment().valueOf()
         memoryStore.setItem('global',{token, now,clientId});

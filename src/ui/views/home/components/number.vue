@@ -4,12 +4,10 @@
             <div class="top">
                 <el-dropdown trigger="click" size="mini" @command="load_flight_home">
                     <span class="el-dropdown-link">
-                        全场<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
+                        {{itemsObj[select]}}<i class="el-icon-caret-bottom el-icon--right" style="color:#0566ff"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="all">全场</el-dropdown-item>
-                        <el-dropdown-item command="domestic">国内</el-dropdown-item>
-                        <el-dropdown-item command="international">国际</el-dropdown-item>
+                        <el-dropdown-item :command="key" v-for="(item,key) in itemsObj" :key="key">{{item}}</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
                 <span class="pre fo">{{percentage}}%</span>
@@ -44,6 +42,11 @@ export default {
             select: 'all',
             activeData: [0, 0],
             percentage: '0',
+            itemsObj: {
+                all: '全场',
+                domestic: '国内',
+                international: '国际',
+            },
         }
     },
     created() {},
@@ -55,6 +58,7 @@ export default {
     },
     methods: {
         load_flight_home(command = 'all') {
+            this.select = command
             this.activeData = this.options.value(this.flight_home, command)
             this.percentage =
                 this.activeData[1] == 0

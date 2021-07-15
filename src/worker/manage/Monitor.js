@@ -19,7 +19,8 @@ export const getFlightDatas = (data, blo) => {
     } else {
         map(data, (k, l) => {
             if (getFlightDetail(k.flightId)) {
-                arr.push({...getFlightDetail(JSON.stringify(k.flightId)), ...k})
+                let flightId=k.flightId+''
+                arr.push({...getFlightDetail(flightId),...k})
             }
         })
     }
