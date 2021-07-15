@@ -1,8 +1,4 @@
 
-
-
-
-
  <template>
 	<div class="runMonitoringIndex">
 
@@ -44,7 +40,7 @@
 						</template>
 						<template slot="warnDetail" slot-scope="{row,index}">
 							<!--<div>取消预警</div>-->
-							<span @click="resetWaring(row) "  class="quxiao">
+							<span @click="resetWaring(row) "  class="quxiao" :class="{infoquxiao:!row.hightLightStatus}">
 							<icon-svg  iconClass="huifu"  :class="{infoSvg:!row.hightLightStatus}"></icon-svg>
 						</span>
 						</template>
@@ -135,14 +131,14 @@
                 let length=Object.keys(data[0]||{}).length
 
                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
-                this.allCheckWarn.batchConcern=[]
+                // this.allCheckWarn.batchConcern=[]
                 console.log('batchConcern',data);
             });
             //提前落地池
             postalStore.sub( 'advanceArrive',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.advanceArrive,'data',data)
-                // length&&this.$set(this.pageListObj.batchConcern,'data',data)
+                length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 // length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
                 // length&&this.$set(this.pageListObj.vvpFlights,'data',data)
                 console.log('advanceArrive',data);
@@ -157,7 +153,7 @@
             postalStore.sub( 'vvpFlights',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.vvpFlights,'data',data)
-                this.allCheckWarn.vvpFlights=[]
+                // this.allCheckWarn.vvpFlights=[]
                 console.log('vvpFlights',data);
             });
         },
@@ -268,6 +264,37 @@
 </script>
 
 <style lang="scss" scoped>
+	.tablediv{
+		background: #19263b;
+	}
+	::v-deep .adv-table-container {
+		.adv-table_main-container {
+			border: 0 !important;
+		}
+
+		.adv-table_header-container {
+			border: 0 !important;
+		}
+		$border: 1px #565c67 solid;
+		table {
+			tr {
+				border-top: $border;
+				border-bottom: $border;
+				th {
+					/*<!--border-top: $border;-->*/
+					border-bottom: $border !important;
+					border-right: 0 !important;
+					background: #233147 !important;
+				}
+				td {
+					border-right: 0 !important;
+					border-bottom: $border !important;
+					background: #19263b !important;
+				}
+			}
+		}
+	}
+
 	::v-deep .warningRow{
 		background: #f2dede!important;
 
@@ -286,8 +313,12 @@
 	}
 
 	 .quxiao{
-		 padding: 3px 5px ;
-		 /*background: #2e67f6;*/
+		 padding: 3px 11px ;
+		 background: #2e67f6;
+		 border-radius: 3px;
+	 }
+	 .infoquxiao{
+		 background: rgba(46, 103, 246, 0.66);
 	 }
 	 .resetPage{
 		 color:#28a745;

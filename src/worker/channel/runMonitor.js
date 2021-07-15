@@ -34,6 +34,7 @@ const subWSEvent = () => {
     });
     //地面保障池
     client.sub('/Flight/monitor/guaranteeWarn',(res)=>{
+
         let data=getFlightDatas(res)
         worker.publish('Web','guaranteeWarn',data)
     });
