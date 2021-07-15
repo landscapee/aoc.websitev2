@@ -11,6 +11,7 @@ import { init as alternateConfigInit } from '../channel/alternate'
 import { init as decreaseInit } from '../channel/decrease'
 import { init as runningNew } from '../channel/runningNew'
 import { init as publicChanelInit } from '../channel/publicChanel'
+import { init as adjustmentReductionInit } from '../channel/adjustmentReduction'
 
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
@@ -70,8 +71,9 @@ postal.subscribe({
         MonitorWithRunwayInit(posWorker, httpRequest);
         resourceMonitorInit(posWorker, httpRequest);
         alternateConfigInit(posWorker, httpRequest);
-         runningNew(posWorker, httpRequest);
-         resourceMonitorInit(posWorker, httpRequest);
+        runningNew(posWorker, httpRequest);
+        resourceMonitorInit(posWorker, httpRequest);
+        adjustmentReductionInit(posWorker, httpRequest)
 
         flightHttp(posWorker, httpRequest);
         homeInit(posWorker, httpRequest)

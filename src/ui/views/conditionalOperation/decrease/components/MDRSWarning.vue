@@ -2,16 +2,9 @@
     <div class="MDRSWarning showBox">
         <div class="title">
             <div class="name alib">MDRS预警</div>
-            <div class="status" :class="mdrsWarn.className">{{mdrsWarn.text}}</div>
+            <div class="status" :class="mdrsWarnOpt[mdrsWarn.status] ">{{mdrsWarn.text}}</div>
         </div>
-        <div class="content" v-html="dataCotent.content">
-            <!-- <span>{{dataCotent}}</span>
-            <span class="time">11:38-12:38</span>
-            <span>受时刻影响，通行能力下降</span>
-            <span class="time">2%</span>
-            <span>，发布IDEPO海口航班延误</span>
-            <span class="color">黄色预警</span> -->
-        </div>
+        <div class="content" v-html="dataCotent.content"></div>
     </div>
 </template>
 <script>

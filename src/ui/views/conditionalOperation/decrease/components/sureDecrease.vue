@@ -52,7 +52,7 @@ export default {
                     key: '',
                     label: '航线',
                     display: ({ row }) => {
-                        return row.displayRouter.join('-')
+                        return row.displayRouter ? row.displayRouter.join('-') : '-'
                     },
                 },
                 {
@@ -79,7 +79,7 @@ export default {
                     key: '',
                     label: '航线',
                     display: ({ row }) => {
-                        return row.displayRouter.join('-')
+                        return row.displayRouter ? row.displayRouter.join('-') : '-'
                     },
                 },
                 {
