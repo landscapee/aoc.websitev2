@@ -90,8 +90,8 @@ export default {
 
   computed: {
     totalHeight: function(){
-      let heightOfPx = (this.flights.length + 1) * itemH // 头部原因加1
-      return heightOfPx / 100
+      let heightOfPx = (this.flights.length -1) * itemH + 120
+      return pxtorem(heightOfPx)
     },
     // showFlights: function (){
     //   let flights = [...this.flights];
@@ -136,7 +136,12 @@ export default {
 
       let rowHeight = fixPx(itemH);
       let begin = Math.floor(window.scrollY / rowHeight);
-      let end = Math.ceil((window.innerHeight - fixPx(120 + 40 )) / rowHeight);
+      let end = Math.ceil((window.innerHeight - fixPx(120 )) / rowHeight);
+
+      // if (begin + end > flights.length){
+      //   end = flights.length;
+      //   begin = flights.length - end
+      // }
       flights = slice(flights, begin, begin + end);
       this.showFlights = flights
     },

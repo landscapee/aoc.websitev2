@@ -21,7 +21,45 @@
     .icon-suoding2{
       font-size: 11px;
     }
+  };
+  ::v-deep {
+    .departWarnGreen{
+      background-color: rgba(53,98,52,.5)!important;
+      border-top: solid 1px #17212F;
+    }
+    .departWarnYellow{
+      background-color: rgba(128,115,5,.5)!important;
+      border-top: solid 1px #17212F;
+    }
+    .departWarnRed{
+      background-color: rgba(138,22,22,.5)!important;
+      border-top: solid 1px #17212F;
+    }
+
+    .warnTextGreen{
+      color: rgba(0,255,26,1)!important;
+    }
+    .warnTextYellow{
+      color: rgba(255,176,0,1)!important;
+    }
+    .warnTextRed{
+      color: rgba(255,38,38,1)!important;
+    }
+    .active.bgA{
+      background-color: rgba(87, 220, 149, 0.5) !important;
+      box-shadow:0px 0px 2px rgb(114, 158, 129) inset;
+    }
+    .active.bgD{
+      background-color: rgba(105, 134, 191, 0.5) !important;
+      box-shadow:0px 0px 2px rgb(101, 125, 177) inset;
+    }
+    .el-radio__label{
+      display: none;
+    }
+
+
   }
+
   .lock{
     box-shadow: 0.01rem .01rem 0.1rem #454c51!important;
   }

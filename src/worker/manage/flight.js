@@ -191,6 +191,8 @@ export const combineFlightField = (cacheFlights) => {
     flight.flightLabel = f.flightLabel;
     flight.markLate = f.markLate;
     flight.movement = f.movement;
+    flight.ctot = f.ctot;
+    flight.dstt = f.dstt;
     return flight;
   });
 };

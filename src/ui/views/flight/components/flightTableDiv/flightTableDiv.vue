@@ -8,7 +8,7 @@
           {{c.text}}
         </div>
       </div>
-      <flightRow :data="data" :columns="lockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
+      <flightRow :hoverId.sync="hoverId" :clickId.sync="clickId"  :data="data" :columns="lockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
     </div>
 
 
@@ -21,7 +21,7 @@
               {{c.text}}
             </div>
           </div>
-          <flightRow :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
+          <flightRow :hoverId.sync="hoverId" :clickId.sync="clickId" :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
         </div>
     </div>
   </div>
@@ -41,7 +41,9 @@ export default {
   },
   data(){
     return{
-      unLockScrolling: false
+      unLockScrolling: false,
+      hoverId: '',
+      clickId: '',
     }
   },
   mounted(){

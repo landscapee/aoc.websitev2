@@ -9,6 +9,12 @@
     <span :style="{ color: scope.row.movement === 'A' ? '#00FE4A' : 'rgba(25,197,255,1)' }" class="flightNo fo">{{ scope.row.flightNo }}</span>
   </div>
 
+  <div :class="ctotClass(scope.row)" v-else-if="item.key === 'displayCTOT'" slot-scope="scope">
+    <i :class="classNames('iconfont icon-zhankai', {'d-none': !getFlightDelayWarn(scope.row)})" />
+    <span>{{ scope.row.displayCTOT }}</span>
+    <i :class="classNames('iconfont icon-shouqi', {'d-none': !getFlightDelayWarn(scope.row)})" />
+  </div>
+
   <permissionSwitch v-else-if="item.key === 'displayTOBT'" slot-scope="scope" role="edit-TOBT">
     <div @click="TOBTClick($event, scope.row)" class="d-flex flex-justify-center">
       <i v-if="scope.row.movement === 'D'" class="iconfont icon-bianji text-blue" ></i>
@@ -88,6 +94,8 @@ import moment from "moment";
 import {get} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
 import {hasRole} from "@/ui/lib/common";
+import {getFlightDelayWarn} from "@/lib/helper/flight";
+import classNames from "classnames";
 
 let postalStore = new PostalStore()
 export default {
@@ -253,6 +261,17 @@ export default {
           this.$message({message:'播放成功!',type: 'success'})
         }
       })
+    },
+    classNames: classNames,
+    getFlightDelayWarn,
+    ctotClass: function (row){
+      let departWarn = getFlightDelayWarn(row);
+      let cClass = classNames('d-flex flex-justify-center flex-items-center', {
+        warnTextGreen: departWarn === 'departWarnGreen',
+        warnTextRed: departWarn === 'departWarnRed',
+        warnTextYellow: departWarn === 'departWarnYellow',
+      });
+      return cClass
     }
   },
   computed: {
