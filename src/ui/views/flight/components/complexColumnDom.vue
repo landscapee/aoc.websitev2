@@ -9,6 +9,14 @@
     <span :style="{ color: scope.row.movement === 'A' ? '#00FE4A' : 'rgba(25,197,255,1)' }" class="flightNo fo">{{ scope.row.flightNo }}</span>
   </div>
 
+  <div v-else-if="item.key === 'flightIndex'"  class="position-relative" slot-scope="scope">
+    <div :class="classNames('position-absolute', {
+      'left-border-vip': get(scope.row,'mark.V') && !get(scope.row,'mark.D'),
+      'left-border-delay': get(scope.row,'mark.D'),
+      'left-border-none': !get(scope.row,'mark.D') && !get(scope.row,'mark.V') })" />
+    <span>{{ scope.row.flightIndex }}</span>
+  </div>
+
   <div :class="ctotClass(scope.row)" v-else-if="item.key === 'displayCTOT'" slot-scope="scope">
     <i :class="classNames('iconfont icon-zhankai', {'d-none': !getFlightDelayWarn(scope.row)})" />
     <span>{{ scope.row.displayCTOT }}</span>
@@ -127,6 +135,7 @@ export default {
     }
   },
   methods: {
+    get,
     setTop: function (flightId){
       let now = memoryStore.getItem('global').now
       let day = moment(now).format('YYYYMMDD');

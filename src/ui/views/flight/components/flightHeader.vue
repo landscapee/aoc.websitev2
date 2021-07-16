@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex header">
-    <div :style="{width: pxtorem(c.width) + 'rem'}" class="text-center headerItem" v-for="c in columns">
+    <div :style="{width: pxtorem(parseInt(c.width)) + 'rem'}" class="text-center headerItem" v-for="c in columns">
       <i v-if="c.lock" @click="changeLockStatus(c, c.lock)" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
       <i v-else class="icon-lock-2 cursor"></i>
       {{c.text}}

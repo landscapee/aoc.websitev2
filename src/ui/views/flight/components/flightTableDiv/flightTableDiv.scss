@@ -90,6 +90,23 @@
       background-color: #0d7fa0!important;
       box-shadow:0px 0px 2px rgb(136, 169, 239) inset !important;
     }
+
+    .left-border-delay, .left-border-vip, .left-border-none {
+      width: 4px;
+      top: 1px;
+      bottom: 1px;
+      left: 0;
+      right: 0;
+    }
+    .left-border-delay {
+      background-color: #dc3545;
+    }
+    .left-border-vip {
+      background-color: #fd7e14;
+    }
+    .left-border-none {
+      display:none;
+    }
     .el-radio__label{
       display: none;
     }
