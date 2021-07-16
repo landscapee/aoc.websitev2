@@ -81,7 +81,7 @@ export default {
 
   },
   mounted() {
-
+    postalStore.sub('Web', 'SendFilterOpt', this.sendFilterOpt)
   },
   beforeDestroy() {
 
@@ -102,6 +102,9 @@ export default {
       this.sendFilterOpt()
     },
     sendFilterOpt: function (sort) {
+      if (!sort){
+        postalStore.pub('Web', 'ClearSort', '')
+      }
       let msg = {
         searchKey: null,
         movement: null,
@@ -120,7 +123,10 @@ export default {
       this.opt && extend(msg, this.opt);
       this.operationType && extend(msg, {dayProperty: this.operationType});
       this.dayProperty && extend(msg, {day: this.dayProperty});
-      sort && extend(msg, sort);
+      sort && extend(msg, {sort});
+      if (!sort){
+        msg.sort = null
+      }
       postalStore.pub('Worker', 'Flight.Filter', msg);
     },
     operationChange: function (label){
