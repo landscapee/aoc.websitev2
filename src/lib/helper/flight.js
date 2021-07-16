@@ -773,3 +773,24 @@ export const calcMaintainTime = (flight) => {
         offBlockDeadline: offBlockDeadline,
     });
 };
+
+export const getFlightDelayWarn = (flight) => {
+	/*
+		* Ctot - 放行标准起飞时间 < -10M 绿色
+			ctot - 放行标准起飞时间 > 10M 红色
+			有ctot和放行标准起飞的其他 : 黄色
+		* */
+	let { ctot, dstt } = flight;
+	let tenMin = 10 * 60 * 1000;
+	if (dstt && ctot) {
+		if (ctot - dstt < -tenMin) {
+			return 'departWarnGreen';
+		}
+		if (ctot - dstt > tenMin) {
+			return 'departWarnRed';
+		}
+		return 'departWarnYellow';
+	} else {
+		return false;
+	}
+};

@@ -164,7 +164,7 @@ export default {
    background: #111926;
    z-index: 10;
    .tabs{
-     height: 50px;
+     height: 40px;
      display: flex;
      align-items: center;
    }
@@ -184,7 +184,7 @@ export default {
      display: inline-block;
    }
    .right-box{
-     height: 50px;
+     height: 40px;
      display: flex;
      align-items: center;
      .search{

@@ -35,7 +35,13 @@
 import FlightDecreaseLists from './components/flightDecreaseLists.vue'
 import DecreaseRecommend from './components/decreaseRecommend.vue'
 import ReduceFlightLists from './components/reduceFlightLists.vue'
+import { mapGetters } from 'vuex'
+import PostalStore from '@/ui/lib/postalStore'
+let postalStore = new PostalStore()
 export default {
+    computed: {
+        ...mapGetters({ user: 'getUserMsg' }),
+    },
     components: {
         'flight-decrease-lists': FlightDecreaseLists,
         'decrease-recommend': DecreaseRecommend,
@@ -43,6 +49,25 @@ export default {
     },
     data() {
         return {}
+    },
+    mounted() {
+        console.log(this.userData)
+
+        let TZZY = _.find(this.user.roles, (item) => item.code.indexOf('TZZY') > -1)
+        let role = _.get(TZZY, 'menus.0', {})
+        let path = role.path || '[]' // [{"reversal":false,"data":["3U"]}]
+        let airlineCode = role.code ? role.code.split('-')[1] : ''
+
+        // console.log(airlineCode)
+
+        postalStore.pub('Worker', 'AdjustReduction.SetFilterOption', { airlineCode: airlineCode })
+        postalStore.sub(
+            'Web',
+            'AdjustReduction.QueryFlight.Response',
+            ({ flights, statistics }) => {
+                console.log(flights, statistics)
+            }
+        )
     },
 }
 </script>
