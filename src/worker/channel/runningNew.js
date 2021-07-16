@@ -1,4 +1,4 @@
-import {runNewStop, runNewStart} from "../manage/runningNew";
+import {runNewStop, runNewStart,getRunwayWeather,getIndicator} from "../manage/runningNew";
 import {mapKeys, map, extend, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 
@@ -34,12 +34,12 @@ const subWSEvent = () => {
         weatherStat: '/adverse-condition/meteorologyDisaster/stat',
         // 预测航班积压量
         estimatedBacklog: '/adverse-condition/meteorologyDisaster/speculative/execution',
-        // 气象灾害-三大指标  航班指标-预测 实时延误航班
-        // 最近一次跑道使用间隔  出港旅客数量指标  本场起降间隔指标
+        // 气象灾害-三大指标  实时延误航班 最近一次跑道使用间隔
+        //   航班指标 - 预测  出港旅客数量指标  本场起降间隔指标
         indicator: '/adverse-condition/meteorologyDisaster/indicator',
         // //低能见度运行 table 数据  MDRS预警下面的表格
         runwayStandard: `/adverse-condition/runwayStandard/list`,
-        //  跑道天气曲线图    RVR趋势图  露点温度与温度趋势图
+        //  跑道天气曲线图   垂直能见度趋势图  RVR趋势图  露点温度与温度趋势图
         runwayWeather: `/adverse-condition/statistic/data/runway`,
         // 通行能力
         seatEvaluate_User2: `/adverse-condition/trafficCapacity/list`,
@@ -48,7 +48,13 @@ const subWSEvent = () => {
     }
     map(urlObj, (val, key) => {
         client.sub(val, (data) => {
-            worker.publish('Web', key, {data: data, key: key})
+            let mydata=data
+            if(key=='runwayWeather'){
+                mydata=getRunwayWeather(mydata)
+            }else if(key==='indicator'){
+                mydata=getIndicator(mydata)
+            }
+            worker.publish('Web', key, {data: mydata, key: key})
         })
     })
 

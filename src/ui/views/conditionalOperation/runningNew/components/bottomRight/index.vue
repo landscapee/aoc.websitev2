@@ -1,77 +1,129 @@
 <template>
 	<div class="bottomRightIndex">
-		<div class="item" v-for="opt in pageObj" :key="opt.key">
-			<div class="title">
-				<div class="shuxian"></div>
-				<div class="text">{{opt.name}}</div>
- 			</div>
-			<div class="content">
-				<div ref="echarts"></div>
-			</div>
+		<div class="item" v-for="opt in pageObj" :key="opt.key+opt.keyC">
+			<Item ref="item"  :data="opt" :optionsEC="getOptions(opt)" :key="opt.key+opt.keyC"></Item>
 		</div>
 	</div>
 </template>
 
 <script>
-    import postal from 'postal';
     import PostalStore from "@ui_lib/postalStore";
+    import {optionsWeather,optionsIndicator}from './options'
+    import {debounce} from '@/ui/lib/common.js'
+
     let postalStore = new PostalStore();
+    import Item from './item'
+	import {map} from 'lodash'
     export default {
         name: "bottomRightIndex",
-        components: {},
-        data() {
-            return {
-                pageObj:[
-					{name:'RVR趋势图',key:"11",data:[]},
-					{name:'航班指标',key:"22",data:[]},
-					{name:'垂直能见度趋势图',key:"33",data:[]},
-					{name:'出港旅客数量指标',key:"44",data:[]},
-					{name:'露点温度与温度趋势图',key:"55",data:[]},
-					{name:'本场起降间隔指标',key:"66",data:[]},
-				]
+        components: {Item},
+        computed: {
+            getOptions(){
+                return (opt)=>{
+                   let arr=this[opt.key][opt.keyC]
+                    console.log(arr,111);
+                    if(!arr){
+					    arr=[	 [], { name: '航班指标', data: [0] },]
+					}
+                    if(opt.key==='runwayWeather'){
+                        console.log(222,optionsWeather(...arr))
+                        return optionsWeather(...arr,opt.yName)||{}
+					}else{
+                        console.log(333,optionsIndicator(...arr) || {});
+                        return  optionsIndicator(...arr,opt.yName)||{}
+
+                    }
+
+				}
 			}
         },
-        methods: {},
+        data() {
+            return {
+                runwayWeather: {},
+                indicator: {},
+                pageObj: [
+                    {name: 'RVR趋势图', key: "runwayWeather",keyC:'rvr', yName:'m'},
+                    {name: '航班指标', key: "indicator", keyC:'flightIndicator', yName:'数量(架次)' },
+                    {name: '垂直能见度趋势图', key: "runwayWeather", keyC:'rvr1', yName:'℃'},
+                    {name: '出港旅客数量指标', key: "indicator", keyC:'passengerIndicator', yName:'数量(人数)' },
+                    {name: '露点温度与温度趋势图', key: "runwayWeather" ,keyC:'rvr2', yName:'℃'},
+                    {name: '本场起降间隔指标', key: "indicator",keyC:'spaceIndicator' , yName:'分钟'},
+                ],
+
+
+            }
+        },
+        methods: {
+
+        },
         created() {
+
+        },
+        mounted() {
+			let data=['runwayWeather','indicator']
+			map(data,(k)=>{
+                postalStore.sub(k, ({data, key}) => {
+                    console.log(key+' ,data', data, key);
+                    this[key] = data
+                })
+			})
+            let a=debounce(() => {
+                 map(this.$refs.item,k=>{
+                    k.aaa()
+				})
+             }, 150, false)
+            window.onresize = () => {
+                this.$nextTick(()=>{
+                    a()
+                })
+
+            }
+        },
+
+        beforeDestroy() {
+            postalStore.unsubAll()
         },
     }
 </script>
 
 <style lang="scss" scoped>
-	.bottomRightIndex{
+	.bottomRightIndex {
 		display: flex;
-		flex-wrap:wrap;
+		flex-wrap: wrap;
 		color: #fff;
 		height: 100%;
 	}
+
 	.item:nth-child(1),
-	.item:nth-child(2){
-		margin-top: 0!important;
+	.item:nth-child(2) {
+		margin-top: 0 !important;
 	}
-	.item:nth-child(odd){
-		margin-left: 0!important;
+
+	.item:nth-child(odd) {
+		margin-left: 0 !important;
 	}
-		.item{
-			background: rgba(25, 37, 60, 0.8);
-			border-radius: 5px;
-			padding: 10px 15px;
-			width: calc(50% - 7px);
-			height: calc(33.333333% - 9px);
-			margin: 10px 0 0  14px ;
- 			.title{
-				font-size: 14px;
-				display: flex;
-				align-items: center;
-				.shuxian{
-					margin-right: 8px;
-					width: 4px;
-					height: 14px;
-					background: #0566ff;
-					border-radius: 1px;
-				}
 
-
-
+	.item {
+		background: rgba(25, 37, 60, 0.8);
+		border-radius: 5px;
+		padding: 10px 15px;
+		width: calc(50% - 7px);
+		height: calc(33.333333% - 9px);
+		margin: 10px 0 0 14px;
+		/*border:  1px red solid;*/
+		.title {
+			font-size: 14px;
+			font-family: MicrosoftYaHei-Bold;
+			display: flex;
+			align-items: center;
+			.shuxian {
+				margin-right: 8px;
+				width: 4px;
+				height: 14px;
+				background: #0566ff;
+				border-radius: 1px;
 			}
+
 		}
+	}
 </style>
