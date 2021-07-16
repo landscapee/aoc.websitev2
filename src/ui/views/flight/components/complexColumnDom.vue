@@ -33,6 +33,7 @@
   <el-cascader
       v-else-if="item.key === 'abnormalCategory'"
       slot-scope="scope"
+      :disabled="scope.row.isDelay !== true"
       :value="scope.row.delayReasonMerge ? scope.row.delayReasonMerge.split(',') : []"
       :options="delayOptions"
       @change="(v) => abnormalCategoryChange(v, scope.row)"></el-cascader>
@@ -41,10 +42,11 @@
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="delayInputBlur(item, scope)" v-model="delayInputValue"></el-input>
     </div>
-    <div v-else  @click="delayClick(item,scope)" class="d-flex flex-justify-center">
+    <div v-else-if="scope.row.isDelay === true"  @click="delayClick(item,scope)" class="d-flex flex-justify-center">
       <i class="iconfont icon-bianji text-blue" ></i>
       <div>{{scope.row[item.key]}}</div>
     </div>
+    <span v-else>--</span>
   </permissionSwitch>
 
   <span v-else-if="item.key === 'showVideo'" class="cursor text-blue" @click="playVideo(scope.row)">

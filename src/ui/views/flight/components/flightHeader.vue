@@ -2,7 +2,7 @@
   <div class="d-flex header">
     <div :style="{width: pxtorem(parseInt(c.width)) + 'rem'}" class="text-center headerItem" v-for="c in columns">
       <i v-if="c.lock" @click="changeLockStatus(c, c.lock)" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
-      <i v-else class="icon-lock-2 cursor"></i>
+      <i v-else @click="changeLockStatus(c, c.lock)" class="icon-lock-2 cursor"></i>
       {{c.text}}
       <span @click="changeSort(c.referenceTo || c.key)" :class="classNames('sort',{'d-none': !c.sort})">
         <i :class="classNames('iconfont icon-paixu icon-asc', {'text-blue-009': active(c) && order === 'asc',})" />
