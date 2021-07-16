@@ -6,6 +6,7 @@
   display: flex;
 
   ::v-deep {
+
     .header{
       height: 26px;
       background-color: #273448;
@@ -84,6 +85,10 @@
     .active.bgD{
       background-color: rgba(105, 134, 191, 0.5) !important;
       box-shadow:0px 0px 2px rgb(101, 125, 177) inset;
+    }
+    .checkedFlight.bgA,.checkedFlight.bgD{
+      background-color: #0d7fa0!important;
+      box-shadow:0px 0px 2px rgb(136, 169, 239) inset !important;
     }
     .el-radio__label{
       display: none;

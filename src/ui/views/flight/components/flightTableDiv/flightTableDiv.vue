@@ -2,27 +2,27 @@
   <div class="flightTableDiv">
     <div class="lock" id="lock" :style="{width: lockWidth + 'rem'}">
       <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="lockColumns"></flightHeader>
-      <flightRow :hoverId.sync="hoverId" :clickId.sync="clickId"  :data="data" :columns="lockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
+      <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId"  :data="data" :columns="lockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
     </div>
 
 
     <div class="unlockBox" :style="{width: unLockBoxWidth + 'rem', left: lockWidth + 'rem'}">
         <div :style="{width: unLockWidth + 'rem'}">
           <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="unLockColumns" ></flightHeader>
-          <flightRow :hoverId.sync="hoverId" :clickId.sync="clickId" :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
+          <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId" :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
         </div>
     </div>
   </div>
 </template>
 
 <script>
-import _, {some} from 'lodash';
+import _, {map, some} from 'lodash';
 import {fixPx, fixPxBySc, pxtorem} from "@/ui/lib/viewSize";
 import {updateListHeader} from "@/ui/views/flight/components/handleColumn";
 import flightHeader from '../flightHeader'
 export default {
   name: "flightTableDiv",
-  props: ['data', 'columns','setColumns', 'isScrolling'],
+  props: ['data', 'columns','setColumns', 'isScrolling', 'checkFlightId'],
   components: {
     flightHeader,
     'flightRow': () =>

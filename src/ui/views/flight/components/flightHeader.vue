@@ -64,6 +64,9 @@ export default {
       this.$emit('update:activeKey', '')
       this.$emit('update:order', '')
     })
+  },
+  destroyed() {
+    postalStore.unsubAll()
   }
 }
 </script>
