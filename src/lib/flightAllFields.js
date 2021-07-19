@@ -323,7 +323,7 @@ export const allField = {
 	contrlPoint: { text: '流控点' },
 	fix: { text: '走廊口' },
 	contrlStatus: { text: '是否流控' },
-	displayFirstLuggageEstimateArriveTime: { text: '首件行李预计到达时间', width: '160px' },
+	displayFirstLuggageEstimateArriveTime: { text: '首件行李预计到达时间', width: 160 },
 	estimateBordingLength: { text: '预计登机时长(分钟)', width: '150px' },
 	displayEstimateGuaranteeCompleteTime: { text: '预计保障完成时间', width: '140px' },
 	displayFirstLuggageActualArriveTime: { text: '首件行李实际到达时间', width: '160px' },

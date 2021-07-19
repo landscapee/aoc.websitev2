@@ -13,12 +13,12 @@
                 </div>
             </div>
             <div class="runway">
-                <span class="title">跑道运行模式</span>
+                <span class="runwayTitle">跑道运行模式</span>
                 <div class="runwayItem">
-                    <div class="left">北</div>
-                    <div class="right" v-for="opt in 3" :key="opt+'right'">
-                        <div class="rightTop">01</div>
-                        <div class="rightBottom">落地+起飞</div>
+                    <div class="runwayLeft">北</div>
+                    <div class="runwayRight" v-for="opt in 3" :key="opt+'right'">
+                        <div class="runwayRightTop">01</div>
+                        <div class="runwayRightBottom">落地+起飞</div>
                     </div>
                 </div>
             </div>
@@ -106,7 +106,7 @@ export default {
     }
     .runway {
         padding: 15px 10px;
-        .title {
+        .runwayTitle {
             background: url('../../../../../assets/img/pdyxms.png');
             background-size: 100% 100%;
             display: inline-block;
@@ -121,7 +121,7 @@ export default {
             }
         }
 
-        .left {
+        .runwayLeft {
             margin: 0;
             line-height: 70px;
             text-align: center;
@@ -131,18 +131,18 @@ export default {
             font-size: 16px;
             box-shadow: 0px 0px 8px 0px #649fff inset;
         }
-        .right {
+        .runwayRight {
             width: 110px;
             height: 70px;
             border: 1px solid #649fff;
-            .rightTop {
+            .runwayRightTop {
                 width: 110px;
                 height: 25px;
                 line-height: 25px;
                 text-align: center;
                 box-shadow: 0px 0px 8px 0px #649fff inset;
             }
-            .rightBottom {
+            .runwayRightBottom {
                 line-height: 45px;
                 font-size: 18px;
                 text-align: center;

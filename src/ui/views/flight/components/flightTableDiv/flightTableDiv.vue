@@ -1,47 +1,41 @@
 <template>
   <div class="flightTableDiv">
     <div class="lock" id="lock" :style="{width: lockWidth + 'rem'}">
-      <div class="d-flex header">
-        <div :style="{width: pxtorem(c.width) + 'rem'}" class="text-center headerItem" v-for="c in lockColumns">
-          <i v-if="c.lock" @click="changeLockStatus(c, c.lock)" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
-          <i v-else class="icon-lock-2 cursor"></i>
-          {{c.text}}
-        </div>
-      </div>
-      <flightRow :data="data" :columns="lockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
+      <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="lockColumns"></flightHeader>
+      <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId"  :data="data" :columns="lockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
     </div>
 
 
     <div class="unlockBox" :style="{width: unLockBoxWidth + 'rem', left: lockWidth + 'rem'}">
         <div :style="{width: unLockWidth + 'rem'}">
-          <div class="d-flex header">
-            <div :style="{width: pxtorem(c.width) + 'rem'}" class="text-center headerItem" v-for="c in unLockColumns">
-              <i v-if="c.lock" @click="changeLockStatus(c, c.lock)" class="iconfont icon-suoding2 text-yellow font-xs cursor"></i>
-              <i v-else @click="changeLockStatus(c, c.lock)" class="icon-lock-2 cursor"></i>
-              {{c.text}}
-            </div>
-          </div>
-          <flightRow :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
+          <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="unLockColumns" ></flightHeader>
+          <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId" :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
         </div>
     </div>
   </div>
 </template>
 
 <script>
-import _, {some} from 'lodash';
+import _, {map, some} from 'lodash';
 import {fixPx, fixPxBySc, pxtorem} from "@/ui/lib/viewSize";
 import {updateListHeader} from "@/ui/views/flight/components/handleColumn";
+import flightHeader from '../flightHeader'
 export default {
   name: "flightTableDiv",
-  props: ['data', 'columns','setColumns', 'isScrolling'],
+  props: ['data', 'columns','setColumns', 'isScrolling', 'checkFlightId'],
   components: {
+    flightHeader,
     'flightRow': () =>
         import(/*webpackChunkName:"com-toolBar"*/ './flightRow'),
 
   },
   data(){
     return{
-      unLockScrolling: false
+      unLockScrolling: false,
+      hoverId: '',
+      clickId: '',
+      activeKey: '',
+      order: ''
     }
   },
   mounted(){

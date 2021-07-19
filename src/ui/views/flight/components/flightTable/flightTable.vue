@@ -32,10 +32,10 @@
 
 <!--            </el-table-column>-->
 <!--          </el-table>-->
-          <flightTableDiv :isScrolling="isScrolling" :setColumns="setColumns" :data="showFlights" :columns="columns">
+          <flightTableDiv :checkFlightId="checkFlightId" :isScrolling="isScrolling" :setColumns="setColumns" :data="showFlights" :columns="columns">
             <complex-column :inputField.sync="inputField" slot-scope="scope" :item="scope.item" :scope="scope"/>
           </flightTableDiv>
-
+          <contextMenu :clickItem="contextClick"></contextMenu>
         </div>
       </div>
 
@@ -47,8 +47,10 @@
 <script>
 import {map, slice, some} from 'lodash';
 import {fixPx, pxtorem} from "@/ui/lib/viewSize";
-import {debounce} from "@/ui/lib/common";
+import contextMenu from '../contextMenu'
 import {updateListHeader} from "@/ui/views/flight/components/handleColumn";
+import PostalStore from "@/ui/lib/postalStore";
+let postalStore = new PostalStore();
 let itemH = 36;
 export default {
   name: "flightTable",
@@ -66,6 +68,7 @@ export default {
     }
   },
   components: {
+    contextMenu,
     'complex-column': () =>
         import(/*webpackChunkName:"complex-column"*/ '../complexColumnDom'),
     'flightTableDiv': () =>
@@ -82,16 +85,17 @@ export default {
       isScrolling: false, // 是否在滚动
       offSetY: 0,
       topCount: 0,
-      showCount: 22,
+      showCount: 23,
       value: '',
-      showFlights: []
+      showFlights: [],
+      checkFlightId: []
     }
   },
 
   computed: {
     totalHeight: function(){
-      let heightOfPx = (this.flights.length + 1) * itemH // 头部原因加1
-      return heightOfPx / 100
+      let heightOfPx = (this.flights.length -1) * itemH + 120
+      return pxtorem(heightOfPx)
     },
     // showFlights: function (){
     //   let flights = [...this.flights];
@@ -111,23 +115,36 @@ export default {
     window.addEventListener('scroll', () => {
       this.getVisibleFlights();
     })
-    // document.onmousewheel = (e) => {
-    //   clearTimeout(this.timer)
-    //   if (Math.abs(e.deltaY) >= 1){
-    //     this.isScrolling = true
-    //   }
-    //   if (Math.abs(e.deltaX) >= 2){
-    //     this.isScrolling = false
-    //   }
-    //   this.timer = setTimeout(()=>{
-    //     this.isScrolling = false
-    //   }, 300)
-    // }
+    postalStore.sub('Web', 'OnAltClick', f => {
+      let {flightId} = f;
+      // xor 返回两个数组中唯一的值
+      this.checkFlightId = _.xor(this.checkFlightId, [flightId])
+    })
   },
 
   methods:{
     fixPx: function (px){
       return fixPx(px)
+    },
+    contextClick(name, flight){
+      switch (name) {
+        case 'publish':
+          this.$request.post('situation', 'flight/batchConcern', {flightids: this.checkFlightId.join(',')}, true).then(res => {
+            if (res.code === 200){
+              this.$message.success('操作成功');
+              this.checkFlightId = []
+            }
+          })
+          break;
+        case 'unSelectAll':
+          this.checkFlightId = []
+          break;
+        case 'selectAll': {
+          const all = map(this.flights, 'flightId');
+          this.checkFlightId = all
+          break;
+        }
+      }
     },
     getVisibleFlights: function (){
       let flights = [...this.flights];
@@ -136,7 +153,12 @@ export default {
 
       let rowHeight = fixPx(itemH);
       let begin = Math.floor(window.scrollY / rowHeight);
-      let end = Math.ceil((window.innerHeight - fixPx(120 + 30 + 40 )) / rowHeight);
+      let end = Math.ceil((window.innerHeight - fixPx(120 )) / rowHeight);
+
+      // if (begin + end > flights.length){
+      //   end = flights.length;
+      //   begin = flights.length - end
+      // }
       flights = slice(flights, begin, begin + end);
       this.showFlights = flights
     },
@@ -187,8 +209,36 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 @import "flightTable.scss";
-
+::v-deep .contextMenu {
+  z-index: 1112222222;
+  background-color: #fff;
+  border:1px solid rgba(200,204,207,1);
+  width:auto;
+  // height:256px;
+  box-shadow:0px 0px 11px 3px rgba(0,0,0,0.19);
+  border-radius:2px;
+  position: fixed;
+  // padding:9px;
+  font-size: 12px;
+  color: #000;
+  .contextItem {
+    height: 25px;
+    line-height: 25px;
+    padding: 0 7px;
+    cursor: pointer;
+    &:hover {
+      background-color: #e7e7e7;
+    }
+    span {
+      margin-left: 7px;
+      display: inline-block;
+    }
+  }
+  .active {
+    background-color: #e7e7e7;
+  }
+}
 ::v-deep html, body { scroll-behavior:smooth; }
 </style>

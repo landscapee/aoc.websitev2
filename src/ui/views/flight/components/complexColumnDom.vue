@@ -9,6 +9,20 @@
     <span :style="{ color: scope.row.movement === 'A' ? '#00FE4A' : 'rgba(25,197,255,1)' }" class="flightNo fo">{{ scope.row.flightNo }}</span>
   </div>
 
+  <div v-else-if="item.key === 'flightIndex'"  class="position-relative" slot-scope="scope">
+    <div :class="classNames('position-absolute', {
+      'left-border-vip': get(scope.row,'mark.V') && !get(scope.row,'mark.D'),
+      'left-border-delay': get(scope.row,'mark.D'),
+      'left-border-none': !get(scope.row,'mark.D') && !get(scope.row,'mark.V') })" />
+    <span>{{ scope.row.flightIndex }}</span>
+  </div>
+
+  <div :class="ctotClass(scope.row)" v-else-if="item.key === 'displayCTOT'" slot-scope="scope">
+    <i :class="classNames('iconfont icon-zhankai', {'d-none': !getFlightDelayWarn(scope.row)})" />
+    <span>{{ scope.row.displayCTOT }}</span>
+    <i :class="classNames('iconfont icon-shouqi', {'d-none': !getFlightDelayWarn(scope.row)})" />
+  </div>
+
   <permissionSwitch v-else-if="item.key === 'displayTOBT'" slot-scope="scope" role="edit-TOBT">
     <div @click="TOBTClick($event, scope.row)" class="d-flex flex-justify-center">
       <i v-if="scope.row.movement === 'D'" class="iconfont icon-bianji text-blue" ></i>
@@ -19,6 +33,7 @@
   <el-cascader
       v-else-if="item.key === 'abnormalCategory'"
       slot-scope="scope"
+      :disabled="scope.row.isDelay !== true"
       :value="scope.row.delayReasonMerge ? scope.row.delayReasonMerge.split(',') : []"
       :options="delayOptions"
       @change="(v) => abnormalCategoryChange(v, scope.row)"></el-cascader>
@@ -27,10 +42,11 @@
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="delayInputBlur(item, scope)" v-model="delayInputValue"></el-input>
     </div>
-    <div v-else  @click="delayClick(item,scope)" class="d-flex flex-justify-center">
+    <div v-else-if="scope.row.isDelay === true"  @click="delayClick(item,scope)" class="d-flex flex-justify-center">
       <i class="iconfont icon-bianji text-blue" ></i>
       <div>{{scope.row[item.key]}}</div>
     </div>
+    <span v-else>--</span>
   </permissionSwitch>
 
   <span v-else-if="item.key === 'showVideo'" class="cursor text-blue" @click="playVideo(scope.row)">
@@ -88,6 +104,8 @@ import moment from "moment";
 import {get} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
 import {hasRole} from "@/ui/lib/common";
+import {getFlightDelayWarn} from "@/lib/helper/flight";
+import classNames from "classnames";
 
 let postalStore = new PostalStore()
 export default {
@@ -119,6 +137,7 @@ export default {
     }
   },
   methods: {
+    get,
     setTop: function (flightId){
       let now = memoryStore.getItem('global').now
       let day = moment(now).format('YYYYMMDD');
@@ -253,6 +272,17 @@ export default {
           this.$message({message:'播放成功!',type: 'success'})
         }
       })
+    },
+    classNames: classNames,
+    getFlightDelayWarn,
+    ctotClass: function (row){
+      let departWarn = getFlightDelayWarn(row);
+      let cClass = classNames('d-flex flex-justify-center flex-items-center', {
+        warnTextGreen: departWarn === 'departWarnGreen',
+        warnTextRed: departWarn === 'departWarnRed',
+        warnTextYellow: departWarn === 'departWarnYellow',
+      });
+      return cClass
     }
   },
   computed: {

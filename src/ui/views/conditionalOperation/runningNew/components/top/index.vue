@@ -31,10 +31,9 @@
             <template v-else>
                 <div class="rightItem">
                     <icon-svg :iconClass="opt.icon"></icon-svg>
-
                     <div class="timeText">
                         <div class="first"><span>09:00</span>(23)</div>
-                        <div class="second">指令发出时间</div>
+                        <div class="second">{{opt.name}}</div>
                     </div>
                 </div>
             </template>
