@@ -4,11 +4,12 @@
 // console.log('env', process.env.ENVIROMENT);
 // let locationHost = '173.101.1.30';
 // let locationHost = '10.33.64.1'; // 天府
-let port = location.port;
-let locationHost = location.hostname;
+// let port = location.port;
+// let locationHost = location.hostname;
 // let locationHost = '173.101.1.30'; // 双流测试
 // let port = '6075'; // 双流测试
-// let locationHost = '173.100.1.133';
+let locationHost = '173.100.1.137';
+ let port = '80'; // 天府
  // let port = '6070'; // 天府
 
 let serverPreset = 'api/';

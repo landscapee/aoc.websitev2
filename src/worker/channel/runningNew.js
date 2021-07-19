@@ -1,5 +1,5 @@
-import {runNewStop, runNewStart,getRunwayWeather,getIndicator} from "../manage/runningNew";
-import {mapKeys, map, extend, forEach} from 'lodash';
+import {runNewStop, runNewStart, getRunwayWeather, getIndicator, trafficCapacity,getDelayBoard} from "../manage/runningNew";
+import {mapKeys, map, extend, forEach, keyBy,get} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 
 let clientObj = {};
@@ -21,13 +21,13 @@ export const checkClient = (clientField) => {
 // situation 服务的连接
 const subWSEvent = () => {
     let client = clientObj.runNewClient;
-     // let emergencyCfg = {
+    // let emergencyCfg = {
     //     准备阶段: 'ready',
     //     实施阶段: 'doing',
     //     结束阶段: 'finish',
     // };
 
-     let urlObj = {
+    let urlObj = {
         // 低能见运行-应急救援
         emergencyEventNode: '/adverse-condition/list/emergencyEventNode',
         // 气象灾害 - 备降外场、取消航班
@@ -42,20 +42,34 @@ const subWSEvent = () => {
         //  跑道天气曲线图   垂直能见度趋势图  RVR趋势图  露点温度与温度趋势图
         runwayWeather: `/adverse-condition/statistic/data/runway`,
         // 通行能力
-        seatEvaluate_User2: `/adverse-condition/trafficCapacity/list`,
-        // 动态时段
-        delayBoard: `/Flight/delay/FlightDelayDetailBoard`,
+        trafficCapacity: `/adverse-condition/trafficCapacity/list`,
+
     }
     map(urlObj, (val, key) => {
         client.sub(val, (data) => {
-            let mydata=data
-            if(key=='runwayWeather'){
-                mydata=getRunwayWeather(mydata)
-            }else if(key==='indicator'){
-                mydata=getIndicator(mydata)
+            let mydata = data
+            if (key == 'runwayWeather') {
+                mydata = getRunwayWeather(mydata)
+            } else if (key === 'indicator') {
+                mydata = getIndicator(mydata)
+            } else if (key === 'trafficCapacity') {
+                // 通行能力
+                mydata = trafficCapacity(mydata)
             }
             worker.publish('Web', key, {data: mydata, key: key})
         })
+    })
+
+};
+const DelaysEvent = () => {
+    let client = clientObj.DelaysClient;
+    // 动态时段
+    // delayBoard: `/Flight/delay/FlightDelayDetailBoard`,
+    client.sub('/Flight/delay/FlightDelayDetailBoard', (data) => {
+        let mydata = data
+        mydata =  getDelayBoard(mydata)
+
+        worker.publish('Web', 'trafficCapacity', {data: mydata, key: 'delayBoard'})
     })
 
 };
@@ -66,13 +80,24 @@ export const init = (worker_, httpRequest_) => {
     worker.subscribe('Adverse.Network.Connected', (c) => {
         clientObj.runNewClient = new SocketWrapper(c);
     });
+    worker.subscribe('Delays.Network.Connected', (c) => {
+        clientObj.DelaysClient = new SocketWrapper(c);
+    });
     worker.subscribe('Page.runningNew.Start', () => {
         runNewStart(worker);
         checkClient('runNewClient').then(() => {
-            subWSEvent();
+
+             checkClient('DelaysClient').then(()=>{
+                DelaysEvent();
+             });
+             checkClient('runNewClient').then(()=>{
+                 subWSEvent();
+             });
+
             console.log('runNew连接成功')
         });
     });
+
     worker.subscribe('Page.runningNew.Stop', () => {
         runNewStop(worker);
         forEach(clientObj, item => {

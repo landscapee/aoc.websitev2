@@ -5,10 +5,10 @@
 		</div>
 		<div class="bottom">
 			<div class="left">
-				<BottomLeft></BottomLeft>
+				<BottomLeft  ></BottomLeft>
 			</div>
 			<div class="right">
-				<BottomRight></BottomRight>
+				<BottomRight  ></BottomRight>
 			</div>
 		</div>
 	</div>
@@ -16,10 +16,9 @@
 
 <script>
     import postal from 'postal';
-
      import PostalStore from "@ui_lib/postalStore";
-
     let postalStore = new PostalStore();
+
     import Top from "./components/top/index"
     import BottomLeft from "./components/bottomLeft/index"
     import BottomRight from "./components/bottomRight/index"

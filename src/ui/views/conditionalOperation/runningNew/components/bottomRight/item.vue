@@ -12,6 +12,7 @@
 </template>
 
 <script>
+    import {debounce} from '@/ui/lib/common.js'
 
     import * as echarts from 'echarts'
     export default {
@@ -43,29 +44,30 @@
         },
         methods: {
             setOptions( ) {
-                console.log(4444,this.echartsInstance,this.optionsEC,Object.keys(this.optionsEC).length);
-                if(this.echartsInstance&&this.optionsEC&&Object.keys(this.optionsEC).length){
-                    this.echartsInstance.setOption(this.optionsEC)
+                 if(this.echartsInstance&&this.optionsEC&&Object.keys(this.optionsEC).length){
+                      this.echartsInstance.setOption(this.optionsEC)
 				}
 
             },
-			aaa(){
-                this.echartsInstance.resize();
+            resizeEcharts(){
+                this.$nextTick(()=>{
+                    this.echartsInstance.resize();
+				})
 			}
         },
         mounted() {
             let ele = this.$refs.eCharts
 			this.echartsInstance = echarts.init(ele)
 			this.setOptions()
-
+			window.addEventListener('resize',this.resizeEcharts)
 
         },
         created() {
 
         },
 		beforeDestroy(){
-            window.onresize=null
-            this.echartsInstance.dispose()
+             this.echartsInstance.dispose()
+            window.removeEventListener('resize',this.resizeEcharts)
 		}
 
     }

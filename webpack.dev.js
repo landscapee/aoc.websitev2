@@ -24,8 +24,8 @@ module.exports = merge(common, {
           [{
               context: ['/api', '/api-login'],
               // target: 'http://10.33.64.1:6077', // 天府
-              // target: 'http://173.100.1.137', // 双流
-              target: 'http://173.101.1.30:6075', // 双流测试
+              target: 'http://173.100.1.137', // 双流
+              // target: 'http://173.101.1.30:6075', // 双流测试
               changeOrigin: true,
               ws:true
               // pathRewrite: {
