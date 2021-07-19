@@ -3,38 +3,37 @@
         <div class="adjustmentReduction_top">
             <div class="top_left">
                 <i class="iconfont icon-shezhi"></i>
-                调时调减
+                调整调减
             </div>
             <div class="top_right">
-                <div>恢复时间：2021-10-20 20:00</div>
-                <div>最后调整时间：2021-10-20 20:00</div>
-                <div>反馈时常：长30分钟</div>
+                <div>恢复时间：{{reduceInfo.recoverBeginTime?$moment(reduceInfo.recoverBeginTime).format('YYYY-MM-DD HH:mm'):'--'}}</div>
+                <div>最后调整时间：{{reduceInfo.recoverEndTime?$moment(reduceInfo.recoverEndTime).format('YYYY-MM-DD HH:mm'):'--'}}</div>
+                <div>反馈时长：{{reduceInfo.feedbackTime?reduceInfo.feedbackTime:'-'}}分钟</div>
                 <div class="top_right_time">
                     倒计时：
-                    <div class="fo">1</div>
-                    <div class="fo">8</div>
+                    <div class="fo">{{countDownM}}</div>
                     分
-                    <div class="fo">1</div>
-                    <div class="fo">8</div>
+                    <div class="fo">{{countDownS}}</div>
                     秒
                 </div>
             </div>
         </div>
         <div class="adjustmentReduction_content">
             <div class="adjustmentReduction_content_left">
-                <flight-decrease-lists />
+                <flight-decrease-lists :currentPlan="currentPlan" :flights="flights" :statistics="statistics" @filter-change="filterChange" @airlineDetails="airlineDetails" />
             </div>
             <div class="adjustmentReduction_content_right">
-                <decrease-recommend />
-                <reduce-flight-lists />
+                <flight-delay :currentReduce="currentReduce" />
+                <reduce-flight-lists :currentPlan="currentPlan" :reduceFlight="reduceFlight" @update="getCurrentReduce" @airlineDetails="airlineDetails" />
             </div>
         </div>
     </div>
 </template>
 <script>
 import FlightDecreaseLists from './components/flightDecreaseLists.vue'
-import DecreaseRecommend from './components/decreaseRecommend.vue'
 import ReduceFlightLists from './components/reduceFlightLists.vue'
+
+import FlightDelay from '@/ui/views/conditionalOperation/decrease/components/flightDelay.vue'
 import { mapGetters } from 'vuex'
 import PostalStore from '@/ui/lib/postalStore'
 let postalStore = new PostalStore()
@@ -44,30 +43,153 @@ export default {
     },
     components: {
         'flight-decrease-lists': FlightDecreaseLists,
-        'decrease-recommend': DecreaseRecommend,
+        // 'decrease-recommend': DecreaseRecommend,
         'reduce-flight-lists': ReduceFlightLists,
+        'flight-delay': FlightDelay,
     },
     data() {
-        return {}
+        return {
+            currentReduce: {},
+            reduceInfo: {},
+            airlineCode: '',
+            path: '',
+            currentPlan: {},
+            city20: '',
+            showAllFlights: false,
+            flightNo: '',
+            statistics: {},
+            flights: [],
+            countDownS: 0,
+            countDownM: 0,
+            reduceFlight: [],
+            currentType: 1,
+        }
     },
+    created() {},
     mounted() {
-        console.log(this.userData)
-
         let TZZY = _.find(this.user.roles, (item) => item.code.indexOf('TZZY') > -1)
         let role = _.get(TZZY, 'menus.0', {})
-        let path = role.path || '[]' // [{"reversal":false,"data":["3U"]}]
-        let airlineCode = role.code ? role.code.split('-')[1] : ''
+        this.path = role.path ? JSON.parse(role.path)[0] : [] // [{"reversal":false,"data":["3U"]}]
+        this.airlineCode = role.code ? role.code.split('-')[1] : ''
 
-        // console.log(airlineCode)
-
-        postalStore.pub('Worker', 'AdjustReduction.SetFilterOption', { airlineCode: airlineCode })
+        this.getCurrentDelayType()
         postalStore.sub(
             'Web',
             'AdjustReduction.QueryFlight.Response',
             ({ flights, statistics }) => {
-                console.log(flights, statistics)
+                let planDetailArrs =
+                    this.currentReduce.planDetail[this.airlineCode] ||
+                    this.currentReduce.planDetail['other'] ||
+                    []
+
+                planDetailArrs.map((arr) => {
+                    let flight = _.find(flights, { flightId: arr.flightId })
+                    if (flight) {
+                        flight.level = arr.type == 'R' ? 'reduce' : 'exchange'
+                    }
+                })
+                this.flights = flights
+                this.statistics = statistics
             }
         )
+
+        postalStore.pub('Worker', 'Delay.GetCity20', null)
+        postalStore.sub('Delay.GetCity20', (data) => {
+            this.city20 = data
+        })
+    },
+    methods: {
+        airlineDetails(data) {
+            this.$request.post('adverse', 'update/airlineDetails', data).then(() => {
+                this.getCurrentReduce()
+            })
+        },
+        filterChange(data) {
+            this.showAllFlights = data.showAllFlights
+            this.flightNo = data.flightNo
+
+            this.changeFilter()
+        },
+        changeFilter() {
+            let { directions, airports, beginTime, endTime } = this.currentReduce.reduceInfo || {}
+            let airport = _.get(this.city20, airports)
+
+            let backEndFilter = [
+                { direction: directions },
+                { preOrNxtAirportCn: { $regex: airport } },
+                { scheduleTime: { $gte: this.$moment(beginTime).format('x') } },
+                { scheduleTime: { $lt: this.$moment(endTime).format('x') } },
+            ]
+            if (this.showAllFlights) {
+                postalStore.pub('Worker', 'AdjustReduction.SetFilterOption', {
+                    rolePath: this.path,
+                    flightNo: this.flightNo,
+                })
+                return
+            }
+            postalStore.pub('Worker', 'AdjustReduction.SetFilterOption', {
+                flightNo: this.flightNo,
+                airlineCode: this.airlineCode,
+                backEndFilter,
+                rolePath: this.path,
+            })
+        },
+        getCurrentDelayType() {
+            this.$request.get('adverse', 'adjust/getCurrentDelayType').then((res) => {
+                this.currentType = res.data.type
+                this.getCurrentReduce()
+            })
+        },
+        getCurrentReduce() {
+            this.$request
+                .get('adverse', 'adjust/getCurrentReduce?type=' + this.currentType)
+                .then((res) => {
+                    if (res.data && res.data.length > 0) {
+                        let current = _.orderBy(
+                            res.data,
+                            (item) => parseInt(item.reduceInfo.reduceplanNo),
+                            ['desc']
+                        )[0]
+                        console.log(current)
+
+                        this.currentReduce = current
+                        this.reduceInfo = current.reduceInfo || {}
+                        this.movement = current.reduceInfo.movement
+
+                        this.changeFilter()
+
+                        let plan = current.plan || {}
+                        this.currentPlan = plan[this.airlineCode] || plan['other'] || {}
+                        // 调整调减数量
+                        this.getReduceFlight(current)
+
+                        let timer = setInterval(() => {
+                            let now = new Date()
+                            let countdown = this.$moment(this.currentPlan.sendTime)
+                                .add(_.get(current, 'reduceInfo.feedbackTime'), 'm')
+                                .diff(this.$moment(now))
+                            if (countdown > 0) {
+                                this.countDownM = parseInt(countdown / 1000 / 60)
+                                this.countDownS = parseInt((countdown % 60000) / 1000)
+                            } else {
+                                countdown = 0
+                                this.countDownM = 0
+                                this.countDownS = 0
+                                clearInterval(timer)
+                            }
+                        }, 500)
+                    }
+                })
+        },
+        getReduceFlight(current) {
+            let flights = current.planDetail[this.airlineCode] || current.planDetail['other']
+            postalStore.pub('Worker', 'AdjustReduction.GetFlights', flights)
+            // let planDetailById = planDetail[current.red];
+
+            postalStore.sub('Web', 'AdjustReduction.GetFlights.Res', (data) => {
+                this.reduceFlight = data
+            })
+        },
     },
 }
 </script>
@@ -122,11 +244,13 @@ export default {
         height: calc(100% - 57px);
         display: flex;
         .adjustmentReduction_content_left {
-            width: 1265px;
+            width: 70%;
         }
         .adjustmentReduction_content_right {
-            flex: 1;
+            width: 30%;
             margin-left: 15px;
+            display: flex;
+            flex-direction: column;
         }
     }
 }

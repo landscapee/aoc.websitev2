@@ -2,24 +2,25 @@
     <div class="sureDecrease showBox">
         <div class="title">
             <div class="name alib">
-                确认调时调减
+                确认调整调减
             </div>
         </div>
         <el-row tag="ul" class="showDetails">
             <el-col tag="li" :span="6" v-for="(value,key) in airLinesGroup" :class="key==confirmAdjustFilter?'active':''" @click.native="navHandle(key)" :key="key">{{value}}({{getKeyNum(key)}}/{{getTotleNum(key)}})</el-col>
         </el-row>
         <div class="tab">
-            调时航班({{get(reduceFlightObj,'A.length', 0)}}/{{APlanLength}})
-        </div>
-        <div class="tableBox">
-            <ele-table :columnConfig="columnConfig1" :tableData="reduceFlightObj.A"></ele-table>
-        </div>
-        <div class="tab">
             调减航班({{get(reduceFlightObj,'R.length', 0)}}/{{RPlanLength}})
         </div>
         <div class="tableBox">
             <ele-table :columnConfig="columnConfig2" :tableData="reduceFlightObj.R"></ele-table>
         </div>
+        <div class="tab">
+            调整航班({{get(reduceFlightObj,'A.length', 0)}}/{{APlanLength}})
+        </div>
+        <div class="tableBox">
+            <ele-table :columnConfig="columnConfig1" :tableData="reduceFlightObj.A"></ele-table>
+        </div>
+
         <div class="buttonBox">
             <el-button type="danger" size="mini" :disabled="!$hasRole('edit-audit',false)||getBack()">驳回</el-button>
             <!-- ||currentReduce.reduceInfo.status==1 -->
@@ -28,69 +29,15 @@
     </div>
 </template>
 <script>
+import { sureDecrease_columnConfig1, sureDecrease_columnConfig2 } from '../config'
 import PostalStore from '@/ui/lib/postalStore'
 let postalStore = new PostalStore()
 export default {
     props: ['currentReduce', 'airLinesGroup'],
     data() {
         return {
-            columnConfig1: [
-                {
-                    key: 'flightNo',
-                    label: '航班号',
-                    width: '80px',
-                },
-                {
-                    key: '',
-                    label: '计划时间',
-                    width: '90px',
-                    display: ({ row }) => {
-                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
-                    },
-                },
-                {
-                    key: '',
-                    label: '航线',
-                    display: ({ row }) => {
-                        return row.displayRouter ? row.displayRouter.join('-') : '-'
-                    },
-                },
-                {
-                    key: 'flightType',
-                    label: '航班类型',
-                    width: '90px',
-                },
-            ],
-            columnConfig2: [
-                {
-                    key: 'flightNo',
-                    label: '航班号',
-                    width: '80px',
-                },
-                {
-                    key: '',
-                    label: '计划时间',
-                    width: '90px',
-                    display: ({ row }) => {
-                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
-                    },
-                },
-                {
-                    key: '',
-                    label: '航线',
-                    display: ({ row }) => {
-                        return row.displayRouter ? row.displayRouter.join('-') : '-'
-                    },
-                },
-                {
-                    key: '',
-                    label: '调减时刻',
-                    width: '90px',
-                    display: ({ row }) => {
-                        return this.$moment(row.updateScheduleTime).format('HH:mm(DD)')
-                    },
-                },
-            ],
+            columnConfig1: sureDecrease_columnConfig1,
+            columnConfig2: sureDecrease_columnConfig2,
             reduceFlightObj: {
                 A: [],
                 R: [],
@@ -106,12 +53,6 @@ export default {
     mounted() {},
     watch: {
         currentReduce: function (val) {
-            this.RPlanLength = 0
-            this.APlanLength = 0
-            this.reduceFlightObj = {
-                A: [],
-                R: [],
-            }
             this.sureShow = _.get(val, 'reduceInfo.status') === 1
             this.getReduceFlights()
             this.getPlanLength()
@@ -120,14 +61,6 @@ export default {
     methods: {
         navHandle(key) {
             this.confirmAdjustFilter = key == this.confirmAdjustFilter ? '' : key
-
-            this.RPlanLength = 0
-            this.APlanLength = 0
-            this.reduceFlightObj = {
-                A: [],
-                R: [],
-            }
-
             this.getAllReduceFlight()
             this.getPlanLength()
         },
@@ -201,6 +134,10 @@ export default {
         },
         getAllReduceFlight() {
             let allReduceFlight = []
+            this.reduceFlightObj = {
+                A: [],
+                R: [],
+            }
             if (this.confirmAdjustFilter && this.confirmAdjustFilter != 'all') {
                 allReduceFlight = this.reduceFlight[this.confirmAdjustFilter] || []
             } else {
@@ -244,7 +181,7 @@ export default {
 
 <style lang="scss" scoped>
 .sureDecrease {
-    flex: 1;
+    height: 100%;
     margin-bottom: 15px;
     padding: 15px;
     .title {
@@ -309,8 +246,8 @@ export default {
         display: flex;
         justify-content: center;
     }
-    // .tableBox {
-    //     height: 300px;
-    // }
+    .tableBox {
+        height: calc(50% - 100px);
+    }
 }
 </style>

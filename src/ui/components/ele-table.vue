@@ -2,9 +2,6 @@
     <div class="eleTableBox" ref="ref_eleTableBox">
         <el-table ref="ref_table" :span-method="spanMethod" :data="tableData" :style="{'width':tableWidth}" :height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName">
 
-
-
-
             <template v-for="(col,idx) in columnConfig"  >
                 <template v-if="col.slot">
                     <slot   :name="col.slot"    ></slot>
@@ -30,7 +27,7 @@
                 </el-table-column>
 
                 <el-table-column  v-else  :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
-                  
+
                     <template slot-scope="scope">
 
                         <template v-if="col.type=='index'">{{scope.$index+1}}</template>

@@ -4,25 +4,58 @@
   overflow-y: hidden;
   overflow-x: visible;
   display: flex;
-  .header{
-    height: 26px;
-    background-color: #273448;
-    .headerItem{
-      line-height: 26px;
-    }
-    .icon-lock-2 {
-      width: 18px;
-      height: 18px;
-      display: inline-block;
-      background: url("~@/ui/assets/img/tianfu/lock-2.svg") no-repeat;
-      vertical-align: middle;
-      background-size: 18px;
-    }
-    .icon-suoding2{
-      font-size: 11px;
-    }
-  };
+
   ::v-deep {
+
+    .header{
+      height: 26px;
+      background-color: #273448;
+      .text-blue-009{
+        color: #0098ff!important;
+      }
+      .sort{
+        height: 26px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .iconfont{
+          line-height: 0.06rem;
+        }
+      }
+      .icon-dsc {
+        &:before{
+          display: block;
+          transform: rotate(180deg)scale(0.5);
+        }
+      }
+
+      .icon-asc{
+        &:before{
+          display: block;
+          transform:scale(0.5);
+        }
+      }
+      .headerItem{
+        line-height: 26px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        white-space: nowrap;
+      }
+      .icon-lock-2 {
+        width: 18px;
+        height: 18px;
+        display: inline-block;
+        background: url("~@/ui/assets/img/tianfu/lock-2.svg") no-repeat;
+        vertical-align: middle;
+        background-size: 18px;
+      }
+      .icon-suoding2{
+        font-size: 11px;
+      }
+    };
     .departWarnGreen{
       background-color: rgba(53,98,52,.5)!important;
       border-top: solid 1px #17212F;
@@ -52,6 +85,27 @@
     .active.bgD{
       background-color: rgba(105, 134, 191, 0.5) !important;
       box-shadow:0px 0px 2px rgb(101, 125, 177) inset;
+    }
+    .checkedFlight.bgA,.checkedFlight.bgD{
+      background-color: #0d7fa0!important;
+      box-shadow:0px 0px 2px rgb(136, 169, 239) inset !important;
+    }
+
+    .left-border-delay, .left-border-vip, .left-border-none {
+      width: 4px;
+      top: 1px;
+      bottom: 1px;
+      left: 0;
+      right: 0;
+    }
+    .left-border-delay {
+      background-color: #dc3545;
+    }
+    .left-border-vip {
+      background-color: #fd7e14;
+    }
+    .left-border-none {
+      display:none;
     }
     .el-radio__label{
       display: none;

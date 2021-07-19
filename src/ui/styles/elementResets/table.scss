@@ -65,3 +65,31 @@
 .el-table:after {
     background-color: #45547c;
 }
+
+tr {
+    td {
+        .cell {
+            padding-right: 0 !important;
+            padding-left: 0 !important;
+        }
+    }
+}
+
+.tableInput {
+    background: #101c2f;
+    border: 1px solid #37455c;
+    width: 100%;
+    text-align: center;
+    height: 30px;
+    color: #fff;
+    border-radius: 2px;
+}
+
+.inputCell {
+    .cell {
+        div {
+            padding: 0 10px;
+        }
+
+    }
+}

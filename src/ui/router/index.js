@@ -25,7 +25,7 @@ const poolMonitorWithRunway = () => import(/*webpackChunkName:"poolMonitorWithRu
 
 //不利条件运行
 const conditionalOperation = () => import(/*webpackChunkName:"conditionalOperation"*/ '../views/conditionalOperation/conditionalOperation')
-//调减调时
+//调减调整
 const adjustmentReduction = () => import(/*webpackChunkName:"adjustmentReduction"*/ '../views/adjustmentReduction/adjustmentReduction')
 //大面积备降
 const alternate = () => import(/*webpackChunkName:"alternate"*/ '../views/conditionalOperation/alternate/index')
@@ -37,7 +37,7 @@ const deice = () => import(/*webpackChunkName:"decrease"*/ '../views/conditional
 const weatherNew = () => import(/*webpackChunkName:"weatherNew"*/ '../views/conditionalOperation/weatherNew/weatherNew')
 //大面积延误
 const delayNew = () => import(/*webpackChunkName:"weatherNew"*/ '../views/conditionalOperation/delayNew/delayNew')
-//调时调减
+//调整调减
 const decrease = () => import(/*webpackChunkName:"decrease"*/ '../views/conditionalOperation/decrease/decrease')
 //消息发布
 const specialTreatment = () => import(/*webpackChunkName:"specialTreatment"*/ '../views/specialTreatment/index')

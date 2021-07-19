@@ -5,14 +5,16 @@
                 <li v-for="(nav,idx) in navLists" :key="idx" :class="navFalg==idx?'active':''" @click="navHandle(idx)">{{nav.name}}({{nav.count}})</li>
             </ul>
             <div class="right">
-                <el-input placeholder="请输入航班号" style="width:150px" size="mini" v-model="searchFlightNo" @blur="searchFlight" @keyup.enter.native="searchFlight" />
+                <el-input placeholder="请输入航班号" style="width:130px" size="mini" v-model="searchFlightNo" @change="searchFlight">
+                    <el-button slot="append" icon="el-icon-search" @click="searchFlight"></el-button>
+                </el-input>
                 <div class="div1">
                     <div></div>
-                    调时
+                    调减
                 </div>
                 <div class="div2">
                     <div></div>
-                    调减
+                    调整
                 </div>
             </div>
         </div>
@@ -22,6 +24,7 @@
     </div>
 </template>
 <script>
+import { flightDecrease_columnConfig } from '../config'
 import { mapGetters } from 'vuex'
 import PostalStore from '@/ui/lib/postalStore'
 let postalStore = new PostalStore()
@@ -43,49 +46,7 @@ export default {
                 { name: '其他', code: 'other', count: 0 },
             ],
             navFalg: 0,
-            columnConfig: [
-                { key: 'ind', label: '序号', type: 'index', width: '50px' },
-                {
-                    key: 'flightNo',
-                    label: '航班号',
-                    width: '80px',
-                },
-                {
-                    key: '',
-                    label: '计划',
-                    width: '90px',
-                    display: ({ row }) => {
-                        return this.$moment(row.scheduleTime).format('HH:mm(DD)')
-                    },
-                },
-                {
-                    key: 'airlineCnName',
-                    label: '航司',
-                    width: '160px',
-                },
-                {
-                    key: 'flightType',
-                    label: '航班类型',
-                    width: '80px',
-                },
-                {
-                    key: '',
-                    label: '航线',
-                    display: ({ row }) => {
-                        return row.displayRouter.join('-')
-                    },
-                },
-                {
-                    key: 'flightIndicator',
-                    label: '国际性质',
-                    width: '80px',
-                    display: ({ row }) => {
-                        return this.getFlightIndicator[row.flightIndicator]
-                            ? this.getFlightIndicator[row.flightIndicator]
-                            : '其他'
-                    },
-                },
-            ],
+            columnConfig: flightDecrease_columnConfig,
             flightsGroup: {},
             tableData: [],
             searchFlightNo: '',
@@ -147,10 +108,10 @@ export default {
         },
         setRowClassName({ row }) {
             if (row.level === 'reduce') {
-                return 'row1'
+                return 'reduce'
             }
             if (row.level === 'exchange') {
-                return 'row0'
+                return 'exchange'
             }
         },
         resetNav() {
@@ -191,7 +152,6 @@ export default {
             // 获取航司航班列表
             postalStore.pub('Worker', 'AdverseCondition.GetFlight', [...filter])
             postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
-                console.log(flights)
                 let planDetail = this.currentReduce.planDetail
 
                 _.map(flights, (flight) => {
@@ -232,6 +192,8 @@ export default {
 .flightDecrease {
     padding: 10px 15px;
     color: #fff;
+    margin-bottom: 15px;
+    height: 510px;
     .title {
         height: 30px;
         display: flex;
@@ -243,7 +205,7 @@ export default {
                 color: rgba(255, 255, 255, 0.5);
                 border-bottom: 2px solid transparent;
                 display: inline-block;
-                margin-right: 20px;
+                margin-right: 15px;
                 height: 100%;
                 line-height: 30px;
                 cursor: pointer;
@@ -287,16 +249,14 @@ export default {
 }
 </style>
 <style lang="scss">
-.flightDecrease {
-    .row0 {
-        td {
-            background-color: #2c3f6d !important;
-        }
+.reduce {
+    td {
+        background-color: #2c3f6d !important;
     }
-    .row1 {
-        td {
-            background-color: #194955 !important;
-        }
+}
+.exchange {
+    td {
+        background-color: #194955 !important;
     }
 }
 </style>

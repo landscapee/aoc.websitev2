@@ -19,7 +19,7 @@ export default {
                 { name: '除冰', path: 'deice' },
                 { name: '气象灾害', path: 'weatherNew' },
                 { name: '大面积延误', path: 'delayNew' },
-                { name: '调时调减', path: 'decrease' },
+                { name: '调整调减', path: 'decrease' },
             ],
             navFlag: {},
         }

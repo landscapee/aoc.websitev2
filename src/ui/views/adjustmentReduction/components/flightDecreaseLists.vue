@@ -5,14 +5,17 @@
                 <li v-for="(nav,idx) in navLists" :key="idx" :class="navFalg==idx?'active':''" @click="navHandle(idx)">{{nav.name}}({{nav.count}})</li>
             </ul>
             <div class="right">
-                <el-input placeholder="请输入航班号" style="width:150px" size="mini" />
+                <div class="allBoxBtn" @click="allBoxBtnHandle">{{showAllFlights?'条件内航班':'查看全部航班'}}</div>
+                <el-input placeholder="请输入航班号" style="width:130px" size="mini" v-model="flightNoStr" @change="search">
+                    <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
+                </el-input>
                 <div class="div1">
                     <div></div>
-                    调时
+                    调减
                 </div>
                 <div class="div2">
                     <div></div>
-                    调减
+                    调整
                 </div>
             </div>
         </div>
@@ -22,201 +25,75 @@
     </div>
 </template>
 <script>
+import { flightDecreaseListsColumnConfig } from '../config'
 export default {
+    props: ['flights', 'statistics', 'currentPlan'],
     data() {
         return {
             navLists: [
-                { name: '全部', count: '5' },
-                { name: '进港', count: '5' },
-                { name: '出港', count: '5' },
+                { name: '全部', count: 0, movement: '' },
+                { name: '进港', count: 0, movement: 'A' },
+                { name: '出港', count: 0, movement: 'D' },
             ],
             navFalg: 0,
-            columnConfig: [
-                { key: 'ind', label: '序号', type: 'index', width: '50px' },
-                {
-                    key: 'flightNo',
-                    label: '航班号',
-                },
-                {
-                    key: 'sta',
-                    label: '计划',
-                },
-                {
-                    key: 'code',
-                    label: '航司',
-                },
-                {
-                    key: 'flightType',
-                    label: '航班类型',
-                },
-                {
-                    key: 'flightLine',
-                    label: '航线',
-                },
-                {
-                    key: 'type',
-                    label: '国际性质',
-                },
-                {
-                    key: 'in',
-                    label: '调时/调减',
-                },
-            ],
+            columnConfig: [],
             tableData: [],
+            flightNoStr: '',
+            showAllFlights: false,
         }
     },
+    watch: {
+        statistics: function (val) {
+            this.navLists[0].count = val.total
+            this.navLists[1].count = val.movementA
+            this.navLists[2].count = val.movementD
+        },
+        flights: function (val) {
+            this.navHandle(this.navFalg)
+        },
+    },
     mounted() {
-        this.tableData = [
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-                inType: 0,
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-                inType: 1,
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-            {
-                flightNo: '3U8888',
-                sta: '09:00(23)',
-                code: ' 国航',
-                flightType: '正班',
-                flightLine: ' 成都-上海',
-                type: '地区',
-                in: '调时',
-            },
-        ]
+        this.columnConfig = flightDecreaseListsColumnConfig
     },
     methods: {
+        allBoxBtnHandle() {
+            this.showAllFlights = !this.showAllFlights
+            this.search()
+        },
         navHandle(idx) {
             this.navFalg = idx
+
+            this.tableData = _.filter(this.flights, (item) => {
+                return this.navLists[this.navFalg].movement
+                    ? item.movement == this.navLists[this.navFalg].movement
+                    : true
+            })
         },
-        setRowClassName(data) {
-            if (data.row.inType === 0) {
-                return 'row0'
+        setRowClassName({ row }) {
+            if (row.level === 'reduce') {
+                return 'reduce'
             }
-            if (data.row.inType === 1) {
-                return 'row1'
+            if (row.level === 'exchange') {
+                return 'exchange'
             }
+        },
+        search() {
+            this.$emit('filter-change', {
+                showAllFlights: this.showAllFlights,
+                flightNo: this.flightNoStr,
+            })
+            // this.tableData = []
+            // let movement = this.navLists[this.navFalg].movement
+
+            // let arrs = _.filter(this.flights, (item) => {
+            //     let movementBul = movement ? item.movement == movement : true
+            //     let flightNoStr = this.flightNoStr
+            //         ? _.includes(item.flightNo, this.flightNoStr)
+            //         : true
+
+            //     return movementBul && flightNoStr
+            // })
+            // this.tableData = arrs
         },
     },
 }
@@ -250,6 +127,21 @@ export default {
             display: flex;
             height: 30px;
             align-items: center;
+            .allBoxBtn {
+                color: #17a2b8;
+                border: 1px solid #17a2b8;
+                height: 100%;
+                padding: 0 15px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-right: 15px;
+                cursor: pointer;
+            }
+            .allBoxBtn:hover {
+                background: #17a2b8;
+                color: #fff;
+            }
             .div1 {
                 margin: 0 10px;
                 display: flex;
@@ -280,16 +172,14 @@ export default {
 }
 </style>
 <style lang="scss">
-.flightDecreaseLists {
-    .row0 {
-        td {
-            background-color: #2c3f6d;
-        }
+.reduce {
+    td {
+        background-color: #2c3f6d !important;
     }
-    .row1 {
-        td {
-            background-color: #194955;
-        }
+}
+.exchange {
+    td {
+        background-color: #194955 !important;
     }
 }
 </style>
