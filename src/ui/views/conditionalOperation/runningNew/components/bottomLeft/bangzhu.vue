@@ -17,7 +17,7 @@
             return {
                 obj:{
                     departureStandard:{
-                        namr:'',
+                        name:'预测起飞结果',
 						data:[
 							{item:'起飞标准', col:4,rules:'RVR>=400',name:'起飞'},
 							{item:'起飞标准',rules:'200<=RVR<400',name:'低能见度起飞'},
@@ -25,8 +25,15 @@
 							{item:'起飞标准',rules:'RVR<150',name:'无法起飞'},
 						]
 					},arriveStandard:{
-                        namr:'',
-						data:[]
+                        name:'预测落地结果',
+                        data:[
+                            {item:'落地标准（01、02、11跑道）',  rules:'RVR>=550且垂直能见度>=60',name:'落地'},
+                            {item:'落地标准（01、02、11跑道）',  rules:'300<=RVR<550并且30<=垂直能见度<60',name:'低能见度落地'},
+                            {item:'落地标准（01、02、11跑道）',  rules:'RVR<300或垂直能见度<30',name:'无法落地'},
+                            {item:'落地标准（19、20跑道）',  rules:'RVR>=550且垂直能见度>=60',name:'落地'},
+                            {item:'落地标准（19、20跑道）',  rules:'450<=RVR<550并且45<=垂直能见度<60',name:'低能见度落地'},
+
+                        ]
 					},
 				},
                  key:'',
