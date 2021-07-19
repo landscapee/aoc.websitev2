@@ -283,12 +283,12 @@ const chartOptionsByHour = {
 			fontSize: '.12rem',
 			fontWeight: 400,
 		},
-		// itemHoverStyle: {
-		// 	color: '#666666',
-		// },
-		// itemHiddenStyle: {
-		// 	color: '#6b6b6b',
-		// },
+		itemHoverStyle: {
+			color: '#44adff',
+		},
+		itemHiddenStyle: {
+			color: '#6b6b6b',
+		},
 	},
 	exporting: { enabled: false }, //隐藏导出图片
 	credits: { enabled: false },

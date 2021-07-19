@@ -1,8 +1,8 @@
 <template>
     <div id="decrease">
         <div class="decrease_left">
-            <setting :currentType='currentType' @restart="restart" @change-type="changeType" @change-planno="changePlanno" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
-            <recommend :currentReduce="currentReduce" :airLinesGroup="airLinesGroup" />
+            <setting :currentType='currentType' @restart="restart" @change-type="changeType" @change-planno="changePlanno" @updateNowCur="getCurrentReduce" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
+            <recommend :currentReduce="currentReduce" :airLinesGroup="airLinesGroup" @updateNowCur="getCurrentReduce" />
         </div>
         <div class="decrease_mid">
             <MDRS-warning />
@@ -10,7 +10,7 @@
             <flight-delay :currentReduce="currentReduce" />
         </div>
         <div class="decrease_right">
-            <sure-decrease :currentReduce="currentReduce" :reduceFlight="reduceFlight" :airLinesGroup="airLinesGroup" @updateNowCur="updateNowCur" />
+            <sure-decrease :currentReduce="currentReduce" :reduceFlight="reduceFlight" :airLinesGroup="airLinesGroup" @updateNowCur="getCurrentReduce" />
         </div>
 
     </div>
@@ -55,9 +55,6 @@ export default {
         this.getCurrentDelayType()
     },
     methods: {
-        logg(row) {
-            console.log(row)
-        },
         restart() {
             this.currentReduceLists = []
             this.addPlanno()
@@ -72,30 +69,41 @@ export default {
                 this.getCurrentReduce()
             })
         },
-        getCurrentReduce(type) {
+        getCurrentReduce(current) {
             this.$request
                 .get('adverse', 'adjust/getCurrentReduce?type=' + this.currentType)
                 .then((res) => {
                     if (res.data) {
-                        this.currentReduceLists = _.sortBy(res.data, 'reduceInfo.reduceplanNo')
-                        if (!type) {
-                            let index = _.findIndex(this.currentReduceLists, (list) => {
-                                return list.reduceInfo.status === 0
-                            })
-                            this.changePlanno(
-                                index >= 0 ? index : this.currentReduceLists.length - 1
-                            )
+                        if (res.data.length == 0) {
+                            this.restart()
+                        } else {
+                            this.currentReduceLists = _.sortBy(res.data, 'reduceInfo.reduceplanNo')
+                            if (current) {
+                                let index = _.findIndex(this.currentReduceLists, (list) => {
+                                    return list.reduceId === current.reduceId
+                                })
+                                this.changePlanno(index)
+                            } else {
+                                let index = _.findIndex(this.currentReduceLists, (list) => {
+                                    return list.reduceInfo.status === 0
+                                })
+                                this.changePlanno(
+                                    index >= 0 ? index : this.currentReduceLists.length - 1
+                                )
+                            }
                         }
                     }
                 })
         },
-        updateNowCur(nowData) {
-            this.getCurrentReduce('update')
-            let index = _.findIndex(this.currentReduceLists, (list) => {
-                return list.reduceId === nowData.reduceId
-            })
-            this.changePlanno(index)
-        },
+        // updateNowCur(nowData) {
+        //     this.getCurrentReduce(nowData ? 'update' : '')
+        //     if (nowData) {
+        //         let index = _.findIndex(this.currentReduceLists, (list) => {
+        //             return list.reduceId === nowData.reduceId
+        //         })
+        //         this.changePlanno(index)
+        //     }
+        // },
         changePlanno(idx) {
             this.currentReduce = this.currentReduceLists[idx]
             // this.getReduceFlights()

@@ -69,3 +69,20 @@
 .tableInput.text {
     background: none;
 }
+
+.el-input-group__append {
+    padding: 0 10px;
+    border: 0.01rem solid #37455c !important;
+    height: 100%;
+    width: 30px;
+    background: #101c2f !important;
+
+    .el-button {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        background: #101c2f !important;
+
+    }
+}

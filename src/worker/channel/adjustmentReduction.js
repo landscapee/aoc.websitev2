@@ -45,29 +45,38 @@ const getStatistics = (flights) => {
 	return result;
 };
 
+
 let queryFlight = () => {
-	let query = [];
-	map(Options.backEndFilter, (item) => {
-		if (item[Object.keys(item)[0]] && JSON.stringify(item[Object.keys(item)[0]]) !== '{}') {
-			query.push(item);
-		}
+	checkWebsocketResponseDataFinish().then(() => {
+        let query = [];
+		map(Options.backEndFilter, (item) => {
+			if (item[Object.keys(item)[0]] && JSON.stringify(item[Object.keys(item)[0]]) !== '{}') {
+				query.push(item);
+			}
+		});
+		// Options.backEndFilter && query.push(...Options.backEndFilter);
+		Options.search && query.push({ search: { $regex: Options.search } });
+		Options.flightNo && query.push({ flightNo: { $regex: Options.flightNo } });
+		// Options.airlineCode && query.push({ airlineCode: Options.airlineCode });
+		// console.log('Options:', Options);
+		// console.log('query:', query);
+		Options.movement && query.push({ movement: Options.movement });
+		let dbFlight = flightDB.find({ $and: query });
+		let flights = filterFlightsByRole(dbFlight, rolePath);
+		// flights = flow([proFlightFields, addSerialNumber])(flights);
+		let statistics = getStatistics(flights);
+		worker.publish('Web', 'AdjustReduction.QueryFlight.Response', { flights, statistics });
 	});
-	// Options.backEndFilter && query.push(...Options.backEndFilter);
-	Options.search && query.push({ search: { $regex: Options.search } });
-	Options.flightNo && query.push({ flightNo: { $regex: Options.flightNo } });
-	// Options.airlineCode && query.push({ airlineCode: Options.airlineCode });
-	// console.log('Options:', Options);
-	// console.log('query:', query);
-	let dbFlight = flightDB.find({ $and: query });
-	let flightsNoMovement = filterFlightsByRole(dbFlight, rolePath);
-	Options.movement && query.push({ movement: Options.movement });
-	let flights = filterFlightsByRole(flightDB.find({ $and: query }), rolePath);
-	// flights = flow([proFlightFields, addSerialNumber])(flights);
-	let statistics = getStatistics(flightsNoMovement);
-	worker.publish('Web', 'AdjustReduction.QueryFlight.Response', { flights, statistics });
+};
+const getFlights = (data) => {
+	checkWebsocketResponseDataFinish().then(() => {
+		let flights = getFlightByIds(data)
+		worker.publish('Web', 'AdjustReduction.GetFlights.Res', flights);
+	});
 };
 
 export const init = (worker_) => {
     worker = worker_;
-    worker.subscribe(`AdjustReduction.SetFilterOption`, setFilterOption);
+	worker.subscribe(`AdjustReduction.SetFilterOption`, setFilterOption);
+	worker.subscribe(`AdjustReduction.GetFlights`, getFlights); // 调整调减的航班列表
 };

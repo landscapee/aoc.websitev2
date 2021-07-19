@@ -1,18 +1,19 @@
 <template>
     <div class="recommend showBox">
         <div class="title">
-            <div class="name alib">推荐调时调减架次</div>
+            <div class="name alib">推荐调整调减架次</div>
             <div class="right">
                 <span style="margin-right:6px">反馈时长</span>
                 <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" :disabled="!$hasRole('edit-handle-suggest',false)" />
             </div>
         </div>
         <div class="table">
-            <ele-table :columnConfig="columnConfig" :tableData="tableData" :key="tableKey"></ele-table>
+            <ele-table :columnConfig="columnConfig" :tableData="tableData" :key="tableKey" :setCellClassName="setCellClassName"></ele-table>
         </div>
     </div>
 </template>
 <script>
+import { recommend_columnConfig } from '../config'
 export default {
     props: ['currentReduce', 'airLinesGroup'],
     data() {
@@ -20,98 +21,9 @@ export default {
             tableKey: 0,
             feedBackTime: 30,
             showInput: '',
-            columnConfig: [
-                {
-                    key: 'airline',
-                    label: '航司',
-                },
-                {
-                    key: 'R',
-                    label: '计划调减',
-                    display: ({ row }) => {
-                        if (this.showInput == `R${row.airline}` && row.airline != '全部') {
-                            window.decRecommendInputHandle = this.decRecommendInputHandle(row, 'R')
-                            return `<input value="${row.R}" class="decRecommendInput" onchange="decRecommendInputHandle(this)"/>`
-                        } else {
-                            return row.R
-                        }
-                    },
-                    click: ({ row }) => {
-                        if (
-                            !this.$hasRole('edit-handle-suggest', false) ||
-                            row.airline === '全部' ||
-                            row.sendType !== 0
-                        ) {
-                            return
-                        }
-
-                        this.showInput = `R${row.airline}`
-                    },
-                },
-                {
-                    key: 'A',
-                    label: '计划调整',
-                    display: ({ row }) => {
-                        if (this.showInput == `A${row.airline}` && row.airline != '全部') {
-                            window.decRecommendInputHandle = this.decRecommendInputHandle(row, 'A')
-                            return `<input value="${row.A}" class="decRecommendInput" onchange="decRecommendInputHandle(this)"/>`
-                        } else {
-                            return row.R
-                        }
-                    },
-
-                    click: ({ row }) => {
-                        if (
-                            !this.$hasRole('edit-handle-suggest', false) ||
-                            row.airline === '全部' ||
-                            row.sendType !== 0
-                        ) {
-                            return
-                        }
-                        this.showInput = `A${row.airline}`
-                    },
-                },
-                {
-                    key: '',
-                    type: 'operate',
-                    label: '操作',
-                    operates: [
-                        {
-                            display: () => {
-                                return '<i class="iconfont icon-fasong"></i>'
-                            },
-                            disabled: ({ row }) => {
-                                let result = false
-                                let hasFinish = _.get(this.currentReduce, 'reduceInfo.status') == 1
-                                let isTotalClickAble = _.some(
-                                    this.currentReduce.suggestForEdit,
-                                    (item) => item.sendType == '0' && item.airline !== '全部'
-                                )
-                                isTotalClickAble = isTotalClickAble && row.airline === '全部'
-
-                                if (isTotalClickAble) {
-                                    row.sendType = 0
-                                } else if (row.airline === '全部') {
-                                    row.sendType = 1
-                                }
-
-                                if (
-                                    !this.$hasRole('edit-handle-suggest', false) ||
-                                    row.sendType != 0 ||
-                                    hasFinish
-                                ) {
-                                    result = true
-                                }
-                                return result
-                            },
-                            click: ({ row }) => {
-                                this.rowSend(row)
-                            },
-                        },
-                    ],
-                },
-            ],
+            columnConfig: recommend_columnConfig,
             tableData: [],
+            ctx: this,
         }
     },
     watch: {
@@ -125,6 +37,11 @@ export default {
     },
     mounted() {},
     methods: {
+        setCellClassName(data) {
+            if (data.column.label == '调后时刻') {
+                return 'inputCell'
+            }
+        },
         decRecommendInputHandle(row, type) {
             return (event) => {
                 row[type] = event.value ? parseInt(event.value) : 0
@@ -185,7 +102,7 @@ export default {
             let idArrs = []
             if (row.airline == '全部') {
                 this.tableData.map((list) => {
-                    if (list && list.id) {
+                    if (list && list.id && list.sendType === 0) {
                         idArrs.push(list.id)
                     }
                 })
@@ -193,7 +110,7 @@ export default {
                 idArrs.push(row.id)
             }
 
-            this.$confirm('确认发送调时调减计划到航司?', '提示', {
+            this.$confirm('确认发送调整调减计划到航司?', '提示', {
                 type: 'warning',
                 center: true,
             }).then(() => {
@@ -204,6 +121,7 @@ export default {
                             message: res.message,
                             type: 'success',
                         })
+                        this.$emit('updateNowCur')
                     })
             })
         },
@@ -268,13 +186,4 @@ export default {
 }
 </style>
 <style lang="scss">
-.decRecommendInput {
-    background: #101c2f;
-    border: 1px solid #37455c;
-    width: 100%;
-    text-align: center;
-    height: 30px;
-    color: #fff;
-    border-radius: 2px;
-}
 </style>
