@@ -17,20 +17,37 @@
 
 					<ele-table :columnConfig="opt.tableConfig"  :table-data="getData(opt)">
 						<!--备降航班统计-->
-						<div class="hangxian" slot="displayRouter" slot-scope="{row,index}">
+						<el-table-column  label="航线" slot="displayRouter" align="center"  width="255px">
 
-							<div v-for="(opt,index) in row.displayRouter" :key="index">
-								<span v-if="index!==0"><icon-svg iconClass="jiantou"></icon-svg></span>
-								<span>{{opt}} </span>
-							</div>
-						</div>
-						<div class="optionq" slot="option1" slot-scope="{row,index}">
-							<span class="cursor" @click="editHandle(row)">编辑</span>
-						</div>
-						<div   slot="flightNo" slot-scope="{row,index}">
-							<span class="cursor" @click="toFlight(row)">{{row.flightNo}}</span>
-						</div>
-						<!--临时机位-->
+							<template   slot-scope="{row,index}" >
+								<div class="hangxian"  >
+									<div v-for="(opt,index) in row.displayRouter" :key="index">
+										<span v-if="index!==0"><icon-svg iconClass="jiantou"></icon-svg></span>
+										<span>{{opt}} </span>
+									</div>
+								</div>
+							</template>
+						</el-table-column>
+
+						<el-table-column  label="操作" slot="option1" align="center"  width="50px">
+
+							<template   slot-scope="{row,index}" >
+								<div class="optionq"   >
+									<span class="cursor" @click="editHandle(row)">编辑</span>
+								</div>
+							</template>
+						</el-table-column>
+						<el-table-column  label="航班号" slot="flightNo" align="center"  width="60px">
+
+							<template   slot-scope="{row,index}" >
+								<div    >
+									<span class="cursor" @click="toFlight(row)">{{row.flightNo}}</span>
+								</div>
+								<!--临时机位-->
+							</template>
+						</el-table-column>
+
+
 					</ele-table>
 				</div>
 				<div class="other" v-else>

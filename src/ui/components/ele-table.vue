@@ -1,22 +1,47 @@
 <template>
     <div class="eleTableBox" ref="ref_eleTableBox">
-        <el-table ref="ref_table" :span-method="spanMethod" :data="tableData" :style="{'width':tableWidth}" :height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName" :cell-class-name="setCellClassName">
+        <el-table ref="ref_table" :span-method="spanMethod" :data="tableData" :style="{'width':tableWidth}" :height="maxHeight" :key="componentKey" border :row-class-name="setRowClassName">
 
-            <el-table-column v-for="(col,idx) in columnConfig" :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
-                <template slot-scope="scope">
-                    <template v-if="col.type=='index'">{{scope.$index+1}}</template>
-                    <template v-else-if="col.slot">
-                        <slot :name="col.slot" :row="scope.row" :index="scope.$index"></slot>
-                    </template>
-                    <template v-else-if="col.type=='operate'">
-                        <el-button type='text' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope,ctx)" @click="item.click?item.click(scope,ctx):''" :disabled="item.disabled?item.disabled(scope,ctx):false"></el-button>
-                    </template>
-                    <template v-else>
-                        <div v-if="col.display" v-html="col.display(scope,ctx)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope,ctx):''"></div>
-                        <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope,ctx):''">{{!!scope.row[col.key]?scope.row[col.key]:(col.nullValue?col.nullValue:'--')}}</div>
-                    </template>
+            <template v-for="(col,idx) in columnConfig"  >
+                <template v-if="col.slot">
+                    <slot   :name="col.slot"    ></slot>
                 </template>
-            </el-table-column>
+                <el-table-column  v-else-if="col.displayHeader" :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
+                    <template v-if="col.displayHeader" slot="header" slot-scope="scope" >
+                        <div  >
+                            <span v-html="col.displayHeader(scope)"></span>
+                        </div>
+                    </template>
+                    <template slot-scope="scope">
+
+                        <template v-if="col.type=='index'">{{scope.$index+1}}</template>
+
+                        <template v-else-if="col.type=='operate'">
+                            <el-button type='text' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope)" @click="item.click?item.click(scope):''" :disabled="item.disabled?item.disabled(scope):false"></el-button>
+                        </template>
+                        <template v-else>
+                            <div v-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
+                            <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{!!scope.row[col.key]?scope.row[col.key]:(col.nullValue?col.nullValue:'--')}}</div>
+                        </template>
+                    </template>
+                </el-table-column>
+
+                <el-table-column  v-else  :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
+
+                    <template slot-scope="scope">
+
+                        <template v-if="col.type=='index'">{{scope.$index+1}}</template>
+
+                        <template v-else-if="col.type=='operate'">
+                            <el-button type='text' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope)" @click="item.click?item.click(scope):''" :disabled="item.disabled?item.disabled(scope):false"></el-button>
+                        </template>
+                        <template v-else>
+                            <div v-if="col.display" v-html="col.display(scope)" :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''"></div>
+                            <div v-else :class="getClassname(col)" :style="getStyle(col)" @click="col.click?col.click(scope):''">{{!!scope.row[col.key]?scope.row[col.key]:(col.nullValue?col.nullValue:'--')}}</div>
+                        </template>
+                    </template>
+                </el-table-column>
+            </template>
         </el-table>
     </div>
 
@@ -34,15 +59,13 @@ export default {
         setRowClassName: {
             type: Function,
         },
-        setCellClassName: {
-            type: Function,
-        },
         // 合并行列
         spanMethod: {
             type: Function,
         },
         tableMaxHeight: {
             type: Number,
+            default: 600,
         },
     },
     computed: {
@@ -70,12 +93,10 @@ export default {
             maxHeight: '100%',
             componentKey: 0,
             tableWidth: '100%',
-            ctx: {},
         }
     },
     mounted() {
         this.loadTableStyle()
-        this.ctx = this.$parent
     },
     watch: {
         tableData: function () {

@@ -1,9 +1,9 @@
-const colorList = ['#0666ff', '#3ec37b', '#00cad2', '#6236ff', '#3f98f2'];
-import {map,get }from 'lodash'
+import {map, get} from 'lodash'
 import * as echarts from 'echarts'
+const colorList = ['#0666ff', '#3ec37b', '#00cad2', '#6236ff', '#3f98f2'];
 
-export const optionsWeather=(xData, yData,yName)=> {
-     let defaultTitle = {
+export const optionsWeather = (xData, yData, yName) => {
+    let defaultTitle = {
         show: false,
         text: '',
         textStyle: {
@@ -32,12 +32,22 @@ export const optionsWeather=(xData, yData,yName)=> {
     let option = {
         backgroundColor: '#19253C',
         color: colorList,
-        title: { ...defaultTitle },
-        legend: { ...defaultLegend },
+        title: {...defaultTitle},
+        legend: {...defaultLegend},
         tooltip: {
             show: true,
             trigger: 'axis',
-
+            borderColor: 'rgba(50,50,50,0.7)',
+            backgroundColor: 'rgba(50,50,50,0.7)',
+             textStyle: {
+                color: '#fff',
+                rich: {
+                    value: {
+                        fontSize: '16',
+                        color: '#fff',
+                    },
+                },
+            },
         },
         grid: {
             top: 30,
@@ -85,7 +95,7 @@ export const optionsWeather=(xData, yData,yName)=> {
             {
                 type: 'value',
                 min: 0,
-                name:  yName||'速率（架次/小时）',
+                name: yName || '速率（架次/小时）',
                 nameLocation: 'end',
                 splitNumber: 4,
                 minInterval: 1,
@@ -142,7 +152,8 @@ export const optionsWeather=(xData, yData,yName)=> {
     };
     return option;
 }
-export const optionsIndicator=(xData, yData,yName)=>   {
+
+export const optionsIndicator = (xData, yData, yName) => {
     //function getLineOption() {
     let defaultTitle = {
         show: false,
@@ -170,15 +181,18 @@ export const optionsIndicator=(xData, yData,yName)=>   {
     };
     let option = {
         // backgroundColor: '#19253C',
-        title: { ...defaultTitle },
-        legend: { ...defaultLegend },
+        title: {...defaultTitle},
+        legend: {...defaultLegend},
         tooltip: {
             show: true,
             trigger: 'axis',
             axisPointer: {
                 type: 'shadow',
             },
-            formatter: '{b}{a}:{c}',
+
+            borderColor: 'rgba(50,50,50,0.7)',
+            backgroundColor: 'rgba(50,50,50,0.7)',
+            formatter: '{b0}{a0}:{c0}',
             textStyle: {
                 color: '#fff',
                 rich: {
@@ -235,7 +249,7 @@ export const optionsIndicator=(xData, yData,yName)=>   {
             {
                 type: 'value',
                 min: 0,
-                name:   yName||'速率（架次/小时）',
+                name: yName || '速率（架次/小时）',
                 nameLocation: 'end',
                 splitNumber: 4,
                 minInterval: 1,
@@ -274,12 +288,22 @@ export const optionsIndicator=(xData, yData,yName)=>   {
             {
                 name: yData.name,
                 type: 'line',
-                symbolSize: 1,
+                symbolSize: 7,
                 symbol: 'circle',
                 smooth: true,
-                yAxisIndex: 0,
+                // yAxisIndex: 1,
                 showSymbol: false,
                 data: yData.data,
+                itemStyle: {
+                    normal: {
+                        symbol:'circle',
+                         color: '#EB547C',
+                        borderWidth: 2,
+                        lineStyle: {
+                            color: '#247BA0'
+                        }
+                    },
+                },
                 lineStyle: {
                     normal: {
                         width: 2,
@@ -311,26 +335,6 @@ export const optionsIndicator=(xData, yData,yName)=>   {
                 },
             },
 
-            {
-                // 分隔
-                type: 'pictorialBar',
-                itemStyle: {
-                    normal: {
-                        color: 'rgba(91,154,255,.2)',
-                    },
-                },
-                symbolRepeat: 'fixed',
-                symbolMargin: 2,
-                symbol: 'rect',
-                symbolClip: true,
-                symbolSize: [2, 2],
-                symbolPosition: 'start',
-                symbolOffset: [1, -1],
-                 data: yData.data,
-                width: 2,
-                z: 0,
-                zlevel: 1,
-            },
         ],
     };
     return option;

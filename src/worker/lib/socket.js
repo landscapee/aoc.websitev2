@@ -137,7 +137,7 @@ class Sock {
 		server.client = new StompClient(server);
 
 		server.socket.onclose = (e) => {
-			console.info(`socket closed ${server.name}`, server, e);
+			// console.info(`socket closed ${server.name}`, server, e);
 			postal.publish({
 				channel: 'Web',
 				topic: `${server.name}.Network.Error`,

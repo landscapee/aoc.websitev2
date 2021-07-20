@@ -9,7 +9,6 @@
 <script>
     import PostalStore from "@ui_lib/postalStore";
     import {optionsWeather,optionsIndicator}from './options'
-    import {debounce} from '@/ui/lib/common.js'
 
     let postalStore = new PostalStore();
     import Item from './item'
@@ -21,16 +20,13 @@
             getOptions(){
                 return (opt)=>{
                    let arr=this[opt.key][opt.keyC]
-                    console.log(arr,111);
-                    if(!arr){
+                     if(!arr){
 					    arr=[	 [], { name: '航班指标', data: [0] },]
 					}
                     if(opt.key==='runwayWeather'){
-                        console.log(222,optionsWeather(...arr))
-                        return optionsWeather(...arr,opt.yName)||{}
+                         return optionsWeather(...arr,opt.yName)||{}
 					}else{
-                        console.log(333,optionsIndicator(...arr) || {});
-                        return  optionsIndicator(...arr,opt.yName)||{}
+                         return  optionsIndicator(...arr,opt.yName)||{}
 
                     }
 
@@ -44,9 +40,9 @@
                 pageObj: [
                     {name: 'RVR趋势图', key: "runwayWeather",keyC:'rvr', yName:'m'},
                     {name: '航班指标', key: "indicator", keyC:'flightIndicator', yName:'数量(架次)' },
-                    {name: '垂直能见度趋势图', key: "runwayWeather", keyC:'rvr1', yName:'℃'},
+                    {name: '垂直能见度趋势图', key: "runwayWeather", keyC:'vv', yName:'℃'},
                     {name: '出港旅客数量指标', key: "indicator", keyC:'passengerIndicator', yName:'数量(人数)' },
-                    {name: '露点温度与温度趋势图', key: "runwayWeather" ,keyC:'rvr2', yName:'℃'},
+                    {name: '露点温度与温度趋势图', key: "runwayWeather" ,keyC:'temp', yName:'℃'},
                     {name: '本场起降间隔指标', key: "indicator",keyC:'spaceIndicator' , yName:'分钟'},
                 ],
 
@@ -63,21 +59,10 @@
 			let data=['runwayWeather','indicator']
 			map(data,(k)=>{
                 postalStore.sub(k, ({data, key}) => {
-                    console.log(key+' ,data', data, key);
-                    this[key] = data
+                     this[key] = data
                 })
 			})
-            let a=debounce(() => {
-                 map(this.$refs.item,k=>{
-                    k.aaa()
-				})
-             }, 150, false)
-            window.onresize = () => {
-                this.$nextTick(()=>{
-                    a()
-                })
 
-            }
         },
 
         beforeDestroy() {

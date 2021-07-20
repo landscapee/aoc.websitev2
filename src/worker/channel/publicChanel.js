@@ -52,8 +52,10 @@ export const init = (worker_, httpRequest_, clientId) => {
         subWSEventMSG(clientId);
         console.log('messageClient连接成功')
     });
+    // 主动获取消息
     worker.subscribe('Get.message.Data', () => {
-        let data = memoryStore.getItem('Pools').messageClientData
+        let data = memoryStore.getItem('global').messageClientData
+
         if(data){
             worker.publish('Web', 'push.message.Data', data)
         }else{
@@ -64,7 +66,6 @@ export const init = (worker_, httpRequest_, clientId) => {
                 }
             })
         }
-
     });
 
 
