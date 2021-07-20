@@ -7,18 +7,16 @@
             </div>
             <div class="contentBox1">
                 <div class="tableBox">
-                    <ele-table :columnConfig="columnConfig1" :tableData="tableData"></ele-table>
+                    <ele-table :columnConfig="columnConfig1" :tableData="tableData" :thisObj="thisObj"></ele-table>
                 </div>
                 <div class="title">
                     <span>特殊参数</span>
                 </div>
                 <div class="tableBox">
-                    <ele-table :columnConfig="columnConfig2" :tableData="special"></ele-table>
+                    <ele-table :columnConfig="columnConfig2" :tableData="special" :thisObj="thisObj"></ele-table>
                 </div>
             </div>
-
         </div>
-
     </el-dialog>
 </template>
 <script>
@@ -32,6 +30,7 @@ export default {
             columnConfig1: decreaseDialog_columnConfig1,
             columnConfig2: decreaseDialog_columnConfig2,
             tableData: [],
+            special: [],
             weeks: {
                 1: '星期一',
                 2: '星期二',
@@ -41,7 +40,7 @@ export default {
                 6: '星期六',
                 7: '星期天',
             },
-            special: [],
+            thisObj: {},
         }
     },
     mounted() {
@@ -61,7 +60,9 @@ export default {
                 }),
                 'startTime'
             )
+            console.log(this.special)
         })
+        this.thisObj = this
     },
     methods: {
         initData() {
@@ -90,7 +91,7 @@ export default {
     .title1 {
         position: fixed;
         width: calc(100% - 50px);
-        top: 0;
+        top: 65px;
     }
     .contentBox1 {
         margin-top: 40px;

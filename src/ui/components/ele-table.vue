@@ -67,6 +67,9 @@ export default {
             type: Number,
             default: 600,
         },
+        thisObj: {
+            type: Object,
+        },
     },
     computed: {
         getClassname: function () {
@@ -98,7 +101,7 @@ export default {
     },
     mounted() {
         this.loadTableStyle()
-        this.ctx = this.$parent
+        this.ctx = this.thisObj ? this.thisObj : this.$parent
     },
     watch: {
         tableData: function () {

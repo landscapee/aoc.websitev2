@@ -59,7 +59,7 @@ export const recommend_columnConfig = [
 	{
 		key: 'R',
 		label: '计划调减',
-		display: ({ row },that) => {
+		display: ({ row }, that) => {
 			if (that.showInput == `R${row.airline}` && row.airline != '全部') {
 				window.decRecommendInputHandle = that.decRecommendInputHandle(row, 'R')
 				return `<input value="${row.R}" class="tableInput" onchange="decRecommendInputHandle(this)"/>`
@@ -299,7 +299,8 @@ export const decreaseDialog_columnConfig2 = [
 	{
 		key: '',
 		label: '星期',
-		display: ({ row },that) => {
+		display: ({ row }, that) => {
+			console.log(that,row.type)
 			return that.weeks[row.type]
 		},
 	},
