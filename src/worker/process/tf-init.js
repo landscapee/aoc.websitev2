@@ -12,6 +12,7 @@ import { init as decreaseInit } from '../channel/decrease'
 import { init as runningNew } from '../channel/runningNew'
 import { init as publicChanelInit } from '../channel/publicChanel'
 import { init as adjustmentReductionInit } from '../channel/adjustmentReduction'
+import { init as deiceInit } from '../channel/deice'
 
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
@@ -82,6 +83,7 @@ postal.subscribe({
         getSysConfigHttp(posWorker, httpRequest);
         TOBTConfigInit(posWorker, httpRequest)
         publicChanelInit(posWorker, httpRequest,data.clientId)
+        deiceInit(posWorker, httpRequest)
         memoryStore.setItem('global', {token: data.token});
 
         postal.subscribe({

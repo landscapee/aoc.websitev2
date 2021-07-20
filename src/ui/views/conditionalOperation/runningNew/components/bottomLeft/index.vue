@@ -244,6 +244,7 @@ import Bangzhu from './bangzhu'
 				height: 70px;
 				border: 1px solid #649fff;
 				.runwayRightTop {
+					color: #649fff;
 					width: 118px;
 					height: 25px;
 					line-height: 25px;

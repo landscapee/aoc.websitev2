@@ -97,16 +97,13 @@ export const init = (worker_, httpRequest_) => {
     worker.subscribe('Page.runningNew.Start', () => {
         runNewStart(worker);
         checkClient('runNewClient').then(() => {
-
-             checkClient('DelaysClient').then(()=>{
-                DelaysEvent();
-             });
-             checkClient('runNewClient').then(()=>{
-                 subWSEvent();
-             });
-
+            subWSEvent();
             console.log('runNew连接成功')
         });
+        checkClient('DelaysClient').then(()=>{
+            DelaysEvent();
+        });
+
     });
 
     worker.subscribe('Page.runningNew.Stop', () => {
