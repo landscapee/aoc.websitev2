@@ -9,7 +9,7 @@
                     <!--<icon-svg :iconClass="opt.icon"></icon-svg>-->
                     <img :src="opt1.icon" alt="">
                     <div class="timeText">
-                        <div class="first"><span>09:00</span>(23)</div>
+                        <div class="first"><span>{{displayTime('HH:mm',index)}}</span>({{displayTime('DD',index)}})</div>
                         <div class="second">指令发出时间</div>
                     </div>
                 </div>
@@ -19,62 +19,77 @@
                     <icon-svg :iconClass="opt.icon"></icon-svg>
 
                     <div class="timeText">
-                        <div class="first"><span>09:00</span>架次</div>
+                        <div class="first"><span>{{getData( 'indicator.flightIndicator.predict')}}</span>架次</div>
                         <div class="second">航班指标预测</div>
                     </div>
                     <div class="timeText">
-                        <div class="first"><span>09:00</span>架次</div>
+                        <div class="first"><span>{{getData('indicator.flightIndicator.realTimeDelay')}}</span>架次</div>
                         <div class="second">实时延误航班</div>
                     </div>
                 </div>
             </template>
             <template v-else>
                 <div class="rightItem">
-                    <icon-svg :iconClass="opt.icon"></icon-svg>
-                    <div class="timeText">
-                        <div class="first"><span>09:00</span>(23)</div>
-                        <div class="second">{{opt.name}}</div>
+                    <div class="rightItem" :class="opt.class" @click="showTable(opt)">
+                        <icon-svg :iconClass="opt.icon"></icon-svg>
+                        <div class="timeText">
+                            <div class="first"><span>{{getData(opt.key)}}</span>{{opt.unit}}</div>
+                            <div class="second">{{opt.name}}</div>
+                        </div>
+
                     </div>
+                    <div class="tableBoxPosition" v-if="opt.click=='alternateLanding'">
+                    <alternateLanding v-show="tabTable" @resetTabTable="resetTabTable"  ref="alternateLanding"></alternateLanding>
+
                 </div>
+                </div>
+
             </template>
         </div>
+
     </div>
 </template>
 
 <script>
+     import alternateLanding from './alternateLanding'
 import ssjd from '../../../../../assets/img/ssjd.png'
 import zbjd from '../../../../../assets/img/zbjd.png'
 import jsjd from '../../../../../assets/img/jsjd.png'
 import moment from 'moment'
 import PostalStore from '@ui_lib/postalStore'
-
+    import {get } from 'lodash'
 let postalStore = new PostalStore()
 export default {
     name: 'topIndex',
-    components: {},
+    components: {alternateLanding},
     data() {
         return {
+            tabTable:null,
             pageObj: [
                 { name: '', key: '', icon: '', deal: 'item0', style: { background: '#3280e7' } },
-                { name: '备降外场', key: '', icon: 'bjwc', style: { background: '#32c8e7' } },
-                { name: '取消航班', key: '', icon: 'qxhb', style: { background: '#24ca87' } },
-                { name: '预测积压情况', key: '', icon: 'yjjyqk', style: { background: '#5d9d52' } },
+                { name: '备降外场',click:'alternateLanding', key: 'weatherStat.alternateLanding',unit:'架次', icon: 'bjwc', class:'cursor',style: { background: '#32c8e7' } },
+                { name: '取消航班',click:'cancelOpen', key: 'weatherStat.cancel', icon: 'qxhb', unit:'架次', class:'cursor',style: { background: '#24ca87' } },
+                { name: '预测积压情况', key: 'estimatedBacklog', icon: 'yjjyqk',  unit:'架次',style: { background: '#5d9d52' } },
                 {
                     name: '',
-                    key: '',
+                    key: 'flightIndicator',
                     icon: 'hbzbyc',
                     deal: 'item4',
                     style: { background: '#5f3fb0' },
                 },
                 {
                     name: '最近一次跑道使用间隔',
-                    key: '',
+                    key: 'indicator.spaceIndicator.space',
                     icon: 'zjycpdsyjg',
+                    unit:'架次',
                     style: { background: '#8f35aa' },
                 },
             ],
             emergencyEventNode: [],
             postalStoreObj: [],
+            weatherStat : {},//备降外场、取消航班
+            estimatedBacklog : {},// 预测航班积压量
+            indicator : {},// 实时延误航班 航班指标
             emergencyCfg: [
                 { key: 'ready', icon: zbjd },
                 { key: 'doing', icon: ssjd },
@@ -84,19 +99,39 @@ export default {
     },
     computed: {
         displayTime() {
-            return (v, type, emptyStr) => {
+            return ( type, index) => {
+
+                let v=this.emergencyEventNode[index]?.createTime
                 if (!v || !moment(v).isValid()) {
-                    return emptyStr !== undefined ? emptyStr : '--'
+                    return '--'
                 }
                 return moment(v).format(type)
             }
         },
+        getData(){
+            return (key)=>{
+
+                return get(this,key,'--')
+            }
+        }
     },
-    methods: {},
+    methods: {
+        resetTabTable(){
+            this.tabTable=null
+        },
+        showTable(opt){
+             if(!opt.click){
+                return false
+            }
+             this.$refs.alternateLanding[0].open(opt.click)
+          this.tabTable=opt.click
+        },
+    },
     created() {},
     mounted() {
-        postalStore.sub('emergencyEventNode', (data) => {
-            this.emergencyEventNode = data
+        postalStore.sub('emergencyEventNode', ({data,key}) => {
+            this[key] = data
+            console.log(key,data);
         })
     },
 }
@@ -119,7 +154,12 @@ export default {
         .rightItem {
             display: flex;
             align-items: center;
-
+            position: relative;
+            .tableBoxPosition{
+                position: absolute;
+                top: 75px;
+                z-index: 1000;
+            }
             .timeText {
                 margin-left: 12px;
                 .first {

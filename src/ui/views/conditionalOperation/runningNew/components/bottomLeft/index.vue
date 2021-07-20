@@ -240,11 +240,11 @@ import Bangzhu from './bangzhu'
 				box-shadow: 0px 0px 8px 0px #649fff inset;
 			}
 			.runwayRight {
-				width: 110px;
+				width: 118px;
 				height: 70px;
 				border: 1px solid #649fff;
 				.runwayRightTop {
-					width: 110px;
+					width: 118px;
 					height: 25px;
 					line-height: 25px;
 					text-align: center;
@@ -273,6 +273,9 @@ import Bangzhu from './bangzhu'
 		background: rgba(25, 37, 60, 0.8);
 		border-radius: 5px;
 		box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
+	}
+	::v-deep th{
+		background: #113671;
 	}
 	::v-deep .cell {
 		font-size: 14px !important;
