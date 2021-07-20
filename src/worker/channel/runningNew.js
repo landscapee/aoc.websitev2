@@ -45,6 +45,15 @@ const subWSEvent = () => {
         trafficCapacity: `/adverse-condition/trafficCapacity/list`,
 
     }
+    let obj={
+        weatherStat:'emergencyEventNode',
+        emergencyEventNode:'emergencyEventNode',
+        estimatedBacklog:'emergencyEventNode',
+        indicator:'indicator',
+        runwayStandard:'runwayStandard',
+        runwayWeather:'runwayWeather',
+        trafficCapacity:'trafficCapacity',
+    }
     map(urlObj, (val, key) => {
         client.sub(val, (data) => {
             let mydata = data
@@ -52,11 +61,13 @@ const subWSEvent = () => {
                 mydata = getRunwayWeather(mydata)
             } else if (key === 'indicator') {
                 mydata = getIndicator(mydata)
+                worker.publish('Web', 'emergencyEventNode', {data: data, key: key})
             } else if (key === 'trafficCapacity') {
                 // 通行能力
                 mydata = trafficCapacity(mydata)
             }
-            worker.publish('Web', key, {data: mydata, key: key})
+            let key1=obj[key]
+            worker.publish('Web', key1, {data: mydata, key: key})
         })
     })
 
