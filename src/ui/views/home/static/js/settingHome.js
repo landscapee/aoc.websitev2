@@ -1225,7 +1225,7 @@ export const settings = {
 							style: {
 								textOutline: '0px 0px rgba(0,161,37,0.1)',
 								// textOutline: '1px 0px #999',
-								fontSize: 11,
+								fontSize: '10px',
 								fontFamily: 'Fjalla One',
 								color: '#fff',
 								// color: '#fff',

@@ -113,6 +113,7 @@ export default {
     flex: 1;
     margin-bottom: 15px;
     padding: 15px;
+    height: 30%;
     .title {
         display: flex;
         align-items: center;

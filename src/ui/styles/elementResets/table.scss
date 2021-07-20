@@ -59,6 +59,16 @@
         display: none;
     }
 
+    .gutter,
+    col[name=gutter] {
+        display: none;
+        width: 0 !important;
+    }
+
+    .el-table__body {
+        width: 100% !important;
+    }
+
 }
 
 .el-table:before,

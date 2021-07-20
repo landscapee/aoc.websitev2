@@ -249,8 +249,6 @@ export default {
         .adjustmentReduction_content_right {
             width: 30%;
             margin-left: 15px;
-            display: flex;
-            flex-direction: column;
         }
     }
 }

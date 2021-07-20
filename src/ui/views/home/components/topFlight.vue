@@ -51,21 +51,21 @@
                 <ul class="ulAD2">
                     <div>
                         <div>
-                            <span class="fo">{{value.departure?value.departure:0}}</span>
+                            <span class="fo">{{value.departure?value.departure:'--'}}</span>
                             分/架
                         </div>
                         <div>起飞速率</div>
                     </div>
                     <div>
                         <div>
-                            <span class="fo">{{value.arrive?value.arrive:0}}</span>
+                            <span class="fo">{{value.arrive?value.arrive:'--'}}</span>
                             分/架
                         </div>
                         <div>落地速率</div>
                     </div>
                     <div>
                         <div>
-                            <span class="fo">{{value.arriveAndDeparture?value.arriveAndDeparture:0}}</span>
+                            <span class="fo">{{value.arriveAndDeparture?value.arriveAndDeparture:'--'}}</span>
                             分/架
                         </div>
                         <div>综合速率</div>
@@ -95,7 +95,7 @@ export default {
 <style scoped lang='scss'>
 .top_flight {
     padding: 7px;
-    height: 70%;
+    height: calc(100% - 275px);
     .box_content {
         padding: 5px 15px 0;
         .lineText {
