@@ -139,12 +139,8 @@ export default {
     display: flex;
     .decrease_left {
         width: 520px;
-        display: flex;
-        flex-direction: column;
     }
     .decrease_mid {
-        display: flex;
-        flex-direction: column;
         width: 930px;
         margin: 0 15px;
     }

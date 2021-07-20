@@ -130,7 +130,7 @@ export default {
 
 <style lang="scss" scoped>
 .reduceFlightLists {
-    height: 70%;
+    height: calc(70% - 15px);
     width: 100%;
     .title {
         display: flex;

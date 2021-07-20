@@ -1,7 +1,8 @@
 import { flow,mapValues} from 'lodash';
 import { flightDB } from '../lib/storage';
 import { proFlightFields } from '@/lib/helper/proFlightFields';
-import { checkWebsocketResponseDataFinish, getFlightByIds,filterRoleFlights,addSerialNumber } from '@/lib/helper/flight';
+import { checkWebsocketResponseDataFinish, getFlightByIds, filterRoleFlights, addSerialNumber } from '@/lib/helper/flight';
+import { decreaseHttp } from '../http/decrease';
 
 let worker;
 
@@ -14,15 +15,17 @@ let getReduceFlights = (reduceFlight) => {
 
 
 let getFlight = (query) => {
-	checkWebsocketResponseDataFinish().then(() => {
+
+    checkWebsocketResponseDataFinish().then(() => {
         let flights = flightDB.find({ $and: query });
         // flights = flow([filterRoleFlights, proFlightFields, addSerialNumber])(flights);
         worker.publish('Web','AdverseCondition.GetFlight.Response',flights)
 	});
 };
-
-export const init = (worker_) => {
+export const init = (worker_,httpRequest) => {
     worker = worker_;
     worker.subscribe(`AdverseCondition.GetFlight`, getFlight);
     worker.subscribe(`Decrease.GetReduceFlights`, getReduceFlights);
+    
+    decreaseHttp(worker,httpRequest);
 };

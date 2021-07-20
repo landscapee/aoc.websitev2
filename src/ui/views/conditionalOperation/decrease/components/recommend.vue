@@ -7,7 +7,7 @@
                 <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" :disabled="!$hasRole('edit-handle-suggest',false)" />
             </div>
         </div>
-        <div class="table">
+        <div class="tableBox">
             <ele-table :columnConfig="columnConfig" :tableData="tableData" :key="tableKey" :setCellClassName="setCellClassName"></ele-table>
         </div>
     </div>
@@ -152,6 +152,7 @@ export default {
     flex: 1;
     margin: 15px 0;
     padding: 0 15px;
+    height: calc(100% - 545px);
     .title {
         padding: 10px 0;
         display: flex;
@@ -180,7 +181,7 @@ export default {
             align-items: center;
         }
     }
-    .table {
+    .tableBox {
         height: calc(100% - 60px);
     }
 }

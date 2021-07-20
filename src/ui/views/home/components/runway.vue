@@ -121,8 +121,7 @@ export default {
 
 <style scoped lang='scss'>
 .runway {
-    padding: 4px;
-    height: 30%;
+    padding: 7px;
     .box_content {
         padding: 5px 15px 0;
         overflow: hidden;
@@ -142,12 +141,12 @@ export default {
             margin-right: 5px;
         }
         .direction {
-            padding: 20px 0;
+            padding: 15px 0;
             border-bottom: 2px dashed rgba(179, 189, 220, 0.2);
         }
         .selectGroup {
             display: flex;
-            margin-top: 20px;
+            margin: 15px 0;
             .label {
                 height: 30px;
                 line-height: 30px;

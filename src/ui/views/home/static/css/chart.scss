@@ -29,6 +29,10 @@
   }
 }
 
+.highcharts-container * {
+  font-size: 12px;
+}
+
 .chart {
   .title-text {
     background: url("./static/imgs/chartbg.svg") no-repeat;

@@ -85,17 +85,9 @@ export default {
     methods: {
         loadTableStyle() {
             this.$nextTick(function () {
-                let refTable = this.$refs.ref_table.$el
-                let boxheight = refTable.parentNode.clientHeight
-                let tableheight = refTable.querySelector('.el-table__body').clientHeight
-                if (tableheight > boxheight) {
-                    this.tableWidth = 'calc(100% + 8px)'
-                }
                 if (this.tableMaxHeight > 0 && this.tableData.length * 40 > this.tableMaxHeight) {
                     this.maxHeight = this.tableMaxHeight
-                    this.tableWidth = 'calc(100% + 8px)'
                 }
-
                 this.componentKey++
             })
         },

@@ -193,7 +193,7 @@ export default {
     padding: 10px 15px;
     color: #fff;
     margin-bottom: 15px;
-    height: 510px;
+    height: calc(70% - 145px);
     .title {
         height: 30px;
         display: flex;
@@ -243,7 +243,7 @@ export default {
         }
     }
     .tableBox {
-        height: 450px;
+        height: calc(100% - 40px);
         margin-top: 10px;
     }
 }

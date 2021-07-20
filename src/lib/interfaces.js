@@ -13,7 +13,6 @@ let locationHost = location.hostname;
 
 let serverPreset = 'api/';
 // let serverPreset = '';
-
 export const servers = [
     {
         name: 'Flight', //航班动态

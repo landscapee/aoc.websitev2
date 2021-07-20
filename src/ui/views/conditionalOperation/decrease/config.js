@@ -252,6 +252,99 @@ export const sureDecrease_columnConfig1 =[
 	},
 ]
 
+export const decreaseDialog_columnConfig1 = [
+	{
+		key: '',
+		label: '时段',
+		display: ({ row },that) => {
+			return `${row.startTime}-${row.endTime}`
+		},
+	},
+	{
+		key: 'maxTotal',
+		label: '起降',
+	},
+	{
+		key: '',
+		label: '*110%',
+		display: ({ row },that) => {
+			return `${parseInt((row.maxTotal|| 0) * 1.1)}`
+		},
+	},
+	{
+		key: 'maxOff',
+		label: '起飞',
+	},
+	{
+		key: '',
+		label: '*110%',
+		display: ({ row },that) => {
+			return `${parseInt((row.maxOff|| 0) * 1.1)}`
+		},
+	},
+	{
+		key: 'maxOn',
+		label: '降落',
+	},
+	{
+		key: '',
+		label: '*110%',
+		display: ({ row },that) => {
+			return `${parseInt((row.maxOn|| 0) * 1.1)}`
+		},
+	},
+]
+
+export const decreaseDialog_columnConfig2 = [
+	{
+		key: '',
+		label: '星期',
+		display: ({ row },that) => {
+			return that.weeks[row.type]
+		},
+	},
+	{
+		key: '',
+		label: '时段',
+		display: ({ row },that) => {
+			return `${row.startTime}-${row.endTime}`
+		},
+	},
+	{
+		key: 'maxTotal',
+		label: '起降',
+	},
+	{
+		key: '',
+		label: '*110%',
+		display: ({ row },that) => {
+			return `${parseInt((row.maxTotal|| 0) * 1.1)}`
+		},
+	},
+	{
+		key: 'maxOff',
+		label: '起飞',
+	},
+	{
+		key: '',
+		label: '*110%',
+		display: ({ row },that) => {
+			return `${parseInt((row.maxOff|| 0) * 1.1)}`
+		},
+	},
+	{
+		key: 'maxOn',
+		label: '降落',
+	},
+	{
+		key: '',
+		label: '*110%',
+		display: ({ row },that) => {
+			return `${parseInt((row.maxOn|| 0) * 1.1)}`
+		},
+	},
+]	
+
 export const flightDelayOptions= function(
 	xData,
 	yData,
@@ -528,3 +621,4 @@ export const flightDelayOptions= function(
 	}
 	return option
 }
+

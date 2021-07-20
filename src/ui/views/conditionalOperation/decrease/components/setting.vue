@@ -7,7 +7,7 @@
                     <li :class="navFalg==1?'active':''" @click="navHandle(1)">常态化</li>
                     <li :class="navFalg==2?'active':''" @click="navHandle(2)">大面积延误</li>
                 </ul>
-                <div>
+                <div @click="refDataHandle">
                     <icon-svg iconClass="xingzhuangjiehe" />
                     最大起降架次
                 </div>
@@ -77,6 +77,7 @@
                 </div>
             </div>
         </div>
+        <decrease-dialog ref="ref_decreaseDialog" />
 
     </div>
 </template>
@@ -84,7 +85,11 @@
 import PostalStore from '@/ui/lib/postalStore'
 let postalStore = new PostalStore()
 import { setting_columnConfig } from '../config'
+import DecreaseDialog from './decreaseDialog.vue'
 export default {
+    components: {
+        'decrease-dialog': DecreaseDialog,
+    },
     props: ['currentReduce', 'currentReduceLists', 'currentType'],
     data() {
         return {
@@ -165,6 +170,9 @@ export default {
         },
     },
     methods: {
+        refDataHandle() {
+            this.$refs.ref_decreaseDialog.initData()
+        },
         rateChange() {
             if (
                 this.subData.rate < 25 ||
@@ -300,6 +308,7 @@ export default {
 </script>
 <style scoped lang='scss'>
 .settting {
+    height: 515px;
     .title {
         width: calc(100% - 8px);
         height: 28px;
