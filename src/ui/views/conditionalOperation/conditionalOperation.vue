@@ -40,6 +40,7 @@ export default {
 <style scoped lang="scss">
 #conditionalOperation {
     padding: 0 15px;
+    position: relative;
     .conditional_navBox {
         display: flex;
         padding: 10px 0;

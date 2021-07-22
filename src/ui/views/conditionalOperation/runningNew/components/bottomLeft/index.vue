@@ -97,16 +97,10 @@ import Bangzhu from './bangzhu'
 		},
         created() {
             // Get.message.Data
-            postal.publish({
-                channel: 'Worker',
-                topic: 'Get.message.Data',
-            });
-            postal.publish({
-                channel: 'Worker',
-                topic: 'Get.runway.Data',
-            });
+
         },
         mounted() {
+
             // 动态时段 通行能力
             postalStore.sub('trafficCapacity', ({data, key}) => {
                 this[key] = data;
@@ -132,8 +126,7 @@ import Bangzhu from './bangzhu'
                 this.runwayData = {
                     direction, runway
                 }
-                console.log(this.runwayData);
-            });
+             });
             postalStore.sub('push.message.Data', (messageClientData) => {
                 let mdrs = filter(messageClientData, (item) => item.category === 'MDRS预警');
                 let mdrsObj = mdrs[0] || {};
@@ -153,7 +146,14 @@ import Bangzhu from './bangzhu'
                 }
                 this.messageData = mdrsObj;
             });
-
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Get.message.Data',
+            });
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Get.runway.Data',
+            });
         },
         beforeDestroy() {
             postalStore.unsubAll()

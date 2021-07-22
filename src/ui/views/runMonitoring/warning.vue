@@ -93,8 +93,9 @@
             },
 
 
-            open(item,options,statusOptions,timeOptions,infoObj) {
-                this.options=options
+            open(item,options,statusOptions,timeOptions,infoObj,idMapNoObj) {
+
+                 this.options=options
                 this.dialogFormVisible = true
                 this.item = item
                 this.timeOptions=timeOptions
@@ -104,19 +105,17 @@
                     if(res.code!=200||!res.data){
                         return
                     }
+                    console.log(options);
                     map(res.data,(k,l)=>{
                         if(k){
                             let arr=map(k,(item)=>{
                                 return this.infoObj[item]
                             })
-                            this.statusDetail.push({name:l,value:arr.join(',')})
+                            this.statusDetail.push({name:idMapNoObj[l]||'--',value:arr.join(',')})
 						}
-
                     })
                 })
             },
-
-
         },
         created() {
 

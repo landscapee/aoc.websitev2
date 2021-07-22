@@ -134,6 +134,9 @@ export default {
             console.log(key,data);
         })
     },
+    beforeDestroy() {
+        postalStore.unsubAll()
+    },
 }
 </script>
 
@@ -159,6 +162,7 @@ export default {
                 position: absolute;
                 top: 75px;
                 z-index: 1000;
+                border-radius: 4px;
             }
             .timeText {
                 margin-left: 12px;

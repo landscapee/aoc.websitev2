@@ -190,7 +190,6 @@
             });
         },
         mounted() {
-
             postalStore.sub('alternateData', ({data, key}) => {
                 key == 'tempWaitArea' && console.log(key, data);
                 let data1 = data
@@ -205,13 +204,12 @@
 
         },
         beforeDestroy() {
-            this.$FlightDetais.destroy()
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.alternate.Stop',
             })
-
             postalStore.unsubAll()
+            this.$FlightDetais.destroy()
         }
     }
 </script>

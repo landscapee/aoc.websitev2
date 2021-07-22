@@ -34,7 +34,7 @@
 						</template>
 						<template slot="batchSet" slot-scope="{row,index}">
 							<!--<div>批量预警</div>-->
-							<el-checkbox class="labelNone" v-model="allCheckWarn[opt.key]" :label="row.flightId">
+							<el-checkbox class="labelNone" @change="idMapNo(row)" v-model="allCheckWarn[opt.key]" :label="row.flightId">
 								<span  >1</span>
 							</el-checkbox>
 						</template>
@@ -78,6 +78,7 @@
         components: {Setting,Bangzhu,AdvTable,Warning},
         data() {
             return {
+                idMapNoObj:{},
                 setting,
                 infoObj:{},
                 statusOptions:[],
@@ -138,7 +139,7 @@
             postalStore.sub( 'advanceArrive',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.advanceArrive,'data',data)
-                length&&this.$set(this.pageListObj.batchConcern,'data',data)
+                // length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 // length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
                 // length&&this.$set(this.pageListObj.vvpFlights,'data',data)
                 console.log('advanceArrive',data);
@@ -165,6 +166,9 @@
             postalStore.unsubAll()
         },
         methods: {
+            idMapNo(row){
+                this.idMapNoObj[row.flightId]=row.flightNo
+			},
             toDetails(row){
 				this.$FlightDetais.open({flightId:row.flightId},true)
 			},
@@ -256,7 +260,7 @@
                 if(!this.getMoreWarnLength(key)||!this.$hasRole(obj[key])){
                     return
                 }
-                this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key],this.statusOptions,this.timeOptions,this.infoObj)
+                this.$refs.Warning.open({name,key,tableConfig},this.allCheckWarn[key],this.statusOptions,this.timeOptions,this.infoObj,this.idMapNoObj)
             },
         },
 
@@ -293,12 +297,15 @@
 				}
 			}
 		}
+
+		.warningRow{
+			td{
+ 				background: #f2dede!important;
+			}
+		}
 	}
 
-	::v-deep .warningRow{
-		background: #f2dede!important;
 
-	}
 	 .el-dropdown-menu{
 		padding:15px!important;
 	}

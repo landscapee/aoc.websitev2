@@ -15,7 +15,7 @@ FlightDetailsObj.install = function (Vue) {
     }
     let removeEle=(vm)=>{
          let ele=FlightInstance?.$mount&&FlightInstance.$mount().$el
-        document.body.removeChild(ele)
+        ele&&document.body.removeChild(ele)
         FlightInstance=null
      }
 
