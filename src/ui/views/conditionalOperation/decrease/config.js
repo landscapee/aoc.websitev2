@@ -263,6 +263,13 @@ export const decreaseDialog_columnConfig1 = [
 	{
 		key: 'maxTotal',
 		label: '起降',
+		display: ({ row,$index }, that) => {
+			if (that.editShow) {
+				return `<input value="${row.maxTotal}" class="tableInput" onchange="coordinateArgChange(this,'tableData',${$index},'maxTotal')"/>`
+			} else {
+				return row.maxTotal
+			}
+		},
 	},
 	{
 		key: '',
@@ -274,6 +281,14 @@ export const decreaseDialog_columnConfig1 = [
 	{
 		key: 'maxOff',
 		label: '起飞',
+		display: ({ row,$index }, that) => {
+			if (that.editShow) {
+
+				return `<input value="${row.maxOff}" class="tableInput" onchange="coordinateArgChange(this,'tableData',${$index},'maxOff')"/>`
+			} else {
+				return row.maxOff
+			}
+		},
 	},
 	{
 		key: '',
@@ -285,6 +300,13 @@ export const decreaseDialog_columnConfig1 = [
 	{
 		key: 'maxOn',
 		label: '降落',
+		display: ({ row,$index }, that) => {
+			if (that.editShow) {
+				return `<input value="${row.maxOn}" class="tableInput" onchange="coordinateArgChange(this,'tableData',${$index},'maxOn')"/>`
+			} else {
+				return row.maxOn
+			}
+		},
 	},
 	{
 		key: '',
@@ -292,28 +314,61 @@ export const decreaseDialog_columnConfig1 = [
 		display: ({ row },that) => {
 			return `${parseInt((row.maxOn|| 0) * 1.1)}`
 		},
+	},
+	{
+		key: '',
+		type: 'operate',
+		label: '操作',
+		show: (that) => {
+			return that.editShow
+		},
+		operates: [
+			{
+				btnType:'primary',
+				display: ({ $index }) => {
+					if ($index==0) {
+						return ''
+					}
+					return '同上'
+				},
+				click: ({ row, $index }, that) => {
+					let prevData = that.tableData[$index-1]
+					row.maxOff = prevData.maxOff
+					row.maxOn = prevData.maxOn
+					row.maxTotal = prevData.maxTotal
+					console.log(row,$index)
+				},
+			},
+		],
 	},
 ]
 
 export const decreaseDialog_columnConfig2 = [
 	{
-		key: '',
-		label: '星期',
-		display: ({ row }, that) => {
-			console.log(that,row.type)
-			return that.weeks[row.type]
-		},
-	},
+        slot: 'week'
+
+    },
 	{
 		key: '',
 		label: '时段',
-		display: ({ row },that) => {
-			return `${row.startTime}-${row.endTime}`
+		display: ({ row,$index },that) => {
+			if (that.editShow) {
+				return `<input value="${row.startTime}-${row.endTime}" class="tableInput" onchange="coordinateArgChange(this,'special',${$index},'time')"/>`
+			} else {
+				return `${row.startTime}-${row.endTime}`
+			}
 		},
 	},
 	{
 		key: 'maxTotal',
 		label: '起降',
+		display: ({ row,$index }, that) => {
+			if (that.editShow) {
+				return `<input value="${row.maxTotal}" class="tableInput" onchange="coordinateArgChange(this,'special',${$index},'maxTotal')"/>`
+			} else {
+				return row.maxTotal
+			}
+		},
 	},
 	{
 		key: '',
@@ -325,6 +380,13 @@ export const decreaseDialog_columnConfig2 = [
 	{
 		key: 'maxOff',
 		label: '起飞',
+		display: ({ row,$index }, that) => {
+			if (that.editShow) {
+				return `<input value="${row.maxOff}" class="tableInput" onchange="coordinateArgChange(this,'special',${$index},'maxOff')"/>`
+			} else {
+				return row.maxOff
+			}
+		},
 	},
 	{
 		key: '',
@@ -336,6 +398,13 @@ export const decreaseDialog_columnConfig2 = [
 	{
 		key: 'maxOn',
 		label: '降落',
+		display: ({ row,$index}, that) => {
+			if (that.editShow) {
+				return `<input value="${row.maxOn}" class="tableInput" onchange="coordinateArgChange(this,'special',${$index},'maxOn')"/>`
+			} else {
+				return row.maxOn
+			}
+		},
 	},
 	{
 		key: '',
@@ -343,6 +412,26 @@ export const decreaseDialog_columnConfig2 = [
 		display: ({ row },that) => {
 			return `${parseInt((row.maxOn|| 0) * 1.1)}`
 		},
+	},
+	{
+		key: '',
+		type: 'operate',
+		label: '操作',
+		show: (that) => {
+			return that.editShow
+		},
+		operates: [
+			{
+				btnType:'primary',
+				display: ({ row },that) => {
+					return '删除'
+				},
+				click: ({ row,$index }, that) => {
+					console.log(row)
+					that.special.splice($index,1)
+				},
+			},
+		],
 	},
 ]	
 

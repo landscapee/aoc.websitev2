@@ -1,7 +1,5 @@
 import {memoryStore} from '../lib/memoryStore'
 import {
-  start,
-  stop,
   flight_home,
   flight_monthClearance,
   flight_lastestAta,
@@ -103,15 +101,13 @@ export const init = (worker_) => {
     clientObj.homeClient = new SocketWrapper(c);
   });
   worker.subscribe('Page.Home.Start', () => {
-    start(worker);
     checkClient('homeClient').then(() => {
       console.log('home连接成功')
       subWSEvent();
     });
   });
   worker.subscribe('Page.Home.Stop',()=>{
-    stop(worker);
-    forEach(clientObj,item=>{
+    forEach(clientObj, item => {
       item.unSubAll()
     })
   })

@@ -88,11 +88,26 @@ tr {
 .tableInput {
     background: #101c2f;
     border: 1px solid #37455c;
-    width: 100%;
+    width: 80%;
     text-align: center;
     height: 30px;
     color: #fff;
     border-radius: 2px;
+}
+
+.operateBtn {
+
+    background-color: #409EFF;
+    border: none;
+    height: 30px;
+    width: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
 }
 
 .inputCell {
