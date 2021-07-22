@@ -24,6 +24,7 @@ let getFlight = (query) => {
 };
 export const init = (worker_,httpRequest) => {
     worker = worker_;
+
     worker.subscribe(`AdverseCondition.GetFlight`, getFlight);
     worker.subscribe(`Decrease.GetReduceFlights`, getReduceFlights);
     

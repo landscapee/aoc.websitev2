@@ -129,6 +129,9 @@ export default {
         })
     },
     mounted() {},
+    destroyed() {
+        postalStore.pub('Worker', 'Page.Home.Stop', '')
+    },
     methods: {
         loadSetting() {
             _.each(settingsCfg, (item, k) => {

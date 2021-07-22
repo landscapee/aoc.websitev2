@@ -1,16 +1,4 @@
 
-export const start = (posWorker) => {
-  posWorker.subscribe('Flight.Change.Sync',(data)=>{
-
-  })
-}
-
-export const stop = (posWorker) => {
-  posWorker.unsubscribe('Flight.Change.Sync')
-}
-
-
-
 
 export const flight_home = (posWorker, data) => {
   posWorker.publish('Web','flight.home',data)
@@ -51,14 +39,6 @@ export const flight_runwayTraffic = (posWorker, data) => {
 export const flight_runwayModels = (posWorker, data) => {
   posWorker.publish('Web','flight.runwayModels',data)
 }
-
-
-
-
-
-
-
-
 //积压
 export const flight_delay_backStatus = (posWorker, data) => {
   posWorker.publish('Web','flight.delay.backStatus',data)
