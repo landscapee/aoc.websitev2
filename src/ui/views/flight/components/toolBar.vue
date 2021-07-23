@@ -36,7 +36,7 @@
         </div>
       </div>
       <div class="buttons">
-        <el-button title="高级搜索" type="info" size="mini"><i class="iconfont icon-gaojisousuo"/></el-button>
+        <el-button @click="toggleAdvance" title="高级搜索" type="info" size="mini"><i class="iconfont icon-gaojisousuo"/></el-button>
         <el-button title="查看航班历史" type="info" size="mini"><i class="iconfont icon-lishi"/></el-button>
         <el-button @click="toggleFieldSetting" title="列表配置" type="info" size="mini"><i class="iconfont icon-zidingyi"/></el-button>
         <el-button title="导出当前结果" type="info" size="mini"><i class="iconfont icon-daochuexcel"/></el-button>
@@ -99,9 +99,11 @@ export default {
     },
     dayChange: function (label){
       this.dayProperty = label;
-      this.sendFilterOpt()
+      this.sendFilterOpt();
+      postalStore.pub('Web', 'Flight.SetDay', label);
     },
     sendFilterOpt: function (sort) {
+      console.log(sort)
       if (!sort){
         postalStore.pub('Web', 'ClearSort', '')
       }
@@ -123,7 +125,7 @@ export default {
       this.opt && extend(msg, this.opt);
       this.operationType && extend(msg, {dayProperty: this.operationType});
       this.dayProperty && extend(msg, {day: this.dayProperty});
-      sort && extend(msg, {sort});
+      sort && extend(msg, sort);
       if (!sort){
         msg.sort = null
       }
@@ -154,6 +156,9 @@ export default {
       this.searchTimer = setTimeout(() => {
         this.onSearchFlight();
       }, 500);
+    },
+    toggleAdvance(){
+      this.$store.commit('flight/toggleShowAdvance', !this.$store.state.flight.showAdvance)
     }
   },
 }

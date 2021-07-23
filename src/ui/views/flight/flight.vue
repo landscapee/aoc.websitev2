@@ -65,6 +65,14 @@
         this.$store.commit('flight/getAbnormalOptions', res.data)
       })
 
+      // 获取运营状态options
+      this.$request.get('flight', 'Flight/status').then(res => {
+        if (res.code === 200){
+          this.$store.commit('flight/getStatusOptions', JSON.parse(res.data))
+        }
+
+      })
+
     },
     beforeDestroy() {
       // let globalHead = document.getElementById('com_glob_head');

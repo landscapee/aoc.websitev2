@@ -774,6 +774,14 @@ export const calcMaintainTime = (flight) => {
     });
 };
 
+/**
+ * 设置isDelay默认为false 高级搜索可用
+ */
+export const setDefaultDelay = (flight) => {
+	let isDelay = get(flight, 'isDelay');
+	return extend({}, flight, { isDelay: !!isDelay });
+};
+
 export const getFlightDelayWarn = (flight) => {
 	/*
 		* Ctot - 放行标准起飞时间 < -10M 绿色

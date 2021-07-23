@@ -8,7 +8,7 @@
   ::v-deep {
 
     .header{
-      height: 26px;
+
       background-color: #273448;
       .text-blue-009{
         color: #0098ff!important;
@@ -43,7 +43,48 @@
         justify-content: center;
         align-items: center;
         white-space: nowrap;
+        height: 26px;
       }
+      .searchWrapper{
+        background-color: #1e2a3d;
+        width: 100%;
+        height: $rowHeight;
+        padding: 2px;
+        .search{
+          height: 100%;
+          background-color: #273448;
+          padding: 0 4px;
+          input{
+            height: 100%;
+            padding: 2px;
+            border: 0!important;
+            background-color: transparent;
+            outline: none;
+            color: #fff;
+            width: 100%;
+          }
+          .el-select{
+            height: 100%;
+            .el-input{
+              height: 100%;
+              .el-input__suffix-inner{
+                height: 100%;
+                .el-input__icon{
+                  line-height: 100%;
+                }
+              }
+            }
+          }
+
+        }
+
+      }
+      //.advanceSearch{
+      //  background-color: #1e2a3d;
+      //  padding: 5px 5px;
+      //
+      //
+      //}
       .icon-lock-2 {
         width: 18px;
         height: 18px;
