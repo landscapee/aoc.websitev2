@@ -15,7 +15,8 @@
 	</div>
 </template>
 <script>
-    import {map } from 'lodash'
+    import {map,some } from 'lodash'
+    import {getUserSerializ} from '@/ui/lib/localStorageTemp'
 
     export default {
         name: "warning",
@@ -28,7 +29,12 @@
         },
         methods: {
             save(){
-                let obj={flightId:this.item.flightId,desc:this.text,type:this.item.type}
+                let isZhs = !this.$hasRole('zhihuishi', false);
+                  let obj={
+                    flightId:this.item.flightId,
+					desc:this.text,
+					type:this.item.type,
+                    roleCode: isZhs ? 'zhihuishi':null}
                 this.$request.post('situation', 'pool/coordinate', obj,true).then((res)=>{
                     if(res.code!=200 ){
                         this.$message.warning(res.message)

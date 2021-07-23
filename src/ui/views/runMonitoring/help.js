@@ -1,3 +1,6 @@
+import moment from 'moment';
+import {memoryStore} from "@/worker/lib/memoryStore";
+
 export const titleMessage = {
     advanceArrive: (
         `<div>
@@ -23,6 +26,11 @@ export const titleMessage = {
             <p>1.要客航班</p>
             <p>2.实际落地时间为空</p>
             <p>3.实际落地超过当前时间30分钟则出池</p>
+    </div>`,
+    closeDoorWait: ` <div>
+            <p>1.进池规则：航班关客舱门25分钟还没有推出（或者推出后续动作）的航班</p>
+            <p>2.出池规则：航班推出或者有后续动作都需要出池</p>
+            <p>3.需要和大面积延误关舱等待统计规则保持一致。</p>
     </div>`
 
 }
@@ -59,7 +67,6 @@ export const setting = {
             type: 'simple'
         },
     ],
-
     batchConcern: [
         {
             type: 'index',
@@ -201,6 +208,55 @@ export const setting = {
         {
             key: 'warnDetail',
             width: '50px', label: '取消预警',
+            type: 'slot'
+        },
+    ],
+    // 航班号、机位、航线、关客舱门时间，关舱时长
+    closeDoorWait: [
+        {
+            type: 'index',
+            width: '30px', label: '序号',
+            key: 'ind'
+        },
+        {
+            key: 'flightNo',
+            width: '60px', label: '航班号',
+            type: 'slot'
+        },
+        {
+            key: 'seat',
+            width: '50px', label: '机位',
+            type: 'simple'
+        },
+        {
+            key: 'closeDoorOTime',
+            label: '关舱时长',width: '80px',type: 'simple',
+            display: (row) => {
+                let data=row
+                let closeDoorTime = data.closeDoorTime === '--' ? null : data.closeDoorTime;
+                console.log('closeDoorTime',row,closeDoorTime);
+                if (!closeDoorTime) {
+                    return '--';
+                }
+                let now =  memoryStore.getItem('global').now;
+                console.log('now',now);
+                let diff = now - closeDoorTime;
+                let diffHour = parseInt(diff / (60 * 60 * 1000), 10);
+                let diffMinute = parseInt(diff / (60 * 1000), 10) % 60;
+                return diffHour + '时' + diffMinute + '分';
+            },
+        },
+
+        {
+            key: 'closeDoorTime',
+            width: '80px', label: '关客舱门时间',
+            type: 'simple',
+            display:(row)=>{
+                return row.closeDoorTime?moment(row.closeDoorTime).format('HH:mm'):'--'
+            }
+        },{
+            key: 'displayRouter',
+            width: '180px', label: '航线',
             type: 'slot'
         },
     ],

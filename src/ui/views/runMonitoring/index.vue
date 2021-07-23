@@ -9,12 +9,12 @@
 				</span>
 				<el-dropdown-menu slot="dropdown">
 					<el-dropdown-item   v-for="(opt) in pageList" :key="opt.key">
-						<el-checkbox v-model="opt.show" :label="opt.name"></el-checkbox>
+						<el-checkbox @change="showChange" v-model="runMonitorShow[opt.key]" :label="opt.name"></el-checkbox>
 					</el-dropdown-item>
 					<div @click="resetPageList" class="resetPage">重置</div>
 				</el-dropdown-menu>
 			</el-dropdown>
-			<div class="itemMonitor" v-if="opt.show" v-for="(opt,index) in pageList" :key="index">
+			<div class="itemMonitor" v-if="runMonitorShow[opt.key]" v-for="(opt,index) in pageList" :key="index">
 				<div class="itemTitle">
 					<div>{{opt.name}}（{{(opt.data||[]).length}}）</div>
 					<div >
@@ -50,6 +50,16 @@
 							<icon-svg  iconClass="shanchu"  ></icon-svg>
 						</span>
 						</template>
+						<template slot="displayRouter" slot-scope="{row,index}">
+							<!--<div>航线 displayRouter</div>-->
+							<div class="hangxian"  >
+								<div v-for="(opt,index) in row.displayRouter" :key="index">
+									<span v-if="index!==0"><icon-svg iconClass="jiantou"></icon-svg></span>
+									<span>{{opt}} </span>
+								</div>
+							</div>
+
+						</template>
 
 					</AdvTable>
 
@@ -78,6 +88,7 @@
         components: {Setting,Bangzhu,AdvTable,Warning},
         data() {
             return {
+                runMonitorShow:{},
                 idMapNoObj:{},
                 setting,
                 infoObj:{},
@@ -92,6 +103,7 @@
                     advanceArrive:{name: '提前落地航班',key:'advanceArrive', data: [], show: true, tableConfig: []},
                     guaranteeWarn:{name: '地面保障告警池',key:'guaranteeWarn', data: [], show: true, tableConfig: []},
                     vvpFlights:{name: '要客航班池',key:'vvpFlights', data: [], show: true, tableConfig: []},
+                     closeDoorWait:{name: '关舱等待池',key:'closeDoorWait', data: [], show: true, tableConfig: []},
                 },
 
             }
@@ -112,6 +124,17 @@
             },
         },
         created() {
+            let obj={
+                batchConcern:true,
+                advanceArrive:true,
+                guaranteeWarn:true,
+                vvpFlights:true,
+                closeDoorWait:true,
+            }
+            let data=localStorage.getItem('runMonitorShow')
+            let obj1=data&&JSON.parse( data)
+             this.runMonitorShow=obj1||obj
+            localStorage.setItem('runMonitorShow',JSON.stringify(this.runMonitorShow))
             map(this.pageListObj,(k,l)=>{
                 k.tableConfig=[];
                 map(setting[l],(k1,l)=>{
@@ -133,8 +156,7 @@
 
                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 // this.allCheckWarn.batchConcern=[]
-                console.log('batchConcern',data);
-            });
+             });
             //提前落地池
             postalStore.sub( 'advanceArrive',(data)=>{
                 let length=Object.keys(data[0]||{}).length
@@ -142,20 +164,22 @@
                 // length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 // length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
                 // length&&this.$set(this.pageListObj.vvpFlights,'data',data)
-                console.log('advanceArrive',data);
-            });
+             });
             //地面保障池
             postalStore.sub( 'guaranteeWarn',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
-                console.log('guaranteeWarn',data);
-            });
+             });
             //要客航班池
             postalStore.sub( 'vvpFlights',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.vvpFlights,'data',data)
-                // this.allCheckWarn.vvpFlights=[]
-                console.log('vvpFlights',data);
+             });
+            //关舱等待池
+            postalStore.sub( 'closeDoorWait',(data)=>{
+                let length=Object.keys(data[0]||{}).length
+                length&&this.$set(this.pageListObj.closeDoorWait,'data',data)
+                 console.log('closeDoorWait',data);
             });
         },
         beforeDestroy() {
@@ -166,6 +190,10 @@
             postalStore.unsubAll()
         },
         methods: {
+            showChange(){
+
+              localStorage.setItem('runMonitorShow',JSON.stringify(this.runMonitorShow))
+			},
             idMapNo(row){
                 this.idMapNoObj[row.flightId]=row.flightNo
 			},
@@ -217,7 +245,7 @@
 				})
             },
             delWaring(row){
-                if(!this.$hasRole('edit-batch-cancel')){
+                 if(!this.$hasRole('edit-batch-cancel')){
                     return
                 }
                 this.$confirm(`是否确认取消关注航班${row.flightNo}？`, '提示', {
@@ -294,6 +322,15 @@
 					border-right: 0 !important;
 					border-bottom: $border !important;
 					background: #19263b !important;
+					.hangxian {
+						display: flex;
+						justify-content: center;
+						svg {
+							margin: 0 2px;
+							width: 10px;
+							fill: #3b639a;
+						}
+					}
 				}
 			}
 		}

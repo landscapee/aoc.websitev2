@@ -43,6 +43,11 @@ const subWSEvent = () => {
         let data=getFlightDatas(res)
         worker.publish('Web','vvpFlights',data)
     })
+    //关舱等待池
+    client.sub('/Flight/monitor/closeDoorWait',(res)=>{
+        let data=getFlightDatas(res)
+        worker.publish('Web','closeDoorWait',data)
+    })
 };
 
 export const init = (worker_,httpRequest_) => {

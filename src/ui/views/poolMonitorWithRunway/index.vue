@@ -21,7 +21,7 @@
 				</span>
 			<el-dropdown-menu slot="dropdown">
 				<el-dropdown-item v-for="(opt) in pageListObj" :key="opt.key">
-					<el-checkbox v-model="opt.show" :label="opt.name"></el-checkbox>
+					<el-checkbox @change="showChange" v-model="poolMonitorShow[opt.key]" :label="opt.name"></el-checkbox>
 				</el-dropdown-item>
 				<div @click="resetPageList" class="resetPage">重置</div>
 			</el-dropdown-menu>
@@ -95,7 +95,7 @@
 			</div>
 		</div>
 		<div class="bottomTable">
-			<div class="bottomItem " :class="opt.columns?'bottomItemTwoTable':''" v-if="opt.show"
+			<div class="bottomItem " :class="opt.columns?'bottomItemTwoTable':''" v-if="poolMonitorShow[opt.key]"
 				 v-for="(opt,index) in pageListObj" :key="index">
 				<div class="itemTitle"
 					 :style="'background-image:url('+opt.bg+') ;background-repeat:no-repeat;background-size:100% 100%;'">
@@ -108,7 +108,7 @@
 					</div>
 					<div>
 						<i v-if="!notSeting(opt)" @click="openSetting(opt)" class="el-icon-setting"></i>
-						<span  @click="bangzhu(opt) " style="color:#fff">
+						<span @click="bangzhu(opt) " style="color:#fff">
 							<icon-svg iconClass="bangzhu"></icon-svg>
 						</span>
 					</div>
@@ -129,7 +129,7 @@
 								</template>
 								<template slot="noRequestedHandle" slot-scope="{row,index}">
 									<!--<div> 过站时间不足 操作 </div>-->
-									<span @click="jiantou(row,opt.key,opt.name) " class="jiantouSpan cursor">
+									<span @click="jiantou(row,opt.key,opt.name) " title="申请" class="jiantouSpan cursor">
 										<icon-svg iconClass="jiantou1"
 												  :style="{transform: 'rotate(-90deg)'}"></icon-svg>
 									</span>
@@ -137,9 +137,14 @@
 								<template slot="requestedHandle" slot-scope="{row,index}">
 									<!--<div> 过站时间不足 操作 </div>-->
 									<span class="xietiao  ">
-										<span class="xietiaoC1 cursor" @click="xietiao(row,opt.key) "
-											  v-if="row[xietiaoObj[opt.key]]==0" :title="row.descript">
-											协调
+
+										<span v-if="row[xietiaoObj[opt.key]]==0">
+											<span v-if="criticalAble(row.roleCode,opt.key)">--</span>
+											<span class="xietiaoC1 cursor" @click="xietiao(row,opt.key) " :title="row.descript"
+												  v-else>协调</span>
+											<span class="xietiaoC1 cursor" @click="xietiao(row,opt.key) " :title="row.descript"
+												  >协调</span>
+
 										</span>
 										<span class="xietiaoC2 " v-else-if="row[xietiaoObj[opt.key]]==1"
 											  :title="'备注信息：'+row.descript">
@@ -167,14 +172,14 @@
 		<Setting :setting="setting" ref="Setting" col="7" @getCol="getCol"></Setting>
 		<Bangzhu ref="Bangzhu"></Bangzhu>
 		<Coordination ref="Coordination"></Coordination>
-
+		<Xietiao ref="Xietiao"></Xietiao>
 	</div>
 </template>
 
 <script>
 
     import postal from 'postal';
-    import {map, keyBy} from 'lodash';
+    import {map, keyBy, some} from 'lodash';
     import {setting} from './help';
     import PostalStore from "../../lib/postalStore";
     import moment from "moment"
@@ -190,12 +195,14 @@
     import sfhbc from '../../assets/img/sfhbc.png'
     import yywc from '../../assets/img/yywc.png'
     import cqywc from '../../assets/img/cqywc.png'
-
+    import {getUserSerializ} from '@/ui/lib/localStorageTemp'
+	import Xietiao from './components/xietiao'
     export default {
         name: "index",
-        components: {AdvTable, Setting, Bangzhu, Coordination},
+        components: {Xietiao,AdvTable, Setting, Bangzhu, Coordination},
         data() {
             return {
+                poolMonitorShow:{},
                 moveNum: 0,
                 unfoldObj: {},//同一个时间的多个航班是否展开
                 timerInterval: null,
@@ -263,10 +270,28 @@
                     },
                 },
                 delayFlightsOptions: [
-                    { value: 'takeOffNormal', label: '放行不正常' }, { value: 'originalAllowTakeOff', label: '始发不正常' }, { value: 'normal', label: '航班不正常' }, { value: 'departureNormal', label: '起飞不正常' }, { value: 'arriveNormal', label: '落地不正常' }, { value: 'originalInMorning', label: '早高峰始发不正常' }],
+                    {value: 'takeOffNormal', label: '放行不正常'}, {
+                        value: 'originalAllowTakeOff',
+                        label: '始发不正常'
+                    }, {value: 'normal', label: '航班不正常'}, {
+                        value: 'departureNormal',
+                        label: '起飞不正常'
+                    }, {value: 'arriveNormal', label: '落地不正常'}, {value: 'originalInMorning', label: '早高峰始发不正常'}],
             }
         },
         computed: {
+            criticalAble() {
+                return(itemRole,key)=>{
+                    let isZhs = !this.$hasRole('zhihuishi', false);
+                    let isItemZhs = itemRole === 'zhihuishi';
+                    let obj = {
+                        fastEnter: 'edit-overstation-request-coordination',
+                        critical: 'edit-delay-request',
+                    }
+                    return (isZhs !== isItemZhs) &&this.$hasRole(obj[key], false);
+
+                }
+               },
             getFlightDatas() {
                 return (item, runway) => {
                     let blo = this.isUnfold(item[0], runway)
@@ -356,6 +381,10 @@
 
         },
         methods: {
+            showChange(){
+
+                localStorage.setItem('poolMonitorShow',JSON.stringify(this.poolMonitorShow))
+            },
             toDetails(row) {
                 this.$FlightDetais.open({flightId: row.flightId})
             },
@@ -404,42 +433,14 @@
                 return Math.ceil(timewidth / timeItemWidth)
             },
 
-            xietiao(row, key) {
+            xietiao(row, key, role) {
                 let obj = {
-                    fastEnter: {
-                        role: 'edit-overstation-request-coordination',
-                        type: 'overStation'
-                    },
-                    critical: {
-                        role: 'edit-delay-request',
-                        type: 'criticalDelay'
-                    },
+                    fastEnter: 'overStation',
+                    critical: 'criticalDelay',
+                }
+                let content=`你确认协调${row.flightNo}航班吗?`
 
-                }
-                if (!this.$hasRole(obj[key].role)) {
-                    return
-                }
-                let fn = (data) => {
-                    this.$request.post('situation', 'pool/status', data, true).then((res) => {
-                        if (res.code != 200) {
-                            this.$message.warning(res.message)
-                            return
-                        }
-                        this.$message.success('操作成功')
-                    })
-                }
-                let o = {status: 1, flightId: row.flightId, type: obj[key].type}
-                this.$confirm(`你确认协调${row.flightNo}航班吗?`, '提示', {
-                    type: 'warning',
-                    confirmButtonText: '确认协调',
-                    cancelButtonText: '不协调',
-                }).then(() => {
-                    fn(o)
-                }).catch(() => {
-                    o.status = null
-                    fn(o)
-                    // this.$message.info('已取消操作')
-                })
+                this.$refs.Xietiao.open(content,row.flightId,obj[key])
             },
             jiantou({flightId}, key, name) {
                 let obj = {
@@ -474,6 +475,19 @@
 
         },
         created() {
+            let obj={
+                delayFlights2:true,
+                fastEnter:true,
+                critical:true,
+                initialFlights2:true,
+                alwaysDelay:true,
+                departGuarantee:true,
+            }
+            let data=localStorage.getItem('poolMonitorShow')
+            let obj1=data&&JSON.parse( data)
+            this.poolMonitorShow=obj1||obj
+            localStorage.setItem('poolMonitorShow',JSON.stringify(this.poolMonitorShow))
+
             this.nowTime = new Date()
             let time = (60 - this.nowTime.getSeconds()) * 1000
             setTimeout(() => {

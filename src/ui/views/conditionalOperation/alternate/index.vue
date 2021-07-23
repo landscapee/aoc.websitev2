@@ -191,7 +191,7 @@
         },
         mounted() {
             postalStore.sub('alternateData', ({data, key}) => {
-                key == 'tempWaitArea' && console.log(key, data);
+                key == 'alternateLanding' && console.log(key, data);
                 let data1 = data
                 if (key == 'seatEvaluate') {
                     data1 = {}

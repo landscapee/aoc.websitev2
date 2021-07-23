@@ -17,9 +17,9 @@
                     </div>
                   </template>
                     <template slot-scope="scope">
-
-                        <template v-if="col.type=='index'">{{scope.$index+1}}</template>
-
+                        <template v-if="col.type=='index'">
+                            <div :class="scope.$index<3?'redIndex':''">{{scope.$index+1}}</div>
+                        </template>
                         <template v-else-if="col.type=='operate'">
                             <el-button :type='item.btnType?item.btnType:"text"' v-for="(item,index) in col.operates" :key="index" class="tableButton" style="margin:0 5px;" :style="getStyle(item)" v-html="item.display(scope,ctx)" @click="item.click?item.click(scope,ctx):''" :disabled="item.disabled?item.disabled(scope,ctx):false" size="mini" v-show="item.display(scope,ctx)"></el-button>
                         </template>
@@ -112,5 +112,8 @@ export default {
 .eleTableBox {
     overflow: hidden;
     height: 100%;
+    .redIndex{
+        color: #ac0015!important;
+    }
 }
 </style>
