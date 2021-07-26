@@ -1,7 +1,17 @@
 import loki from 'lokijs';
 import Promise from 'bluebird';
 import { has, extend, get, groupBy, each, omit, flatMap, map, flow, orderBy, remove, concat, compact, isArray, toUpper, keyBy, isString } from 'lodash';
-import { calcCancel, calcReturn, calcAlternate, calcCompleted, calcOriginated, addDisplayField, buildSearchField, fixTakeOffNormalStatus } from 'lib/helper/flight';
+import {
+  calcCancel,
+  calcReturn,
+  calcAlternate,
+  calcCompleted,
+  calcOriginated,
+  addDisplayField,
+  buildSearchField,
+  fixTakeOffNormalStatus,
+  setDefaultDelay
+} from 'lib/helper/flight';
 
 import Logger from '@/lib/logger';
 // import { remote } from 'electron';
@@ -52,6 +62,7 @@ export const processFlight = (flights) => {
     // calcCancel,
     // calcReturn,
     // calcAlternate,
+    setDefaultDelay,
     calcCompleted,
     fixTakeOffNormalStatus,
     fixDelayReasonMerge,

@@ -38,6 +38,38 @@
       :options="delayOptions"
       @change="(v) => abnormalCategoryChange(v, scope.row)"></el-cascader>
 
+  <el-select
+      clearable
+      v-else-if="item.key === 'delayMainReason'"
+      slot-scope="scope"
+      :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
+      :value="scope.row.delayMainReason"
+      @change="(v) => delayChange({delayMainReason: v, delaySubReason: null}, scope.row)">
+    <el-option
+        :key="option.value"
+        :label="option.label"
+        :value="option.value"
+        v-for="option in flightRemoteSel['delayMainReason']">
+    </el-option>
+
+  </el-select>
+
+  <el-select
+      clearable
+      v-else-if="item.key === 'delaySubReason'"
+      slot-scope="scope"
+      :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
+      :value="scope.row.delayMainReason && scope.row.delayMainReason !== '--' ? scope.row.delaySubReason : '--'"
+      @change="(v) => delayChange({delaySubReason: v}, scope.row)">
+    <el-option
+        :key="option.value"
+        :label="option.label"
+        :value="option.value"
+        v-for="option in getSubReason(scope.row)">
+    </el-option>
+
+  </el-select>
+
   <permissionSwitch v-else-if="['airportDesc','airlineDesc'].includes(item.key)" slot-scope="scope" :role="item.role">
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="delayInputBlur(item, scope)" v-model="delayInputValue"></el-input>
@@ -106,6 +138,7 @@ import PostalStore from "@/ui/lib/postalStore";
 import {hasRole} from "@/ui/lib/common";
 import {getFlightDelayWarn} from "@/lib/helper/flight";
 import classNames from "classnames";
+import {mapState} from "vuex";
 
 let postalStore = new PostalStore()
 export default {
@@ -138,6 +171,13 @@ export default {
   },
   methods: {
     get,
+    hasRole,
+    getSubReason:function (f){
+      let {delayMainReason} = f
+      let mainOptions = this.flightRemoteSel.delayMainReason;
+      let options = _.find(mainOptions, i => i.value === delayMainReason);
+      return options ? options.children : null
+    },
     setTop: function (flightId){
       let now = memoryStore.getItem('global').now
       let day = moment(now).format('YYYYMMDD');
@@ -265,6 +305,16 @@ export default {
       })
     },
 
+    // 延误分类事件
+    delayChange: function (reason, row){
+      let options = { ...reason, flightId: row.flightId };
+      this.$request.post('situation', 'runningState/edit', options, true).then(res => {
+        if (res.code === 200){
+          this.$message({message: '操作成功!', type: 'success'})
+        }
+      })
+    },
+
     // 播放视频
     playVideo: function (row){
       this.$request.post('flight', 'Flight/video/' + row.flightId).then(res => {
@@ -304,11 +354,14 @@ export default {
     delayOptions: function (){
       return this.$store.state.flight.delayOptions
     },
-    hasRole: function (){
-      return (role) => {
-        hasRole(role, false)
-      }
-    }
+    ...mapState('flight',{
+      flightRemoteSel: 'flightRemoteSel'
+    })
+    // hasRole: function (){
+    //   return (role) => {
+    //     hasRole(role, false)
+    //   }
+    // }
   }
 }
 </script>

@@ -14,7 +14,7 @@
     import postal from 'postal';
     import PostalStore from "../../lib/postalStore";
     import {getListHeader} from "@/ui/views/flight/components/handleColumn";
-    import _ from 'lodash';
+    import _, {map, pick} from 'lodash';
     import ColumnsDefine from './columnDefine'
     import {mapGetters, mapState} from "vuex";
     let postalStore = new PostalStore();
@@ -63,6 +63,23 @@
       // 获取延误分类options
       this.$request.get('situation', 'runningState/delayCode').then(res => {
         this.$store.commit('flight/getAbnormalOptions', res.data)
+        let optionsForSub = [];
+        let optionsForMain = [];
+        _.map(res.data, (item) => {
+          optionsForMain.push(item);
+          _.map(item.children, (child) => {
+            optionsForSub.push(child);
+          });
+        });
+        this.$store.commit('flight/updateFlightRemoteOptions', { delaySubReason: optionsForSub, delayMainReason: optionsForMain })
+      })
+
+      // 获取运营状态options
+      this.$request.get('flight', 'Flight/status').then(res => {
+        if (res.code === 200){
+          this.$store.commit('flight/updateFlightRemoteOptions', {statusOptions: JSON.parse(res.data)})
+        }
+
       })
 
     },

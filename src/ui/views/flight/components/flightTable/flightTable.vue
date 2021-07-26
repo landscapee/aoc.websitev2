@@ -50,8 +50,9 @@ import {fixPx, pxtorem} from "@/ui/lib/viewSize";
 import contextMenu from '../contextMenu'
 import {updateListHeader} from "@/ui/views/flight/components/handleColumn";
 import PostalStore from "@/ui/lib/postalStore";
+import {mapState} from "vuex";
 let postalStore = new PostalStore();
-let itemH = 36;
+let itemH = 37;
 export default {
   name: "flightTable",
   props: {
@@ -93,21 +94,17 @@ export default {
   },
 
   computed: {
+    ...mapState({
+      showAdvance: state => state.flight.showAdvance
+    }),
     totalHeight: function(){
-      let heightOfPx = (this.flights.length -1) * itemH + 120
+      let showAdvance = this.showAdvance
+      // 因为header的原因,没有打开高级搜索的情况就应该 -1 ,如果打开高级搜索就应该在正常情况下-1 这里就不减一
+      let flightLength = showAdvance ? this.flights.length : this.flights.length - 1
+      let heightOfPx = (flightLength) * itemH + 120
       return pxtorem(heightOfPx)
     },
-    // showFlights: function (){
-    //   let flights = [...this.flights];
-    //   // flights = flights.splice(this.topCount,this.showCount)
-    //   // return flights
-    //
-    //   let rowHeight = fixPx(itemH);
-    //   let begin = Math.floor(window.scrollY / rowHeight);
-    //   let end = Math.ceil((window.innerHeight - fixPx(120 + 30 + 40 )) / rowHeight);
-    //   flights = slice(flights, begin, begin + end);
-    //   return flights;
-    // }
+
   },
 
   mounted() {
@@ -150,11 +147,11 @@ export default {
       let flights = [...this.flights];
       // flights = flights.splice(this.topCount,this.showCount)
       // return flights
-
+      let showAdvance = this.showAdvance
       let rowHeight = fixPx(itemH);
       let begin = Math.floor(window.scrollY / rowHeight);
-      let end = Math.ceil((window.innerHeight - fixPx(120 )) / rowHeight);
-
+      let end = Math.ceil((window.innerHeight - fixPx(120 )) / rowHeight) - 1;
+      end = showAdvance ? end - 1 : end
       // if (begin + end > flights.length){
       //   end = flights.length;
       //   begin = flights.length - end
@@ -202,6 +199,9 @@ export default {
   },
   watch:{
     flights: function() {
+      this.getVisibleFlights()
+    },
+    showAdvance: function (){
       this.getVisibleFlights()
     }
   }

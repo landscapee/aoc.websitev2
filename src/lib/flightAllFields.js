@@ -226,7 +226,7 @@ export const allField = {
 	},
 	displayRouter: { text: '航线', auto: true, search: { type: 'text' }, width: 340 },
 	direction: { text: '方向', search: { type: 'select', options: { 西安: '西安', 贵阳: '贵阳', 重庆: '重庆', 拉萨: '拉萨', 兰州: '兰州', 昆明: '昆明' } } },
-	elecFlightStatus: { text: '电子进程单状态', search: { type: 'select', options: ['未激活', '激活', '申请放行', '已发放行', '准备好', '未推出', '推出', '开车', '推出开车', '滑行', '滑回', '管制', '上跑道', '起飞', '起飞中断', '降落', '塔台滑行', '管制结束', '未管制', '降落', '落地', '入位'] } },
+	elecFlightStatus: { text: '电子进程单状态', search: { type: 'select', options: ['未激活', '激活', '申请放行', '已发放行', '准备好', '未推出', '推出', '开车', '推出开车', '滑行', '滑回', '管制', '上跑道', '起飞', '起飞中断', '降落', '塔台滑行', '管制结束', '未管制', '落地', '入位'] } },
 	displayElecPublishTime: { text: '电子进程单发布', full: '电子进程单发布时间', search: { type: 'time' } },
 	c: { text: '机类', sort: true, search: { type: 'select', options: ['B', 'C', 'D', 'E', 'F'] } },
 	mark: { text: '标记', search: { type: 'select', options: { markD: 'D', markV: 'V' } } },
@@ -248,8 +248,8 @@ export const allField = {
 	mixEta: { text: 'mixEta', reference: true },
 	displayMixEtaWithDate: { text: '预达', sort: true, referenceTo: 'mixEta' },
 	displayETI: { text: '预位', sort: true, referenceTo: 'eti' },
-	'eta-etd': { text: '优利预计' },
-	flightStatusText: { text: '运营状态', search: { type: 'select', remoteOptionField: 'flightStatusText' } },
+	// 'eta-etd': { text: '优利预计' },
+	flightStatusText: { text: '运营状态', search: { type: 'select', remoteOptionField: 'statusOptions' } },
 	displayPreATDOrETD: { text: '前站起飞' },
 	counters: { text: '值机柜台' },
 	displayCarousels: { text: '转盘' },
@@ -361,11 +361,11 @@ export const allField = {
 	displayEstimateEndTime: { text: '除冰预计结束', width: 120, renderType: 'deiceTimeInput', referenceTo: 'estimateEndTime'  }, //
 	// EDIT: { text: '除冰预计持续', width: 120 }, //
 	showVideo: { text: '播放视频', search: false, unConfigurable: true },
-	preDeicing: { text: '预除冰', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio', role: 'edit-pre-deice' }, // 预除冰
-	preRefueling: { text: '预加油', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio', role: 'edit-pre-fuel' }, // 预加油
+	preDeicing: { text: '预除冰', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role: 'edit-pre-deice' }, // 预除冰
+	preRefueling: { text: '预加油', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role: 'edit-pre-fuel' }, // 预加油
 	// expectRunWay: { text: '计划使用跑道', width: 120 }, // 预加油
 	milestoneStatusCn: { text: '空地里程碑', width: 120 }, //
-	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: { 1: '是', 0: '否' } }, renderType: 'radio', role:'edit-qualification', width: 180 }, //
+	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role:'edit-qualification', width: 180 }, //
 	displayDSGT: { text: '放行标准保障时间', width: 140 },
 	displayTSGT: { text: '起飞标准保障时间', width: 140 },
 	displayDSTT: { text: '放行标准起飞时间', width: 140 },
@@ -384,6 +384,18 @@ export const allField = {
 			type: 'cascader',
 			searchKey: 'delayReasonMerge',
 		},
+	},
+
+	delayMainReason: {
+		text: '延误主原因',
+		width: 200,
+		search: { type: 'select', remoteOptionField: 'delayMainReason' },
+	},
+	delaySubReason: {
+		text: '延误子原因',
+		width: 200,
+		remoteOptionField: 'delaySubReason',
+		search: { type: 'select', remoteOptionField: 'delaySubReason' },
 	},
 	// // EIBT2: { text: '预计上轮档' }, //
 	// // ELDT2: { text: '预计落地时间' }, //
@@ -455,6 +467,8 @@ export const defaultColumns = [
 	{ key: 'overStationScheduleTime' },
 	{ key: 'planRoute' },
 	{ key: 'abnormalCategory' }, // 不正常分类
+	{ key: 'delayMainReason' }, //延误主原因
+	{ key: 'delaySubReason' }, //延误子原因
 	{ key: 'delayBasis' }, // 延误依据
 	{ key: 'airlineDesc' }, // 延误备注
 	{ key: 'airportDesc' }, // 延误备注
