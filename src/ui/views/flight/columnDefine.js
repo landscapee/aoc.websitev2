@@ -15,15 +15,6 @@ export default {
       return size * 8;
     }
   },
-  direction: {
-    formatter: (item) => {
-      return(
-        `
-        <div>${item.direction}</div>
-        `
-      )
-    }
-  },
   flightStatusText: {
     formatter: (item) => {
       const flightState = {
