@@ -2,7 +2,9 @@ import {map, get} from 'lodash'
 import * as echarts from 'echarts'
 const colorList = ['#0666ff', '#3ec37b', '#00cad2', '#6236ff', '#3f98f2'];
 
-export const optionsWeather = (xData, yData, yName) => {
+
+export const optionsIndicator = (xData, yData, yName) => {
+    //function getLineOption() {
     let defaultTitle = {
         show: false,
         text: '',
@@ -15,31 +17,33 @@ export const optionsWeather = (xData, yData, yName) => {
         left: 'center',
     };
     let defaultLegend = {
-        show: true,
+        show: false,
         icon: 'square',
         orient: 'horizontal',
         top: '0.5%',
         left: 'center',
         right: 'center',
-        itemWidth: 10,
-        itemHeight: 10,
-        itemGap: 15,
+        itemGap: 20,
         textStyle: {
             color: '#FFFFFF',
             fontSize: 12,
         },
     };
     let option = {
-        backgroundColor: '#19253C',
-        color: colorList,
+        // backgroundColor: '#19253C',
         title: {...defaultTitle},
         legend: {...defaultLegend},
         tooltip: {
             show: true,
             trigger: 'axis',
+            axisPointer: {
+                type: 'shadow',
+            },
+
             borderColor: 'rgba(50,50,50,0.7)',
             backgroundColor: 'rgba(50,50,50,0.7)',
-             textStyle: {
+            formatter: '{b0}{a0}:{c0}',
+            textStyle: {
                 color: '#fff',
                 rich: {
                     value: {
@@ -87,7 +91,7 @@ export const optionsWeather = (xData, yData, yName) => {
                     show: true,
                     color: '#7286AC',
                     fontSize: 12,
-                    // interval: 0,
+                    interval: 0,
                 },
             },
         ],
@@ -130,26 +134,58 @@ export const optionsWeather = (xData, yData, yName) => {
                 show: true,
             },
         ],
-        series: map(yData, (item, index) => {
-            return {
-                name: item.name,
+        series: [
+            {
+                name: yData.name,
                 type: 'line',
-                symbolSize: 1,
+                symbolSize: 7,
                 symbol: 'circle',
                 smooth: true,
-                yAxisIndex: 0,
+                // yAxisIndex: 1,
                 showSymbol: false,
-                data: item.data,
+                data: yData.data,
+                itemStyle: {
+                    normal: {
+                        symbol:'circle',
+                         color: '#EB547C',
+                        borderWidth: 2,
+                        lineStyle: {
+                            color: '#247BA0'
+                        }
+                    },
+                },
                 lineStyle: {
                     normal: {
                         width: 2,
-                        color: item.color || colorList[index],
-                        type: item.type || 'solid',
+                        color: '#5b9aff',
                     },
                 },
-            };
-        }),
+                areaStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(
+                            0,
+                            0,
+                            0,
+                            1,
+                            [
+                                {
+                                    offset: 0,
+                                    color: 'rgba(67,120,207,0.3)',
+                                },
+                                {
+                                    offset: 1,
+                                    color: 'rgba(67,120,207,0)',
+                                },
+                            ],
+                            false,
+                        ),
+                        shadowColor: 'rgba(67,120,207,0.9)',
+                        shadowBlur: 20,
+                    },
+                },
+            },
+
+        ],
     };
     return option;
 }
-

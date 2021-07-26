@@ -1,7 +1,7 @@
 
-import {alternateConfigStop,alternateConfigStart} from "../manage/alternate";
+import {alternateConfigStop,alternateConfigStart} from "../../manage/conditionalOperation/alternate";
  import { mapKeys,map, extend,forEach} from 'lodash';
-import SocketWrapper from "../lib/socketWrapper";
+import SocketWrapper from "../../lib/socketWrapper";
  let clientObj = {};
  let   worker, client, ajax;
 import { flightDB } from '@/worker/lib/storage';

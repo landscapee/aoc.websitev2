@@ -29,7 +29,7 @@
 							</template>
 						</el-table-column>
 
-						<el-table-column  label="操作" slot="option1" align="center"  width="50px">
+						<el-table-column  label="操作" slot="option1" align="center"  width="60px">
 
 							<template   slot-scope="{row,index}" >
 								<div class="optionq"   >

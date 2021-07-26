@@ -1,6 +1,6 @@
-import {deiceStop, deiceStart, transWether} from "../manage/deice";
+import {deiceStop, deiceStart, transWether,tranDeiceFlights} from "../../manage/conditionalOperation/deice";
 import {mapKeys, map, extend, forEach, keyBy, get} from 'lodash';
-import SocketWrapper from "../lib/socketWrapper";
+import SocketWrapper from "../../lib/socketWrapper";
 
 let clientObj = {};
 let worker, client, ajax;
@@ -60,6 +60,10 @@ const adverseClientEvent = () => {
     });
     client.sub('/adverse-condition/stat/flightAtdRate', (data) => {
         worker.publish('Web', 'Page.deiceTop', {data: data, key: 'departureRate'})
+    })
+    client.sub('/adverse-condition/deice/dynamic/flight', (data) => {
+        let myData=tranDeiceFlights(data)
+        worker.publish('Web', 'Page.deiceBottom', {data: myData, key: 'deiceFlights'})
     })
 };
 const situationClientEvent = () => {

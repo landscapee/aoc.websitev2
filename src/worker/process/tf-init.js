@@ -7,12 +7,13 @@ import {init as monitorInit} from '../channel/runMonitor'
 import {init as resourceMonitorInit} from '../channel/resourceMonitor'
 import {init as MonitorWithRunwayInit} from '../channel/poolMonitorWithRunway'
 import {init as TOBTConfigInit} from '../channel/TOBTConfig'
-import { init as alternateConfigInit } from '../channel/alternate'
+import { init as alternateConfigInit } from '../channel/conditionalOperation/alternate'
 import { init as decreaseInit } from '../channel/decrease'
-import { init as runningNew } from '../channel/runningNew'
+import { init as runningNew } from '../channel/conditionalOperation/runningNew'
 import { init as publicChanelInit } from '../channel/publicChanel'
 import { init as adjustmentReductionInit } from '../channel/adjustmentReduction'
-import { init as deiceInit } from '../channel/deice'
+import { init as deiceInit } from '../channel/conditionalOperation/deice'
+import { init as conditionalOperationInit } from '../channel/conditionalOperation/commonChanel'
 
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
@@ -70,8 +71,7 @@ postal.subscribe({
         flightInit(posWorker, httpRequest);
         monitorInit(posWorker, httpRequest);
         MonitorWithRunwayInit(posWorker, httpRequest);
-        resourceMonitorInit(posWorker, httpRequest);
-        alternateConfigInit(posWorker, httpRequest);
+         alternateConfigInit(posWorker, httpRequest);
         runningNew(posWorker, httpRequest);
         resourceMonitorInit(posWorker, httpRequest);
         adjustmentReductionInit(posWorker, httpRequest)
@@ -84,6 +84,7 @@ postal.subscribe({
         TOBTConfigInit(posWorker, httpRequest)
         publicChanelInit(posWorker, httpRequest,data.clientId)
         deiceInit(posWorker, httpRequest)
+        conditionalOperationInit(posWorker, httpRequest)
         memoryStore.setItem('global', {token: data.token});
 
         postal.subscribe({
