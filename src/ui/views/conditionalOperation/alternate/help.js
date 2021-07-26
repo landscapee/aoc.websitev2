@@ -132,6 +132,6 @@ export const exigencyConfig=[
             return row.securityCheck === 0 ? '是' : row.securityCheck === 1 ? '否' : '--';
         },
     },
-    {slot: 'option1', type: 'slot',label: '操作', width:'60px'},
+    {slot: 'option1', type: 'slot',label: '操作', width:'80px'},
 
 ];

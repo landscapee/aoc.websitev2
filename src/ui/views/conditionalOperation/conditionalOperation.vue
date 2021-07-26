@@ -10,6 +10,10 @@
 </template>
 
 <script>
+    import {memoryStore} from "@/worker/lib/memoryStore";
+    import postal from 'postal';
+    import PostalStore from "@ui_lib/postalStore";
+    let postalStore = new PostalStore();
 export default {
     data() {
         return {
@@ -27,13 +31,28 @@ export default {
     created() {
         let nav = _.find(this.navList, { path: this.$route.name })
         this.navHandle(nav ? nav : this.navList[0])
+        postal.publish({
+            channel: 'Worker',
+            topic: 'Page.conditionalOperation.Start',
+        });
     },
-    mounted() {},
+
     methods: {
         navHandle(nav) {
             this.navFlag = nav
             this.$router.push(nav.path)
         },
+    },
+    mounted() {
+
+
+    },
+    beforeDestroy() {
+        postal.publish({
+            channel: 'Worker',
+            topic: 'Page.conditionalOperation.Stop',
+        })
+        postalStore.unsubAll()
     },
 }
 </script>

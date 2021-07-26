@@ -309,8 +309,7 @@
         mounted() {
             postalStore.sub('Page.deiceTop', ({data, key}) => {
 
-                console.log(1122221, key, data);
-                this[key] = data
+                 this[key] = data
             })
         },
         beforeDestroy() {

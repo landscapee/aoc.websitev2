@@ -1,5 +1,5 @@
 
-import {map}from 'lodash'
+import {map,groupBy}from 'lodash'
  export const transWether = (data) => {
       let tempTime = 0;
      let weatherObj = {};
@@ -11,6 +11,22 @@ import {map}from 'lodash'
      });
      return weatherObj
 }
+export const tranDeiceFlights = (data) => {
+    map(data,item=>{
+        // 0:待除冰 1:正在除冰 2:已完成
+        if (!item.actualStartTime) {
+            item.deiceStatus = 0;
+        }
+        if (item.actualStartTime && !item.actualEndTime) {
+            item.deiceStatus = 1;
+        }
+        if (item.actualEndTime) {
+            item.deiceStatus = 2;
+        }
+    })
+    let obj=groupBy(data,'agencyCode')
+    return obj
+};
 export const deiceStart = (posWorker) => {
     // posWorker.subscribe('Resource.Change.Sync', (data) => {
     // })

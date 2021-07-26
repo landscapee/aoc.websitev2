@@ -4,7 +4,41 @@ import {memoryStore} from "../lib/memoryStore";
 
 let clientObj = {};
 let worker, client, ajax;
+const convert = (msg) => {
 
+    let statusCfg = {
+        '1': '未处理',
+        '2': '处理中',
+        '3': '完成',
+        '4': '撤销',
+    };
+    let operateCfg = {
+        '1': '已读',
+        '2': '回复',
+        '3': '结束',
+        '4': '撤销',
+        '5': '转发',
+    };
+    let data = extend(msg, {
+        from: msg.createDeptName,
+        to: map(msg.receivers, (item) => {
+            return item.receiveDeptName;
+        }),
+        level: msg.applyLevel,
+        type: msg.specificType,
+        scheme: msg.closeScheme,
+        status: statusCfg[msg.status],
+        reply: map(msg.messages, (item) => {
+            return {
+                createTime: item.createTime,
+                from: item.createDeptName,
+                status: operateCfg[item.operateType],
+                content: item.operateType == 2 ? item.content : operateCfg[item.operateType],
+            };
+        }),
+    });
+    return data;
+};
 /*
 * 检查服务是否在线
 * */
@@ -23,11 +57,9 @@ const subWSEventMSG = (clientId) => {
     // 消息
     let messageClient = clientObj.messageClient;
     messageClient.sub('/topic/notice/' + clientId, (res) => {
-        if (res.code == 200) {
 
-        }
-        memoryStore.setItem('global', {messageClientData: res.data})
-        worker.publish('Web', 'push.message.data', res)
+        memoryStore.setItem('global', {messageClientData:convert(res) })
+        worker.publish('Web', 'push.message.Data', res)
     })
 };
 // 跑道模式

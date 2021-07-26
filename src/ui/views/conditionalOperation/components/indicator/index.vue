@@ -9,36 +9,35 @@
 <script>
     import postal from 'postal';
     import PostalStore from "@ui_lib/postalStore";
-    import { optionsWeather}from './options'
+    import { optionsIndicator}from './options'
     let postalStore = new PostalStore();
-    import Item from '../../../components/indicator/item'
-    import {map} from 'lodash'
+    import Item from './item'
+	import {map} from 'lodash'
     export default {
         name: "bottomRightIndex",
         components: {Item},
         computed: {
             getOptions(){
                 return (opt)=>{
-                    let arr=this.runwayWeather[opt.keyC]
-                    if(!arr){
-                        arr=[	 [], { name: '航班指标', data: [0] },]
-                    }
-                    return  optionsWeather(...arr,opt.yName)||{}
+                   let arr=this[opt.key][opt.keyC]
+                     if(!arr){
+					    arr=[	 [], { name: '航班指标', data: [0] },]
+					}
+                    return  optionsIndicator(...arr,opt.yName)||{}
 
-                }
-            }
+				}
+			}
         },
         data() {
             return {
-                runwayWeather: {},
+                 indicator: {},
                 pageObj: [
-                    {name: 'RVR趋势图', key: "runwayWeather",keyC:'rvr', yName:'m'},
-                    // {name: '航班指标', key: "indicator", keyC:'flightIndicator', yName:'数量(架次)' },
-                    {name: '垂直能见度趋势图', key: "runwayWeather", keyC:'vv', yName:'℃'},
-                    // {name: '出港旅客数量指标', key: "indicator", keyC:'passengerIndicator', yName:'数量(人数)' },
-                    {name: '露点温度与温度趋势图', key: "runwayWeather" ,keyC:'temp', yName:'℃'},
-                    // {name: '本场起降间隔指标', key: "indicator",keyC:'spaceIndicator' , yName:'分钟'},
-                ]
+                    {name: '航班指标', key: "indicator", keyC:'flightIndicator', yName:'数量(架次)' },
+                    {name: '出港旅客数量指标', key: "indicator", keyC:'passengerIndicator', yName:'数量(人数)' },
+                    {name: '本场起降间隔指标', key: "indicator",keyC:'spaceIndicator' , yName:'分钟'},
+                ],
+
+
             }
         },
         methods: {
@@ -49,9 +48,14 @@
         },
         mounted() {
 
-            postalStore.sub('runwayWeather', ({data, key}) => {
-                this.runwayWeather = data
-            })
+                postalStore.sub('push.trafficCapacity.Data', ({data, key}) => {
+                     this.indicator = data
+                })
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Get.indicator.Data',
+
+            });
 
         },
 
@@ -64,7 +68,7 @@
 <style lang="scss" scoped>
 	.bottomRightIndex {
 		display: flex;
-		color: #fff;
+ 		color: #fff;
 		width: 100%;
 		height: 100%;
 	}

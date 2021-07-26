@@ -1,5 +1,5 @@
 <template>
-    <div id="deiceIndex">
+    <div class="deiceIndex">
         <div class="top">
             <Top></Top>
         </div>
@@ -46,15 +46,15 @@
     }
 </script>
 <style scoped lang="scss">
-    #runningNew {
+    .deiceIndex {
+        height: 100%;
         padding-bottom: 15px;
         .top {
             height: 70px;
         }
         .bottom {
-            margin-top: 10px;
-            height: calc(100% - 84px);
-            display: flex;
+             margin-top: 10px;
+            height: calc(100% - 78px);
 
         }
     }
