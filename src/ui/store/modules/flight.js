@@ -6,6 +6,7 @@ const flight = {
         showAdvance: false,
         delayOptions: [],
         statusOptions: [],
+        flightRemoteSel: {}
     },
     mutations: {
         toggleTOBTVisibility: (state,data)=>{
@@ -17,8 +18,8 @@ const flight = {
         getAbnormalOptions: (state, data) => {
             state.delayOptions = data
         },
-        getStatusOptions: (state, data) => {
-            state.statusOptions = data
+        updateFlightRemoteOptions: (state, data) => {
+            state.flightRemoteSel = _.extend({}, state.flightRemoteSel, data)
         }
 
     },

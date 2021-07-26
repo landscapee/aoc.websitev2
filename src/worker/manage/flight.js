@@ -1,5 +1,5 @@
 import {memoryStore} from '../lib/memoryStore';
-import {every, extend, filter, flow, get, head, isArray, last, map, merge, orderBy, toUpper} from "lodash";
+import {concat, every, extend, filter, flow, get, head, isArray, last, map, merge, orderBy, toUpper} from "lodash";
 import moment from "moment";
 import {flightDB} from "@/worker/lib/storage";
 import {addSerialNumber, calcDelayTime, filterRoleFlights} from "@/lib/helper/flight";
@@ -273,6 +273,56 @@ export const setFilterOption = (data) => {
   //return refreshFlights(true);
 };
 
+/**
+ * 导出标准数组数据, 可以方便在 UI 线程导出各种格式
+ */
+export const exportArrayData = () => {
+  let flights = loadDefaultFlights();
+  let data = flow([filterRoleFlights, filterFlight, combineFlightField, sortFlights, addSerialNumber])(flights);
+  let convert = {
+    displayRouter: (data) => {
+      return data.join('->');
+    },
+    mark: (data) => {
+      let str;
+      if (data.D) {
+        str = 'D';
+      }
+      if (data.V) {
+        str = str ? str + ' V' : 'V';
+      }
+      return str || DISPLAYNULL;
+    },
+    counters: (data) => {
+      return data.split(',').join(' ');
+    },
+    carousels: (data) => {
+      return data.split(',').join(' ');
+    },
+    displayPreATDOrETD: (data) => {
+      let etd = data[0];
+      let atd = data[1];
+      let tex = etd && atd ? '实:' : '预:';
+      return tex + atd || etd || DISPLAYNULL;
+    },
+    abnormalCategory: (data, flight) => {
+      let reasonOptions = memoryStore.getItem('delayReasonOptions');
+      let str = flight.delayReasonMerge && map(flight.delayReasonMerge.split(','), (item) => reasonOptions[item]).join(',');
+      return str;
+    },
+  };
+  let title = map(columns, 'text');
+  let titleForKey = map(columns, 'key');
+  let rows = map(data, (f) => {
+    return map(titleForKey, (key) => {
+      let result = convert[key] ? convert[key](f[key], f) : f[key];
+      return result || DISPLAYNULL;
+    });
+  });
+
+  return concat([title], rows);
+};
+
 export const flightStart = (posWorker, myHeader) => {
   let hasGetYesterday;
   // ui线程传过来的header 先存进内存
@@ -311,6 +361,12 @@ export const flightStart = (posWorker, myHeader) => {
     console.log(data)
     setFlightTop(data);
     flightStart(true);
+  });
+
+  //导出csv
+  posWorker.subscribe(`Flight.Export`, () => {
+    let result = exportArrayData();
+    result && posWorker.publish('Web', 'Flight.Export', result);
   });
 
   flightStart()

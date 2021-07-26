@@ -160,8 +160,12 @@ export default {
       let remoteOptionField = get(col, 'search.remoteOptionField')
       let options = get(col, 'search.options');
       if (remoteOptionField) {
-        map(this.$store.state.flight[remoteOptionField], (v) => {
-          sOptions.push({ value: v, label: v });
+        map(this.$store.state.flight.flightRemoteSel[remoteOptionField], (v) => {
+          if (_.isObject(v)){
+            sOptions.push(v);
+          }else {
+            sOptions.push({ value: v, label: v });
+          }
         });
       } else if (options) {
         // sOptions = extend({ all: '全部' }, options);

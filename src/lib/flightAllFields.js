@@ -385,6 +385,18 @@ export const allField = {
 			searchKey: 'delayReasonMerge',
 		},
 	},
+
+	delayMainReason: {
+		text: '延误主原因',
+		width: 200,
+		search: { type: 'select', remoteOptionField: 'delayMainReason' },
+	},
+	delaySubReason: {
+		text: '延误子原因',
+		width: 200,
+		remoteOptionField: 'delaySubReason',
+		search: { type: 'select', remoteOptionField: 'delaySubReason' },
+	},
 	// // EIBT2: { text: '预计上轮档' }, //
 	// // ELDT2: { text: '预计落地时间' }, //
 	// EXIT: { text: '预计滑入时间' }, //
@@ -455,6 +467,8 @@ export const defaultColumns = [
 	{ key: 'overStationScheduleTime' },
 	{ key: 'planRoute' },
 	{ key: 'abnormalCategory' }, // 不正常分类
+	{ key: 'delayMainReason' }, //延误主原因
+	{ key: 'delaySubReason' }, //延误子原因
 	{ key: 'delayBasis' }, // 延误依据
 	{ key: 'airlineDesc' }, // 延误备注
 	{ key: 'airportDesc' }, // 延误备注
