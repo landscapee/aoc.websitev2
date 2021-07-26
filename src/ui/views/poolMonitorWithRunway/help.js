@@ -62,6 +62,7 @@ export const titleMessage = {
         </div>`
     ,
 }
+
 export const setting = {
     //始发航班池
     initialFlights2: [
@@ -107,8 +108,8 @@ export const setting = {
 
         },
         {
-            key: 'seat',
-            type: 'simple', width: '20px', label: '机号',
+            key: 'aircraftNo',
+            type: 'simple', width: '30px', label: '机号',
         },
         {
             key: 'sta-std',

@@ -51,7 +51,7 @@
                                     <td v-for="(col, ci) in columns"  :style="tdColStyle(col, row)" :ref="`${row.id}_${ci}`" :key="ci">
                                         <el-tooltip v-if="dynamicDisplay(row, ci) && col.toggle ? col.toggle($route, outParams) : true" :content="col.tip?col.tip(row):''" placement="top" :disabled="!(col.tip && col.tip(row))" transition="none" :open-delay="300">
                                             <div class="adv-body-col" :data-px="ci" :data-py="ri" :class="editPointClass(ci, ri)" @click="handlePointSet(row, col, ci, ri)" :title="col.tip?col.tip(row):''">
-                                                <span v-if="col.type == 'index'" > {{ ri + 1 }} </span>
+                                                <span v-if="col.type == 'index'"   :class="ri<3?'redIndex':''"> {{ ri + 1 }} </span>
                                                 <span v-if="col.type == 'simple'" class="cell-simple" :style="col.wordStyle ? col.wordStyle(row, outParams):{}" >
                                                     <template v-if="col.simpleContent">
                                                         <div style="display:flex;flex-flow:row;align-items: center;justify-content: space-between;padding:0 10px;">
@@ -274,7 +274,7 @@
                             <td v-for="(col, ci) in columns"  :style="tdColStyle(col, row)" :ref="`${row.id}_${ci}`" v-if="dynamicDisplay(row, ci) && col.toggle?col.toggle($route, outParams):true">
                                 <el-tooltip :content="col.tip?col.tip(row):''" placement="top" :disabled="!(col.tip && col.tip(row))" transition="none" :open-delay="300">
                                     <div class="adv-body-col" :data-px="ci" :data-py="ri" :class="editPointClass(ci, ri)" @click="handlePointSet(row, col, ci, ri)" :title="col.tip?col.tip(row):''">
-                                        <span v-if="col.type == 'index'" > {{ ri + 1 }} </span>
+                                        <span v-if="col.type == 'index'" :class="ri<3?'redIndex':''"> {{ ri + 1 }} </span>
                                         <span v-if="col.type == 'simple'"   :style="col.wordStyle ? col.wordStyle(row, outParams):{}"   class="cell-simple">
                                              {{ syncDisplay(row, col, ri)}}
                                         </span>
@@ -1750,6 +1750,7 @@
 </script>
 
 <style lang='scss' scoped>
+
     .badge-item {
         position: absolute !important;
         background-color: #ff7500;
@@ -2385,5 +2386,7 @@
             }
         }
     }
-
+    .redIndex{
+        color: #ac0015!important;
+    }
 </style>

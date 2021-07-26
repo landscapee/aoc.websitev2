@@ -26,6 +26,11 @@
         },
         methods: {
             save(){
+                let blo=(/^0$|^[1-9]\d*$/g).test(this.data)
+                if(!blo){
+                    this.$message.warning('请输入正整数')
+					return
+				}
                 let obj={
                     hour: this.index,
                     capacityNum: Number(this.data)

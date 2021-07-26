@@ -5,10 +5,10 @@
 				<div class="itemTitle">
 					<div class="div1"><span></span><span>{{opt.name}}</span></div>
 					<div class="div2">
-						<span>
+						<span class="shiji">
 							<span></span><span>实际</span>
 						</span>
-						<span>
+						<span class="yuji" v-if="tabObj[key]=='全部'||key!=='gateSituation'">
 							<span></span><span>预计</span>
 						</span>
 					</div>
@@ -153,7 +153,8 @@
     import {map, cloneDeep, extend} from 'lodash';
     import PostalStore from "../../lib/postalStore";
     import * as echarts from 'echarts'
-    import {getBarLineOption} from './options'
+    import {getBarLineOption,gateSituationLineOption} from './options'
+    import {debounce} from '@/ui/lib/common.js'
 
     let postalStore = new PostalStore();
     export default {
@@ -233,27 +234,54 @@
                 let data = this.echartsData[opt.key]
                 this.setOptions(data, opt.key)
             },
-            setOptions(item, key, blo) {
+            setOptions(item, key) {
                 let tabData = item[this.tabObj[key]] || {};
-                if (JSON.stringify(tabData !== '{}')) {
-                    let xData = map(tabData.minList || [], (item, i) => {
-                        let hour = parseInt(item / 60) === 0 ? '00' : parseInt(item / 60).toString().length == 1 ? '0' + parseInt(item / 60) : parseInt(item / 60);
-                        let minute = item % 60 === 0 ? '00' : (item % 60) + '';
-                        return hour + minute;
-                    });
-                    let yData = [{name: '实际', data: tabData.actNumList}, {
-                        name: '预计',
-                        data: tabData.planNumList || []
-                    }];
-                    let yData2 = [{name: '总实际', data: tabData.totalList}, {
-                        name: '总预计',
-                        data: tabData.totalList || []
-                    }];
-                    let tooltipName = this.dataSituation[key].tooltipName
-                    let option = getBarLineOption({...tabData, xData, yData, yData2, tooltipName})
-                    this.echartsInstance[key].setOption(option)
+                let 	actNumList=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //实际占用
+                    disabledList= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //不可用
+                    minList= ['0030', '0130', '0230', '0330', '0430', '0530', '0630', '0730', '0830', '0930', '1030', '1130', '1230', '1330', '1430', '1530', '1630', '1730', '1830', '1930', '2030', '2130', '2230', '2330'], //时间段
+                    planNumList= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //计划占用
+                    totalList= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //总量
+                    usableList= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //可用
+                    actSurplusList= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], //实际空余
+                    planSurplusList= [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; //预计空余
+                let xData, yData, yData2,tooltipName,options ;
+                let yDataTotal, yDataTotal2; //用于全部
+                xData =tabData?.minList ? map(tabData.minList, (item, i) => {
+                    let hour = parseInt(item / 60) === 0 ? '00' : parseInt(item / 60).toString().length == 1 ? '0' + parseInt(item / 60) : parseInt(item / 60);
+                    let minute = item % 60 === 0 ? '00' : (item % 60) + '';
+                    return hour + minute;
+                }):minList;
+                yData = [{name: '实际', data: tabData?.actNumList||actNumList}, {
+                    name: '预计',
+                    data: tabData?.planNumList || planNumList
+                }];
+                yData2 = [{name: '总实际', data: tabData?.totalList||totalList}, {
+                    name: '总预计',
+                    data: tabData?.totalList || totalList
+                }];
+                usableList = tabData?.usableList||usableList;
+                disabledList = tabData?.disabledList||disabledList;
+                actSurplusList = tabData?.actSurplusList||actSurplusList;
+                planSurplusList = tabData?.planSurplusList||planSurplusList;
+                tooltipName = this.dataSituation[key].tooltipName
+                options = getBarLineOption({...tabData, xData, yData, yData2, usableList, disabledList, actSurplusList, planSurplusList,tooltipName})
+                if(this.tabObj[key]!=='全部'&&key=='gateSituation'){
+                    yDataTotal = [{ name: '实际', data: tabData?.actNumList ||actNumList}];
+                    yDataTotal2 = [{ name: '总实际', data: tabData?.totalList ||totalList}];
+                    options=gateSituationLineOption(xData, yDataTotal, yDataTotal2, usableList, disabledList, actSurplusList, planSurplusList,tooltipName)
                 }
-
+                console.log(111,this.tabObj[key] ,key );
+                this.echartsInstance[key].setOption(options)
+            },
+            resizeEcharts(){
+                let timer=debounce(()=>{
+                    this.$nextTick(()=>{
+                        map(this.echartsInstance,k=>{
+                            k.resize();
+						})
+                    })
+                },180)
+                return timer
             },
         },
         created() {
@@ -284,7 +312,9 @@
             postalStore.sub('resourceUsageData', ({data, key}) => {
                 console.log('resourceUsageData,data', data, key);
                 this[key] = data
-            })
+            })  ;
+            window.addEventListener('resize',this.resizeEcharts())
+
         },
         beforeDestroy() {
             postal.publish({
@@ -295,6 +325,8 @@
                 this.echartsInstance[key].dispose()
             })
             postalStore.unsubAll()
+            window.removeEventListener('resize',this.resizeEcharts())
+
         },
     }
 </script>
@@ -349,8 +381,11 @@
 				border-radius: 5px;
 				box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
 				.eChartsBox {
+					height: 100%;
 					.eCharts {
-						height: 238px;
+						height: calc(100% - 10px);
+						width: 100%;
+
 						& > div {
 							height: 100%;
 						}
@@ -399,7 +434,7 @@
 				}
 			}
 			.div2 {
-				& > span {
+				.shiji,.yuji {
 					span:first-child {
 						margin-right: 10px;
 						width: 14px;
@@ -410,7 +445,7 @@
 						font-size: 14px;
 					}
 				}
-				& > span:last-child {
+				.yuji {
 					margin-left: 30px;
 					span:first-child {
 						background: linear-gradient(180deg, #25e0e7, #00cad2);

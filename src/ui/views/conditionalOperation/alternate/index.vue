@@ -190,9 +190,8 @@
             });
         },
         mounted() {
-
             postalStore.sub('alternateData', ({data, key}) => {
-                key == 'tempWaitArea' && console.log(key, data);
+                key == 'alternateLanding' && console.log(key, data);
                 let data1 = data
                 if (key == 'seatEvaluate') {
                     data1 = {}
@@ -205,13 +204,12 @@
 
         },
         beforeDestroy() {
-            this.$FlightDetais.destroy()
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.alternate.Stop',
             })
-
             postalStore.unsubAll()
+            this.$FlightDetais.destroy()
         }
     }
 </script>

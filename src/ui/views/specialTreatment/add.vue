@@ -27,7 +27,7 @@
 				</el-form-item>
 				<!--间隔时间 通行能力下降-->
 				<el-form-item prop="closeScheme" :label="closeSchemeObj[type]">
-					<el-input v-model="form.closeScheme"  @input="closeSchemeInput" clearable placeholder="请输入间隔时间"></el-input>
+					<el-input v-model="form.closeScheme"  @input="closeSchemeInput" clearable :placeholder="placeHolderObj[type]"></el-input>
 				</el-form-item>
 				<el-form-item v-if="this.type=='warning'" prop="level" label="预警等级：">
 					<el-select v-model="form.level"   clearable placeholder="请选择预警等级">
@@ -66,6 +66,10 @@
                 closeSchemeObj:{
                     liukong:'间隔时间：',
                     warning:'通行能力下降：',
+				},
+				placeHolderObj:{
+                    liukong:'请输入间隔时间',
+                    warning:'请输入通行能力下降 ',
 				},
                 form: {
                     time: [new Date(), new Date(new Date().getTime() + 60 * 60 * 1000)],
@@ -137,11 +141,13 @@
                 let tranTime=(time)=>{
                     return moment(time).format('HH:mm')||'--'
 				}
-                 let time1=tranTime(this.form.closeStartTime)
-                 let time2=tranTime(this.form.closeEndTime)
+                console.log(this.form);
+
+                let time1=tranTime(this.form.time[0])
+                 let time2=tranTime(this.form.time[1])
                  let content = `受${this.form.title || '--'}${this.form.specificType || '--'}限制影响，间隔${this.form.closeScheme || '--'}，起止时间${time1}-${time2}`;
                 if(this.type=='warning'){
-					content = `${this.form.title}预计${time1}-${time2}受${this.form.specificType}影响，通行能力下降${this.form.closeScheme || 0}%，发布${this.form.title}航班延误${this.form.level}预警。`;
+					content = `${this.form.title}预计${time1}-${time2}受${this.form.specificType||'--'}影响，通行能力下降${this.form.closeScheme || 0}%，发布${this.form.title|| '--'}航班延误${this.form.level|| '--'}预警。`;
                 }
                 this.$set(this.form, 'content', content)
             }

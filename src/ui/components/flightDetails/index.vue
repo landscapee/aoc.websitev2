@@ -95,10 +95,9 @@
 		components:{AircraftNoPage},
         data() {
             let ipObj = {
-                'fpms.test': 'http://173.101.1.30:6068', // 双流测试
-                // dev: devIp, // 开发
-                'fpms.dev': 'http://173.101.1.30:6068', // 开发
-                'fpms.prod': 'http://10.33.64.1:6076', // 天府机场
+                'test': 'http://173.101.1.30:6068', // 双流测试
+                 'dev': 'http://173.101.1.30:6068', // 开发
+                'tf': 'http://10.33.64.1:6076', // 天府机场
             };
             return {
                 iframeIp: ipObj[PROGRAM],
@@ -248,8 +247,7 @@
             },
         },
 		mounted(){
-
-		}
+         }
 
 
     }

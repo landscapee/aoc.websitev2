@@ -78,7 +78,7 @@ export const init = (worker_, httpRequest_, clientId) => {
         console.log('runweyClient连接成功')
     });
     worker.subscribe('Get.runway.Data', (() => {
-            let runwayData = memoryStore.getItem('Pools').runwayData
+            let runwayData = memoryStore.getItem('Pools').runwayModels
             worker.publish('Web', 'push.runway.Data', runwayData)
             worker.publish('push.runway.Data', runwayData)
         })

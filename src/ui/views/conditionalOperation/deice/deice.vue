@@ -30,7 +30,7 @@
         created() {
             postal.publish({
                 channel: 'Worker',
-                topic: 'Page.runningNew.Start',
+                topic: 'Page.deice.Start',
             });
         },
         mounted() {
@@ -39,7 +39,7 @@
         beforeDestroy() {
             postal.publish({
                 channel: 'Worker',
-                topic: 'Page.runningNew.Stop',
+                topic: 'Page.deice.Stop',
             })
             postalStore.unsubAll()
         },
@@ -49,7 +49,7 @@
     #runningNew {
         padding-bottom: 15px;
         .top {
-            height: 74px;
+            height: 70px;
         }
         .bottom {
             margin-top: 10px;

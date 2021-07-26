@@ -6,7 +6,7 @@ export const LandingConfig=	 [
 
     {slot: 'flightNo', type: 'slot',label: '航班号',width:'45px'},
     {key: 'aircraftNo', type: 'simple',label: '机号',width:'45px' },
-    {key: 'flightStatus', type: 'simple',label: '状态',width:'45px'},
+    {key: 'flightStatusText', type: 'simple',label: '状态',width:'45px'},
     {key: 'seat', type: 'simple',label: '机位',width:'40px'},
     {key: 'ata', type: 'simple',label: '落地时间', width:'60px'  ,
         display: ({row}) => {
@@ -36,7 +36,8 @@ export const LandingConfig=	 [
     {key: 'isCancel', type: 'simple',label: '是否取消', width:'50px',
         display: ({row}) => {
             return `${row.isCancel?'是':'否'}`;
-        },},
+        },
+    },
     {slot: 'option1', type: 'slot',label: '操作', width:'50px'},
 ];
 // 临时机位
