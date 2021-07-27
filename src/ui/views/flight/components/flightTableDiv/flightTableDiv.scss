@@ -1,5 +1,5 @@
 .flightTableDiv{
-  $rowHeight: 37px;
+  $rowHeight: 35px;
   color: #fff;
   overflow-y: hidden;
   overflow-x: visible;
@@ -7,6 +7,10 @@
 
   ::v-deep {
 
+    .el-input__inner{
+      height: 34px;
+      background-color: transparent;
+    }
     .header{
 
       background-color: #273448;
@@ -161,6 +165,23 @@
   .unlockBox{
     overflow-x: auto;
     position: absolute;
+    /*整体部分*/
+    &::-webkit-scrollbar{
+      //width:.12rem;
+      height:.10rem;
+      width: 0;
+      background-color: #000;
+    }
+    /*滑动轨道*/
+    &::-webkit-scrollbar-track{
+      border-radius: 0px;
+      background-color: #000;
+    }
+    /*滑块*/
+    &::-webkit-scrollbar-thumb{
+      border-radius:.1rem;
+      background-color: rgb(87, 86, 86);
+    }
   }
 
   ::v-deep .row{

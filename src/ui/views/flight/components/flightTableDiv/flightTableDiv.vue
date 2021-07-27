@@ -6,7 +6,7 @@
     </div>
 
 
-    <div class="unlockBox" :style="{width: unLockBoxWidth + 'rem', left: lockWidth + 'rem'}">
+    <div class="unlockBox" :style="{width: unLockBoxWidth + 'rem', left: lockWidth + 'rem', height: flightHeight + 'rem'}">
         <div :style="{width: unLockWidth + 'rem'}">
           <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="unLockColumns" ></flightHeader>
           <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId" :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
@@ -22,7 +22,7 @@ import {updateListHeader} from "@/ui/views/flight/components/handleColumn";
 import flightHeader from '../flightHeader'
 export default {
   name: "flightTableDiv",
-  props: ['data', 'columns','setColumns', 'isScrolling', 'checkFlightId'],
+  props: ['data', 'columns','setColumns', 'isScrolling', 'checkFlightId', 'showCount'],
   components: {
     flightHeader,
     'flightRow': () =>
@@ -59,20 +59,11 @@ export default {
         updateListHeader(newColumns);
       }
     },
-    unLockScroll: function (e){
-      clearTimeout(this.timer)
-      if (Math.abs(e.deltaY) >= 1){
-        this.unLockScrolling = true
-      }
-      if (Math.abs(e.deltaX) >= 2){
-        this.unLockScrolling = false
-      }
-      this.timer = setTimeout(()=>{
-        this.unLockScrolling = false
-      }, 100)
-    }
   },
   computed:{
+    flightHeight: function (){
+      return (this.showCount + 1) * pxtorem(35) + 0.1
+    },
     lockColumns: function (){
       return _.filter(this.columns, item => item.lock)
     },
