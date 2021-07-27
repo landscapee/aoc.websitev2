@@ -13,7 +13,7 @@
                     <ele-table :columnConfig="columnConfig1" :tableData="tableData" :thisObj="thisObj"></ele-table>
                 </div>
                 <div class="title">
-                    <span>特殊参数<i class="iconfont icon-xinzeng"></i></span>
+                    <span>特殊参数<i class="iconfont icon-xinzeng" v-show="editShow==true" @click="addSpecial"></i></span>
                 </div>
                 <div class="tableBox">
                     <ele-table :columnConfig="columnConfig2" :tableData="special" :thisObj="thisObj">
@@ -39,7 +39,7 @@
             </div>
 
             <div class="buttonBox">
-                <el-button type="primary" size="mini" @click="submitData">保存</el-button>
+                <el-button type="primary" size="mini" v-show="editShow==true" @click="submitData">保存</el-button>
             </div>
         </div>
     </el-dialog>
@@ -92,8 +92,33 @@ export default {
         }
     },
     methods: {
+        addSpecial() {
+            let data = {
+                endTime: '',
+                maxOff: 0,
+                maxOn: 0,
+                maxTotal: 0,
+                startTime: '',
+                type: '1',
+            }
+            this.special.push(data)
+        },
         submitData() {
-            console.log(this.tableData, this.special)
+            let data = _.concat(this.tableData, this.special)
+            console.log(data)
+
+            // http://173.101.1.30:6075/api/flight/dynamicAdjust/coordinateArg/save
+
+            this.$request.post('flight', 'dynamicAdjust/coordinateArg/save', data).then((res) => {
+                if (res.data) {
+                    this.$message({
+                        message: '保存成功',
+                        type: 'success',
+                    })
+                    this.editShow = false
+                    postalStore.pub('Worker', 'Flight.GetCoordinateArg', null)
+                }
+            })
         },
         initData() {
             this.editShow = false

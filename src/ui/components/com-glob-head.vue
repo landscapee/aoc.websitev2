@@ -305,7 +305,7 @@ export default {
             }
 
             this.navList.forEach((list, index) => {
-                if (list.path == path) {
+                if (list.name == path) {
                     this.navFlag = index
                 }
             })
@@ -320,7 +320,6 @@ export default {
 
 <style lang="scss" scoped>
 #com_glob_head {
-
     height: 36px;
     width: 100%;
     background: linear-gradient(90deg, #183d71 0%, #0172cf 100%);
@@ -330,11 +329,11 @@ export default {
     z-index: 10;
     position: fixed;
     .nav_middle,
-    .logo_left{
-        span,li{
-            font-family: MicrosoftYaHei-Bold!important;
+    .logo_left {
+        span,
+        li {
+            font-family: MicrosoftYaHei-Bold !important;
         }
-
     }
     .logo_left {
         height: 36px;

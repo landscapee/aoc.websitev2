@@ -8,14 +8,14 @@
                 </template>
 
                 <el-table-column v-else :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
-                  <template slot-scope="scope" slot="header">
-                    <div v-if="col.displayHeader">
-                      <span v-html="col.displayHeader(scope)"></span>
-                    </div>
-                    <div v-else>
-                      {{col.label}}
-                    </div>
-                  </template>
+                    <template slot-scope="scope" slot="header">
+                        <div v-if="col.displayHeader">
+                            <span v-html="col.displayHeader(scope)"></span>
+                        </div>
+                        <div v-else>
+                            {{col.label}}
+                        </div>
+                    </template>
                     <template slot-scope="scope">
                         <template v-if="col.type=='index'">
                             <div :class="scope.$index<3?'redIndex':''">{{scope.$index+1}}</div>
@@ -53,7 +53,6 @@ export default {
         },
         tableMaxHeight: {
             type: Number,
-            default: 600,
         },
         thisObj: {
             type: Object,
@@ -99,6 +98,7 @@ export default {
     methods: {
         loadTableStyle() {
             this.$nextTick(function () {
+                this.maxHeight = '100%'
                 if (this.tableMaxHeight > 0 && this.tableData.length * 40 > this.tableMaxHeight) {
                     this.maxHeight = this.tableMaxHeight
                 }
@@ -112,8 +112,8 @@ export default {
 .eleTableBox {
     overflow: hidden;
     height: 100%;
-    .redIndex{
-        color: #ac0015!important;
+    .redIndex {
+        color: #ac0015 !important;
     }
 }
 </style>
