@@ -1,7 +1,8 @@
 <template>
 	<div id="runningNew">
 		<div class="top">
-			<Top></Top>
+
+			<Top setting="runningNewObj"></Top>
 		</div>
 		<div class="bottom">
 			<div class="left">
@@ -19,7 +20,7 @@
      import PostalStore from "@ui_lib/postalStore";
     let postalStore = new PostalStore();
 
-    import Top from "./components/top/index"
+    import Top from "../components/top/index"
     import BottomLeft from "./components/bottomLeft/index"
     import BottomRight from "./components/bottomRight/index"
 

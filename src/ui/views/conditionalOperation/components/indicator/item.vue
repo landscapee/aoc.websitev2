@@ -84,5 +84,19 @@
   	}
 
 }
+.title {
+	font-size: 14px;
+	font-family: MicrosoftYaHei-Bold;
+	display: flex;
+	align-items: center;
+	.shuxian {
+		margin-right: 8px;
+		width: 4px;
+		height: 14px;
+		background: #0566ff;
+		border-radius: 1px;
+	}
+
+}
 
 </style>

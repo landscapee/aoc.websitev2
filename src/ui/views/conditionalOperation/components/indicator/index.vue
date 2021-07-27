@@ -1,7 +1,7 @@
 <template>
 	<div class="bottomRightIndex">
 		<div class="item" v-for="opt in pageObj" :key="opt.key+opt.keyC">
-			<Item ref="item"  :data="opt" :optionsEC="getOptions(opt)" :key="opt.key+opt.keyC"></Item>
+			<Item ref="item" :data="opt" :optionsEC="getOptions(opt)" :key="opt.key+opt.keyC"></Item>
 		</div>
 	</div>
 </template>
@@ -9,48 +9,46 @@
 <script>
     import postal from 'postal';
     import PostalStore from "@ui_lib/postalStore";
-    import { optionsIndicator}from './options'
+    import {optionsIndicator} from './options'
+
     let postalStore = new PostalStore();
     import Item from './item'
-	import {map} from 'lodash'
+    import {map} from 'lodash'
+
     export default {
         name: "bottomRightIndex",
         components: {Item},
         computed: {
-            getOptions(){
-                return (opt)=>{
-                   let arr=this[opt.key][opt.keyC]
-                     if(!arr){
-					    arr=[	 [], { name: '航班指标', data: [0] },]
-					}
-                    return  optionsIndicator(...arr,opt.yName)||{}
+            getOptions() {
+                return (opt) => {
+                    let arr = this[opt.key][opt.keyC]
+                    if (!arr) {
+                        arr = [[], {name: '航班指标', data: [0]},]
+                    }
+                    return optionsIndicator(...arr, opt.yName) || {}
 
-				}
-			}
+                }
+            }
         },
         data() {
             return {
-                 indicator: {},
+                indicator: {},
                 pageObj: [
-                    {name: '航班指标', key: "indicator", keyC:'flightIndicator', yName:'数量(架次)' },
-                    {name: '出港旅客数量指标', key: "indicator", keyC:'passengerIndicator', yName:'数量(人数)' },
-                    {name: '本场起降间隔指标', key: "indicator",keyC:'spaceIndicator' , yName:'分钟'},
+                    {name: '航班指标', key: "indicator", keyC: 'flightIndicator', yName: '数量(架次)'},
+                    {name: '出港旅客数量指标', key: "indicator", keyC: 'passengerIndicator', yName: '数量(人数)'},
+                    {name: '本场起降间隔指标', key: "indicator", keyC: 'spaceIndicator', yName: '分钟'},
                 ],
-
-
             }
         },
-        methods: {
-
-        },
+        methods: {},
         created() {
 
         },
         mounted() {
 
-                postalStore.sub('push.trafficCapacity.Data', ({data, key}) => {
-                     this.indicator = data
-                })
+            postalStore.sub('push.indicator.Data', ({data, key}) => {
+                this.indicator = data
+            })
             postal.publish({
                 channel: 'Worker',
                 topic: 'Get.indicator.Data',
@@ -68,9 +66,10 @@
 <style lang="scss" scoped>
 	.bottomRightIndex {
 		display: flex;
- 		color: #fff;
+		color: #fff;
 		width: 100%;
 		height: 100%;
+		flex-wrap: wrap;
 	}
 
 	.item:nth-child(1) {
@@ -83,20 +82,7 @@
 		padding: 10px 15px;
 		width: 100%;
 		height: calc(33.333333% - 9px);
-		margin-top: 10px ;
-		.title {
-			font-size: 14px;
-			font-family: MicrosoftYaHei-Bold;
-			display: flex;
-			align-items: center;
-			.shuxian {
-				margin-right: 8px;
-				width: 4px;
-				height: 14px;
-				background: #0566ff;
-				border-radius: 1px;
-			}
+		margin-top: 10px;
 
-		}
 	}
 </style>

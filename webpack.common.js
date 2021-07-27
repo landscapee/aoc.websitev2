@@ -207,6 +207,7 @@ module.exports = {
             '@': path.join(__dirname, 'src'),
             '@components': path.join(__dirname, 'src/ui/components'),
             '@ui_lib': path.join(__dirname, 'src/ui/lib'),
+            '@assets': path.join(__dirname, 'src/ui/assets'),
         }
     },
 }

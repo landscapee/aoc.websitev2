@@ -35,7 +35,7 @@
     export default {
         name: "trafficCapacityCom",
         components: {EditEcharts},
-        props: ['showDTSD'], //showDTSD 是否显示动态时段
+        props: ['showDTSD'], //showDTSD 是否显示动态时段 默认显示
         data() {
             return {
                 trafficCapacity: {},//通行能力
@@ -304,6 +304,8 @@
         beforeDestroy() {
             this.echartsInstance.dispose()
             window.removeEventListener('resize', this.resizeEcharts)
+            postalStore.unsubAll()
+
         }
 
     }

@@ -105,19 +105,19 @@
 		.runwayLeft {
 			margin: 0;
 			text-align: center;
-			width: 45px;
+			width: 54px;
 			height: 70px;
 			color: #00d3ff;
 			font-size: 16px;
 			box-shadow: 0px 0px 8px 0px #649fff inset;
 		}
 		.runwayRight {
-			width: 118px;
+			width: calc(33.3333% - 18px );
 			border: 1px solid #649fff;
 			.runwayRightTop {
 				flex: 0 1 auto;
 				color: #649fff;
-				width: 118px;
+				width: 100%;
 				height: 25px;
 				text-align: center;
 				box-shadow: 0px 0px 8px 0px #649fff inset;

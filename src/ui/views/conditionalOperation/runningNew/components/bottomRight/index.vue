@@ -14,10 +14,7 @@
 </template>
 
 <script>
-    import PostalStore from "@ui_lib/postalStore";
-    import {optionsWeather}from './options'
 
-    let postalStore = new PostalStore();
     import Item from './item'
 	import {map} from 'lodash'
 	import Indicator from '../../../components/indicator'
@@ -25,38 +22,17 @@
         name: "bottomRightIndex",
         components: {Item,Indicator},
         computed: {
-
         },
         data() {
             return {
-                optionsWeather,
-                runwayWeather: {},
-                 pageObj: [
-                    {name: 'RVR趋势图', key: "runwayWeather",keyC:'rvr', yName:'m'},
-                    // {name: '航班指标', key: "indicator", keyC:'flightIndicator', yName:'数量(架次)' },
-                    {name: '垂直能见度趋势图', key: "runwayWeather", keyC:'vv', yName:'℃'},
-                    // {name: '出港旅客数量指标', key: "indicator", keyC:'passengerIndicator', yName:'数量(人数)' },
-                    {name: '露点温度与温度趋势图', key: "runwayWeather" ,keyC:'temp', yName:'℃'},
-                    // {name: '本场起降间隔指标', key: "indicator",keyC:'spaceIndicator' , yName:'分钟'},
-                ],
+
             }
         },
         methods: {
 
         },
-        created() {
 
-        },
-        mounted() {
 
-            postalStore.sub('runwayWeather', ({data, key}) => {
-                this.runwayWeather = data
-            })
-        },
-
-        beforeDestroy() {
-            postalStore.unsubAll()
-        },
     }
 </script>
 
