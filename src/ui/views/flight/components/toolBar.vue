@@ -37,7 +37,7 @@
       </div>
       <div class="buttons">
         <el-button @click="toggleAdvance" title="高级搜索" type="info" size="mini"><i class="iconfont icon-gaojisousuo"/></el-button>
-        <el-button title="查看航班历史" type="info" size="mini"><i class="iconfont icon-lishi"/></el-button>
+        <el-button @click="jumpToHistory" title="查看航班历史" type="info" size="mini"><i class="iconfont icon-lishi"/></el-button>
         <el-button @click="toggleFieldSetting" title="列表配置" type="info" size="mini"><i class="iconfont icon-zidingyi"/></el-button>
         <el-button @click="exportExel" title="导出当前结果" type="info" size="mini"><i class="iconfont icon-daochuexcel"/></el-button>
       </div>
@@ -97,6 +97,9 @@ export default {
 
   },
   methods: {
+    jumpToHistory(){
+      this.$router.push('flightHistory')
+    },
     exportExel(){
       postalStore.pub('Worker', 'Flight.Export', '')
     },

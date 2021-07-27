@@ -32,7 +32,7 @@
 
 <!--            </el-table-column>-->
 <!--          </el-table>-->
-          <flightTableDiv :checkFlightId="checkFlightId" :isScrolling="isScrolling" :setColumns="setColumns" :data="showFlights" :columns="columns">
+          <flightTableDiv :showCount="showCount" :checkFlightId="checkFlightId" :isScrolling="isScrolling" :setColumns="setColumns" :data="showFlights" :columns="columns">
             <complex-column :inputField.sync="inputField" slot-scope="scope" :item="scope.item" :scope="scope"/>
           </flightTableDiv>
           <contextMenu :clickItem="contextClick"></contextMenu>
@@ -52,7 +52,7 @@ import {updateListHeader} from "@/ui/views/flight/components/handleColumn";
 import PostalStore from "@/ui/lib/postalStore";
 import {mapState} from "vuex";
 let postalStore = new PostalStore();
-let itemH = 37;
+let itemH = 35;
 export default {
   name: "flightTable",
   props: {
@@ -150,13 +150,14 @@ export default {
       let showAdvance = this.showAdvance
       let rowHeight = fixPx(itemH);
       let begin = Math.floor(window.scrollY / rowHeight);
-      let end = Math.ceil((window.innerHeight - fixPx(120 )) / rowHeight) - 1;
+      let end = Math.ceil((window.innerHeight - fixPx(160 )) / rowHeight);
       end = showAdvance ? end - 1 : end
       // if (begin + end > flights.length){
       //   end = flights.length;
       //   begin = flights.length - end
       // }
       flights = slice(flights, begin, begin + end);
+      this.showCount = end;
       this.showFlights = flights
     },
     onScroll: function (e){

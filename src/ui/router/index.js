@@ -19,6 +19,7 @@ const index = () => import(/*webpackChunkName:"index"*/ '../views')
 const home = () => import(/*webpackChunkName:"home"*/ '../views/home/home')
 //航班动态
 const flight = () => import(/*webpackChunkName:"flight"*/ '../views/flight/flight')
+const flightHistory = () => import(/*webpackChunkName:"flight"*/ '../views/flight/flightHistory')
 //运行监控
 const runMonitoring = () => import(/*webpackChunkName:"runMonitoring"*/ '../views/runMonitoring')
 const poolMonitorWithRunway = () => import(/*webpackChunkName:"poolMonitorWithRunway"*/ '../views/poolMonitorWithRunway')
@@ -59,6 +60,10 @@ export var routes = [
             {
                 path: '/flight', name: 'flight', component: flight,
                 title:'航班动态',icon:'hangbandongtai1',role:'flight'
+            },
+            {
+                path: '/flightHistory', name: 'flightHistory', component: flightHistory,
+                title:'航班历史',icon:'hangbandongtai1',role:'flight'
             },
             {
                 path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component: poolMonitorWithRunway,
