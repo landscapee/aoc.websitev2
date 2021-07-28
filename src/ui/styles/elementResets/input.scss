@@ -7,13 +7,17 @@
     .el-input-group__prepend,
     .el-input-group__append {
         height: 30px;
-        background-color: transparent;
-        border: none;
+        border: none!important;
+        background-color: #2b3645!important;
+        .el-button{
+            background-color: #2b3645!important;
+        }
     }
 
     .el-input__inner {
         padding: 0 5px;
         color: #a1a1a1;
+        border: none!important;
     }
 
     .el-input-group__prepend {
