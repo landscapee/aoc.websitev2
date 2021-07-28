@@ -116,6 +116,7 @@ export default {
     }
 }
 .homeNumber2contentbox {
-    overflow: auto;
+    // overflow: auto;
+    // height: 600px;
 }
 </style>

@@ -15,7 +15,7 @@
                     </div>
                     <div>
                         <p class="p2">今天限制延误架次：{{flight_monthClearance.value?flight_monthClearance.value.limitDelay:0}}</p>
-                        <p class="p2">今日已延误架次：<span @click="flightDialogHandle">{{flight_monthClearance.value?flight_monthClearance.value.delay:0}}</span></p>
+                        <p class="p2">今日已延误架次：<span @click="flightDialogHandle" :class="getDelayName">{{flight_monthClearance.value?flight_monthClearance.value.delay:0}}</span></p>
                     </div>
                 </div>
                 <div class="footer">
@@ -116,6 +116,20 @@ export default {
         },
     },
     methods: {
+        getDelayName() {
+            let limitDelay = this.flight_monthClearance.value
+                ? this.flight_monthClearance.value.limitDelay
+                : 0
+            let delay = this.flight_monthClearance.value
+                ? this.flight_monthClearance.value.delay
+                : 0
+
+            if (delay > limitDelay) {
+                return 'redBg'
+            } else {
+                return ''
+            }
+        },
         load_flight_home() {
             this.activeData = this.flight_home.rateDelay
                 ? this.flight_home.rateDelay[this.select]
@@ -203,9 +217,11 @@ export default {
                             height: 24px;
                             width: 24px;
                             border-radius: 24px;
-                            background: #940d5b;
                             line-height: 24px;
                             text-align: center;
+                        }
+                        span.redBg {
+                            background: #940d5b;
                         }
                     }
                     .p2 {

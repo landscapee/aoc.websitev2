@@ -131,6 +131,7 @@ export default {
     mounted() {},
     destroyed() {
         postalStore.pub('Worker', 'Page.Home.Stop', '')
+        postalStore.unsubAll()
     },
     methods: {
         loadSetting() {

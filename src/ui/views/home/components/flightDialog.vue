@@ -53,6 +53,9 @@ export default {
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    click: ({ row }) => {
+                        this.$FlightDetais.open({ flightId: row.flightId }, true)
+                    },
                 },
             ]
             switch (key) {
@@ -150,7 +153,10 @@ export default {
                     this.columnConfig = _.concat(this.columnConfig, [
                         {
                             key: 'aircraftNo',
-                            label: '机尾号',
+                            label: '进/离',
+                            display: ({ row }) => {
+                                return row.movement == 'A' ? '进' : '离'
+                            },
                         },
                         {
                             key: 'routing',
@@ -180,8 +186,12 @@ export default {
                 case 'delay':
                     this.columnConfig = _.concat(this.columnConfig, [
                         {
-                            key: 'aircraftNo',
-                            label: '机尾号',
+                            key: 'routing',
+                            label: '航线',
+                            width: '340px',
+                            display: ({ row }) => {
+                                return row.routers ? row.routers.join('-') : '--'
+                            },
                         },
                         {
                             key: 'actualTime',
@@ -189,6 +199,15 @@ export default {
                             display: ({ row }) => {
                                 return row.actualTime
                                     ? this.$moment(row.actualTime).format('HH:mm')
+                                    : '--'
+                            },
+                        },
+                        {
+                            key: 'scheduleTime',
+                            label: '计划起飞',
+                            display: ({ row }) => {
+                                return row.scheduleTime
+                                    ? this.$moment(row.scheduleTime).format('HH:mm')
                                     : '--'
                             },
                         },

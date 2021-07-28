@@ -93,7 +93,7 @@ export default {
     },
     methods: {
         submitData() {
-            // console.log(this.tableData, this.special)
+            console.log(this.tableData, this.special)
         },
         initData() {
             this.editShow = false

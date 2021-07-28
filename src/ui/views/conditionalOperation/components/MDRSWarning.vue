@@ -1,5 +1,5 @@
 <template>
-	<div class="warn">
+ 	<div class="warn">
 		<div class="title">
 			<div class="shuxian"></div>
 			<div class="text">MDRS预警</div>
@@ -11,12 +11,13 @@
 			{{messageData.content}}
 		</div>
 	</div>
+
 </template>
 
 <script>
-    import {memoryStore} from "@/worker/lib/memoryStore";
+import { memoryStore } from '@/worker/lib/memoryStore'
 
-    import postal from 'postal';
+     import postal from 'postal';
     import PostalStore from "@ui_lib/postalStore";
 
     let postalStore = new PostalStore();
@@ -117,4 +118,5 @@
 			line-height: 22px;
 		}
 	}
+
 </style>
