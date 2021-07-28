@@ -149,9 +149,11 @@ export default {
             movement && filter.push({ movement })
             airport && filter.push({ preOrNxtAirportCn: { $regex: airport } })
             direction && filter.push({ direction })
+
             // 获取航司航班列表
             postalStore.pub('Worker', 'AdverseCondition.GetFlight', [...filter])
             postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
+                console.log(flights)
                 let planDetail = this.currentReduce.planDetail
 
                 _.map(flights, (flight) => {

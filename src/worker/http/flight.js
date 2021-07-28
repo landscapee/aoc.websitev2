@@ -1,10 +1,11 @@
 import {flightDB, saveToFlightDB} from "../lib/storage";
-import {memoryStore} from "../lib/memoryStore";
+import { memoryStore } from "../lib/memoryStore";
+import { isString} from 'lodash';
 
 export const flightHttp = (worker,httpRequest) => {
   const getTodayFLight = () => {
     httpRequest.get('flight', 'getWebSocketResponseData').then(response => {
-      saveToFlightDB(JSON.parse(response.responseData)).then(() => {
+      saveToFlightDB(isString(response.responseData)?JSON.parse(response.responseData):response.responseData).then(() => {
         memoryStore.setItem('global', { websocketDataFinish: true });
         worker.publish('','Flight.Change.Sync',response)
       });
@@ -21,7 +22,7 @@ export const flightHttp = (worker,httpRequest) => {
 
   worker.subscribe('Flight.GetMore',(options)=>{
     httpRequest.post('flight','Flight/Screening', options, true).then(res=>{
-      saveToFlightDB(JSON.parse(res.responseData)).then(() => {
+      saveToFlightDB(isString(res.responseData)?JSON.parse(res.responseData):res.responseData).then(() => {
         worker.publish('Worker','Flight.Change.Sync','')
       })
     });

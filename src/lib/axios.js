@@ -37,13 +37,6 @@ axios.interceptors.request.use(
           topic:'Login.Out',
           data: ''
         })
-        // Vue.prototype.$alert('用户已过期，请重新登录！', '提示', {
-        //   type: 'warning',
-        //   center: true
-        // }).then(() => {
-        //   // router.replace("/")
-        // })
-        // c()
       });
     }
 

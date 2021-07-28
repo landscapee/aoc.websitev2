@@ -73,9 +73,9 @@ import './assets/index.scss'
 import { encryptedData } from '../../lib/des-coder.js'
 import { memoryStore } from '../../../worker/lib/memoryStore'
 import PostalStore from '@/ui/lib/postalStore'
-import {find, get} from "lodash";
+import { find, get } from 'lodash'
 let postalStore = new PostalStore()
-import {getUser,setUser}from '../../lib/localStorageTemp'
+import { getUser, setUser } from '../../lib/localStorageTemp'
 export default {
     name: 'login',
     data() {
@@ -213,12 +213,14 @@ export default {
                                 // }
 
                                 if (
-                                    (res.responseCode == 30003 ||res.responseCode == 30002 || res.responseCode == 1000) &&
+                                    (res.responseCode == 30003 ||
+                                        res.responseCode == 30002 ||
+                                        res.responseCode == 1000) &&
                                     res.data
                                 ) {
-                                  let storageData = {
-                                    token: res.data.token,
-                                  }
+                                    let storageData = {
+                                        token: res.data.token,
+                                    }
                                     postalStore.pub('Worker', 'LoginSuccess', res.data)
                                     memoryStore.setItem('global', storageData)
                                     this.$store.commit('setUserMsg', res.data)
@@ -229,8 +231,11 @@ export default {
                                     // )
                                     // 登录信息保存本地
                                     setUser(res.data)
-                                    if(res.responseCode == 30002){
-                                        this.$message({ message: res.responseMessage, type: 'warning' })
+                                    if (res.responseCode == 30002) {
+                                        this.$message({
+                                            message: res.responseMessage,
+                                            type: 'warning',
+                                        })
                                     }
                                     this.$router.push('/menu')
                                     // this.routerHandle(res.data.menus || [])
