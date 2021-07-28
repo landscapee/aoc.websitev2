@@ -137,11 +137,11 @@
         },
         watch: {
             getContent: function () {
-                console.log(2);
+                // console.log(2);
                 let tranTime=(time)=>{
                     return moment(time).format('HH:mm')||'--'
 				}
-                console.log(this.form);
+                // console.log(this.form);
 
                 let time1=tranTime(this.form.time[0])
                  let time2=tranTime(this.form.time[1])
@@ -179,9 +179,9 @@
                 this.form.title = this.areaObj[val]
             },
 			timeChange(value) {
-                console.log(11111,2,value);
+                // console.log(11111,2,value);
                 if(value){
-                    console.log(333);
+                    // console.log(333);
 
                     this.$set(this.form, 'closeStartTime', value[0])
                     this.$set(this.form, 'closeEndTime', value[1])

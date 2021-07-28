@@ -131,7 +131,7 @@ export default {
     mounted() {
         postalStore.sub('emergencyEventNode', ({data,key}) => {
             this[key] = data
-            console.log(key,data);
+            // console.log(key,data);
         })
     },
     beforeDestroy() {

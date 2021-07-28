@@ -1,19 +1,82 @@
 <template>
-    <div id="delayNew">
-        delayNew
+    <div id="runningNew">
+        <div class="top">
+            <Top setting="delayNewObj"></Top>
+        </div>
+        <div class="middle">
+            <div class="left">
+                <BottomLeft  ></BottomLeft>
+            </div>
+            <div class="right">
+                <BottomRight  ></BottomRight>
+            </div>
+        </div>
+        <div class="footer">
+            <Footer></Footer>
+        </div>
     </div>
 </template>
 
 <script>
-export default {
-    data() {
-        return {}
-    },
-    mounted() {},
-    methods: {},
-}
+    import postal from 'postal';
+    import PostalStore from "@ui_lib/postalStore";
+    let postalStore = new PostalStore();
+
+    import Top from "../components/top/index"
+    import BottomLeft from "./components/middleLeft/index"
+    import BottomRight from "./components/middleRight/index"
+    import Footer from "./components/footer/index"
+
+    export default {
+        data() {
+            return {}
+        },
+        components: {
+            BottomRight, BottomLeft, Top,Footer
+        },
+        methods: {},
+        created() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.runningNew.Start',
+            });
+        },
+        mounted() {
+
+        },
+        beforeDestroy() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.runningNew.Stop',
+            })
+            postalStore.unsubAll()
+        },
+    }
 </script>
 <style scoped lang="scss">
-#delayNew {
-}
+    #runningNew {
+        padding-bottom: 15px;
+        .top {
+            height: 74px;
+        }
+        .middle {
+            margin: 12px  0;
+            height: calc(45% - 98px);
+            display: flex;
+            .right,
+            .left {
+                height: 100%;
+             }
+            .left {
+                width: calc(40% - 14px  );
+                margin-right: 14px;
+            }
+            .right{
+                width: 60%;
+            }
+        }
+        .footer{
+             height: 55%;
+        }
+    }
 </style>

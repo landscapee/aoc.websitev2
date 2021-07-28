@@ -87,7 +87,6 @@ export const init = (worker_, httpRequest_, clientId) => {
     // 主动获取消息
     worker.subscribe('Get.message.Data', () => {
         let data = memoryStore.getItem('global').messageClientData
-
         if(data){
             worker.publish('Web', 'push.message.Data', data)
         }else{

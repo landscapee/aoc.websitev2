@@ -28,7 +28,7 @@
 		computed:{
             getTableData(){
                 return (key)=>{
-                    console.log(this.deiceFlights,this.deiceFlights[key]);
+                    // console.log(this.deiceFlights,this.deiceFlights[key]);
                     let data=this.deiceFlights[key]||[]
                     let allLen=data.length
                     let flights = groupBy(data, 'deiceStatus');
@@ -53,7 +53,7 @@
 							data:finish,
 						},
 					}
-                    console.log(22,obj);
+                    // console.log(22,obj);
                     return obj
 				}
 			}

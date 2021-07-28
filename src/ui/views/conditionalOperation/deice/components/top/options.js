@@ -366,7 +366,7 @@ export const getOptionsCB = (yData,xData,) => {
     let hours =   xData ||  xDataD;
     let rates =  yData ||  yDataD;
     let option = getLineOptionCB(hours, rates);
-    console.log(yData || yDataD);
+    // console.log(yData || yDataD);
     return option;
 };
 

@@ -107,7 +107,7 @@
                         let med='post';
                         let timeRangeStart=moment(this.form.time[0]).format('HHmm')
                         let timeRangeEnd=moment(this.form.time[1]).format('HHmm')
-                        console.log('time',timeRangeStart,timeRangeEnd);
+                        // console.log('time',timeRangeStart,timeRangeEnd);
                         let obj={...this.form,timeRangeEnd,timeRangeStart}
                         if(this.title=='编辑'){
                             med='put'
