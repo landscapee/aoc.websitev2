@@ -189,7 +189,7 @@ export default {
                             password: encryptedData(this.loginForm.password),
                         })
                         .then((res, resBody) => {
-                            console.log(resBody)
+                            // console.log(resBody)
                             this.loading = false
                             if (res) {
                                 // if (

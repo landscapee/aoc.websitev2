@@ -97,7 +97,7 @@
                     startTime:moment( this.time[0]).format('YYYY-MM-DD HH:mm:SS'),
                     endTime: moment( this.time[1]).format('YYYY-MM-DD HH:mm:SS'),
                 }
-                console.log(this.time,obj);
+                // console.log(this.time,obj);
                 this.$request.post('situation', typeObj[key], obj, true).then((res) => {
                     if (res.code == 200) {
 

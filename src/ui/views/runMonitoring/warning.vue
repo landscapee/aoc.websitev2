@@ -65,11 +65,11 @@
                     let arr=[...this.time,...this.status]
                     let obj={}
                      map(this.options,(k,l)=>{
-                        console.log(k, l);
+                        // console.log(k, l);
                         obj[k]=[...arr]
                     })
                     this.$request.post('situation', 'batchConcernStatus/add', obj,false).then((res)=>{
-                        console.log('edit',res);
+                        // console.log('edit',res);
                         if(res.code==200){
                             this.$message.success('操作成功')
                         }
@@ -105,7 +105,7 @@
                     if(res.code!=200||!res.data){
                         return
                     }
-                    console.log(options);
+                    // console.log(options);
                     map(res.data,(k,l)=>{
                         if(k){
                             let arr=map(k,(item)=>{

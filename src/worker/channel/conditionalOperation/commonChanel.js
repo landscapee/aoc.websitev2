@@ -1,4 +1,10 @@
-import {trafficCapacity, getDelayBoard,getIndicator,getRunwayWeather} from "../../manage/conditionalOperation/common";
+import {
+    trafficCapacity,
+    getDelayBoard,
+    getIndicator,
+    getRunwayWeather,
+    dealWeather
+} from "../../manage/conditionalOperation/common";
 import {mapKeys, map, extend, forEach, keyBy, get} from 'lodash';
 import SocketWrapper from "../../lib/socketWrapper";
 import {memoryStore} from "../../lib/memoryStore";
@@ -33,36 +39,27 @@ const subWSEvent = () => {
     });
     // 气象灾害-三大指标  实时延误航班 最近一次跑道使用间隔
     //   航班指标  - 预测  出港旅客数量指标  本场起降间隔指标
-     client.sub(`/adverse-condition/meteorologyDisaster/indicator`, (data) => {
+    client.sub(`/adverse-condition/meteorologyDisaster/indicator`, (data) => {
         let mydata = data
         mydata = getIndicator(mydata)
         memoryStore.setItem('AdverseCondition', {indicator: mydata})
         worker.publish('Web', 'push.indicator.Data', {data: mydata, key: 'indicator'})
     });
-     //   实时延误航班
-     client.sub(`/adverse-condition/delay/stat`, (data) => {
+    //   实时延误航班
+    client.sub(`/adverse-condition/delay/stat`, (data) => {
         let mydata = data
-         memoryStore.setItem('AdverseCondition', {flightDelay: mydata})
+        memoryStore.setItem('AdverseCondition', {flightDelay: mydata})
         worker.publish('Web', 'push.flightDelay.Data', {data: mydata, key: 'flightDelay'})
-         mydata= mydata?.series[0]
-         mydata=mydata?.total
-         worker.publish('Web', 'push.top.Data', {data: {flightNum:mydata}, key: 'flightDelay'})
-     });
-     //  新气象灾害
+        mydata = mydata?.series[0]
+        mydata = mydata?.total
+        worker.publish('Web', 'push.top.Data', {data: {flightNum: mydata}, key: 'flightDelay'})
+    });
+    //  新气象灾害
     client.sub('/adverse-condition/meteorologyDisaster/warnInfo', (data) => {
         let mydata = data
         memoryStore.setItem('AdverseCondition', {weatherWarnInfo: mydata})
-        worker.publish('Web', 'page.delay.data', {data: mydata, key: 'weatherWarnInfo'})
-
-        let obj={
-            warnType:mydata.warnType,
-            publishTime:mydata.publishTime,
-            expectStartTime:mydata.expectStartTime,
-            expectEndTime:mydata.expectEndTime,
-        }
-        worker.publish('Web', 'push.top.Data', {data: obj, key: 'weatherWarnInfo'})
-
-     })
+        dealWeather(mydata)
+    })
 
 
 };
@@ -94,28 +91,33 @@ export const init = (worker_, httpRequest_) => {
     worker.subscribe('Get.trafficCapacity.Data', (c) => {
         let data = memoryStore.getItem('AdverseCondition')
         let txnl = data?.txnl  //通行能力
-        let dtsd =data?.dtsd  //动态时段
-         txnl && worker.publish('Web', 'push.trafficCapacity.Data', {data: txnl, key: 'trafficCapacity'})
+        let dtsd = data?.dtsd  //动态时段
+        txnl && worker.publish('Web', 'push.trafficCapacity.Data', {data: txnl, key: 'trafficCapacity'})
         dtsd && worker.publish('Web', 'push.trafficCapacity.Data', {data: dtsd, key: 'delayBoard'})
 
     });
     //  航班指标 
     worker.subscribe('Get.indicator.Data', (c) => {
         let data = memoryStore.getItem('AdverseCondition')
-        let indicator =data?.indicator  //(不利条件运行）折线图    航班指标     出港旅客数量指标  本场起降间隔指标
+        let indicator = data?.indicator  //(不利条件运行）折线图    航班指标     出港旅客数量指标  本场起降间隔指标
         indicator && worker.publish('Web', 'push.indicator.Data', {data: indicator, key: 'indicator'})
 
     });
     //  实时延误航班
     worker.subscribe('Get.flightDelay.Data', (c) => {
         let data = memoryStore.getItem('AdverseCondition')
-        let flightDelay =data?.flightDelay
+        let flightDelay = data?.flightDelay
         flightDelay && worker.publish('Web', 'push.flightDelay.Data', {data: flightDelay, key: 'flightDelay'})
-        let myData= flightDelay?.series[0]
-        myData=myData?.total
+        let myData = flightDelay?.series[0]
+        myData = myData?.total
         //发送给不利条件运行的 top组件
-          myData!==undefined &&worker.publish('Web', 'push.top.Data', {data: {flightNum:myData}, key: 'flightDelay'})
+        myData !== undefined && worker.publish('Web', 'push.top.Data', {data: {flightNum: myData}, key: 'flightDelay'})
 
+    });
+    //  新气象灾害
+    worker.subscribe('Get.flightDelay.Data', (c) => {
+        let data = memoryStore.getItem('AdverseCondition')
+        dealWeather(data,c)
     });
 
     worker.subscribe('Page.conditionalOperation.Start', () => {

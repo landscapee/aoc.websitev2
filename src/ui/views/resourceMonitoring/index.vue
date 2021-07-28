@@ -270,7 +270,7 @@
                     yDataTotal2 = [{ name: '总实际', data: tabData?.totalList ||totalList}];
                     options=gateSituationLineOption(xData, yDataTotal, yDataTotal2, usableList, disabledList, actSurplusList, planSurplusList,tooltipName)
                 }
-                console.log(111,this.tabObj[key] ,key );
+                // console.log(111,this.tabObj[key] ,key );
                 this.echartsInstance[key].setOption(options)
             },
             resizeEcharts(){
@@ -310,7 +310,7 @@
                 })
             });
             postalStore.sub('resourceUsageData', ({data, key}) => {
-                console.log('resourceUsageData,data', data, key);
+                // console.log('resourceUsageData,data', data, key);
                 this[key] = data
             })  ;
             window.addEventListener('resize',this.resizeEcharts())

@@ -179,7 +179,7 @@
             postalStore.sub( 'closeDoorWait',(data)=>{
                 let length=Object.keys(data[0]||{}).length
                 length&&this.$set(this.pageListObj.closeDoorWait,'data',data)
-                 console.log('closeDoorWait',data);
+                 // console.log('closeDoorWait',data);
             });
         },
         beforeDestroy() {

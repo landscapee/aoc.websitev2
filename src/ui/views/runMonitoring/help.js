@@ -234,12 +234,12 @@ export const setting = {
             display: (row) => {
                 let data=row
                 let closeDoorTime = data.closeDoorTime === '--' ? null : data.closeDoorTime;
-                console.log('closeDoorTime',row,closeDoorTime);
+                // console.log('closeDoorTime',row,closeDoorTime);
                 if (!closeDoorTime) {
                     return '--';
                 }
                 let now =  memoryStore.getItem('global').now;
-                console.log('now',now);
+                // console.log('now',now);
                 let diff = now - closeDoorTime;
                 let diffHour = parseInt(diff / (60 * 60 * 1000), 10);
                 let diffMinute = parseInt(diff / (60 * 1000), 10) % 60;

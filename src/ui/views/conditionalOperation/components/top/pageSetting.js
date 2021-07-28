@@ -42,7 +42,7 @@ export const weatherNewObj=[
 ];
 // 大面积延误
 export const delayNewObj=[
-    { name: '', key: '', icon: '', deal: 'item0', style: { background: '#3280e7' } },
+    { name: '', key: '', icon: '', deal: 'weather0', style: { background: '#3280e7' } },
     { name: '备降外场',click:'alternateLanding', key: 'weatherStat.alternateLanding',unit:'架次', icon: 'bjwc', class:'cursor',style: { background: '#32c8e7' } },
     { name: '取消航班',click:'cancelOpen', key: 'weatherStat.cancel', icon: 'qxhb', unit:'架次', class:'cursor',style: { background: '#24ca87' } },
     { name: '预测积压情况', key: 'estimatedBacklog', icon: 'yjjyqk',  unit:'架次',style: { background: '#5d9d52' } },
@@ -50,10 +50,16 @@ export const delayNewObj=[
         name: '',
         key: 'flightIndicator',
         icon: 'hbzbyc',
-        deal: 'item4',
+        deal: 'runningNew4',
         style: { background: '#5f3fb0' },
     },
     {
+        name: '出港旅客数量指标',
+        key: 'indicator.spaceIndicator.space',
+        icon: 'lgsl',
+        unit:'人',
+        style: { background: '#783bbd' },
+    }, {
         name: '最近一次跑道使用间隔',
         key: 'indicator.spaceIndicator.space',
         icon: 'zjycpdsyjg',

@@ -94,6 +94,7 @@
                 estimatedBacklog: '',// 预测航班积压量
                 indicator: {},//   航班指标
                 flightDelay: {},// 实时延误航班 数量
+                weatherWarnInfo: {},// 新气象灾害
                 emergencyCfg: [
                     {key: 'ready', icon: zbjd},
                     {key: 'doing', icon: ssjd},
@@ -146,7 +147,7 @@
             });
             postalStore.sub('push.top.Data', ({data, key}) => {
                 this[key] = data
-                console.log(2222, key, data);
+                // console.log(2222, key, data);
             })
             postal.publish({
                 channel: 'Worker',

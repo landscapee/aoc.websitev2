@@ -77,6 +77,22 @@ export const trafficCapacity = (data) => {
     let series=[{ name: '已延误航班统计', data: map(trafficCapacity, (item) => item.capacity) }]
     return {xAxis,series}
 };
+export const dealWeather = (mydata,c) => {
+    if(!mydata){
+        return
+    }
+    let obj={
+        warnType:mydata.warnType,
+        publishTime:mydata.publishTime,
+        expectStartTime:mydata.expectStartTime,
+        expectEndTime:mydata.expectEndTime,
+    }
+    worker.publish('Web', 'page.delay.data', {data: mydata, key: 'weatherWarnInfo'})
+
+    worker.publish('Web', 'push.top.Data', {data: obj, key: 'weatherWarnInfo'})
+
+
+};
 export const runNewStart = (posWorker) => {
     // posWorker.subscribe('RunNewStart.Change.Sync', (data) => {
     // })

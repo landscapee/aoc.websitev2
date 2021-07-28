@@ -336,7 +336,7 @@ export const decreaseDialog_columnConfig1 = [
 					row.maxOff = prevData.maxOff
 					row.maxOn = prevData.maxOn
 					row.maxTotal = prevData.maxTotal
-					console.log(row,$index)
+					// console.log(row,$index)
 				},
 			},
 		],
