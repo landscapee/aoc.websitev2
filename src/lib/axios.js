@@ -4,8 +4,8 @@ import axios from "axios";
 import router from '../ui/router'
 import store from '../ui/store'
 import postal from 'postal';
-import {cloneDeep, includes} from 'lodash';
-import {memoryStore} from "../worker/lib/memoryStore";
+import {cloneDeep, includes, isString} from 'lodash';
+import {memoryStore} from "@/worker/lib/memoryStore";
 // let hasIfm = self!=top//是否被镶嵌
 axios.interceptors.request.use(
   config => {
