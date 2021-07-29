@@ -284,7 +284,7 @@
         mounted() {
             // 动态时段 通行能力
             postalStore.sub('push.trafficCapacity.Data', ({data, key}) => {
-                console.log('trafficCapacity',data, key);
+                // console.log('trafficCapacity',data, key);
                 this[key] = data;
             });
 
@@ -317,6 +317,7 @@
 		background: rgba(25, 37, 60, 0.8);
 		border-radius: 5px;
 		padding: 10px 15px;
+		color: #fff;
 		.title {
 			font-size: 14px;
 			font-family: MicrosoftYaHei-Bold;

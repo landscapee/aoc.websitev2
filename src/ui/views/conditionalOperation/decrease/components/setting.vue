@@ -242,7 +242,7 @@ export default {
             }
 
             if (this.recoverTime[0] < this.influenceTime[1]) {
-                this.$message.error('恢复开始时间不能影响结束时间！')
+                this.$message.error('恢复开始时间不能早于影响结束时间！')
                 return false
             }
 

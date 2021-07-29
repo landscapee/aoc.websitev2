@@ -78,7 +78,7 @@ export default {
         })
         // 月度放行正常率目标
         postalStore.sub('flight.monthClearance', (data) => {
-            console.log('月度放行正常率目标', data)
+            // console.log('月度放行正常率目标', data)
             this.flight_monthClearance = data
         })
         // 最近实际落地航班
@@ -131,6 +131,7 @@ export default {
     mounted() {},
     destroyed() {
         postalStore.pub('Worker', 'Page.Home.Stop', '')
+        postalStore.unsubAll()
     },
     methods: {
         loadSetting() {

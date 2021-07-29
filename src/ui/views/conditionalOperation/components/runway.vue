@@ -38,7 +38,7 @@
 
 
             postalStore.sub('push.runway.Data', (runwayData) => {
-                console.log(111, runwayData);
+                // console.log(111, runwayData);
                 let directionOpt = {
                     north: '北',
                     south: '南',
@@ -74,6 +74,7 @@
 		width: 100%;
 		background: rgba(25, 37, 60, 0.8);
 		padding: 15px 15px 15px 10px ;
+		color: #fff;
 		.runwayTitle {
 			background: url("../../../assets/img/pdyxms.png");
 			background-size: 100% 100%;

@@ -56,8 +56,10 @@ Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 //     store.commit('setLanguage',localStorage.lang)
 // }
 
-if(getUser()){//刷新或者丢失用户信息，使用token获取用户信息
-    store.commit('setUserMsg',JSON.parse(getUser()))
+if (getUser()) {//刷新或者丢失用户信息，使用token获取用户信息
+    let user = JSON.parse(getUser())
+    store.commit('setUserMsg', user)
+    memoryStore.setItem('global', {token:user.token});
 }
 
 
@@ -70,22 +72,24 @@ new Vue({
     i18n,
     template: '<App />',
     created () {
-         let clientId = uuidv4();
-         console.log('clientId',clientId);
+         
         const workerProces = new WorkerRegist();
         workerProces.start();
-        let token = JSON.parse(getUser()).token;
-        let now = moment().valueOf()
-        memoryStore.setItem('global',{token, now,clientId});
+        let clientId = uuidv4();
+        let now = moment().valueOf();
+        let user = getUser() ? JSON.parse(getUser()) : {}
+
+        //vue实例，重新注册信息
+        
         postal.publish({
             channel: 'Worker',
             topic: 'init',
             data: {
                 servers,
                 httpConfig,
-                token,
                 now,
-                clientId
+                clientId,
+                user
             },
         });
     }

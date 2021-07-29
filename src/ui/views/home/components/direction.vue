@@ -189,10 +189,10 @@ export default {
             //key当前业务value实时业务
         }
     },
-    created() {
+    created() {},
+    mounted() {
         this.getFindCurrentNotice()
     },
-    mounted() {},
     watch: {
         flight_direction: function (val) {
             this.loadMap()

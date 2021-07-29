@@ -5,16 +5,18 @@ import store from '../store'
 import postal from 'postal';
 import axios from "axios";
 import {httpConfig} from "@/lib/interfaces";
-import {getUserSerializ,clearCookie} from '../lib/localStorageTemp'
+import { getUserSerializ, clearCookie } from '../lib/localStorageTemp'
+// import {memoryStore} from "@/worker/lib/memoryStore";
 let loginFlag = 0;
 let hasIfm = self!=top//是否被镶嵌
 let socketInterfaceType = window.webConfig.socketInterfaceType
 let token=getUserSerializ()?.token
 router.beforeEach((to, from, next) => {
-
     if(to.name=="login"||to.name=="/"){//登陆页清空信息
         loginFlag=0
         clearCookie()
+        localStorage.clear()
+        sessionStorage.clear()
  		store.commit("resetStore",null)
 
 		postal.publish({
@@ -47,11 +49,12 @@ router.beforeEach((to, from, next) => {
                 })
                 .then(res=>{
                     if(res&&res.responseCode=='1000'){
-                        postal.publish({
-                            channel: 'Worker',
-                            topic: 'LoginSuccess',
-                            data: {...res.data, token:token}
-                        })
+                        // postal.publish({
+                        //     channel: 'Worker',
+                        //     topic: 'LoginSuccess',
+                        //     data: {...res.data, token:token}
+                        // })
+                        //  memoryStore.setItem('global', {token:user.token});
                         next()
                     }
                 })

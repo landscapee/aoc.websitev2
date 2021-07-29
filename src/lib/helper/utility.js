@@ -146,3 +146,9 @@ export const getMomentFromHHmm = (v) => {
 		.set('hour', v.substring(0, 2))
 		.set('minute', v.substring(2, 4));
 };
+export const displayTime = (v,str, emptyStr) => {
+    if (!v || !moment(v).isValid()) {
+        return emptyStr !== undefined ? emptyStr : '--';
+    }
+    return moment(v).format(str||'YYYY-MM-DD HH:mm');
+};

@@ -18,7 +18,7 @@ let getFlight = (query) => {
 
     checkWebsocketResponseDataFinish().then(() => {
         let flights = flightDB.find({ $and: query });
-        // flights = flow([filterRoleFlights, proFlightFields, addSerialNumber])(flights);
+        flights = flow([filterRoleFlights])(flights);
         worker.publish('Web','AdverseCondition.GetFlight.Response',flights)
 	});
 };
