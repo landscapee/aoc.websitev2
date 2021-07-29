@@ -4,12 +4,10 @@ import {memoryStore} from "../lib/memoryStore";
 export const flightHttp = (worker,httpRequest) => {
   const getTodayFLight = () => {
     httpRequest.get('flight', 'getWebSocketResponseData').then(response => {
-      if (response.code === 200){
-        saveToFlightDB(JSON.parse(response.responseData)).then(() => {
-          memoryStore.setItem('global', { websocketDataFinish: true });
-          worker.publish('','Flight.Change.Sync',response)
-        });
-      }
+      saveToFlightDB(JSON.parse(response.responseData)).then(() => {
+        memoryStore.setItem('global', { websocketDataFinish: true });
+        worker.publish('','Flight.Change.Sync',response)
+      });
     }).catch()
   }
 
