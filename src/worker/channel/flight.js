@@ -1,5 +1,5 @@
 import {memoryStore} from '../lib/memoryStore'
-import {flightStart, flightStop} from "../manage/flight";
+import {flightHistoryStart, flightHistoryStop, flightStart, flightStop} from "../manage/flight";
 import {saveToFlightDB} from "../lib/storage";
 import Logger from "../../lib/logger";
 import {values, extend, forEach, map} from 'lodash';
@@ -142,5 +142,13 @@ export const init = (worker_) => {
       console.log('flight销毁',item)
       item.unSubAll()
     })
+  })
+
+  worker.subscribe('Page.FlightHistory.Start',(header)=>{
+    flightHistoryStart(worker, header)
+  })
+
+  worker.subscribe('Page.FlightHistory.Stop',()=>{
+    flightHistoryStop(worker)
   })
 };

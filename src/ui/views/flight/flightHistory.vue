@@ -35,12 +35,22 @@
         <router-link to="/flight" class="back"><el-button size="mini" type="primary">返回</el-button></router-link>
       </div>
     </div>
+    <flightTable :setColumns="setColumns" :flights="flightData.flights" :columns="columns">
+    </flightTable>
   </div>
 </template>
 
 <script>
 import moment from "moment";
 import {memoryStore} from "@/worker/lib/memoryStore";
+import _, {extend} from "lodash";
+import PostalStore from "@/ui/lib/postalStore";
+import {getListHeader} from "@/ui/views/flight/components/handleColumn";
+import {map} from "lodash";
+import flightTable from "@/ui/views/flight/components/flightTable/flightTable";
+import ColumnsDefine from "@/ui/views/flight/columnDefine";
+
+let postalStore = new PostalStore();
 
 let tabBarOptions = [
   { name: '全部', key: 'total', option: null },
@@ -55,15 +65,20 @@ let tabBarOptions = [
   { name: '始发', key: 'originated', option: { originated: true } },
   // { name: '可执行积压', key: 'isExecutableFlight', option: { isExecutableFlight: true } },
 ];
+let opt, defaultSortFun, term, sort, date, search;
 export default {
   name: "flightHistory",
+  components: {flightTable},
   data(){
     let _this = this;
     let nowTime = memoryStore.getItem('global').now
     let now = moment(nowTime).startOf("day");
     return{
       tabBarOptions,
-      time:'',
+      time:[moment(now).subtract(1, 'd').format(), moment(now).format()],
+      pageSize: 22,
+      flightData: {},
+      columns: [],
       pickerOptions: {
         shortcuts: [
           {
@@ -147,9 +162,57 @@ export default {
       },
     }
   },
+  mounted() {
+    let header = getListHeader();
+    let headerArray = map(header, item => {return _.pick(item, ['text' , 'key', 'reference', 'referenceTo'])})
+    postalStore.pub('Page.FlightHistory.Start', headerArray);
+    postalStore.sub('Flight.GetHistory.Response', data => {
+      this.flightData = data
+    })
+    this.sendFilterOpt()
+  },
+  beforeDestroy() {
+    postalStore.pub('Page.FlightHistory.Stop', '');
+    postalStore.unsubAll()
+  },
   methods: {
+    setColumns: function (Columns) {
+      let newColumns = _.map(Columns, (h) => {
+        if (ColumnsDefine[h.key]) {
+          return _.extend({}, h, ColumnsDefine[h.key]);
+        } else {
+          return h;
+        }
+      });
+      this.columns = newColumns;
+      this.calcColumnWidth()
+    },
+    calcColumnWidth: function (){
+      let oldC = this.columns;
+      _.map(oldC,item => {
+        item.width = item.width || 90
+      })
+      this.columns = oldC
+    },
     timeChange(v){
       console.log(v)
+    },
+    sendFilterOpt(sort) {
+      // if (!sort) {
+      //   defaultSortFun();
+      // }
+      let msg = {
+        pageIndex: 1,
+        pageSize: this.pageSize,
+        startTime: moment(this.time[0]).format('x'),
+        endTime: moment(this.time[1]).format('x'),
+      };
+      opt && extend(msg, opt);
+      term && extend(msg, term);
+      date && extend(msg, date);
+      search && extend(msg, search);
+      sort && extend(msg, sort);
+      postalStore.pub('Worker', 'Flight.GetHistory', msg);
     }
   }
 }

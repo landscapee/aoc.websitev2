@@ -1,13 +1,15 @@
-import {flightDB, saveToFlightDB} from "../lib/storage";
+import {flightDB, processFlight, saveToFlightDB} from "../lib/storage";
 import {memoryStore} from "../lib/memoryStore";
 
 export const flightHttp = (worker,httpRequest) => {
   const getTodayFLight = () => {
     httpRequest.get('flight', 'getWebSocketResponseData').then(response => {
-      saveToFlightDB(JSON.parse(response.responseData)).then(() => {
-        memoryStore.setItem('global', { websocketDataFinish: true });
-        worker.publish('','Flight.Change.Sync',response)
-      });
+      if (response.code === 200){
+        saveToFlightDB(JSON.parse(response.responseData)).then(() => {
+          memoryStore.setItem('global', { websocketDataFinish: true });
+          worker.publish('','Flight.Change.Sync',response)
+        });
+      }
     }).catch()
   }
 
@@ -24,6 +26,27 @@ export const flightHttp = (worker,httpRequest) => {
       saveToFlightDB(JSON.parse(res.responseData)).then(() => {
         worker.publish('Worker','Flight.Change.Sync','')
       })
+    });
+  })
+
+  worker.subscribe('Flight.GetHistory',(options)=>{
+    httpRequest.post('flight','Flight/search/history', options, true).then(data=>{
+      console.log(data)
+      data = JSON.parse(data.data)
+      let result = {
+        movementA: data.movementTotalA || 0,
+        movementD: data.movementTotalD || 0,
+        total: data.total,
+        return: data.return || 0,
+        alternate: data.alternate || 0,
+        cancel: data.cancel || 0,
+        flights: processFlight(data.dataList),
+        concern: data.concern || 0,
+        isAlternateLandingFlight: data.alternateLanding || 0,
+        isPassagerFlight: data.passenger || 0,
+        originated: data.original || 0,
+      };
+      worker.publish('Worker', 'Flight.GetHistory.Response', result);
     });
   })
 
