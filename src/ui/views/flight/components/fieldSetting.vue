@@ -95,8 +95,8 @@ export default {
 
 <style lang="scss" scoped>
 .fieldSetting{
-  position: absolute;
-  z-index: 100;
+  position: fixed;
+  z-index: 300;
   left: 0;
   right: 0;
   .visibleField{

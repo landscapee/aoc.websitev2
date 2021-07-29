@@ -19,9 +19,56 @@
 
   <div :class="ctotClass(scope.row)" v-else-if="item.key === 'displayCTOT'" slot-scope="scope">
     <i :class="classNames('iconfont icon-zhankai', {'d-none': !getFlightDelayWarn(scope.row)})" />
-    <span>{{ scope.row.displayCTOT }}</span>
+    <el-popover
+        :disabled="!scope.row.displayCTOT || scope.row.displayCTOT === '--'"
+        popper-class="timeHistoryPopover"
+        trigger="click"
+        @show="historyShow(scope.row.flightId, 'ctot')"
+    >
+      <div v-if="timeHistoryData.length <= 0" class="text-center">
+        暂无数据
+      </div>
+      <div v-for="item in timeHistoryData" class="historyItem">
+        <span>{{displayTimeDate(item.createTime)}}</span>
+        <span class="weightFont">{{scope.row.flightNo}}</span>
+        <span class="weightFont">CTOT</span>
+        <span class="mr-1">
+          由: <span class="weightFont">{{ displayTimeDate(item.oldTime) }}</span>
+        </span>
+        <span>
+          变更为: <span class="weightFont">{{ displayTimeDate(item.newTime) }}</span>
+        </span>
+      </div>
+      <span slot="reference">{{ scope.row.displayCTOT }}</span>
+    </el-popover>
+
     <i :class="classNames('iconfont icon-shouqi', {'d-none': !getFlightDelayWarn(scope.row)})" />
   </div>
+
+  <el-popover
+      v-else-if="item.key === 'displayCOBT'"
+      slot-scope="scope"
+      :disabled="!scope.row.displayCOBT || scope.row.displayCOBT === '--'"
+      popper-class="timeHistoryPopover"
+      trigger="click"
+      @show="historyShow(scope.row.flightId, 'cobt')"
+  >
+    <div v-if="timeHistoryData.length <= 0" class="text-center">
+      暂无数据
+    </div>
+    <div v-for="item in timeHistoryData" class="historyItem">
+      <span>{{displayTimeDate(item.createTime)}}</span>
+      <span class="weightFont">{{scope.row.flightNo}}</span>
+      <span class="weightFont">COBT</span>
+      <span class="mr-1">
+          由: <span class="weightFont">{{ displayTimeDate(item.oldTime) }}</span>
+        </span>
+      <span>
+          变更为: <span class="weightFont">{{ displayTimeDate(item.newTime) }}</span>
+        </span>
+    </div>
+    <span slot="reference">{{ scope.row.displayCTOT }}</span>
+  </el-popover>
 
   <permissionSwitch v-else-if="item.key === 'displayTOBT'" slot-scope="scope" role="edit-TOBT">
     <div @click="TOBTClick($event, scope.row)" class="d-flex flex-justify-center">
@@ -139,6 +186,7 @@ import {hasRole} from "@/ui/lib/common";
 import {getFlightDelayWarn} from "@/lib/helper/flight";
 import classNames from "classnames";
 import {mapState} from "vuex";
+import {displayTimeDate} from "@/lib/helper/utility";
 
 let postalStore = new PostalStore()
 export default {
@@ -167,11 +215,19 @@ export default {
       timeInputValue: '',
       abnormalCategoryValue:'',
       delayInputValue:'',
+      timeHistoryData: []
     }
   },
   methods: {
     get,
     hasRole,
+    displayTimeDate,
+    historyShow(flightId, type){
+      let options = {flightId, type}
+      this.$request.post('flight', 'Flight/getTimeHistory', options, true).then(res => {
+        this.timeHistoryData = res.data;
+      })
+    },
     getSubReason:function (f){
       let {delayMainReason} = f
       let mainOptions = this.flightRemoteSel.delayMainReason;

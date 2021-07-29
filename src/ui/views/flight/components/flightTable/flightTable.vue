@@ -100,7 +100,7 @@ export default {
     totalHeight: function(){
       let showAdvance = this.showAdvance
       // 因为header的原因,没有打开高级搜索的情况就应该 -1 ,如果打开高级搜索就应该在正常情况下-1 这里就不减一
-      let flightLength = showAdvance ? this.flights.length : this.flights.length - 1
+      let flightLength = showAdvance ? this.flights.length + 1 : this.flights.length
       let heightOfPx = (flightLength) * itemH + 120
       return pxtorem(heightOfPx)
     },
@@ -157,7 +157,7 @@ export default {
       //   begin = flights.length - end
       // }
       flights = slice(flights, begin, begin + end);
-      this.showCount = end;
+      this.showCount = showAdvance ? end + 1 : end;
       this.showFlights = flights
     },
     onScroll: function (e){
@@ -242,4 +242,36 @@ export default {
   }
 }
 ::v-deep html, body { scroll-behavior:smooth; }
+</style>
+
+<style lang="scss">
+.timeHistoryPopover{
+  height: 300px;
+  width: 400px;
+  background: #25395c;
+  box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.50);
+  border-color: #25395c;
+  overflow: auto;
+  .historyHeader{
+    height: 40px;
+    background-color: #334f80;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .historyItem{
+    width: 100%;
+    margin-top: 5px;
+    display: flex;
+    justify-content: space-evenly;
+    color: #fff;
+    .weightFont{
+      font-weight: bold;
+      font-family: FjallaOne;
+    }
+  }
+  .popper__arrow, .popper__arrow::after{
+    border-bottom-color: #25395c!important;
+  }
+}
 </style>
