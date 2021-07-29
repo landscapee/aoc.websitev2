@@ -4,7 +4,7 @@ import axios from "axios";
 import router from '../ui/router'
 import store from '../ui/store'
 import postal from 'postal';
-import { includes } from 'lodash';
+import {cloneDeep, includes} from 'lodash';
 import {memoryStore} from "../worker/lib/memoryStore";
 // let hasIfm = self!=top//是否被镶嵌
 axios.interceptors.request.use(
@@ -125,7 +125,14 @@ export default class HttpRequest {
         headers: isFormData ? {} : { 'Content-Type': 'application/json' },
         data: isFormData ? qs.stringify(params) : params,
       }).then(response => {
-        resolve( response )
+        let sBody = cloneDeep(response);
+        if (sBody.responseData && isString(sBody.responseData)){
+          sBody.responseData = JSON.parse(sBody.responseData)
+        }
+        if (sBody.data && isString(sBody.data)){
+          sBody.data = JSON.parse(sBody.data)
+        }
+        resolve( sBody )
       }).catch(err => {
         reject( err )
       })
@@ -142,7 +149,14 @@ export default class HttpRequest {
         method: 'GET',
         params: params
       }).then(response => {
-        resolve(response)
+        let sBody = cloneDeep(response);
+        if (sBody.responseData && isString(sBody.responseData)){
+          sBody.responseData = JSON.parse(sBody.responseData)
+        }
+        if (sBody.data && isString(sBody.data)){
+          sBody.data = JSON.parse(sBody.data)
+        }
+        resolve( sBody )
       }).catch(err=>reject(err))
     })
   }
