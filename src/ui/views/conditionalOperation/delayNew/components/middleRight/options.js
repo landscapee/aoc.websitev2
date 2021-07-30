@@ -24,6 +24,10 @@ export const optionsPie = (mySeriesData) =>{
             backgroundColor: 'rgba(13,5,30,.6)',
             borderWidth: 1,
             padding: 5,
+            textStyle: {
+                color: '#fff',
+
+            },
             formatter: function(parms) {
                 let str = parms.marker + '' + parms.data.name + '</br>' + '数量：' + parms.data.value + '人</br>' + '占比：' + parms.percent + '%';
                 return str;
