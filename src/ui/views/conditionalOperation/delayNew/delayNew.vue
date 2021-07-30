@@ -5,10 +5,10 @@
         </div>
         <div class="middle">
             <div class="left">
-                <BottomLeft  ></BottomLeft>
+                <middleLeft  ></middleLeft>
             </div>
             <div class="right">
-                <BottomRight  ></BottomRight>
+                <middleRight  ></middleRight>
             </div>
         </div>
         <div class="footer">
@@ -23,8 +23,8 @@
     let postalStore = new PostalStore();
 
     import Top from "../components/top/index"
-    import BottomLeft from "./components/middleLeft/index"
-    import BottomRight from "./components/middleRight/index"
+    import middleLeft from "./components/middleLeft/index"
+    import middleRight from "./components/middleRight/index"
     import Footer from "./components/footer/index"
 
     export default {
@@ -32,7 +32,7 @@
             return {}
         },
         components: {
-            BottomRight, BottomLeft, Top,Footer
+            middleRight, middleLeft, Top,Footer
         },
         methods: {},
         created() {

@@ -1,7 +1,7 @@
 <template>
 	<div class="topIndex">
 
-		<div :class="'item item' +index +'  ' +opt.classBox" v-for="(opt,index) in pageObj" :style="opt.style"
+		<div :class="'item item' +index +'  ' +opt.classBox||''" v-for="(opt,index) in pageObj" :style="opt.deal=='delay0'&&warnInfo.levelCn?{background:warnCfg[warnInfo.levelCn]}:opt.style"
 			 :key="index+'q'">
 			<template v-if="opt.deal=='runningNew0'">
 				<div class="left">应急救援</div>
@@ -16,20 +16,6 @@
 					</div>
 				</div>
 			</template>
-			<template v-else-if="opt.deal=='weather0'">
-				<div class="  rightItem">
-					<icon-svg :iconClass="opt.icon"></icon-svg>
-
-					<div class="timeText">
-						<div class="first"><span>{{getData( 'indicator.flightIndicator.predict')}}</span>架次</div>
-						<div class="second">预警发布时间</div>
-					</div>
-					<div class="timeText">
-						<div class="first"><span>{{getData( 'flightDelay.flightNum')}}</span>架次</div>
-						<div class="second">影响时间段</div>
-					</div>
-				</div>
-			</template>
 			<template v-else-if="opt.deal=='runningNew4'">
 				<div class="rightItem">
 					<icon-svg :iconClass="opt.icon"></icon-svg>
@@ -41,6 +27,72 @@
 					<div class="timeText">
 						<div class="first"><span>{{getData( 'flightDelay.flightNum')}}</span>架次</div>
 						<div class="second">实时延误航班</div>
+					</div>
+				</div>
+			</template>
+			<template v-else-if="opt.deal=='weather0'">
+				<div class="  rightItem">
+					<div class="svgBox">
+						<img :src="weatherImg[weatherWarnInfo.warnType ]" alt="">
+						<span class="thunder">{{weatherWarnInfo.warnType }}</span>
+					</div>
+					<div class="right">
+						<div class="timeText">
+							<div class="first">
+								<span>{{tranTime( weatherWarnInfo.publishTime,'HH:mm')}}</span>
+								({{tranTime( weatherWarnInfo.publishTime,'DD')}})
+							</div>
+							<div class="second">预警发布时间</div>
+						</div>
+						<div class="shuxian"></div>
+						<div class="timeText">
+							<div class="first"><span>{{tranTime( weatherWarnInfo.expectStartTime,'HH:mm')+'~'+tranTime( weatherWarnInfo.expectEndTime,'HH:mm')}}</span>
+							</div>
+							<div class="second">影响时间段</div>
+						</div>
+					</div>
+
+				</div>
+			</template>
+			<template v-else-if="opt.deal=='delay0'">
+				<div class="  rightItem">
+					<div class="svgBox">
+						<icon-svg iconClass="响应"></icon-svg>
+						<span class="thunder">{{warnInfo.levelCn && warnInfo.levelCn + '响应'}}</span>
+					</div>
+					<div class="right">
+						<div class="timeText">
+							<div class="first">
+								<span>{{tranTime( weatherWarnInfo.publishTime,'HH:mm')}}</span>
+								({{tranTime( weatherWarnInfo.publishTime,'DD')}})
+							</div>
+							<div class="second">预警发布时间</div>
+						</div>
+						<div class="shuxian"></div>
+						<div class="timeText">
+							<div class="first"><span>{{tranTime( weatherWarnInfo.expectStartTime,'HH:mm')+'~'+tranTime( weatherWarnInfo.expectEndTime,'HH:mm')}}</span>
+							</div>
+							<div class="second">影响时间段</div>
+						</div>
+					</div>
+
+				</div>
+			</template>
+			<template v-else-if="opt.deal=='delay6'">
+				<div class="  rightItem">
+					<icon-svg iconClass="zjycpdsyjg"></icon-svg>
+					<div class="timeText timeText1">
+						<div class="first">
+							<span>{{getData('indicator.average')}}</span>分钟
+						</div>
+						<div class="second">平均起降间隔</div>
+					</div>
+					<div class="timeText ">
+						<div class="first"><span>{{getData(opt.key)}}</span>分钟</div>
+						<div class="second">
+							<div>最近一次</div>
+							<div>跑道使用间隔</div>
+						</div>
 					</div>
 				</div>
 			</template>
@@ -73,9 +125,12 @@
     import ssjd from '@assets/img/ssjd.png'
     import zbjd from '@assets/img/zbjd.png'
     import jsjd from '@assets/img/jsjd.png'
+    import dafeng from '@assets/img/dafeng.png'
+    import leidian from '@assets/img/leidian.png'
+    import dawu from '@assets/img/dayu.png' //大雾
+    // import baoyu from '@assets/img/baoyu.png'
     import moment from 'moment'
     import {get} from 'lodash'
-
     import postal from 'postal';
     import PostalStore from '@ui_lib/postalStore'
 
@@ -95,15 +150,21 @@
                 indicator: {},//   航班指标
                 flightDelay: {},// 实时延误航班 数量
                 weatherWarnInfo: {},// 新气象灾害
+                warnInfo: {},// 大面积延误
                 emergencyCfg: [
                     {key: 'ready', icon: zbjd},
                     {key: 'doing', icon: ssjd},
                     {key: 'finish', icon: jsjd},
                 ],
-                weatherImg :{
-                    雷电天气: 'leidian',
-                    大风天气: 'dafeng',
-                    大雾天气: 'dawu',
+                warnCfg: {
+                    红色: '#FF4747',
+                    橙色: '#e78e32',
+                    黄色: '#ceaa26',
+                },
+                weatherImg: {
+                    雷电天气: leidian,
+                    大风天气: dafeng,
+                    大雾天气: dawu,
                 },
             }
         },
@@ -112,6 +173,14 @@
                 return (type, index) => {
 
                     let v = this.emergencyEventNode[index]?.createTime
+                    if (!v || !moment(v).isValid()) {
+                        return '--'
+                    }
+                    return moment(v).format(type)
+                }
+            },
+            tranTime() {
+                return (v, type) => {
                     if (!v || !moment(v).isValid()) {
                         return '--'
                     }
@@ -173,12 +242,13 @@
 			border-radius: 5px;
 			box-shadow: 0px 2px 10px 0px rgba(63, 78, 90, 0.05);
 			margin-left: 10px;
-			padding: 12px 22px;
+			padding: 0px 22px;
 			.rightItem {
+				height: 100%;
 				display: flex;
 				align-items: center;
 				position: relative;
-				.tableBoxPosition {
+ 				.tableBoxPosition {
 					position: absolute;
 					top: 75px;
 					z-index: 1000;
@@ -236,10 +306,47 @@
 		}
 		.weather0 {
 			width: 505px;
+			.rightItem {
+				margin-left: 15px;
+				width: 100%;
+				padding-right: 40px;
+			}
+			.svgBox {
+				display: flex;
+				align-items: center;
+				width: 140px;
+				.thunder {
+					margin-left: 10px;
+					font-size: 20px;
+				}
+			}
+			.right {
+				height: 100%;
+ 				flex: 1 1 auto;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+			}
+			.shuxian {
+				height: 25px;
+				border-right: 1px solid #236ed1;
+			}
 		}
 		.item4 {
 			flex: 0 1 auto;
 			width: 310px;
+		}
+		.delay4{
+			width: 280px;
+		}
+		.delay5{
+			width: 200px;
+		}
+		.delay6{
+			width: 280px;
+			.timeText1{
+				/*width: 120px;*/
+			}
 		}
 	}
 </style>

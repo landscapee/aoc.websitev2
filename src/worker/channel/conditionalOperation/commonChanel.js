@@ -58,7 +58,7 @@ const subWSEvent = () => {
     client.sub('/adverse-condition/meteorologyDisaster/warnInfo', (data) => {
         let mydata = data
         memoryStore.setItem('AdverseCondition', {weatherWarnInfo: mydata})
-        dealWeather(mydata)
+        dealWeather(mydata,worker)
     })
 
 
@@ -117,7 +117,7 @@ export const init = (worker_, httpRequest_) => {
     //  新气象灾害
     worker.subscribe('Get.flightDelay.Data', (c) => {
         let data = memoryStore.getItem('AdverseCondition')
-        dealWeather(data,c)
+        dealWeather(data,worker)
     });
 
     worker.subscribe('Page.conditionalOperation.Start', () => {

@@ -14,6 +14,7 @@ import { init as publicChanelInit } from '../channel/publicChanel'
 import { init as adjustmentReductionInit } from '../channel/adjustmentReduction'
 import { init as deiceInit } from '../channel/conditionalOperation/deice'
 import { init as conditionalOperationInit } from '../channel/conditionalOperation/commonChanel'
+import { init as delayNewInit } from '../channel/conditionalOperation/delayNew'
 
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
@@ -88,6 +89,8 @@ postal.subscribe({
         publicChanelInit(posWorker, httpRequest,data.clientId)
         deiceInit(posWorker, httpRequest)
         conditionalOperationInit(posWorker, httpRequest)
+         delayNewInit(posWorker, httpRequest)
+        memoryStore.setItem('global', {token: data.token});
 
 
 

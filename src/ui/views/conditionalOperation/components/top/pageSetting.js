@@ -15,7 +15,7 @@ export const runningNewObj=[
         name: '最近一次跑道使用间隔',
         key: 'indicator.spaceIndicator.space',
         icon: 'zjycpdsyjg',
-        unit:'架次',
+        unit:'分钟',
         style: { background: '#8f35aa' },
     },
 ];
@@ -36,13 +36,13 @@ export const weatherNewObj=[
         name: '最近一次跑道使用间隔',
         key: 'indicator.spaceIndicator.space',
         icon: 'zjycpdsyjg',
-        unit:'架次',
+        unit:'分钟',
         style: { background: '#8f35aa' },
     },
 ];
 // 大面积延误
 export const delayNewObj=[
-    { name: '', key: '', icon: '', deal: 'weather0', style: { background: '#3280e7' } },
+    { name: '', key: '', icon: '', deal: 'delay0',classBox:'weather0', style: { background: '#3280e7' } },
     { name: '备降外场',click:'alternateLanding', key: 'weatherStat.alternateLanding',unit:'架次', icon: 'bjwc', class:'cursor',style: { background: '#32c8e7' } },
     { name: '取消航班',click:'cancelOpen', key: 'weatherStat.cancel', icon: 'qxhb', unit:'架次', class:'cursor',style: { background: '#24ca87' } },
     { name: '预测积压情况', key: 'estimatedBacklog', icon: 'yjjyqk',  unit:'架次',style: { background: '#5d9d52' } },
@@ -51,19 +51,22 @@ export const delayNewObj=[
         key: 'flightIndicator',
         icon: 'hbzbyc',
         deal: 'runningNew4',
+        classBox:'delay4',
         style: { background: '#5f3fb0' },
     },
     {
         name: '出港旅客数量指标',
-        key: 'indicator.spaceIndicator.space',
+        key: 'indicator.passenger',
         icon: 'lgsl',
+        classBox:'delay5',
         unit:'人',
         style: { background: '#783bbd' },
     }, {
+        deal: 'delay6',classBox:'delay6',
         name: '最近一次跑道使用间隔',
         key: 'indicator.spaceIndicator.space',
         icon: 'zjycpdsyjg',
-        unit:'架次',
+        unit:'分钟',
         style: { background: '#8f35aa' },
     },
 ];

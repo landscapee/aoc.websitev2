@@ -77,7 +77,7 @@ export const trafficCapacity = (data) => {
     let series=[{ name: '已延误航班统计', data: map(trafficCapacity, (item) => item.capacity) }]
     return {xAxis,series}
 };
-export const dealWeather = (mydata,c) => {
+export const dealWeather = (mydata,worker) => {
     if(!mydata){
         return
     }
