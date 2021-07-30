@@ -111,15 +111,8 @@ const setGlobal = (global, user) => {
     
 
     memoryStore.setItem('global', global);
-    
-    console.log(memoryStore.getItem('global'))
-
-
     if (user) {// 根据权限过滤航班
         let roleData = find(user.roles, (item) => item.code.indexOf('DATA') > -1);
-
-        let role = get(roleData, 'menus.0', {})
-        let path = role.path ? JSON.parse(role.path)[0] : []
         let roleFlights = get(roleData, 'menus.0.path');
         roleFlights = roleFlights ? JSON.parse(roleFlights)[0] : { reversal: true, data: [] };
         memoryStore.setItem('global', {roleFlights},false);

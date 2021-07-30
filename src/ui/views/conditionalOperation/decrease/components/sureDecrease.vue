@@ -22,7 +22,7 @@
         </div>
 
         <div class="buttonBox">
-            <el-button type="danger" size="mini" :disabled="!$hasRole('edit-audit',false)||getBack()">驳回</el-button>
+            <el-button type="danger" size="mini" @click="backData" :disabled="!$hasRole('edit-audit',false)||getBack()">驳回</el-button>
             <!-- ||currentReduce.reduceInfo.status==1 -->
             <el-button type="primary" size="mini" @click="submitData" :disabled="!$hasRole('edit-audit',false)||sureShow">发布</el-button>
         </div>
@@ -63,6 +63,33 @@ export default {
             this.confirmAdjustFilter = key == this.confirmAdjustFilter ? '' : key
             this.getAllReduceFlight()
             this.getPlanLength()
+        },
+        backData() {
+            this.$confirm(
+                `确认驳回${this.airLinesGroup[this.confirmAdjustFilter]}的调时调减?`,
+                '提示',
+                {
+                    type: 'warning',
+                    center: true,
+                }
+            ).then(() => {
+                let airlineReduceId = this.currentReduce.plan[this.confirmAdjustFilter].id
+                this.$request
+                    .post(
+                        'adverse',
+                        `adjust/airlineDetail/action?action=reject&airlineReduceId=${airlineReduceId}`,
+                        null,
+                        false,
+                        'PUT'
+                    )
+                    .then((res) => {
+                        this.$alert(res.message, '提示', {
+                            type: 'success',
+                            center: true,
+                        })
+                        this.$emit('updateNowCur', this.currentReduce)
+                    })
+            })
         },
         submitData() {
             this.$confirm('确认发送到fims?', '提示', {
