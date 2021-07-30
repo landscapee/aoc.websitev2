@@ -379,3 +379,20 @@ export const flightStop = (posWorker) => {
   posWorker.unsubscribe('Flight.Personal.SetTop')
   // const data = memoryStore.getItem('ExecutableFlights')
 }
+
+export const flightHistoryStart = (posWorker, myHeader) => {
+  // ui线程传过来的header 先存进内存
+  memoryStore.setItem('global',{flightHeader: myHeader})
+  columns = getListHeader();
+  // posWorker.publish('Web', 'Flight.UpdateHeader', columns);
+  let flightStart = (data) => {
+    let result = refreshFlights(data);
+    console.log(result)
+    posWorker.publish('Web', 'Flight.GetHistory.Response', result);
+  };
+  // channel.publish('Web', 'Flight.UpdateHeader', getListHeader());
+  posWorker.subscribe(`Flight.GetHistory.Response`, flightStart);
+};
+export const flightHistoryStop = (posWorker) => {
+  posWorker.unsubscribe(`Flight.GetHistory.Response`);
+};
