@@ -59,6 +59,7 @@ Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 if (getUser()) {//刷新或者丢失用户信息，使用token获取用户信息
     let user = JSON.parse(getUser())
     store.commit('setUserMsg', user)
+    debugger
     memoryStore.setItem('global', {token:user.token});
 }
 

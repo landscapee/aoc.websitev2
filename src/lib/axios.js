@@ -10,7 +10,8 @@ import {memoryStore} from "@/worker/lib/memoryStore";
 axios.interceptors.request.use(
   config => {
     let token = memoryStore.getItem('global').token;
-     let noToken = false
+
+    let noToken = false
     if(config.url.indexOf("/sso/login/")>-1){//登陆,不需要验证token
       noToken = true
       // config.url = origin+"/"+interfaceType+ config.url
