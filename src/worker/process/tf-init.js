@@ -90,7 +90,6 @@ postal.subscribe({
         deiceInit(posWorker, httpRequest)
         conditionalOperationInit(posWorker, httpRequest)
          delayNewInit(posWorker, httpRequest)
-        memoryStore.setItem('global', {token: data.token});
 
 
 
