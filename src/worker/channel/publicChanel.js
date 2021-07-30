@@ -1,7 +1,7 @@
 // import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 import {memoryStore} from "../lib/memoryStore";
-
+import {orderBy} from 'lodash'
 let clientObj = {};
 let worker, client, ajax;
 const convert = (msg) => {
@@ -61,6 +61,9 @@ const subWSEventMSG = (clientId) => {
         memoryStore.setItem('global', {messageClientData:convert(res) })
         worker.publish('Web', 'push.message.Data', res)
     })
+
+
+
 };
 // 跑道模式
 const subWSEventRunwey = (clientId) => {
@@ -71,6 +74,19 @@ const subWSEventRunwey = (clientId) => {
          worker.publish('Web', 'push.runway.Data', res)
          worker.publish('push.runway.Data', res)
     })
+};
+
+
+let subAdverseWSEvent = (clientId) => {
+    let adverseClient = clientObj.adverseClient;
+	adverseClient.sub('/adverse-condition/message/push', (data) => {
+        console.log(data)
+		// let prev = memoryStore.getItem('Public').msgList || [];
+		// prev.unshift({ ...data, isUnRead: true });
+        // let pubData = orderBy(prev, 'createTime', 'desc')
+		// memoryStore.setItem('Public', { msgList:  pubData});
+		worker.publish('Web', 'Public.GetMsg.Sync', data);
+	});
 };
 
 export const init = (worker_, httpRequest_, clientId) => {
@@ -84,21 +100,15 @@ export const init = (worker_, httpRequest_, clientId) => {
         subWSEventMSG(clientId);
         console.log('messageClient连接成功')
     });
-    // 主动获取消息
-    worker.subscribe('Get.message.Data', () => {
-        let data = memoryStore.getItem('global').messageClientData
-        if(data){
-            worker.publish('Web', 'push.message.Data', data)
-        }else{
-            httpRequest_.get('msg', 'notice/findCurrentNotice').then((res) => {
-                if (res.code == 200 && res?.data?.length) {
-                    memoryStore.setItem('global', {messageClientData: res.data})
-                    worker.publish('Web', 'push.message.Data', res.data)
-                }
-            })
-        }
-    });
 
+    //头部信息获取
+    worker.subscribe('Network.Connected.Adverse', (c) => {
+		clientObj.adverseClient = new SocketWrapper(c);
+	});
+    checkClient('adverseClient').then(() => {
+        subAdverseWSEvent(clientId);
+        console.log('adverseClient连接成功')
+    });
 
     //  跑道模式  跑道模式和禁用状态
     worker.subscribe('Situation.Network.Connected', (c) => {
@@ -114,6 +124,22 @@ export const init = (worker_, httpRequest_, clientId) => {
             worker.publish('push.runway.Data', runwayData)
         })
     )
+
+
+    // 主动获取消息
+    worker.subscribe('Get.message.Data', () => {
+        let data = memoryStore.getItem('global').messageClientData
+        if(data){
+            worker.publish('Web', 'push.message.Data', data)
+        }else{
+            httpRequest_.get('msg', 'notice/findCurrentNotice').then((res) => {
+                if (res.code == 200 && res?.data?.length) {
+                    memoryStore.setItem('global', {messageClientData: res.data})
+                    worker.publish('Web', 'push.message.Data', res.data)
+                }
+            })
+        }
+    });
 
 
 };

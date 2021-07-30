@@ -13,14 +13,19 @@
             </li>
         </ul>
         <div class="user_right">
-            <div class="dateBox">
+            <!-- <div class="dateBox">
                 <i class="el-icon-date" style="color:#fff;"></i>
                 <span class="fo">{{$moment().format('YYYY-MM-DD')}}</span>
             </div>
             <div class="timeBox">
                 <i class="el-icon-time" style="color:#fff;"></i>
                 <span class="fo">{{$moment().format('HH:mm:ss')}}</span>
-            </div>
+            </div> -->
+            <!-- <div class="msgBox">
+                <i class="iconfont icon-xiaoxi"></i>
+                <div>12</div>
+            </div> -->
+            <header-msg />
             <div>
                 <!-- <icon-svg :iconClass="'yonghu'" :iconColor="'#fff'"></icon-svg> -->
                 <el-dropdown @command="userHandleCommand" trigger="click">
@@ -73,7 +78,13 @@ import { encryptedData } from '../lib/des-coder.js'
 import { routes } from '../router/index'
 let url = require('../assets/img/' + sysEdition + '/logoTitle.png')
 import { map } from 'lodash'
+
+import HeaderMsg from './headerMsg.vue'
+
 export default {
+    components: {
+        'header-msg': HeaderMsg,
+    },
     data() {
         var validateName = (rule, value, callback) => {
             if (value === '' || value === null || value === undefined) {
@@ -396,6 +407,7 @@ export default {
     .user_right {
         display: flex;
         align-items: center;
+
         & > div {
             margin: 0 12px;
             height: 36px;
