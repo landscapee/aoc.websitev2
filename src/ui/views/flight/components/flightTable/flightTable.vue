@@ -1,7 +1,7 @@
 <template>
   <div ref="tableContainer" class="flightTable">
     <div class="scrollWrapper" ref="scrollOut">
-      <div class="scrollBox" :style="{height: totalHeight + 'rem'}">
+      <div class="scrollBox" :style="{height: isHistory ? 'auto' : totalHeight + 'rem'}">
         <div class="virtualFlight" id="flightTable" >
 <!--          <el-table-->
 <!--              :row-class-name="rowClass"-->
@@ -32,8 +32,8 @@
 
 <!--            </el-table-column>-->
 <!--          </el-table>-->
-          <flightTableDiv :showCount="showCount" :checkFlightId="checkFlightId" :isScrolling="isScrolling" :setColumns="setColumns" :data="showFlights" :columns="columns">
-            <complex-column :inputField.sync="inputField" slot-scope="scope" :item="scope.item" :scope="scope"/>
+          <flightTableDiv :isHistory="isHistory" :showCount="showCount" :checkFlightId="checkFlightId" :isScrolling="isScrolling" :setColumns="setColumns" :data="showFlights" :columns="columns">
+            <complex-column :isHistory="isHistory" :inputField.sync="inputField" slot-scope="scope" :item="scope.item" :scope="scope"/>
           </flightTableDiv>
           <contextMenu :clickItem="contextClick"></contextMenu>
         </div>
@@ -58,14 +58,17 @@ export default {
   props: {
     columns: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     flights: {
       type: Array,
-      default: [],
+      default: () => [],
     },
     setColumns: {
       type: Function
+    },
+    isHistory: {
+      type: Boolean
     }
   },
   components: {

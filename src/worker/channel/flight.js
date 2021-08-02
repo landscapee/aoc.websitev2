@@ -70,17 +70,6 @@ const subWSEvent = () => {
 
 };
 
-// delay服务的连接
-const subDelayWSEvent = () => {
-  let client = clientObj.delaysClient;
-  client.sub('/Flight/delay/executableFlight',()=>{
-    // let flights = {};
-    // map(data, (flightId) => {
-    //   flights[flightId] = true;
-    // });
-    // memoryStore.setItem('ExecutableFlights', flights, true);
-  })
-};
 
 // adverse服务的连接
 const subAdverseClient = () => {
@@ -102,7 +91,13 @@ export const init = (worker_) => {
   });
   worker.subscribe('Delays.Network.Connected', (c) => {
     clientObj.delaysClient = new SocketWrapper(c);
-    // subWidespreadWSEvent();
+    c.sub('/Flight/delay/executableFlight',(data)=>{
+      let flights = {};
+      map(data, (flightId) => {
+        flights[flightId] = true;
+      });
+      memoryStore.setItem('ExecutableFlights', flights, true);
+    })
   });
 
   worker.subscribe('Adverse.Network.Connected', (c) => {

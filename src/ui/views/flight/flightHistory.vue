@@ -10,9 +10,9 @@
       <div class="rightTool">
         <div class="tabs">
           <el-tabs @tab-click="tabClick" v-model="activeTab" tab-position="bottom">
-            <el-tab-pane v-for="item in tabBarOptions" :option="item.option" :name="item.key" :key="item.name" :label='item.name'>
+            <el-tab-pane v-for="item in tabBarOptions" :name="item.key" :key="item.key" :label='item.name'>
           <span slot="label"> {{item.name}}
-            <span class="tab-item-num">20</span>
+            <span class="tab-item-num">{{flightData[item.key]}}</span>
           </span>
             </el-tab-pane>
           </el-tabs>
@@ -35,8 +35,18 @@
         <router-link to="/flight" class="back"><el-button size="mini" type="primary">返回</el-button></router-link>
       </div>
     </div>
-    <flightTable :setColumns="setColumns" :flights="flightData.flights" :columns="columns">
+    <flightTable :isHistory="true" :setColumns="setColumns" :flights="flightData.flights" :columns="columns">
     </flightTable>
+    <div class="paginationHistory">
+      <el-pagination
+          :current-page="pageIndex"
+          @current-change="pageChange"
+          background
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          :total="1000">
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -59,7 +69,7 @@ let tabBarOptions = [
   { name: '返航', key: 'return', option: { return: true } },
   { name: '备降', key: 'alternate', option: { alternate: true } },
   { name: '取消', key: 'cancel', option: { cancel: true } },
-  { name: '关注', key: 'concern', option: { concern: true } },
+  // { name: '关注', key: 'concern', option: { concern: true } },
   { name: '备降外场', key: 'isAlternateLandingFlight', option: { isAlternateLandingFlight: true } },
   { name: '客运', key: 'isPassagerFlight', option: { isPassagerFlight: true } },
   { name: '始发', key: 'originated', option: { originated: true } },
@@ -74,9 +84,12 @@ export default {
     let nowTime = memoryStore.getItem('global').now
     let now = moment(nowTime).startOf("day");
     return{
+      activeTab: 'total',
       tabBarOptions,
+      searchValue: '',
       time:[moment(now).subtract(1, 'd').format(), moment(now).format()],
       pageSize: 22,
+      pageIndex: 1,
       flightData: {},
       columns: [],
       pickerOptions: {
@@ -167,8 +180,10 @@ export default {
     let headerArray = map(header, item => {return _.pick(item, ['text' , 'key', 'reference', 'referenceTo'])})
     postalStore.pub('Page.FlightHistory.Start', headerArray);
     postalStore.sub('Flight.GetHistory.Response', data => {
+      console.log(data)
       this.flightData = data
     })
+    this.setColumns(header)
     this.sendFilterOpt()
   },
   beforeDestroy() {
@@ -176,6 +191,29 @@ export default {
     postalStore.unsubAll()
   },
   methods: {
+    pageChange(v){
+      this.pageIndex = v;
+      this.sendFilterOpt()
+    },
+    tabClick(option){
+      let sel = _.find(this.tabBarOptions, item => item.name === option.label)
+      this.opt = sel.option;
+      this.sendFilterOpt()
+    },
+    searchInputChange(v){
+      if (this.timer){
+        clearTimeout(this.timer)
+      }
+      this.timer = setTimeout(() => {
+        this.search = {
+          filed: 'all',
+          value: v,
+        };
+        console.log(this.search)
+        this.sendFilterOpt()
+      },400);
+
+    },
     setColumns: function (Columns) {
       let newColumns = _.map(Columns, (h) => {
         if (ColumnsDefine[h.key]) {
@@ -195,22 +233,25 @@ export default {
       this.columns = oldC
     },
     timeChange(v){
-      console.log(v)
+      let s = moment(v[0]).format('x')
+      let e = moment(v[1]).format('x')
+      this.date = { startTime: s, endTime: e, pageIndex: 1 };
+      this.sendFilterOpt()
     },
     sendFilterOpt(sort) {
       // if (!sort) {
       //   defaultSortFun();
       // }
       let msg = {
-        pageIndex: 1,
+        pageIndex: this.pageIndex,
         pageSize: this.pageSize,
         startTime: moment(this.time[0]).format('x'),
         endTime: moment(this.time[1]).format('x'),
       };
-      opt && extend(msg, opt);
+      this.opt && extend(msg, this.opt);
       term && extend(msg, term);
-      date && extend(msg, date);
-      search && extend(msg, search);
+      this.date && extend(msg, this.date);
+      this.search && extend(msg, this.search);
       sort && extend(msg, sort);
       postalStore.pub('Worker', 'Flight.GetHistory', msg);
     }
@@ -219,6 +260,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .flightHistory{
+    position: fixed!important;
+  }
+  ::v-deep .paginationHistory{
+    position: fixed;
+    bottom: 10px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    .btn-next, .btn-prev, .el-pagination.is-background .el-pager li{
+      background-color: #2b3645;
+      color: #fff;
+    }
+    .el-pager .active{
+      background-color: #536886 !important;
+    }
+  }
   .toolBar{
     height: 40px;
     display: flex;
