@@ -29,8 +29,7 @@ export const flightHttp = (worker,httpRequest) => {
 
   worker.subscribe('Flight.GetHistory',(options)=>{
     httpRequest.post('flight','Flight/search/history', options, true).then(data=>{
-      console.log(data)
-      data = JSON.parse(data.data)
+      data = data.data
       let result = {
         movementA: data.movementTotalA || 0,
         movementD: data.movementTotalD || 0,

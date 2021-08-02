@@ -60,7 +60,7 @@ let tabBarOptions = [
   { name: '返航', key: 'return', option: { return: true } },
   { name: '备降', key: 'alternate', option: { alternate: true } },
   { name: '取消', key: 'cancel', option: { cancel: true } },
-  { name: '关注', key: 'concern', option: { concern: true } },
+  // { name: '关注', key: 'concern', option: { concern: true } },
   { name: '备降外场', key: 'isAlternateLandingFlight', option: { isAlternateLandingFlight: true } },
   { name: '客运', key: 'isPassagerFlight', option: { isPassagerFlight: true } },
   { name: '始发', key: 'originated', option: { originated: true } },

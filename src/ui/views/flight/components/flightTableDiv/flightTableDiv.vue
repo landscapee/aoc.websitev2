@@ -6,7 +6,7 @@
     </div>
 
 
-    <div class="unlockBox" :style="{width: unLockBoxWidth + 'rem', left: lockWidth + 'rem', height: flightHeight + 'rem'}">
+    <div class="unlockBox" :style="{width: unLockBoxWidth + 'rem', left: lockWidth + 'rem', height: isHistory ? 'auto' : flightHeight + 'rem'}">
         <div :style="{width: unLockWidth + 'rem'}">
           <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="unLockColumns" ></flightHeader>
           <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId" :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
@@ -22,7 +22,7 @@ import {updateListHeader} from "@/ui/views/flight/components/handleColumn";
 import flightHeader from '../flightHeader'
 export default {
   name: "flightTableDiv",
-  props: ['data', 'columns','setColumns', 'isScrolling', 'checkFlightId', 'showCount'],
+  props: ['data', 'columns','setColumns', 'isScrolling', 'checkFlightId', 'showCount', 'isHistory'],
   components: {
     flightHeader,
     'flightRow': () =>
