@@ -77,10 +77,10 @@ const subWSEventRunwey = (clientId) => {
 };
 
 
-let subAdverseWSEvent = (clientId) => {
+let subAdverseWSEvent = () => {
     let adverseClient = clientObj.adverseClient;
 	adverseClient.sub('/adverse-condition/message/push', (data) => {
-        console.log(data)
+        // console.log(data)
 		// let prev = memoryStore.getItem('Public').msgList || [];
 		// prev.unshift({ ...data, isUnRead: true });
         // let pubData = orderBy(prev, 'createTime', 'desc')
@@ -102,7 +102,7 @@ export const init = (worker_, httpRequest_, clientId) => {
     });
 
     //头部信息获取
-    worker.subscribe('Network.Connected.Adverse', (c) => {
+    worker.subscribe('Adverse.Network.Connected', (c) => {
 		clientObj.adverseClient = new SocketWrapper(c);
 	});
     checkClient('adverseClient').then(() => {

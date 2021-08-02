@@ -32,6 +32,8 @@
 
 <script>
 import Highcharts from 'highcharts/highstock'
+import PostalStore from '@ui_lib/postalStore'
+let postalStore = new PostalStore()
 export default {
     props: ['options', 'flight_FlightStatistic', 'flight_delay_backStatus', 'flight_home'],
     data() {
@@ -51,6 +53,7 @@ export default {
     mounted() {},
     watch: {
         flight_delay_backStatus: function (val) {
+            console.log(val)
             let nextHour = this.$moment().add(1, 'h').hours()
             this.onehoursNum = val.prediction[nextHour]
             if (this.select === 1 && !this.loading) {
@@ -108,7 +111,17 @@ export default {
             // 图表初始化函数
             let options = _.cloneDeep(this.options.options)
             let series = this.options.options.series(
-                this.select == 1 ? this.flight_FlightStatistic : this.flight_delay_backStatus
+                this.select == 1 ? this.flight_FlightStatistic : this.flight_delay_backStatus,
+                (data, isExecuteAble, isToday) => {
+                    if (this.select == 0) {
+                        this.backlogChartClick(data, isExecuteAble)
+                    } else {
+                        // this.backlogChartClick(data)
+                        this.chartClick(data, isExecuteAble, isToday)
+                    }
+                    console.log(data, isExecuteAble)
+                    // this.backlogChartClick(data)
+                }
             )
 
             options.series = series
@@ -118,6 +131,58 @@ export default {
                 this.loading = true
                 this.chart = Highcharts.chart('flight_chart_box', options)
             }
+        },
+        backlogChartClick(time, isExecuteAble) {
+            let selector = time <= 9 ? '0' + time : time
+            let currentDetail = _.get(
+                this.flight_delay_backStatus,
+                [isExecuteAble ? 'executable-detail' : 'actual-detail'],
+                {}
+            )
+            let ids = currentDetail[selector]
+
+            postalStore.pub('Worker', 'Home.GetFlightsByIds', {
+                ids: ids || [],
+                webSubName: 'Home.Chart1.Return',
+                getTitleSpan: `类型:${isExecuteAble ? '可执行航班' : '积压航班'} 时间:${time}时`,
+            })
+        },
+        chartClick(time, movement, isToday) {
+            let day = isToday
+                ? this.$moment().format('YYYYMMDD')
+                : this.$moment().subtract(1, 'day').format('YYYYMMDD')
+            let fullHour = time < 10 ? '0' + time : time
+            let day_time = day + fullHour
+
+            this.$request
+                .post(
+                    'situation',
+                    `intime/detail`,
+                    {
+                        hour: day_time,
+                        movement,
+                    },
+                    true
+                )
+                .then((res) => {
+                    console.log(res)
+                    postalStore.pub('Web', 'Home.Chart2.Return', {
+                        data: res.data || [],
+                        getTitleSpan: `进/离:${movement == 'A' ? '进港' : '离港'} 时间:${time}时`,
+                    })
+                })
+
+            //         ajax.post('situation', `intime/detail`, options, (response) => {
+            // 	let data = map(response, (v, i) => {
+            // 		v.index001 = i + 1;
+            // 		v.movement = v.movement === 'D' ? '离港' : '进港';
+            // 		return addDisplayField(v);
+            // 	});
+            // 	channel.publish('Web', 'Home.ToolTip.Return', { data });
+            // });
+
+            //             this.returnObj = ['Worker', 'Home.GetToolTipContentSp', { hour: day_time, movement }];
+            //             self.setState({ showToolTip: type, sts: { movementStr: movement === 'D' ? '离港' : '进港', hour: time + '时' } });
         },
     },
 }
