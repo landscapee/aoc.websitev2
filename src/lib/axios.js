@@ -57,6 +57,7 @@ axios.interceptors.response.use(
       ||response.data.responseCode==30002
       ||response.data.responseCode==30003
       ||response.data.responseCode==30010
+      ||response.data.responseCode==30012
       ||response.data.responseCode==200
     ){
       let data = response.data || response.responseData;

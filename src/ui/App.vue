@@ -1,69 +1,109 @@
 <template>
-    <div style="width:100%;height:100%;" id="app">
-         <router-view v-if="isRouterShow" />
-    </div>
+	<div style="width:100%;height:100%;" id="app">
+		<router-view v-if="isRouterShow"/>
+	</div>
 </template>
 <script>
     import router from './router'
     import Vue from 'vue';
     import PostalStore from "./lib/postalStore";
+    import {clearCookie} from "./lib/localStorageTemp";
     let postalStore = new PostalStore();
-export default {
-    data() {
-        return {
-            isRouterShow: true,
-            handleTimer: null,
-            outrTimer: null,
-        }
-    },
-    provide() {
-        return {
-            reload: this.reload,
-        }
-    },
-    destroyed() {
-        clearTimeout(this.handleTimer)
-        clearTimeout(this.outrTimer)
-    },
-  mounted(){
-    postalStore.sub('Web','Login.Out',()=>{
-        router.replace("/")
-       // Vue.prototype.$alert('用户已过期，请重新登录！', '提示', {
-      //   type: 'warning',
-      //   center: true
-      // }).then(() => {
-      //   router.replace("/")
-      // })
-    });
-    postalStore.sub('Web','Global.Alert',(opts)=>{
-      Vue.prototype.$alert(...opts)
-    })
-  },
-    methods: {
-        async reload() {
-            this.isRouterShow = false
-            await this.$nextTick()
-            this.isRouterShow = true
-        },
-        autoEsc() {
-            if (this.outrTimer) {
-                clearTimeout(this.outrTimer)
+    export default {
+        data() {
+            return {
+                isRouterShow: true,
+                handleTimer: null,
+                outrTimer: null,
+                checkTokenTimer: null,
             }
-            this.outrTimer = setTimeout(() => {
-                //连续操作，记录最后一次
-                if (this.handleTimer) {
-                    clearTimeout(this.handleTimer)
-                }
-                this.handleTimer = setTimeout(() => {
-                    //重置计时器
-                    clearTimeout(this.handleTimer)
-                    this.$router.push('/')
-                }, 10 * 60 * 1000)
-            }, 300)
         },
-    },
-}
+        provide() {
+            return {
+                reload: this.reload,
+            }
+        },
+        destroyed() {
+            clearTimeout(this.handleTimer)
+            clearTimeout(this.outrTimer)
+        },
+        mounted() {
+
+            postalStore.sub('Web', 'Login.Out', () => {
+                this.clearUserInfo()
+            });
+            postalStore.sub('Web', 'LoginSuccessCheckToken', (user) => {
+                this.checkTokenTimer = window.setInterval(() => {
+                    // this.checkToken(user)
+                }, 6  * 1000)
+            });
+            postalStore.sub('Web', 'Global.Alert', (opts) => {
+                Vue.prototype.$alert(...opts)
+            })
+        },
+        methods: {
+            async reload() {
+
+                this.isRouterShow = false
+                await this.$nextTick()
+                this.isRouterShow = true
+            },
+			clearUserInfo(){
+                clearCookie()
+                 localStorage.clear()
+                sessionStorage.clear()
+                localStorage.removeItem('User');
+                clearInterval(this.checkTokenTimer)
+                console.log(this.$route.path,222,this.checkTokenTimer	);
+                this.$nextTick(()=>{
+                    if(this.$route.path!=='/'&&this.$route.path!=='/login'){
+                        this.$router.push('/')
+                    }
+				})
+			},
+            autoEsc() {
+                if (this.outrTimer) {
+                    clearTimeout(this.outrTimer)
+                }
+                this.outrTimer = setTimeout(() => {
+                    //连续操作，记录最 后一次
+                    if (this.handleTimer) {
+                        clearTimeout(this.handleTimer)
+                    }
+                    this.handleTimer = setTimeout(() => {
+                        //重置计时器
+                        clearTimeout(this.handleTimer)
+                        this.$router.push('/')
+                    }, 10 * 60 * 1000)
+                }, 300)
+            },
+            loginFail(user) {
+
+                this.$request.post('login', `/logout?userId=${user.id}`, null, false).then((res) => {
+                    this.clearUserInfo()
+
+                })
+            },
+            checkToken(user) {
+
+                this.$request.post('login', `/authorizeIsLogin?userId=${user.id}&auth=${user.auth}`, null, false).then((res) => {
+
+                    if (res.data !== true || res.responseCode !== 1000) {
+
+                        this.loginFail(user);
+
+                        this.$message.warning('账号已在其他地方登录')
+                    }
+
+                }).catch(()=>{})
+            },
+
+        },
+        beforeDestroy(){
+            clearInterval(this.checkTokenTimer)
+		}
+    }
 </script>
 <style lang="scss">
-@import './styles/App.scss';
+	@import './styles/App.scss';
 </style>

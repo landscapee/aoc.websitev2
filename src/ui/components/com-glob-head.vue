@@ -78,6 +78,7 @@ import { encryptedData } from '../lib/des-coder.js'
 import { routes } from '../router/index'
 let url = require('../assets/img/' + sysEdition + '/logoTitle.png')
 import { map } from 'lodash'
+import postal from 'postal';
 
 import HeaderMsg from './headerMsg.vue'
 
@@ -176,12 +177,13 @@ export default {
         outLogin() {
             this.$confirm(this.$t('message.sureLogout'), this.$t('message.prompt'), {
                 type: 'warning',
-            })
-                .then(() => {
+            }).then(() => {
                     this.$router.push('/')
-                    // sessionStorage.clear()
-                })
-                .catch(() => {})
+                postal.publish({
+                    channel: 'Web',
+                    topic: 'Login.Out',
+                });
+                }).catch(() => {})
         },
         userHandleCommand(command) {
             if (command == 'password') {
