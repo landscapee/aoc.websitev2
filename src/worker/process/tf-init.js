@@ -85,7 +85,6 @@ postal.subscribe({
         flightHttp(posWorker, httpRequest);
         homeInit(posWorker, httpRequest)
         decreaseInit(posWorker, httpRequest)
-        delaysInit(posWorker, httpRequest)
         getSysConfigHttp(posWorker, httpRequest);
         TOBTConfigInit(posWorker, httpRequest)
         publicChanelInit(posWorker, httpRequest,data.clientId)

@@ -99,7 +99,7 @@
         </div>
         <el-dialog :title="layerName" :visible.sync="flightDetilShow" class="nodeDialog" center width="900px" :append-to-body="true">
             <div class="contentbox">
-                <ele-table :columnConfig="columnConfig" :tableData="flightDetilLists"></ele-table>
+                <ele-table :columnConfig="columnConfig" :tableData="flightDetilLists" :tableMaxHeight="460"></ele-table>
             </div>
         </el-dialog>
 

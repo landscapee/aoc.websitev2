@@ -93,7 +93,7 @@ export default {
         })
         //运行
         postalStore.sub('flight.FlightStatistic', (data) => {
-            // console.log('运行', data)
+            console.log('运行', data)
             this.flight_FlightStatistic = data
         })
         //走廊口方向放行率

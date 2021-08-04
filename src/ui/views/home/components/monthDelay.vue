@@ -38,10 +38,10 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td>{{activeData.ltHalfHour}}</td>
-                                    <td>{{activeData.ltOneHour}}</td>
-                                    <td>{{activeData.ltTwoHour}}</td>
-                                    <td>{{activeData.gtTwoHour}}</td>
+                                    <td><span @click="showToolTipByIDs('ltHalfHour')">{{activeData.ltHalfHour}}</span></td>
+                                    <td><span @click="showToolTipByIDs('ltOneHour')">{{activeData.ltOneHour}}</span></td>
+                                    <td><span @click="showToolTipByIDs('ltTwoHour')">{{activeData.ltTwoHour}}</span></td>
+                                    <td><span @click="showToolTipByIDs('gtTwoHour')">{{activeData.gtTwoHour}}</span></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -79,6 +79,8 @@
 
 <script>
 import { matchPercentNum } from 'lib/helper/utility'
+import PostalStore from '@ui_lib/postalStore'
+let postalStore = new PostalStore()
 export default {
     props: [
         'options',
@@ -106,6 +108,12 @@ export default {
             },
             monthDRateInput: false,
             monthRate: '',
+            activeDataDetails: {
+                gtTwoHour: [],
+                ltHalfHour: [],
+                ltOneHour: [],
+                ltTwoHour: [],
+            },
         }
     },
     created() {},
@@ -116,6 +124,13 @@ export default {
         },
     },
     methods: {
+        showToolTipByIDs(type) {
+            let ids = this.activeDataDetails[type]
+            postalStore.pub('Worker', 'Home.GetFlightsByIds', {
+                ids: ids || [],
+                webSubName: 'Home.ToolTip.Return',
+            })
+        },
         getDelayName() {
             let limitDelay = this.flight_monthClearance.value
                 ? this.flight_monthClearance.value.limitDelay
@@ -138,6 +153,14 @@ export default {
                       ltHalfHour: 0,
                       ltOneHour: 0,
                       ltTwoHour: 0,
+                  }
+            this.activeDataDetails = this.flight_home.rateDelayDetails
+                ? this.flight_home.rateDelayDetails[this.select]
+                : {
+                      gtTwoHour: [],
+                      ltHalfHour: [],
+                      ltOneHour: [],
+                      ltTwoHour: [],
                   }
         },
         editMonthRateHandle() {
@@ -252,6 +275,9 @@ export default {
                         height: 40px;
                         text-align: center;
                         font-weight: 400;
+                        span {
+                            cursor: pointer;
+                        }
                     }
                 }
             }

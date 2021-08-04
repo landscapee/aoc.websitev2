@@ -64,11 +64,7 @@
                 </div>
             </div>
         </div>
-        <el-dialog :title="layerName" :visible.sync="flightDetilShow" class="nodeDialog" center width="900px" :append-to-body="true">
-            <div class="contentbox">
-                <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
-            </div>
-        </el-dialog>
+
     </div>
 </template>
 
@@ -239,11 +235,9 @@ export default {
             if (this.timeSelect != 4 || data.rateType == 8) {
                 return
             }
-            postalStore.pub('Worker', 'Home.GetFlightsByIds', data.unNormalList || [])
-
-            postalStore.sub('Home.ToolTip.Return', (data) => {
-                this.flightDetilShow = true
-                this.tableData = data || []
+            postalStore.pub('Worker', 'Home.GetFlightsByIds', {
+                ids: data.unNormalList || [],
+                webSubName: 'Home.ToolTip.Return',
             })
         },
     },

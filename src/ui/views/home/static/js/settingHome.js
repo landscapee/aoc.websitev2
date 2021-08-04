@@ -1328,7 +1328,7 @@ export const settings = {
 						className: 'shadowBlue',
 						events: {
 							click: function(e) {
-								cb && cb(e.point.category, 'D');
+								cb && cb(e.point.category, 'D',false);
 							},
 						},
 					},
@@ -1374,7 +1374,7 @@ export const settings = {
 						className: 'shadowBlue',
 						events: {
 							click: function(e) {
-								cb && cb(e.point.category, 'A');
+								cb && cb(e.point.category, 'A',false);
 							},
 						},
 						
@@ -1415,7 +1415,7 @@ export const settings = {
 					},
 				},
 			},
-			series: (data) => {
+			series: (data,cb) => {
 				let prediction = get(data, 'prediction', []);
 				let actual = get(data, 'actual', {});
 				let executable = get(data, 'executable', []);
@@ -1442,6 +1442,11 @@ export const settings = {
 								className: 'roundTop',
 							};
 						}),
+						events: {
+							click: function(e) {
+								cb && cb(e.point.category, true, true);
+							},
+						},
 						className: 'shadowBlue',
 					},
 					// {
@@ -1489,7 +1494,12 @@ export const settings = {
 										}
 
 										return res;
-								  }) || [],
+								}) || [],
+						events: {
+							click: function(e) {
+								cb && cb(e.point.category, false, true);
+							},
+						},
 						className: 'shadowBlue',
 					},
 				];
