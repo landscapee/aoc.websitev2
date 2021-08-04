@@ -1,6 +1,7 @@
 import {flightDB, processFlight, saveToFlightDB} from "../lib/storage";
 import {memoryStore} from "../lib/memoryStore";
 import { isString} from 'lodash';
+import {saveToFlightHisDB} from "@/worker/lib/storageHis";
 export const flightHttp = (worker,httpRequest) => {
   const getTodayFLight = () => {
     httpRequest.get('flight', 'getWebSocketResponseData').then(response => {
@@ -44,6 +45,17 @@ export const flightHttp = (worker,httpRequest) => {
         originated: data.original || 0,
       };
       worker.publish('Worker', 'Flight.GetHistory.Response', result);
+    });
+  })
+
+  worker.subscribe('Flight.GetOthers', (options) => {
+    httpRequest.get('flight', `Flight/adjust/history/${options}`).then(res => {
+      let response = res.data
+      if (response.length > 0) {
+        saveToFlightHisDB(response).then(() => {
+          worker.publish('Worker', 'Flight.Change.Sync');
+        });
+      }
     });
   })
 

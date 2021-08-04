@@ -77,7 +77,7 @@
       // 获取运营状态options
       this.$request.get('flight', 'Flight/status').then(res => {
         if (res.code === 200){
-          this.$store.commit('flight/updateFlightRemoteOptions', {statusOptions: JSON.parse(res.data)})
+          this.$store.commit('flight/updateFlightRemoteOptions', {statusOptions: res.data})
         }
 
       })

@@ -47,7 +47,7 @@ const subRetainWs = () => {
         lastUpdateFinish = false;
         saveToFlightDB(_changes).then(() => {
           lastUpdateFinish = true;
-          worker.publish('Flight.Change.Sync');
+          worker.publish('Flight.Change.Sync', '');
         });
       }
     }
@@ -60,7 +60,7 @@ const subSituationRetainsWS = () => {
     memoryStore.setItem('delayFlight', data);
     let datas = map(data, (item) => ({ ...item, isDelay: true }));
     saveToFlightDB(datas).then((res) => {
-      worker.publish('Flight.Change.Sync');
+      worker.publish('Flight.Change.Sync', '');
     });
   });
 }
@@ -78,7 +78,7 @@ const subAdverseClient = () => {
   client.sub('/adverse-condition/deice/dynamic/flight',(data)=>{
     console.log(data);
     saveToFlightDB(data).then(() => {
-      worker.publish('Flight.Change.Sync');
+      worker.publish('Flight.Change.Sync', '');
     });
   })
 };
@@ -121,7 +121,7 @@ export const init = (worker_) => {
     });
 
     checkClient('delaysClient').then(()=>{
-      subDelayWSEvent();
+      // subDelayWSEvent();
       console.log('Widespread连接成功')
     })
 
