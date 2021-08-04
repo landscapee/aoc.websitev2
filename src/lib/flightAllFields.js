@@ -376,24 +376,26 @@ export const allField = {
 	delayBasis: { text: '延误依据', search: { type: 'text' }, auto: true },
 	airportDesc: { text: '运控延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason' },
 	airlineDesc: { text: '航司延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason-airline' },
-	abnormalCategory: {
-		width: 200,
-		text: '延误原因分类',
-		referenceTo: 'delayReasonMerge',
-		search: {
-			type: 'cascader',
-			searchKey: 'delayReasonMerge',
-		},
-	},
+	// abnormalCategory: {
+	// 	width: 200,
+	// 	text: '延误原因分类',
+	// 	referenceTo: 'delayReasonMerge',
+	// 	search: {
+	// 		type: 'cascader',
+	// 		searchKey: 'delayReasonMerge',
+	// 	},
+	// },
 
 	delayMainReason: {
 		text: '延误主原因',
 		width: 200,
+		referenceTo: 'delayMainReasonCn',
 		search: { type: 'select', remoteOptionField: 'delayMainReason' },
 	},
 	delaySubReason: {
 		text: '延误子原因',
 		width: 200,
+		referenceTo: 'delaySubReasonCn',
 		remoteOptionField: 'delaySubReason',
 		search: { type: 'select', remoteOptionField: 'delaySubReason' },
 	},
@@ -466,7 +468,7 @@ export const defaultColumns = [
 	{ key: 'overStationMinTime' },
 	{ key: 'overStationScheduleTime' },
 	{ key: 'planRoute' },
-	{ key: 'abnormalCategory' }, // 不正常分类
+	// { key: 'abnormalCategory' }, // 不正常分类
 	{ key: 'delayMainReason' }, //延误主原因
 	{ key: 'delaySubReason' }, //延误子原因
 	{ key: 'delayBasis' }, // 延误依据

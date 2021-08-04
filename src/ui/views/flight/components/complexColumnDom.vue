@@ -71,8 +71,8 @@
   </el-popover>
 
   <permissionSwitch v-else-if="item.key === 'displayTOBT'" slot-scope="scope" role="edit-TOBT">
-    <div @click="TOBTClick($event, scope.row)" class="d-flex flex-justify-center">
-      <i v-if="scope.row.movement === 'D'" class="iconfont icon-bianji text-blue" ></i>
+    <div class="d-flex flex-justify-center">
+      <i @click="TOBTClick($event, scope.row)" v-if="scope.row.movement === 'D' && !isHistory" class="iconfont icon-bianji text-blue" ></i>
       <div>{{scope.row.displayTOBT}}</div>
     </div>
   </permissionSwitch>
@@ -85,44 +85,53 @@
       :options="delayOptions"
       @change="(v) => abnormalCategoryChange(v, scope.row)"></el-cascader>
 
-  <el-select
-      clearable
-      v-else-if="item.key === 'delayMainReason'"
-      slot-scope="scope"
-      :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
-      :value="scope.row.delayMainReason"
-      @change="(v) => delayChange({delayMainReason: v, delaySubReason: null}, scope.row)">
-    <el-option
-        :key="option.value"
-        :label="option.label"
-        :value="option.value"
-        v-for="option in flightRemoteSel['delayMainReason']">
-    </el-option>
+  <div slot-scope="scope" v-else-if="item.key === 'delayMainReason'">
+    <span v-if="isHistory">
+      {{scope.row.delayMainReasonCn}}
+    </span>
+    <el-select
+        v-else
+        clearable
+        :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
+        :value="scope.row.delayMainReason"
+        @change="(v) => delayChange({delayMainReason: v, delaySubReason: null}, scope.row)">
+      <el-option
+          :key="option.value"
+          :label="option.label"
+          :value="option.value"
+          v-for="option in flightRemoteSel['delayMainReason']">
+      </el-option>
 
-  </el-select>
+    </el-select>
+  </div>
 
-  <el-select
-      clearable
-      v-else-if="item.key === 'delaySubReason'"
-      slot-scope="scope"
-      :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
-      :value="scope.row.delayMainReason && scope.row.delayMainReason !== '--' ? scope.row.delaySubReason : '--'"
-      @change="(v) => delayChange({delaySubReason: v}, scope.row)">
-    <el-option
-        :key="option.value"
-        :label="option.label"
-        :value="option.value"
-        v-for="option in getSubReason(scope.row)">
-    </el-option>
 
-  </el-select>
+  <div slot-scope="scope" v-else-if="item.key === 'delaySubReason'">
+    <span v-if="isHistory">
+      {{scope.row.delaySubReasonCn}}
+    </span>
+    <el-select
+        v-else
+        clearable
+        :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
+        :value="scope.row.delayMainReason && scope.row.delayMainReason !== '--' ? scope.row.delaySubReason : '--'"
+        @change="(v) => delayChange({delaySubReason: v}, scope.row)">
+      <el-option
+          :key="option.value"
+          :label="option.label"
+          :value="option.value"
+          v-for="option in getSubReason(scope.row)">
+      </el-option>
+    </el-select>
+  </div>
+
 
   <permissionSwitch v-else-if="['airportDesc','airlineDesc'].includes(item.key)" slot-scope="scope" :role="item.role">
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="delayInputBlur(item, scope)" v-model="delayInputValue"></el-input>
     </div>
-    <div v-else-if="scope.row.isDelay === true"  @click="delayClick(item,scope)" class="d-flex flex-justify-center">
-      <i class="iconfont icon-bianji text-blue" ></i>
+    <div v-else-if="scope.row.isDelay === true"   class="d-flex flex-justify-center">
+      <i @click="delayClick(item,scope)" v-if="!isHistory" class="iconfont icon-bianji text-blue" ></i>
       <div>{{scope.row[item.key]}}</div>
     </div>
     <span v-else>--</span>
@@ -136,8 +145,8 @@
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="HHmm" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="deiceTimeInputBlur(item, scope)" v-model="deiceTimeInputValue"></el-input>
     </div>
-    <div v-else  @click="timeClick(item,scope)" class="d-flex flex-justify-center">
-      <i v-if="scope.row.movement === 'D'" class="iconfont icon-bianji text-blue" ></i>
+    <div v-else  class="d-flex flex-justify-center">
+      <i @click="timeClick(item,scope)" v-if="scope.row.movement === 'D' && !isHistory" class="iconfont icon-bianji text-blue" ></i>
       <div>{{scope.row[item.key]}}</div>
     </div>
   </permissionSwitch>
@@ -146,15 +155,17 @@
     <div v-if="inputField === item.key + scope.row.flightId">
       <el-input :ref="item.key + scope.row.flightId" :autofocus="true" placeholder="HHmm" @keyup.esc.native="$emit('update:inputField', '')" @keyup.enter.native="timeInputBlur(item, scope)" v-model="timeInputValue"></el-input>
     </div>
-    <div v-else  @click="timeClick(item,scope)" class="d-flex flex-justify-center">
-      <i v-if="scope.row.movement === 'D'" class="iconfont icon-bianji text-blue" ></i>
+    <div v-else   class="d-flex flex-justify-center">
+      <i @click="timeClick(item,scope)" v-if="scope.row.movement === 'D' && !isHistory" class="iconfont icon-bianji text-blue" ></i>
       <div>{{scope.row[item.key] || '--'}}</div>
     </div>
   </permissionSwitch>
 
   <permissionSwitch v-else-if="item.renderType === 'radio'" :noRoleDes="(scope.row[item.key] === '--' || !scope.row[item.key]) ? '否' : '是' " slot-scope="scope" :role="item.role">
     <template>
+      <span v-if="isHistory">{{scope.row[item.key] == '1' ? '是' : '否'}}</span>
       <el-popconfirm
+          v-else
           :title="`是否确认${scope.row[item.key] == '1' ? '取消' : '设置'}航班${scope.row.flightNo}为${item.text}`"
           @confirm="radioConfirm(scope.row, item)"
       >
@@ -207,6 +218,9 @@ export default {
     inputField: {
       type: String
     },
+    isHistory: {
+      type: Boolean
+    }
   },
   data(){
     return{

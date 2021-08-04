@@ -82,17 +82,30 @@ const subWSEvent = () => {
   homeClient.sub('/Flight/Flight/FlightStatistic', (data) => {
     flight_FlightStatistic(worker,data)
   });
+  //积压
+  homeClient.sub('/Flight/delay/backStatus', (data) => {
+		console.log('积压',data)
+	});
 };
 
-let getFlightsByIds = (ids) => {
+let getFlightsByIds = ({ids,webSubName,getTitleSpan}) => {
 	checkWebsocketResponseDataFinish().then(() => {
 			let flights = map(ids, (flightId, index) => {
 				let f = flightDB.by('flightId', flightId + '');
 				f = extend({}, f, { index001: index + 1 });
 				return f;
       });
-			worker.publish('Web', 'Home.ToolTip.Return', flights);
+			worker.publish('Web', webSubName, {data:flights,getTitleSpan});
 		});
+};
+
+
+const delays_subWSEvent = () => {
+  let delaysClient = clientObj.delaysClient
+  //积压
+  delaysClient.sub('/Flight/delay/backStatus', (data) => {
+    flight_delay_backStatus(worker, data)
+  });
 };
 
 export const init = (worker_) => {
@@ -106,62 +119,41 @@ export const init = (worker_) => {
       subWSEvent();
     });
   });
+  
+  
+
+
+  worker.subscribe('Delays.Network.Connected', (c) => {
+    clientObj.delaysClient = new SocketWrapper(c);
+  });
+  worker.subscribe('Page.Delays.Start', () => {
+    checkClient('delaysClient').then(() => {
+      console.log('delays连接成功')
+      delays_subWSEvent();
+    });
+  });
+
+
+  worker.subscribe(`Home.GetFlightsByIds`, getFlightsByIds);
+
   worker.subscribe('Page.Home.Stop',()=>{
     forEach(clientObj, item => {
       item.unSubAll()
     })
   })
-  worker.subscribe(`Home.GetFlightsByIds`, getFlightsByIds);
+
+
+
+
+
 };
 
 
 
 
 
-let delays_clientObj = {}
-let delays_worker = {}
-
-/*
-* 检查服务是否在线
-* */
-export const delays_checkClient = (clientField,) => {
-  return new Promise((resolve) => {
-    setInterval(() => {
-      if (delays_clientObj[clientField]) {
-        resolve();
-      }
-    }, 50);
-  });
-};
 
 
-const delays_subWSEvent = () => {
-  //积压
-  delays_clientObj.delaysClient.sub('/Flight/delay/backStatus', (data) => {
-    flight_delay_backStatus(worker, data)
-  });
-
-};
-
-export const delaysInit = (worker_) => {
-  delays_worker = worker_;
-  delays_worker.subscribe('Delays.Network.Connected', (c) => {
-    delays_clientObj.delaysClient = new SocketWrapper(c);
-  });
-  delays_worker.subscribe('Page.Delays.Start', () => {
-    // start(worker);
-    delays_checkClient('delaysClient').then(() => {
-      console.log('delays连接成功')
-      delays_subWSEvent();
-    });
-  });
-  delays_worker.subscribe('Page.Delays.Stop',()=>{
-    // stop(worker);
-    forEach(delays_clientObj,item=>{
-      item.unSubAll()
-    })
-  })
-};
 
 
 

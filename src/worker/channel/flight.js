@@ -47,7 +47,7 @@ const subRetainWs = () => {
         lastUpdateFinish = false;
         saveToFlightDB(_changes).then(() => {
           lastUpdateFinish = true;
-          worker.publish('Flight.Change.Sync');
+          worker.publish('Flight.Change.Sync', '');
         });
       }
     }
@@ -60,7 +60,7 @@ const subSituationRetainsWS = () => {
     memoryStore.setItem('delayFlight', data);
     let datas = map(data, (item) => ({ ...item, isDelay: true }));
     saveToFlightDB(datas).then((res) => {
-      worker.publish('Flight.Change.Sync');
+      worker.publish('Flight.Change.Sync', '');
     });
   });
 }
@@ -70,17 +70,6 @@ const subWSEvent = () => {
 
 };
 
-// delay服务的连接
-const subDelayWSEvent = () => {
-  let client = clientObj.delaysClient;
-  client.sub('/Flight/delay/executableFlight',()=>{
-    // let flights = {};
-    // map(data, (flightId) => {
-    //   flights[flightId] = true;
-    // });
-    // memoryStore.setItem('ExecutableFlights', flights, true);
-  })
-};
 
 // adverse服务的连接
 const subAdverseClient = () => {
@@ -89,7 +78,7 @@ const subAdverseClient = () => {
   client.sub('/adverse-condition/deice/dynamic/flight',(data)=>{
     console.log(data);
     saveToFlightDB(data).then(() => {
-      worker.publish('Flight.Change.Sync');
+      worker.publish('Flight.Change.Sync', '');
     });
   })
 };
@@ -102,7 +91,13 @@ export const init = (worker_) => {
   });
   worker.subscribe('Delays.Network.Connected', (c) => {
     clientObj.delaysClient = new SocketWrapper(c);
-    // subWidespreadWSEvent();
+    c.sub('/Flight/delay/executableFlight',(data)=>{
+      let flights = {};
+      map(data, (flightId) => {
+        flights[flightId] = true;
+      });
+      memoryStore.setItem('ExecutableFlights', flights, true);
+    })
   });
 
   worker.subscribe('Adverse.Network.Connected', (c) => {
@@ -126,7 +121,7 @@ export const init = (worker_) => {
     });
 
     checkClient('delaysClient').then(()=>{
-      subDelayWSEvent();
+      // subDelayWSEvent();
       console.log('Widespread连接成功')
     })
 

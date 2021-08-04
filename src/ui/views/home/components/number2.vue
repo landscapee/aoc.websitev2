@@ -88,35 +88,4 @@ export default {
 }
 </style>
 <style lang='scss'>
-.homeNumber2Title {
-    display: flex;
-    color: #fff;
-    padding: 0 50px 0 10px;
-    justify-content: space-between;
-
-    .title {
-        color: #fff;
-        line-height: 20px;
-        display: flex;
-        align-items: center;
-        span {
-            margin-left: 10px;
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 12px;
-        }
-    }
-    .title:before {
-        content: '';
-        display: inline-block;
-        height: 16px;
-        width: 5px;
-        background: #0566ff;
-        border-radius: 1px;
-        margin-right: 5px;
-    }
-}
-.homeNumber2contentbox {
-    // overflow: auto;
-    // height: 600px;
-}
 </style>

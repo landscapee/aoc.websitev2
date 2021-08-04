@@ -1,6 +1,7 @@
 import {flightDB, processFlight, saveToFlightDB} from "../lib/storage";
 import {memoryStore} from "../lib/memoryStore";
 import { isString} from 'lodash';
+import {saveToFlightHisDB} from "@/worker/lib/storageHis";
 export const flightHttp = (worker,httpRequest) => {
   const getTodayFLight = () => {
     httpRequest.get('flight', 'getWebSocketResponseData').then(response => {
@@ -29,8 +30,7 @@ export const flightHttp = (worker,httpRequest) => {
 
   worker.subscribe('Flight.GetHistory',(options)=>{
     httpRequest.post('flight','Flight/search/history', options, true).then(data=>{
-      console.log(data)
-      data = JSON.parse(data.data)
+      data = data.data
       let result = {
         movementA: data.movementTotalA || 0,
         movementD: data.movementTotalD || 0,
@@ -45,6 +45,17 @@ export const flightHttp = (worker,httpRequest) => {
         originated: data.original || 0,
       };
       worker.publish('Worker', 'Flight.GetHistory.Response', result);
+    });
+  })
+
+  worker.subscribe('Flight.GetOthers', (options) => {
+    httpRequest.get('flight', `Flight/adjust/history/${options}`).then(res => {
+      let response = res.data
+      if (response.length > 0) {
+        saveToFlightHisDB(response).then(() => {
+          worker.publish('Worker', 'Flight.Change.Sync');
+        });
+      }
     });
   })
 

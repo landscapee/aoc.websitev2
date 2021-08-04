@@ -47,6 +47,9 @@ const resourceMonitoring = () => import(/*webpackChunkName:"resourceMonitoring"*
 //tobt配置
 const tobtConfig = () => import(/*webpackChunkName:"tobtConfig"*/ '../views/tobtConfig/index')
 
+//动态调整
+const flightAdjustment = () => import(/*webpackChunkName:"tobtConfig"*/ '../views/flightAdjustment/flightAdjustment')
+
 
 export var routes = [
     {path: '/', name: 'login', component: login},
@@ -75,7 +78,7 @@ export var routes = [
             },
 
             {
-                path: '/flightAdjustment', name: 'flightAdjustment', component: resourceMonitoring,
+                path: '/flightAdjustment', name: 'flightAdjustment', component: flightAdjustment,
                 title:'动态调整',icon:'tiaozheng1',role:'flight_schedule_dynamic_adjustment'
             },
 
