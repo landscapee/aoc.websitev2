@@ -139,11 +139,11 @@
 									<span class="xietiao  ">
 
 										<span v-if="row[xietiaoObj[opt.key]]==0">
-											<span v-if="criticalAble(row.roleCode,opt.key)">--</span>
 											<span class="xietiaoC1 cursor" @click="xietiao(row,opt.key) " :title="row.descript"
-												  v-else>协调</span>
-											<span class="xietiaoC1 cursor" @click="xietiao(row,opt.key) " :title="row.descript"
-												  >协调</span>
+												  v-if="criticalAble(row.roleCode,opt.key)">协调</span>
+
+											<span v-else>--</span>
+
 
 										</span>
 										<span class="xietiaoC2 " v-else-if="row[xietiaoObj[opt.key]]==1"

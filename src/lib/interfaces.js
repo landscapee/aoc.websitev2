@@ -4,6 +4,7 @@
 // console.log('env', process.env.ENVIROMENT);
 // let locationHost = '173.101.1.30';
 // let locationHost = '10.33.64.1'; // 天府
+
  let port = location.port;
 let locationHost = location.hostname;
 locationHost = '173.101.1.30'; // 双流测试

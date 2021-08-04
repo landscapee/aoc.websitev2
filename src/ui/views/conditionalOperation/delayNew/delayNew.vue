@@ -38,7 +38,7 @@
         created() {
             postal.publish({
                 channel: 'Worker',
-                topic: 'Page.runningNew.Start',
+                topic: 'Page.delayNew.Start',
             });
         },
         mounted() {
@@ -47,7 +47,7 @@
         beforeDestroy() {
             postal.publish({
                 channel: 'Worker',
-                topic: 'Page.runningNew.Stop',
+                topic: 'Page.delayNew.Stop',
             })
             postalStore.unsubAll()
         },

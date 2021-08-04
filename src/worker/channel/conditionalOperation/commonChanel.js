@@ -49,7 +49,7 @@ const subWSEvent = () => {
     client.sub(`/adverse-condition/delay/stat`, (data) => {
         let mydata = data
         memoryStore.setItem('AdverseCondition', {flightDelay: mydata})
-        worker.publish('Web', 'push.flightDelay.Data', {data: mydata, key: 'flightDelay'})
+        worker.publish('Web', 'page.delayNewMiddleRight.Data', {data: mydata, key: 'flightDelay'})
         mydata = mydata?.series[0]
         mydata = mydata?.total
         worker.publish('Web', 'push.top.Data', {data: {flightNum: mydata}, key: 'flightDelay'})
@@ -107,7 +107,7 @@ export const init = (worker_, httpRequest_) => {
     worker.subscribe('Get.flightDelay.Data', (c) => {
         let data = memoryStore.getItem('AdverseCondition')
         let flightDelay = data?.flightDelay
-        flightDelay && worker.publish('Web', 'push.flightDelay.Data', {data: flightDelay, key: 'flightDelay'})
+        flightDelay && worker.publish('Web', 'page.delayNewMiddleRight.Data', {data: flightDelay, key: 'flightDelay'})
         let myData = flightDelay?.series[0]
         myData = myData?.total
         //发送给不利条件运行的 top组件

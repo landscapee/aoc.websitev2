@@ -2,7 +2,10 @@
 	<div   style="height: 100%;">
  		<div class="title">
 			<div class="shuxian"></div>
-			<div class="text">{{data.name}}</div>
+			<div class="text">
+				{{data.name}}
+				<slot :name="data.slot"></slot>
+			</div>
  		</div>
 		<div class="content"  >
 			<div class="echarts" ref="eCharts">  </div>
@@ -61,6 +64,9 @@
 			this.setOptions()
 			window.addEventListener('resize',this.resizeEcharts)
 			this.resizeEcharts()
+            this.echartsInstance.on('click', (params) => {
+                this.$emit('handleClick',this.data.key,params)
+             });
         },
         created() {
 
@@ -95,6 +101,12 @@
 		height: 14px;
 		background: #0566ff;
 		border-radius: 1px;
+	}
+	.text{
+		width: calc(100% - 12px);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 }

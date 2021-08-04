@@ -239,7 +239,8 @@
             getData(obj) {
                 this.$request.post('flight', 'Flight/getFlightDetail/v2', obj, true).then((res) => {
                     if (res.code == 200 && res?.data) {
-                        this.data = JSON.parse(res.data)
+
+                        this.data =  res.data
                         this.flightAD = [this.data.flightA, this.data.flightD]
                         console.log(this.data, this.item);
                     }
