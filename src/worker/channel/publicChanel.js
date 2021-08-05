@@ -1,6 +1,7 @@
 // import {values, extend,map, forEach} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
 import {memoryStore} from "../lib/memoryStore";
+import {parseTime} from "../manage/publick";
 import {orderBy} from 'lodash'
 let clientObj = {};
 let worker, client, ajax;
@@ -65,14 +66,21 @@ const subWSEventMSG = (clientId) => {
 
 
 };
-// 跑道模式
-const subWSEventRunwey = (clientId) => {
-    let runweyClient = clientObj.runweyClient;
-    //跑道模式和禁用状态
-    runweyClient.sub('/Flight/runwayModels', (res) => {
+
+const subWSEventSituation = (clientId) => {
+    let SituationClient = clientObj.SituationClient;
+    //跑道模式和禁用状态 // 跑道模式
+    SituationClient.sub('/Flight/runwayModels', (res) => {
         memoryStore.setItem('Pools', {runwayModels: res})
          worker.publish('Web', 'push.runway.Data', res)
          worker.publish('push.runway.Data', res)
+    })
+    //服务器时间
+    SituationClient.sub('/Flight/CurrentTime', (res) => {
+        parseTime(res)
+    })
+    SituationClient.sub('/topic/time/cur_time', (res) => {
+        parseTime(res)
     })
 };
 
@@ -80,14 +88,10 @@ const subWSEventRunwey = (clientId) => {
 let subAdverseWSEvent = () => {
     let adverseClient = clientObj.adverseClient;
 	adverseClient.sub('/adverse-condition/message/push', (data) => {
-        // console.log(data)
-		// let prev = memoryStore.getItem('Public').msgList || [];
-		// prev.unshift({ ...data, isUnRead: true });
-        // let pubData = orderBy(prev, 'createTime', 'desc')
-		// memoryStore.setItem('Public', { msgList:  pubData});
 		worker.publish('Web', 'Public.GetMsg.Sync', data);
 	});
 };
+
 
 export const init = (worker_, httpRequest_, clientId) => {
     worker = worker_;
@@ -112,11 +116,11 @@ export const init = (worker_, httpRequest_, clientId) => {
 
     //  跑道模式  跑道模式和禁用状态
     worker.subscribe('Situation.Network.Connected', (c) => {
-        clientObj.runweyClient = new SocketWrapper(c);
+        clientObj.SituationClient = new SocketWrapper(c);
     });
-    checkClient('runweyClient').then(() => {
-        subWSEventRunwey();
-        console.log('runweyClient连接成功')
+    checkClient('SituationClient').then(() => {
+        subWSEventSituation();
+        console.log('SituationClient连接成功')
     });
     worker.subscribe('Get.runway.Data', (() => {
             let runwayData = memoryStore.getItem('Pools').runwayModels

@@ -31,6 +31,7 @@
     import {timeRangeConfig} from './help'
     import postal from 'postal';
     import PostalStore from "@ui_lib/postalStore";
+
     let postalStore = new PostalStore();
     export default {
         name: "trafficCapacityCom",
@@ -40,7 +41,7 @@
             return {
                 trafficCapacity: {},//通行能力
                 delayBoard: [],//动态时段
-                 titleStatus: true,
+                titleStatus: true,
                 tableConfig: timeRangeConfig,
                 echartsInstance: null,
             }
@@ -58,8 +59,8 @@
                 this.titleStatus = !this.titleStatus
             },
             getOptions(data) {
-                let arr=[]
-				arr.length=24
+                let arr = []
+                arr.length = 24
                 let obj = {
                     xAxis: map(arr, (item, index) => index + 1),
                     series: [{name: '已延误航班统计', data: []}],
@@ -96,7 +97,7 @@
 
             },
             resizeEcharts() {
-                this.$nextTick(()=>{
+                this.$nextTick(() => {
                     this.echartsInstance.resize();
                 })
             },
@@ -202,11 +203,12 @@
                             },
                             // boundaryGap: false,
                             name: xAxisName || '时长',
-                            nameLocation: 'center',
+                            nameLocation: 'end',
                             nameTextStyle: {
                                 fontSize: 12,
                                 color: '#7286AC',
-                                padding: [-7, 0, 0, 860],
+                                verticalAlign: 'top',
+                                padding: [8, 0, 0, -22],
                             },
 
                             splitLine: {
@@ -330,11 +332,11 @@
 				background: #0566ff;
 				border-radius: 1px;
 			}
-			.text{
+			.text {
 				margin-right: 7px;
 			}
 			.cursor {
-				margin-right:15px;
+				margin-right: 15px;
 				svg {
 					fill: #f78501 !important;
 				}

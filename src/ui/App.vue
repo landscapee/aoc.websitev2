@@ -6,6 +6,8 @@
 <script>
     import router from './router'
     import Vue from 'vue';
+    import {memoryStore} from "@/worker/lib/memoryStore";
+
     import PostalStore from "./lib/postalStore";
     import {clearCookie} from "./lib/localStorageTemp";
     let postalStore = new PostalStore();
@@ -32,10 +34,13 @@
             postalStore.sub('Web', 'Login.Out', () => {
                 this.clearUserInfo()
             });
+            postalStore.sub('Web', 'Time.Sync', (time) => {
+                memoryStore.setItem('global', {now:time});
+            });
             postalStore.sub('Web', 'LoginSuccessCheckToken', (user) => {
                 this.checkTokenTimer = window.setInterval(() => {
-                    // this.checkToken(user)
-                }, 6  * 1000)
+                    this.checkToken(user)
+                }, 10  * 1000)
             });
             postalStore.sub('Web', 'Global.Alert', (opts) => {
                 Vue.prototype.$alert(...opts)
@@ -100,6 +105,7 @@
 
         },
         beforeDestroy(){
+            postalStore.unsubAll()
             clearInterval(this.checkTokenTimer)
 		}
     }

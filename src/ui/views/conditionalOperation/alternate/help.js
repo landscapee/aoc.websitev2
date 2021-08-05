@@ -1,6 +1,6 @@
 import {displayTimeDate} from '@/lib/helper/utility.js'
 import {map} from 'lodash'
-import moment from 'moment'
+ import {tranAtaAtd} from '@/ui/lib/transTimeByKey.js'
 // 备降航班统计
 export const LandingConfig=	 [
 
@@ -10,7 +10,8 @@ export const LandingConfig=	 [
     {key: 'seat', type: 'simple',label: '机位',width:'40px'},
     {key: 'ata', type: 'simple',label: '落地时间', width:'60px'  ,
         display: ({row}) => {
-            return( row.ata||row.atd)?moment(row.ata||row.atd).format('HH:mm'):'--'   ;
+
+            return tranAtaAtd(row);
         },},
     {key: 'waitTime', type: 'simple',label: '机上等待', width:'60px',
         display: ({row}) => {
@@ -110,7 +111,7 @@ export const exigencyConfig=[
         type: 'simple',label: '落地时间',
         width:'65px',
         display: ({row}) => {
-            return ( row.ata||row.atd)?moment(row.ata||row.atd).format('HH:mm'):'--'   ;
+            return tranAtaAtd(row) ;
         },
     },
     {

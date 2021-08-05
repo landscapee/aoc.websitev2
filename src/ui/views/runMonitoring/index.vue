@@ -164,6 +164,7 @@
                 // length&&this.$set(this.pageListObj.batchConcern,'data',data)
                 // length&&this.$set(this.pageListObj.guaranteeWarn,'data',data)
                 // length&&this.$set(this.pageListObj.vvpFlights,'data',data)
+                // length&&this.$set(this.pageListObj.closeDoorWait,'data',data)
              });
             //地面保障池
             postalStore.sub( 'guaranteeWarn',(data)=>{
