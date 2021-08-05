@@ -1,17 +1,32 @@
 import moment from 'moment'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
-
- export const parseTime = (data) => {
+let serverTime=null
+ export const parseTime = (data,num) => {
      let HHMMTime = data.responseData;
-      let time = moment(HHMMTime).valueOf();
+     let PCNow = new Date().getTime();
+     let time = moment(HHMMTime).valueOf();
+        let PCOffsetTime
+
+
+     PCOffsetTime = time - PCNow;
+     serverTime = time;
       // app 页面
-      postal.publish({
-         channel: 'Web',
-         topic: 'Time.Sync',
-         data: time,
-     });
+     let pushApp=(t)=>{
+         postal.publish({
+             channel: 'Web',
+             topic: 'Time.Sync',
+             data: t,
+         });
+     }
+     pushApp(time)
      memoryStore.setItem('global', {now:time});
+     setInterval(() => {
+         let PCNow = new Date().getTime();
+         let timeNew = PCNow + PCOffsetTime;
+         pushApp(timeNew)
+         memoryStore.setItem('global', {now:timeNew});
+     }, 3000);
  } ;
 export const publicktart = (posWorker) => {
     // posWorker.subscribe('Resource.Change.Sync', (data) => {

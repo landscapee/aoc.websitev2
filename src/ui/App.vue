@@ -35,6 +35,7 @@
                 this.clearUserInfo()
             });
             postalStore.sub('Web', 'Time.Sync', (time) => {
+                // console.log(2,time);
                 memoryStore.setItem('global', {now:time});
             });
             postalStore.sub('Web', 'LoginSuccessCheckToken', (user) => {

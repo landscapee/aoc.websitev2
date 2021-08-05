@@ -77,10 +77,10 @@ const subWSEventSituation = (clientId) => {
     })
     //服务器时间
     SituationClient.sub('/Flight/CurrentTime', (res) => {
-        parseTime(res)
+        parseTime(res,1)
     })
     SituationClient.sub('/topic/time/cur_time', (res) => {
-        parseTime(res)
+        parseTime(res,2)
     })
 };
 
