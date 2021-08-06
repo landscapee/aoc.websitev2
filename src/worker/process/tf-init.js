@@ -1,7 +1,8 @@
 import {each, find, get} from "lodash";
 import socket from '../lib/socket'
 import {init as flightInit} from '../channel/flight'
-import {init as homeInit} from '../channel/home'
+import {init as flightAdjustmentInit} from '../channel/flightAdjustment'
+import {init as homeInit, delaysInit} from '../channel/home'
 // import { init as delaysInit } from '../connect/delays'
 import {init as monitorInit} from '../channel/runMonitor'
 import {init as resourceMonitorInit} from '../channel/resourceMonitor'
@@ -73,6 +74,7 @@ postal.subscribe({
         let mySockets = socket(data.servers);
         let httpRequest = new HttpRequest(data.httpConfig);
         flightInit(posWorker, httpRequest);
+        flightAdjustmentInit(posWorker, httpRequest);
         monitorInit(posWorker, httpRequest);
         MonitorWithRunwayInit(posWorker, httpRequest);
         alternateConfigInit(posWorker, httpRequest);

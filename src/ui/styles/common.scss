@@ -45,3 +45,17 @@
         font-size: 12px;
     }
 }
+//竖线+文字
+.titleSX{
+    display: flex;
+    align-items: center;
+}
+.titleSX:before{
+    content: '';
+    display: inline-block;
+    margin-right: 8px;
+    width: 4px;
+    height: 14px;
+    background: #0566ff;
+    border-radius: 1px;
+}

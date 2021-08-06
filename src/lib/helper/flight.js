@@ -147,7 +147,7 @@ export const fixTakeOffNormalStatus = (flight) => {
 	if (!flight) {
 		return flight;
 	}
-	let result = { takeOffNormalStatus: takeOffNormalStatus[flight.takeOffNormalStatus] };
+	let result = { takeOffNormalStatusText: takeOffNormalStatus[flight.takeOffNormalStatus] };
 	return extend({}, flight, result);
 };
 

@@ -10,18 +10,22 @@ import { getUserSerializ, clearCookie } from '../lib/localStorageTemp'
 let loginFlag = 0;
 let hasIfm = self!=top//是否被镶嵌
 let socketInterfaceType = window.webConfig.socketInterfaceType
-let token=getUserSerializ()?.token
 router.beforeEach((to, from, next) => {
-    if(to.name=="login"||to.name=="/"){//登陆页清空信息
+    let token=getUserSerializ()?.token
+
+    if(to.path=="login"||to.path=="/"){//登陆页清空信息
+
         loginFlag=0
-        clearCookie()
-        localStorage.clear()
-        sessionStorage.clear()
+
  		store.commit("resetStore",null)
 
 		postal.publish({
             channel: 'worker.aoc',
             topic: 'socket_close',
+        });
+        postal.publish({
+            channel: 'Web',
+            topic: 'Login.Out',
         });
         postal.publish({
             channel: 'worker.aoc',
@@ -60,7 +64,8 @@ router.beforeEach((to, from, next) => {
                 })
 
             }else{
-                next()
+
+                next('/')
             }
         }
 
@@ -69,6 +74,8 @@ router.beforeEach((to, from, next) => {
 })
 
 router.afterEach(()=>{
+    let token=getUserSerializ()?.token
+
     if(token&&loginFlag==0){
         loginFlag = 1
         postal.publish({//建立socket

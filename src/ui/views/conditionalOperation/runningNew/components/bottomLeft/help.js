@@ -48,10 +48,7 @@ export const runwayStandardConfig = [
     {
         key: 'windD10',
         label: '风向',
-        displayHeader: ({row}) => (
-            `<div>
-            <span>风向</span>
-         </div>`)
+
     }
     ,
     {
@@ -65,6 +62,9 @@ export const runwayStandardConfig = [
     </span>
     </div>`
             ),
+        display:({row})=>{
+            return row.temp||'0'
+        }
     }
     ,
     {
@@ -77,6 +77,9 @@ export const runwayStandardConfig = [
     class = "textSecondary" >℃</span>
     </div>`
             ),
+        display:({row})=>{
+            return row.td||'0'
+        }
     }
     ,
     {
@@ -85,7 +88,10 @@ export const runwayStandardConfig = [
         displayHeader: ({row}) => (
             `<div>
             <span>湿度</span>
-         </div>`)
+         </div>`),
+        display:({row})=>{
+            return row.humid||'0'
+        }
     }
     ,
     {

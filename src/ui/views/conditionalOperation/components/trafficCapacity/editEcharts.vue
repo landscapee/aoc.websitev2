@@ -40,7 +40,7 @@
                     if(res.code==200){
                         this.$message.success('设置成功')
                         this.close()
-                     }else{
+                    }else{
                         this.$message.warning(res.message)
                     }
                 })
