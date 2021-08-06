@@ -6,7 +6,7 @@
             </div>
             <div class="deltails">
                 <span>平均计划架次:{{suggestTime.average}}</span>
-                <span>总数:{{suggestTime.total}}</span>
+                <span>总数:{{totalCount}}</span>
             </div>
         </div>
         <div class="content">
@@ -41,6 +41,7 @@ export default {
     },
     watch: {
         currentReduce: function (val) {
+            console.log(val)
             this.totalCount = 0
             this.suggestTime = val.suggestTime
             let suggestTimeDetail = _.get(val.suggestTime, 'detail', [])

@@ -79,4 +79,5 @@ export const init = (worker_) => {
     worker = worker_;
 	worker.subscribe(`AdjustReduction.SetFilterOption`, setFilterOption);
 	worker.subscribe(`AdjustReduction.GetFlights`, getFlights); // 调整调减的航班列表
+	
 };

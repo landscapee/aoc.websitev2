@@ -143,6 +143,10 @@ export default {
                         return row.displayRouter ? row.displayRouter.join('->') : '-'
                     },
                 },
+                {
+                    key: 'status',
+                    label: '状态',
+                },
             ],
             select: 'takeOffNormal',
             selectArr: [

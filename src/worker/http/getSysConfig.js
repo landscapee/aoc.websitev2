@@ -7,9 +7,8 @@ export const getSysConfigHttp = (worker,httpRequest) => {
         if (JSON.stringify(cityData)=="{}") {
             httpRequest.get('delays', 'Flight/FlightSchedule/allAirport').then(res => {
                 if (res.data) {
-                    let data = JSON.parse(res.data)
-                    memoryStore.setItem('cityData', data);
-                    worker.publish('Web', `Delay.GetCity`, data);
+                    memoryStore.setItem('cityData', res.data);
+                    worker.publish('Web', `Delay.GetCity`, res.data);
                 }
                 
             });

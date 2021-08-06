@@ -71,26 +71,28 @@
                 </el-form>
             </div>
             <div class="table">
-                <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+                <div class="tableBox">
+                    <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
+
+                </div>
+
                 <div class="buttonBox">
                     <el-button type="primary" size="mini" @click="submitData" :disabled="editDisabled||!$hasRole('edit-submit-calc',false)">提交</el-button>
                 </div>
             </div>
         </div>
-        <decrease-dialog ref="ref_decreaseDialog" />
+        <decrease-dialog ref="ref_decreaseDialog" :postalStore="postalStore" />
 
     </div>
 </template>
 <script>
-import PostalStore from '@/ui/lib/postalStore'
-let postalStore = new PostalStore()
 import { setting_columnConfig } from '../config'
 import DecreaseDialog from './decreaseDialog.vue'
 export default {
     components: {
         'decrease-dialog': DecreaseDialog,
     },
-    props: ['currentReduce', 'currentReduceLists', 'currentType'],
+    props: ['currentReduce', 'currentReduceLists', 'currentType', 'postalStore'],
     data() {
         return {
             navFalg: 1,
@@ -133,8 +135,8 @@ export default {
         }
     },
     mounted() {
-        postalStore.pub('Worker', 'Delay.GetCity', null)
-        postalStore.sub('Delay.GetCity', (res) => {
+        this.postalStore.pub('Worker', 'Delay.GetCity', null)
+        this.postalStore.sub('Delay.GetCity', (res) => {
             this.allAirportOptions = res
         })
     },
@@ -308,19 +310,19 @@ export default {
 </script>
 <style scoped lang='scss'>
 .settting {
-    height: 515px;
+    padding-top: 4px;
     .title {
         width: calc(100% - 8px);
         height: 28px;
-        background: linear-gradient(180deg, #2e67f6, rgba(0, 75, 205, 0.8));
-        box-shadow: 0px 0px 6px 0px #2f3d8e;
+        background: linear-gradient(180deg, #234ba7, #0c367e);
+        box-shadow: 0 0 6px 0 #2f3d8e;
         color: #fff;
         line-height: 28px;
         text-align: center;
-        margin: 4px 4px 0;
+        margin: 0 4px 0;
     }
     .content {
-        padding: 15px;
+        padding: 10px 15px;
         .nav {
             height: 34px;
             display: flex;
@@ -352,7 +354,7 @@ export default {
             padding: 10px 0 0;
             color: #fff;
             .el-form-item {
-                margin-bottom: 10px !important;
+                margin-bottom: 4px !important;
                 label {
                     color: #fff;
                 }
@@ -360,6 +362,9 @@ export default {
         }
     }
     .table {
+        .tableBox {
+            width: 490px;
+        }
         .buttonBox {
             padding: 10px 0 0;
             display: flex;

@@ -30,10 +30,8 @@
 </template>
 <script>
 import { sureDecrease_columnConfig1, sureDecrease_columnConfig2 } from '../config'
-import PostalStore from '@/ui/lib/postalStore'
-let postalStore = new PostalStore()
 export default {
-    props: ['currentReduce', 'airLinesGroup'],
+    props: ['currentReduce', 'airLinesGroup', 'postalStore'],
     data() {
         return {
             columnConfig1: sureDecrease_columnConfig1,
@@ -196,11 +194,15 @@ export default {
                 }
                 return []
             })
-            postalStore.pub('Worker', 'Decrease.GetReduceFlights', reduceShouldShow)
-            postalStore.sub('Web', 'Decrease.GetReduceFlights.Response', (flightWithAirline) => {
-                this.reduceFlight = flightWithAirline
-                this.getAllReduceFlight()
-            })
+            this.postalStore.pub('Worker', 'Decrease.GetReduceFlights', reduceShouldShow)
+            this.postalStore.sub(
+                'Web',
+                'Decrease.GetReduceFlights.Response',
+                (flightWithAirline) => {
+                    this.reduceFlight = flightWithAirline
+                    this.getAllReduceFlight()
+                }
+            )
         },
     },
 }

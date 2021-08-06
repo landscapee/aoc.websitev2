@@ -184,8 +184,6 @@ export default {
         getReduceFlight(current) {
             let flights = current.planDetail[this.airlineCode] || current.planDetail['other']
             postalStore.pub('Worker', 'AdjustReduction.GetFlights', flights)
-            // let planDetailById = planDetail[current.red];
-
             postalStore.sub('Web', 'AdjustReduction.GetFlights.Res', (data) => {
                 this.reduceFlight = data
             })

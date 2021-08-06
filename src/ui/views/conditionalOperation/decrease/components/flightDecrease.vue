@@ -26,10 +26,8 @@
 <script>
 import { flightDecrease_columnConfig } from '../config'
 import { mapGetters } from 'vuex'
-import PostalStore from '@/ui/lib/postalStore'
-let postalStore = new PostalStore()
 export default {
-    props: ['airLinesGroup', 'currentReduce', 'reduceFlight'],
+    props: ['airLinesGroup', 'currentReduce', 'reduceFlight', 'postalStore'],
     computed: {
         ...mapGetters(['getFlightIndicator']),
     },
@@ -57,45 +55,9 @@ export default {
         currentReduce: function (val) {
             this.getAirlineFromDb()
         },
-        // decreaseFlights: function (val) {
-        //     let allReduceFlight = []
-        //     _.map(this.reduceFlight, (item, key) => {
-        //         _.map(item, (flight) => {
-        //             allReduceFlight.push({ ...flight, airlineCode: key })
-        //         })
-        //     })
-
-        //     let allReduceFlightByType = _.groupBy(allReduceFlight, 'type')
-        //     console.log(this.reduceFlight)
-        //     _.map(val, (item, index) => {
-        //         item.flightIndex = index + 1
-        //         if (
-        //             _.map(allReduceFlightByType.R, (item) => item.flightId).indexOf(
-        //                 parseInt(item.flightId)
-        //             ) > -1
-        //         ) {
-        //             item.level = 'reduce'
-        //         }
-        //         if (
-        //             _.map(allReduceFlightByType.A, (item) => item.flightId).indexOf(
-        //                 parseInt(item.flightId)
-        //             ) > -1
-        //         ) {
-        //             item.level = 'exchange'
-        //         }
-        //     })
-
-        //     this.flightsGroup = _.groupBy(val, (list) => {
-        //         if (this.airLinesGroup[list.airlineCode]) {
-        //             return list.airlineCode
-        //         } else {
-        //             return 'other'
-        //         }
-        //     })
-        //     this.resetNav()
-        // },
     },
     mounted() {},
+
     methods: {
         navHandle(idx) {
             this.searchFlightNo = ''
@@ -151,9 +113,8 @@ export default {
             direction && filter.push({ direction })
 
             // 获取航司航班列表
-            postalStore.pub('Worker', 'AdverseCondition.GetFlight', [...filter])
-            postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
-                console.log(flights)
+            this.postalStore.pub('Worker', 'AdverseCondition.GetFlight', [...filter])
+            this.postalStore.sub('Web', 'AdverseCondition.GetFlight.Response', (flights) => {
                 let planDetail = this.currentReduce.planDetail
 
                 _.map(flights, (flight) => {
