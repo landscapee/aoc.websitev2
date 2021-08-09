@@ -61,6 +61,11 @@
               <el-dropdown-item :key="key + item + '1'" :command="key" v-for="(item, key) in citys">{{ item }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+          <div
+              @click="showMaxTotal = !showMaxTotal"
+              class="flightControlBox flightEnd cursor">
+          <img title="推荐放行架次" :src="showMaxTotal ? eyes1 : eyes2" alt="" />
+        </div>
         </div>
 
 
@@ -204,6 +209,8 @@ import {displayTimeHour} from "@/lib/helper/utility";
 import classNames from 'classnames';
 import gantan from 'ui/assets/img/gantan.svg';
 import statusHelp from 'ui/assets/img/statusHelp.svg';
+import eyes1 from 'ui/assets/img/eyes1.svg';
+import eyes2 from 'ui/assets/img/eye2.svg';
 
 let postalStore = new PostalStore()
 
@@ -260,6 +267,8 @@ export default {
       get,
       statusHelp,
       gantan,
+      eyes2,
+      eyes1,
       classNames,
       normalStatus,
       statusCfg,
@@ -278,7 +287,8 @@ export default {
       flightStatusD: [],
       takeOffNormalStatus: [],
       showStatusHelp: false,
-      adjustReduceFlights: []
+      adjustReduceFlights: [],
+      showMaxTotal: false
     }
   },
   mounted() {
@@ -526,7 +536,19 @@ export default {
       flex-wrap: nowrap;
       color: #FFF;
       font-size: 10px;
-
+      // 最后一个按钮
+      .flightEnd{
+        height: 28px;
+        width: 28px;
+        border-radius: 50%;
+        background: #0182e7;
+        display: flex;
+        align-items: center;
+        place-content: center;
+        img{
+          height: 100%;
+        }
+      }
       .dropdown-toggle {
         font-size: 10px;
       }
