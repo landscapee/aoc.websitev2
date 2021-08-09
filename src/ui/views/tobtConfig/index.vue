@@ -91,9 +91,7 @@
 
             this.$request.get('delays', 'Flight/FlightSchedule/rankAirport',null,false).then((res)=>{
                 if(res.code==200){
-                    // console.log(200,res.data,200);
-                    this.dataAirport=JSON.parse(res.data)
-
+                    this.dataAirport= res.data
                 }
              })
         },

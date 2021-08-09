@@ -4,7 +4,7 @@
             <div class="name alib">推荐调整调减架次</div>
             <div class="right">
                 <span style="margin-right:6px">反馈时长</span>
-                <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @change="feedbackTimeChange" :disabled="!$hasRole('edit-handle-suggest',false)" />
+                <el-input placeholder="请输入" size="mini" style="width:70px" v-model="feedBackTime" @keyup.enter.native="feedbackTimeChange" @blur="feedbackTimeChange" :disabled="!$hasRole('edit-handle-suggest',false)" />
             </div>
         </div>
         <div class="tableBox">
@@ -28,11 +28,15 @@ export default {
     },
     watch: {
         currentReduce: function (val) {
+            console.log(val)
             if (!val) return
             this.plan = val.plan
             this.tableData =
                 JSON.stringify(val.plan) != '{}' ? this.formatSuggestForEdit(val.plan) : []
-            this.feedBackTime = val.reduceInfo ? val.reduceInfo.feedbackTime : 30
+            this.feedBackTime =
+                val && val.reduceInfo && val.reduceInfo.feedbackTime
+                    ? val.reduceInfo.feedbackTime
+                    : 30
         },
     },
     mounted() {},
@@ -152,9 +156,9 @@ export default {
     flex: 1;
     margin: 15px 0;
     padding: 0 15px;
-    height: calc(100% - 545px);
+    height: calc(100% - 510px);
     .title {
-        padding: 10px 0;
+        padding: 6px 0;
         display: flex;
         justify-content: space-between;
         align-items: center;

@@ -62,7 +62,7 @@ import Bangzhu from './bangzhu'
             return {
                 status:2,
                 tableConfig: runwayStandardConfig,
-                tableData:[],
+                tableData:[ ],
             }
         },
         methods: {
@@ -77,7 +77,7 @@ import Bangzhu from './bangzhu'
         mounted() {
 
             postalStore.sub('runwayStandard', ({data, key}) => {
-                this.tableData = data;
+                // this.tableData = data;
              });
         },
         beforeDestroy() {
@@ -114,13 +114,21 @@ import Bangzhu from './bangzhu'
 
 	.tableBoxWB {
 		margin: 15px 0;
-		height: calc(21.5% - 10px);
+		height: calc(21.5% - 14px);
 		background: rgba(25, 37, 60, 0.8);
 		border-radius: 5px;
 		::v-deep th{
 			background: #113671!important;
 		}
+		::v-deep tr{
+			/*background: red;*/
+			/*height: 30px!important;*/
+			td,th{
+				height: 37px!important;
+			}
+		}
 		::v-deep .cell {
+
 			font-size: 14px !important;
 			font-weight: 400;
 			padding: 0 2px !important;
@@ -135,7 +143,7 @@ import Bangzhu from './bangzhu'
 	}
 
 	.txnl {
-		height: calc(57% - 10px);
+		height: calc(57% - 9px);
 
 		background: rgba(25, 37, 60, 0.8);
 		border-radius: 5px;

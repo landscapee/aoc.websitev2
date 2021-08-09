@@ -1,23 +1,43 @@
 .el-picker-panel {
+    $color:#37455c;
     color: #ffffff;
     background: #25395c;
-    border-color: #101c2f;
+    border-color: $color;
 
     .el-picker-panel__footer {
         background-color: #25395c;
-        border-color: #101c2f;
+        border-color:$color;
+        button{
+            color: #fff;
+        }
+        button:last-child{
+            background: none;
+            border: none;
+            color: #4181e9;
+        }
     }
-
+     .el-picker-panel__icon-btn{
+         color: #fff;
+     } 
     .el-date-range-picker__time-header,
     .el-date-range-picker__content.is-left,
     .el-date-table th {
-        border-color: #101c2f;
-    }
-
+        border-color: $color!important;
+     }
+.el-date-range-picker__time-header{
+    border-width: 0 0 1px 0 !important;
+}
     .el-date-table td.in-range div,
     .el-date-table td.in-range div:hover,
     .el-date-table.is-week-mode .el-date-table__row.current div,
     .el-date-table.is-week-mode .el-date-table__row:hover div {
         background-color: #101c2f;
+    }
+    //选择范围背景
+    .in-range{
+        &>div{
+            background: rgba(255, 255, 255, 0.18)!important;
+        }
+
     }
 }

@@ -45,168 +45,163 @@
     </el-dialog>
 </template>
 <script>
-    import PostalStore from '@/ui/lib/postalStore'
-    let postalStore = new PostalStore()
-    import { decreaseDialog_columnConfig1, decreaseDialog_columnConfig2 } from '../config'
-    export default {
-        data() {
-            return {
-                dialogShow: false,
-                columnConfig1: decreaseDialog_columnConfig1,
-                columnConfig2: decreaseDialog_columnConfig2,
-                tableData: [],
-                special: [],
-                editShow: false,
-                weeks: {
-                    1: '星期一',
-                    2: '星期二',
-                    3: '星期三',
-                    4: '星期四',
-                    5: '星期五',
-                    6: '星期六',
-                    7: '星期天',
-                },
-                thisObj: {},
-            }
-        },
-        mounted() {
-            postalStore.pub('Worker', 'Flight.GetCoordinateArg', null)
-            postalStore.sub('Flight.GetCoordinateArg.Response', (list) => {
-                this.tableData = _.sortBy(
-                    _.filter(list, (l) => {
-                        return (l.type === 0 || l.type === '0') && l.endTime != 2500
-                    }),
-                    'startTime'
-                )
-                this.special = _.sortBy(
-                    _.filter(list, (l) => {
-                        return l.type != 0 || l.type != '0'
-                    }),
-                    'startTime'
-                )
-            })
-            this.thisObj = this
+import { decreaseDialog_columnConfig1, decreaseDialog_columnConfig2 } from '../config'
+export default {
+    props: ['postalStore'],
+    data() {
+        return {
+            dialogShow: false,
+            columnConfig1: decreaseDialog_columnConfig1,
+            columnConfig2: decreaseDialog_columnConfig2,
+            tableData: [],
+            special: [],
+            editShow: false,
+            weeks: {
+                1: '星期一',
+                2: '星期二',
+                3: '星期三',
+                4: '星期四',
+                5: '星期五',
+                6: '星期六',
+                7: '星期天',
+            },
+            thisObj: {},
+        }
+    },
+    mounted() {
+        this.postalStore.pub('Worker', 'Flight.GetCoordinateArg', null)
+        this.postalStore.sub('Flight.GetCoordinateArg.Response', (list) => {
+            this.tableData = _.sortBy(
+                _.filter(list, (l) => {
+                    return (l.type === 0 || l.type === '0') && l.endTime != 2500
+                }),
+                'startTime'
+            )
+            this.special = _.sortBy(
+                _.filter(list, (l) => {
+                    return l.type != 0 || l.type != '0'
+                }),
+                'startTime'
+            )
+        })
+        this.thisObj = this
 
-            window.coordinateArgChange = (e, listName, index, key) => {
-                this.coordinateArgChange(e, listName, index, key)
+        window.coordinateArgChange = (e, listName, index, key) => {
+            this.coordinateArgChange(e, listName, index, key)
+        }
+    },
+    methods: {
+        addSpecial() {
+            let data = {
+                endTime: '',
+                maxOff: 0,
+                maxOn: 0,
+                maxTotal: 0,
+                startTime: '',
+                type: '1',
             }
+            this.special.push(data)
         },
-        methods: {
-            addSpecial() {
-                let data = {
-                    endTime: '',
-                    maxOff: 0,
-                    maxOn: 0,
-                    maxTotal: 0,
-                    startTime: '',
-                    type: '1',
+        submitData() {
+            let data = _.concat(this.tableData, this.special)
+            this.$request.post('flight', 'dynamicAdjust/coordinateArg/save', data).then((res) => {
+                if (res.data) {
+                    this.$message({
+                        message: '保存成功',
+                        type: 'success',
+                    })
+                    this.editShow = false
+                    this.postalStore.pub('Worker', 'Flight.GetCoordinateArg', null)
                 }
-                this.special.push(data)
-            },
-            submitData() {
-                let data = _.concat(this.tableData, this.special)
-                console.log(data)
-
-                // http://173.101.1.30:6075/api/flight/dynamicAdjust/coordinateArg/save
-
-                this.$request.post('flight', 'dynamicAdjust/coordinateArg/save', data).then((res) => {
-                    if (res.data) {
-                        this.$message({
-                            message: '保存成功',
-                            type: 'success',
-                        })
-                        this.editShow = false
-                        postalStore.pub('Worker', 'Flight.GetCoordinateArg', null)
-                    }
-                })
-            },
-            initData() {
-                this.editShow = false
-                this.dialogShow = true
-            },
-            coordinateArgChange(event, listName, index, key) {
-                if (key == 'time') {
-                    let timeArr = event.value.split('-')
-                    let pass = true
-                    if (timeArr.length < 2) {
-                        this.$message({
-                            message: '时间格式不正确',
-                            type: 'warning',
-                        })
-                        pass = false
-                    }
-                    if (pass && parseInt(timeArr[0]) > parseInt(timeArr[1])) {
-                        this.$message({
-                            message: '开始时间不能大于结束时间',
-                            type: 'warning',
-                        })
-                        pass = false
-                    }
-                    if (!pass) {
-                        this[listName][index].startTime = ''
-                        this[listName][index].endTime = ''
-                        return
-                    }
-                    this[listName][index].startTime = timeArr[0]
-                    this[listName][index].endTime = timeArr[1]
+            })
+        },
+        initData() {
+            this.editShow = false
+            this.dialogShow = true
+        },
+        coordinateArgChange(event, listName, index, key) {
+            if (key == 'time') {
+                let timeArr = event.value.split('-')
+                let pass = true
+                if (timeArr.length < 2) {
+                    this.$message({
+                        message: '时间格式不正确',
+                        type: 'warning',
+                    })
+                    pass = false
+                }
+                if (pass && parseInt(timeArr[0]) > parseInt(timeArr[1])) {
+                    this.$message({
+                        message: '开始时间不能大于结束时间',
+                        type: 'warning',
+                    })
+                    pass = false
+                }
+                if (!pass) {
+                    this[listName][index].startTime = ''
+                    this[listName][index].endTime = ''
                     return
                 }
-                this[listName][index][key] = event.value
-            },
-            weekChange(command) {
-                let indexArr = command.split('_')
-                this.special[indexArr[0]].type = indexArr[1]
-            },
+                this[listName][index].startTime = timeArr[0]
+                this[listName][index].endTime = timeArr[1]
+                return
+            }
+            this[listName][index][key] = event.value
         },
-    }
+        weekChange(command) {
+            let indexArr = command.split('_')
+            this.special[indexArr[0]].type = indexArr[1]
+        },
+    },
+}
 </script>
 <style lang="scss" scoped>
-    .decreaseDialog {
-        .contentBox {
-            position: relative;
-        }
-        .title {
-            height: 40px;
-            color: #fff;
+.decreaseDialog {
+    .contentBox {
+        position: relative;
+    }
+    .title {
+        height: 40px;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-right: 20px;
+        & > span {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding-right: 20px;
-            & > span {
-                display: flex;
-                align-items: center;
-                i {
-                    color: #409eff;
-                    margin-left: 15px;
-                    cursor: pointer;
-                }
-            }
-            div {
-                i {
-                    font-size: 18px;
-                    color: #409eff;
-                    cursor: pointer;
-                }
-                span {
-                    color: #409eff;
-                    cursor: pointer;
-                }
+            i {
+                color: #409eff;
+                margin-left: 15px;
+                cursor: pointer;
             }
         }
-        .title1 {
-            position: fixed;
-            width: calc(100% - 50px);
-            top: 65px;
-        }
-        .contentBox1 {
-            margin-top: 40px;
-            overflow: auto;
-            height: 460px;
-        }
-        .buttonBox {
-            padding: 10px 0 0;
-            display: flex;
-            justify-content: center;
+        div {
+            i {
+                font-size: 18px;
+                color: #409eff;
+                cursor: pointer;
+            }
+            span {
+                color: #409eff;
+                cursor: pointer;
+            }
         }
     }
+    .title1 {
+        position: fixed;
+        width: calc(100% - 50px);
+        top: 65px;
+    }
+    .contentBox1 {
+        margin-top: 40px;
+        overflow: auto;
+        height: 460px;
+    }
+    .buttonBox {
+        padding: 10px 0 0;
+        display: flex;
+        justify-content: center;
+    }
+}
 </style>

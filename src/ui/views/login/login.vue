@@ -74,6 +74,8 @@ import { encryptedData } from '../../lib/des-coder.js'
 import { memoryStore } from '../../../worker/lib/memoryStore'
 import PostalStore from '@/ui/lib/postalStore'
 import { find, get } from 'lodash'
+import postal from 'postal';
+
 let postalStore = new PostalStore()
 import { getUser, setUser } from '../../lib/localStorageTemp'
 export default {
@@ -222,7 +224,13 @@ export default {
                                         token: res.data.token,
                                     }
                                     postalStore.pub('Worker', 'LoginSuccess', res.data)
-                                    memoryStore.setItem('global', storageData)
+                                    // app页面
+                                    postal.publish({
+                                        channel: 'Web',
+                                        topic: 'LoginSuccessCheckToken',
+                                        data:res.data
+                                    });
+                                     memoryStore.setItem('global', storageData)
                                     this.$store.commit('setUserMsg', res.data)
                                     // sessionStorage.setItem('token', res.data.token)
                                     // sessionStorage.setItem(

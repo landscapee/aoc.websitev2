@@ -1,5 +1,6 @@
 import moment from 'moment';
 import {memoryStore} from "@/worker/lib/memoryStore";
+import {tranAtaAtd,tranEtaCtot} from '@/ui/lib/transTimeByKey.js'
 
 export const titleMessage = {
     advanceArrive: (
@@ -91,12 +92,18 @@ export const setting = {
         {
             key: 'eta-ctot',
             width: '50px', label: '预计时间',
-            type: 'simple'
+            type: 'simple',
+            display:(row)=>{
+                return tranEtaCtot(row)
+            }
         },
         {
             key: 'ata-atd',
             width: '50px', label: '实际时间',
-            type: 'simple'
+            type: 'simple',
+            display:(row)=>{
+                return tranAtaAtd(row)
+            }
         },
         {
             key: 'reasonType',
@@ -151,7 +158,10 @@ export const setting = {
         {
             key: 'ata-atd',
             width: '50px', label: '实际时间',
-            type: 'simple'
+            type: 'simple',
+            display:(row)=>{
+                return tranAtaAtd(row)
+            }
         },
         {
             key: 'stepCode',
@@ -239,6 +249,7 @@ export const setting = {
                     return '--';
                 }
                 let now =  memoryStore.getItem('global').now;
+
                 // console.log('now',now);
                 let diff = now - closeDoorTime;
                 let diffHour = parseInt(diff / (60 * 60 * 1000), 10);

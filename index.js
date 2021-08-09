@@ -56,10 +56,11 @@ Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 //     store.commit('setLanguage',localStorage.lang)
 // }
 
-if (getUser()) {//刷新或者丢失用户信息，使用token获取用户信息
+ if (getUser()) {//刷新或者丢失用户信息，使用token获取用户信息
     let user = JSON.parse(getUser())
     store.commit('setUserMsg', user)
     memoryStore.setItem('global', {token:user.token});
+
 }
 
 
@@ -91,6 +92,13 @@ new Vue({
                 clientId,
                 user
             },
+        });
+    },
+    mounted(){
+        getUser()&&postal.publish({
+            channel: 'Web',
+            topic: 'LoginSuccessCheckToken',
+            data: getUser(),
         });
     }
 });

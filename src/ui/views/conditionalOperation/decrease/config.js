@@ -4,49 +4,49 @@ export const setting_columnConfig = [
 	{
 		key: 'adjust',
 		label: '调整/调减',
-		width: '90px',
+		width: '70px',
 		nullValue: '-',
 	},
 	{
 		key: 'total',
 		label: '总数',
-		width: '57px',
+		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'CA',
 		label: '国航',
-		width: '57px',
+		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: '3U',
 		label: '川航',
-		width: '57px',
+		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'MU',
 		label: '东航',
-		width: '57px',
+		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'CZ',
 		label: '南航',
-		width: '57px',
+		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'EU',
 		label: '成航',
-		width: '57px',
+		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: '8L',
 		label: '祥鹏',
-		width: '57px',
+		width: '60px',
 		nullValue: '-',
 	}
 ]
@@ -87,7 +87,7 @@ export const recommend_columnConfig = [
 				window.decRecommendInputHandle = that.decRecommendInputHandle(row, 'A')
 				return `<input value="${row.A}" class="tableInput" onchange="decRecommendInputHandle(this)"/>`
 			} else {
-				return row.R
+				return row.A
 			}
 		},
 

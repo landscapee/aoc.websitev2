@@ -1,18 +1,17 @@
 <template>
     <div id="decrease">
         <div class="decrease_left">
-            <setting :currentType='currentType' @restart="restart" @change-type="changeType" @change-planno="changePlanno" @updateNowCur="getCurrentReduce" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" />
+            <setting :currentType='currentType' @restart="restart" @change-type="changeType" @change-planno="changePlanno" @updateNowCur="getCurrentReduce" @add-planno="addPlanno" :currentReduce="currentReduce" :currentReduceLists="currentReduceLists" :postalStore="postalStore" />
             <recommend :currentReduce="currentReduce" :airLinesGroup="airLinesGroup" @updateNowCur="getCurrentReduce" />
         </div>
         <div class="decrease_mid">
             <MDRS-warning />
-            <flight-decrease ref="ref_flightDecrease" :currentReduce='currentReduce' :airLinesGroup="airLinesGroup" />
+            <flight-decrease ref="ref_flightDecrease" :currentReduce='currentReduce' :airLinesGroup="airLinesGroup" :postalStore="postalStore" />
             <flight-delay :currentReduce="currentReduce" />
         </div>
         <div class="decrease_right">
-            <sure-decrease :currentReduce="currentReduce" :reduceFlight="reduceFlight" :airLinesGroup="airLinesGroup" @updateNowCur="getCurrentReduce" />
+            <sure-decrease :currentReduce="currentReduce" :reduceFlight="reduceFlight" :airLinesGroup="airLinesGroup" @updateNowCur="getCurrentReduce" :postalStore="postalStore" />
         </div>
-
     </div>
 </template>
 
@@ -24,6 +23,9 @@ import FlightDecrease from './components/flightDecrease.vue'
 import FlightDelay from './components/flightDelay.vue'
 import SureDecrease from './components/sureDecrease.vue'
 
+import PostalStore from '@/ui/lib/postalStore'
+let postalStore = new PostalStore()
+import { memoryStore } from '@/worker/lib/memoryStore'
 export default {
     components: {
         setting: Setting,
@@ -49,10 +51,35 @@ export default {
                 '8L': '祥航',
                 other: '其他',
             },
+            current: '',
+            postalStore: postalStore,
         }
+    },
+    destroyed() {
+        postalStore.pub('Worker', 'Page.Decrease.Stop', '')
+        postalStore.unsubAll()
     },
     mounted() {
         this.getCurrentDelayType()
+
+        postalStore.sub('Web', 'AdverseCondition.Decrease.SetReduce', (data) => {
+            if (data.length == 0) {
+                this.restart()
+            } else {
+                this.currentReduceLists = _.sortBy(data, 'reduceInfo.reduceplanNo')
+                if (this.current) {
+                    let index = _.findIndex(this.currentReduceLists, (list) => {
+                        return list.reduceId === this.current.reduceId
+                    })
+                    this.changePlanno(index)
+                } else {
+                    let index = _.findIndex(this.currentReduceLists, (list) => {
+                        return list.reduceInfo.status === 0
+                    })
+                    this.changePlanno(index >= 0 ? index : this.currentReduceLists.length - 1)
+                }
+            }
+        })
     },
     methods: {
         restart() {
@@ -70,44 +97,21 @@ export default {
             })
         },
         getCurrentReduce(current) {
-            this.$request
-                .get('adverse', 'adjust/getCurrentReduce?type=' + this.currentType)
-                .then((res) => {
-                    if (res.data) {
-                        if (res.data.length == 0) {
-                            this.restart()
-                        } else {
-                            this.currentReduceLists = _.sortBy(res.data, 'reduceInfo.reduceplanNo')
-                            if (current) {
-                                let index = _.findIndex(this.currentReduceLists, (list) => {
-                                    return list.reduceId === current.reduceId
-                                })
-                                this.changePlanno(index)
-                            } else {
-                                let index = _.findIndex(this.currentReduceLists, (list) => {
-                                    return list.reduceInfo.status === 0
-                                })
-                                this.changePlanno(
-                                    index >= 0 ? index : this.currentReduceLists.length - 1
-                                )
-                            }
-                        }
-                    }
-                })
+            postalStore.pub('Worker', 'Decrease.GetCurrentReduce', this.currentType)
+
+            // this.$request
+            //     .get('adverse', 'adjust/getCurrentReduce?type=' + this.currentType)
+            //     .then((res) => {
+            //         if (res.data) {
+            //             this.current = current
+            //             memoryStore.setItem('AdverseCondition', { reduceData: res.data })
+            //             postalStore.pub('Web', 'AdverseCondition.Decrease.SetReduce', null)
+            //         }
+            //     })
         },
-        // updateNowCur(nowData) {
-        //     this.getCurrentReduce(nowData ? 'update' : '')
-        //     if (nowData) {
-        //         let index = _.findIndex(this.currentReduceLists, (list) => {
-        //             return list.reduceId === nowData.reduceId
-        //         })
-        //         this.changePlanno(index)
-        //     }
-        // },
         changePlanno(idx) {
+            console.log(idx)
             this.currentReduce = this.currentReduceLists[idx]
-            // this.getReduceFlights()
-            // this.getAirlineFromDb()
         },
         addPlanno() {
             this.currentReduceLists.push({
