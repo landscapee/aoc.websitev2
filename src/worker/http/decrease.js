@@ -8,9 +8,8 @@ export const decreaseHttp = (worker, httpRequest) => {
         // if (JSON.stringify(coordinateArg)=="{}") {
             httpRequest.get('flight', 'dynamicAdjust/coordinateArg/list').then(res => {
                 if (res.data) {
-                    let data = JSON.parse(res.data)
-                    memoryStore.setItem('coordinateArg', data);
-                    worker.publish('Web', 'Flight.GetCoordinateArg.Response', data);
+                    memoryStore.setItem('coordinateArg', res.data);
+                    worker.publish('Web', 'Flight.GetCoordinateArg.Response', res.data);
                 }
             });
         // } else {
@@ -18,5 +17,22 @@ export const decreaseHttp = (worker, httpRequest) => {
         //     worker.publish('Web', `Flight.GetCoordinateArg.Response`, coordinateArg);
         // }
     })
+
+
+    worker.subscribe('Decrease.GetCurrentReduce', (data) => {
+        
+        memoryStore.setItem('AdverseCondition', { currentDelayType: data });
+
+        httpRequest.get('adverse', 'adjust/getCurrentReduce?type=' + data).then(res => {
+            if (res.data) {
+                memoryStore.setItem('AdverseCondition', { reduceData: res.data });
+                worker.publish('Web', 'AdverseCondition.Decrease.SetReduce', res.data);
+                worker.publish('Web', 'FlightsByHours.Decrease.SetReduce', res.data);
+            }
+        });
+    })
+
+
+
 
 }

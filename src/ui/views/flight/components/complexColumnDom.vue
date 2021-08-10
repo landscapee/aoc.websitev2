@@ -3,7 +3,7 @@
     <el-button class="set-top-btn" @click="setTop(scope.row.flightId)" type="info"><i :class="scope.row.setTop ? 'iconfont icon-quxiaozhiding' : 'iconfont icon-zhiding' "></i></el-button>
   </div>
 
-  <div v-else-if="item.key === 'flightNo'" slot-scope="scope">
+  <div v-else-if="item.key === 'flightNo'" @click="$FlightDetais.open({flightId:scope.row.flightId},true)" slot-scope="scope">
     <span v-if="scope.row.markLate" class="flightLabel">晚</span>
     <span class="flightLabel">{{ flightLabel }}</span>
     <span :style="{ color: scope.row.movement === 'A' ? '#00FE4A' : 'rgba(25,197,255,1)' }" class="flightNo fo">{{ scope.row.flightNo }}</span>

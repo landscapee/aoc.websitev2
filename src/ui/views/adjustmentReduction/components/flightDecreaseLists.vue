@@ -62,7 +62,6 @@ export default {
         },
         navHandle(idx) {
             this.navFalg = idx
-
             this.tableData = _.filter(this.flights, (item) => {
                 return this.navLists[this.navFalg].movement
                     ? item.movement == this.navLists[this.navFalg].movement

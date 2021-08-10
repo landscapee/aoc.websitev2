@@ -9,6 +9,10 @@
         cursor: pointer;
     }
 
+    .cell {
+        padding: 0 !important;
+    }
+
     thead {
         color: #fff;
 
@@ -78,14 +82,6 @@
     background-color: #45547c;
 }
 
-tr {
-    td {
-        .cell {
-            padding-right: 0 !important;
-            padding-left: 0 !important;
-        }
-    }
-}
 
 .tableInput {
     background: #101c2f;

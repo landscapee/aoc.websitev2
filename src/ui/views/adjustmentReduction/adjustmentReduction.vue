@@ -65,7 +65,10 @@ export default {
             currentType: 1,
         }
     },
-    created() {},
+    destroyed() {
+        postalStore.pub('Worker', 'Page.Decrease.Stop', '')
+        postalStore.unsubAll()
+    },
     mounted() {
         let TZZY = _.find(this.user.roles, (item) => item.code.indexOf('TZZY') > -1)
         let role = _.get(TZZY, 'menus.0', {})
@@ -97,6 +100,39 @@ export default {
         postalStore.sub('Delay.GetCity20', (data) => {
             this.city20 = data
         })
+
+        postalStore.sub('Web', 'AdverseCondition.Decrease.SetReduce', (data) => {
+            console.log(data)
+            if (data && data.length > 0) {
+                let current = _.orderBy(data, (item) => parseInt(item.reduceInfo.reduceplanNo), [
+                    'desc',
+                ])[0]
+                this.currentReduce = current
+                this.reduceInfo = current.reduceInfo || {}
+                this.movement = current.reduceInfo.movement
+                this.changeFilter()
+                let plan = current.plan || {}
+                this.currentPlan = plan[this.airlineCode] || plan['other'] || {}
+                // 调整调减数量
+                this.getReduceFlight(current)
+
+                let timer = setInterval(() => {
+                    let now = new Date()
+                    let countdown = this.$moment(this.currentPlan.sendTime)
+                        .add(_.get(current, 'reduceInfo.feedbackTime'), 'm')
+                        .diff(this.$moment(now))
+                    if (countdown > 0) {
+                        this.countDownM = parseInt(countdown / 1000 / 60)
+                        this.countDownS = parseInt((countdown % 60000) / 1000)
+                    } else {
+                        countdown = 0
+                        this.countDownM = 0
+                        this.countDownS = 0
+                        clearInterval(timer)
+                    }
+                }, 500)
+            }
+        })
     },
     methods: {
         airlineDetails(data) {
@@ -107,7 +143,6 @@ export default {
         filterChange(data) {
             this.showAllFlights = data.showAllFlights
             this.flightNo = data.flightNo
-
             this.changeFilter()
         },
         changeFilter() {
@@ -141,51 +176,11 @@ export default {
             })
         },
         getCurrentReduce() {
-            this.$request
-                .get('adverse', 'adjust/getCurrentReduce?type=' + this.currentType)
-                .then((res) => {
-                    if (res.data && res.data.length > 0) {
-                        let current = _.orderBy(
-                            res.data,
-                            (item) => parseInt(item.reduceInfo.reduceplanNo),
-                            ['desc']
-                        )[0]
-                        console.log(current)
-
-                        this.currentReduce = current
-                        this.reduceInfo = current.reduceInfo || {}
-                        this.movement = current.reduceInfo.movement
-
-                        this.changeFilter()
-
-                        let plan = current.plan || {}
-                        this.currentPlan = plan[this.airlineCode] || plan['other'] || {}
-                        // 调整调减数量
-                        this.getReduceFlight(current)
-
-                        let timer = setInterval(() => {
-                            let now = new Date()
-                            let countdown = this.$moment(this.currentPlan.sendTime)
-                                .add(_.get(current, 'reduceInfo.feedbackTime'), 'm')
-                                .diff(this.$moment(now))
-                            if (countdown > 0) {
-                                this.countDownM = parseInt(countdown / 1000 / 60)
-                                this.countDownS = parseInt((countdown % 60000) / 1000)
-                            } else {
-                                countdown = 0
-                                this.countDownM = 0
-                                this.countDownS = 0
-                                clearInterval(timer)
-                            }
-                        }, 500)
-                    }
-                })
+            postalStore.pub('Worker', 'Decrease.GetCurrentReduce', this.currentType)
         },
         getReduceFlight(current) {
             let flights = current.planDetail[this.airlineCode] || current.planDetail['other']
             postalStore.pub('Worker', 'AdjustReduction.GetFlights', flights)
-            // let planDetailById = planDetail[current.red];
-
             postalStore.sub('Web', 'AdjustReduction.GetFlights.Res', (data) => {
                 this.reduceFlight = data
             })

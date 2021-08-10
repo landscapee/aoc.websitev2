@@ -61,14 +61,124 @@
               <el-dropdown-item :key="key + item + '1'" :command="key" v-for="(item, key) in citys">{{ item }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+          <div
+              @click="showMaxTotal = !showMaxTotal"
+              class="flightControlBox flightEnd cursor">
+          <img title="推荐放行架次" :src="showMaxTotal ? eyes1 : eyes2" alt="" />
+        </div>
         </div>
 
+
+
+      </div>
+      <div class="statusHelp">
+        <img @click="showStatusHelp = !showStatusHelp" :src="statusHelp" class="cursor statusHelpImg" alt="" />
+        <div :class="classNames('statusHelpBox', { 'h-0': !showStatusHelp })">
+          <div class="triangleBorder" />
+          <div class="explain">
+            <img :src="gantan" alt="" />
+            <span class="">航班状态备注说明</span>
+          </div>
+          <div class="descriptions">
+            <div class="descriptionItem">
+              <div class="flight finish">CA6666</div>
+              <span class="statusDes">正常</span>
+            </div>
+            <div class="descriptionItem">
+              <div class="flight abnormal">CA6666</div>
+              <span class="statusDes">不正常</span>
+            </div>
+            <div class="descriptionItem">
+              <div class="flight unCalculate">CA6666</div>
+              <span class="statusDes">不计算</span>
+            </div>
+            <div class="descriptionItem gutter">
+              <div class="flight flightSuggest" />
+              <span class="statusDes">推荐调整时刻</span>
+            </div>
+            <div class="descriptionItem">
+              <div class="flight flightSuggest">CA6666</div>
+              <span class="statusDes">计划调整后</span>
+            </div>
+            <div class="descriptionItem">
+              <div class="flight actualAdjusted">
+                <div class="iconStart" />CA6666
+              </div>
+              <span class="statusDes">实际调整后</span>
+            </div>
+            <div class="descriptionItem">
+              <div class="flight planAdjust">CA6666</div>
+              <span class="statusDes">计划调整前</span>
+            </div>
+
+            <div class="descriptionItem">
+              <div class="flight actualAdjust">CA6666</div>
+              <span class="statusDes">实际调整前</span>
+            </div>
+            <div class="descriptionItem">
+              <div class="flight planReduce">CA6666</div>
+              <span class="statusDes">计划调减</span>
+            </div>
+            <div class="descriptionItem">
+              <div class="flight actualReduce">
+                <div class="iconStartRed" />CA6666
+              </div>
+              <span class="statusDes">实际调减</span>
+            </div>
+
+            <div class="descriptionItem gutter">
+              <div class="flight closeDoor">CA6666</div>
+              <span class="statusDes">关闭</span>
+            </div>
+
+            <div class="descriptionItem">
+              <div class="flight boarding">CA6666</div>
+              <span class="statusDes">登机</span>
+            </div>
+
+            <div class="descriptionItem">
+              <div class="flight preTakeoff">CA6666</div>
+              <span class="statusDes">前方起飞</span>
+            </div>
+
+            <div class="descriptionItem">
+              <div class="flight aBoarding">CA6666</div>
+              <span class="statusDes">催促登机</span>
+            </div>
+
+            <div class="descriptionItem">
+              <div class="flight arrive">CA6666</div>
+              <span class="statusDes">到达</span>
+            </div>
+
+            <div class="descriptionItem">
+              <div class="flight delay">CA6666</div>
+              <span class="statusDes">延误</span>
+            </div>
+
+            <div class="descriptionItem">
+              <div class="flight cancel">CA6666</div>
+              <span class="statusDes">取消航班</span>
+            </div>
+
+            <div class="descriptionItem flex-items-center">
+              <div class="flight maxTakeOff" />
+              <span class="statusDes">最大起降架次</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="flightBox d-flex mx-2 flex-items-end">
 <!--        宽度81只是为了撑开空列 实际以flex: 1 为准 -->
         <div style="width: 81px" v-for="(item, index) in 24" class="flightColumn flex-auto text-center">
           <div v-for="(flightBy5Min, key) in getFlightsBy5Min(index)">
-            <div v-for="flight in flightBy5Min" :class="getFlightClass(flight)">
+            <div
+                @click="$FlightDetais.open({flightId:flight.flightId},true)"
+                v-for="flight in flightBy5Min"
+                :title="flight.preScheduleTime ? (flight.preScheduleTime || []).map(time => moment(time).format('HH:mm')).join(',') : ''"
+                :class="getFlightClass(flight)">
+              <div v-if="get(flight,'preScheduleTime.length', 0) > 0 && adjustReduceFlights.indexOf(flight.flightId) > -1" class="iconStart" />
+              <div v-if="flight.flightStatusText === '取消' && adjustReduceFlights.indexOf(flight.flightId) > -1" class="iconStartRed" />
               {{flight.flightNo }}
             </div>
             <div class="flight timeGutter">
@@ -94,9 +204,13 @@
 import moment from "moment";
 import {memoryStore} from "@/worker/lib/memoryStore";
 import PostalStore from "@ui_lib/postalStore";
-import {groupBy, pull, some} from "lodash";
+import {groupBy, pull, get} from "lodash";
 import {displayTimeHour} from "@/lib/helper/utility";
 import classNames from 'classnames';
+import gantan from 'ui/assets/img/gantan.svg';
+import statusHelp from 'ui/assets/img/statusHelp.svg';
+import eyes1 from 'ui/assets/img/eyes1.svg';
+import eyes2 from 'ui/assets/img/eye2.svg';
 
 let postalStore = new PostalStore()
 
@@ -150,6 +264,12 @@ export default {
   name: "flightByHour",
   data() {
     return {
+      get,
+      statusHelp,
+      gantan,
+      eyes2,
+      eyes1,
+      classNames,
       normalStatus,
       statusCfg,
       flightStateColor,
@@ -165,7 +285,10 @@ export default {
       flights: [],
       flightStatusA: [],
       flightStatusD: [],
-      takeOffNormalStatus: []
+      takeOffNormalStatus: [],
+      showStatusHelp: false,
+      adjustReduceFlights: [],
+      showMaxTotal: false
     }
   },
   mounted() {
@@ -183,6 +306,7 @@ export default {
     postalStore.unsubAll()
   },
   methods: {
+    moment,
     getFlightClass(f){
       return classNames('flight', {
         // cancel: f.cancel,
@@ -318,6 +442,74 @@ export default {
   min-height: 100%;
   height: auto!important;
 
+  .statusHelp{
+    position: absolute;
+    top:20px;
+    right: 19px;
+    .statusHelpImg{
+      width: 28px;
+    }
+    .h-0{
+      transform: scale(0);
+    }
+    .statusHelpBox{
+      width: 284px;
+      height: 740px;
+      opacity: 1;
+      background: #111926;
+      border: 1px solid #25395c;
+      box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.50);
+      position: absolute;
+      top:42px;
+      right: 0;
+      padding: 30px 22px;
+      color: #fff;
+      z-index: 2;
+      transition: all .5s;
+      transform-origin: 100% 0%;
+      .explain{
+        margin-bottom: 22px;
+        img{
+          width: 16px;
+          margin-right: 7px;
+        }
+        span{
+          font-size: 16px;
+        }
+      }
+      .descriptions{
+        padding-left: 22px;
+        .gutter{
+          margin: 0;
+          margin-top: 20px;
+        }
+        .descriptionItem{
+          display: flex;
+          margin-bottom: 10px;
+          .flight{
+            width: 81px;
+            text-align: center;
+            margin-right: 19px;
+          }
+          .statusDes{
+            font-size: 16px;
+          }
+        }
+      }
+    }
+    .triangleBorder{
+      height: 22px;
+      width: 22px;
+      background-color: #111926;
+      border-width: 1px 1px 0 0;
+      border-color: #25395c;
+      border-style: solid;
+      transform: rotate(-45deg);
+      position: absolute;
+      right: 4.5px;
+      top: -11px;
+    }
+  }
   .el-dropdown-link{
     padding: 2px 5px;
     background-color: #2a4d7f;
@@ -344,7 +536,19 @@ export default {
       flex-wrap: nowrap;
       color: #FFF;
       font-size: 10px;
-
+      // 最后一个按钮
+      .flightEnd{
+        height: 28px;
+        width: 28px;
+        border-radius: 50%;
+        background: #0182e7;
+        display: flex;
+        align-items: center;
+        place-content: center;
+        img{
+          height: 100%;
+        }
+      }
       .dropdown-toggle {
         font-size: 10px;
       }
