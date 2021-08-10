@@ -58,7 +58,7 @@ Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 
  if (getUser()) {//刷新或者丢失用户信息，使用token获取用户信息
     let user = JSON.parse(getUser())
-    store.commit('setUserMsg', user)
+     store.commit('setUserMsg', user)
     memoryStore.setItem('global', {token:user.token});
 
 }
@@ -98,7 +98,7 @@ new Vue({
         getUser()&&postal.publish({
             channel: 'Web',
             topic: 'LoginSuccessCheckToken',
-            data: getUser(),
+            data: getUser() ? JSON.parse(getUser()) : {},
         });
     }
 });

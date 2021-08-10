@@ -84,26 +84,19 @@
                 }, 300)
             },
             loginFail(user) {
-
                 this.$request.post('login', `/logout?userId=${user.id}`, null, false).then((res) => {
                     this.clearUserInfo()
 
                 })
             },
             checkToken(user) {
-
                 this.$request.post('login', `/authorizeIsLogin?userId=${user.id}&auth=${user.auth}`, null, false).then((res) => {
-
                     if (res.data !== true || res.responseCode !== 1000) {
-
                         this.loginFail(user);
-
                         this.$message.warning('账号已在其他地方登录')
                     }
-
                 }).catch(()=>{})
             },
-
         },
         beforeDestroy(){
             postalStore.unsubAll()
