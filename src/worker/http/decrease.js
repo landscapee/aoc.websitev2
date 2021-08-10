@@ -27,7 +27,7 @@ export const decreaseHttp = (worker, httpRequest) => {
             if (res.data) {
                 memoryStore.setItem('AdverseCondition', { reduceData: res.data });
                 worker.publish('Web', 'AdverseCondition.Decrease.SetReduce', res.data);
-                worker.publish('Web', 'FlightsByHours.Decrease.SetReduce', res.data);
+                worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce', res.data);
             }
         });
     })

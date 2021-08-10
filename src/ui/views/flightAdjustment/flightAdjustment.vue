@@ -62,9 +62,9 @@
             </el-dropdown-menu>
           </el-dropdown>
           <div
-              @click="showMaxTotal = !showMaxTotal"
+              @click="showSuggest = !showSuggest"
               class="flightControlBox flightEnd cursor">
-          <img title="推荐放行架次" :src="showMaxTotal ? eyes1 : eyes2" alt="" />
+          <img title="推荐放行架次" :src="showSuggest ? eyes1 : eyes2" alt="" />
         </div>
         </div>
 
@@ -171,6 +171,15 @@
       <div class="flightBox d-flex mx-2 flex-items-end">
 <!--        宽度81只是为了撑开空列 实际以flex: 1 为准 -->
         <div style="width: 81px" v-for="(item, index) in 24" class="flightColumn flex-auto text-center">
+          <div class="position-relative">
+            <div class="">
+              <div v-if="suggestSquareData[index]" v-for="(item, index2) in Array.from({length: suggestSquareData[index]})" :key="'flightSuggest' + index + index2" class="flight flightSuggest" />
+            </div>
+          </div>
+          <div v-for="item in reduceData.adjustFlightsByHour[index]" :key="'suggest' + item.flightNo" :class="['flight', item.status == '1' ? 'actualAdjusted' : 'flightSuggest']">
+            <div v-if="item.status == '1'" class="iconStart" />
+            {{ item.flightNo }}
+          </div>
           <div v-for="(flightBy5Min, key) in getFlightsBy5Min(index)">
             <div
                 @click="$FlightDetais.open({flightId:flight.flightId},true)"
@@ -186,6 +195,25 @@
               {{ key }}
               <span class="line" />
             </div>
+          </div>
+<!--          最大放行架次的横线 -->
+          <div class="position-absolute" :style="{ width: pxtorem('80') + 'rem', bottom: currentMaxDepart(index) * fixPx(23.2) + 'px', height: '1px', backgroundColor: 'rgba(233,54,112,.5)' }" />
+
+          <div class="position-relative">
+            <div class="position-absolute" :style="{ width: '1px', bottom: bottom(index) + 'px', height: Math.abs(difference(index)) * fixPx(23.2) + 'px', backgroundColor: 'rgba(233,54,112,.5)' }" />
+          </div>
+
+          <div v-if="suggestData[index] && showSuggest" :key="'suggest' + index" class="position-relative">
+            <div class="suggestDetailBox">
+              <div :key="detail.id" v-for="detail in suggestData[index]" class="detailItem">
+                <div class="d-flex flex-items-center detailTime">
+                  <span class="dot" />
+                  {{ Object.keys(detail)[0] }}
+                </div>
+                <div>{{ detail[Object.keys(detail)[0]] }} 架次</div>
+              </div>
+            </div>
+            <div class="triangle" />
           </div>
         </div>
       </div>
@@ -204,13 +232,14 @@
 import moment from "moment";
 import {memoryStore} from "@/worker/lib/memoryStore";
 import PostalStore from "@ui_lib/postalStore";
-import {groupBy, pull, get} from "lodash";
+import {groupBy, pull, get, map, some} from "lodash";
 import {displayTimeHour} from "@/lib/helper/utility";
 import classNames from 'classnames';
 import gantan from 'ui/assets/img/gantan.svg';
 import statusHelp from 'ui/assets/img/statusHelp.svg';
 import eyes1 from 'ui/assets/img/eyes1.svg';
 import eyes2 from 'ui/assets/img/eye2.svg';
+import {pxtorem, fixPx} from "@ui_lib/viewSize";
 
 let postalStore = new PostalStore()
 
@@ -276,6 +305,7 @@ export default {
       airLines,
       directionCfg,
       days,
+      reduceData: {},
       movement: 'D',
       direction: 'All',
       airline: 'All',
@@ -288,17 +318,61 @@ export default {
       takeOffNormalStatus: [],
       showStatusHelp: false,
       adjustReduceFlights: [],
-      showMaxTotal: false
+      showSuggest: false,
+      maxDepart: []
     }
   },
+  computed: {
+    suggestData(){
+      let mergeSuggest = {};
+      let suggestTimeDetail = get(this.reduceData, 'currentReduce.suggestTime.detail');
+      map(suggestTimeDetail, (item) => {
+        let timeKeyAll = Object.keys(item)[0];
+        let timeKey = timeKeyAll.substr(0, 2);
+        mergeSuggest[timeKey] ? mergeSuggest[timeKey].concat(item.time) : (mergeSuggest[timeKey] = item[timeKeyAll].time);
+      });
+      return mergeSuggest
+    },
+    suggestSquareData(){
+      let {adjustFlightsByHour} = this.reduceData;
+      let mergeSuggest = {};
+      let suggestTimeDetail = get(this.reduceData, 'currentReduce.suggestTime.detail');
+      map(suggestTimeDetail, (item) => {
+        let timeKeyAll = Object.keys(item)[0];
+        let timeKey = timeKeyAll.substr(0, 2);
+        mergeSuggest[timeKey] ? (mergeSuggest[timeKey] += item[timeKeyAll].count) : (mergeSuggest[timeKey] = item[timeKeyAll].count);
+      });
+      // 减去调整航班
+      map(mergeSuggest, (item, key) => {
+        if (item > 0) {
+          let count = item - get(adjustFlightsByHour, [key, 'length'], 0);
+          mergeSuggest[key] = count < 0 ? 0 : count;
+        }
+      });
+      return mergeSuggest
+    },
+  },
   mounted() {
-
+    this.$request.get('flight', 'dynamicAdjust/coordinateArg/list').then(res => {
+      this.maxDepart = res.data
+    })
     postalStore.sub('FlightByHours.Sync', data => {
       this.flights = data
+    })
+    postalStore.sub('FlightsByHours.GetCurrentReduce.Response', data => {
+      this.reduceData = data
+    })
+    postalStore.sub('FlightByHours.AdjustReduceFlights.Sync', data => {
+      this.adjustReduceFlights = data
     })
     this.$request.get('delays', 'Flight/FlightSchedule/allAirport').then(res => {
       this.citys = {All: '全部机场',...res.data}
     })
+    this.$request.get('adverse', 'adjust/getCurrentDelayType').then((res) => {
+      this.currentType = res.data.type
+      postalStore.pub('Decrease.GetCurrentReduce',  res.data.type);
+    })
+
     postalStore.pub('Page.FlightAdjustment.Start', '');
   },
   beforeDestroy() {
@@ -307,7 +381,49 @@ export default {
   },
   methods: {
     moment,
+    pxtorem,
+    fixPx,
+
+    currentMaxDepart(time){
+      let flightsByTime = this.flights[time];
+      let flightsByScheduleTime = groupBy(flightsByTime, (item) => displayTimeHour(item.scheduleTime));
+      // 航班块中增加了时间分割块 所以最大放行架次也需要加上时间分割块来计算
+      let timeLength = Object.keys(flightsByScheduleTime).length || 0; // 时间块的长度
+      let currentMaxDepart = get(this.maxDepart, [time, 'maxTotal'], 0) + timeLength;
+      return currentMaxDepart + 1
+    },
+
+    difference(time){
+      let prevFlightsByTime = this.flights[time - 1];
+      let flightsByTime = this.flights[time];
+      let flightsByScheduleTime = groupBy(flightsByTime, (item) => displayTimeHour(item.scheduleTime));
+      // 航班块中增加了时间分割块 所以最大放行架次也需要加上时间分割块来计算
+      let timeLength = Object.keys(flightsByScheduleTime).length || 0; // 时间块的长度
+      let currentMaxDepart = get(this.maxDepart, [time, 'maxTotal'], 0) + timeLength;
+      let prevFlightsByScheduleTime = groupBy(prevFlightsByTime, (item) => displayTimeHour(item.scheduleTime));
+      let prevTimeLength = Object.keys(prevFlightsByScheduleTime || {}).length || 0; // 时间块的长度
+      let prevMaxDepart = get(this.maxDepart, [time - 1, 'maxTotal']) + prevTimeLength;
+      return prevMaxDepart - (currentMaxDepart || 0);
+    },
+    bottom(index){
+      let flightsByTime = this.flights[index];
+      let prevFlightsByTime = this.flights[index - 1];
+      // 通过时间分割航班
+      let flightsByScheduleTime = groupBy(flightsByTime, (item) => displayTimeHour(item.scheduleTime));
+      let prevFlightsByScheduleTime = groupBy(prevFlightsByTime, (item) => displayTimeHour(item.scheduleTime));
+      // 航班块中增加了时间分割块 所以最大放行架次也需要加上时间分割块来计算
+      let timeLength = Object.keys(flightsByScheduleTime).length || 0; // 时间块的长度
+      let prevTimeLength = Object.keys(prevFlightsByScheduleTime || {}).length || 0; // 时间块的长度
+      // 计算最大放行架次指示线
+      let itemHeight = fixPx(23.2);
+      let currentMaxDepart = get(this.maxDepart, [index, 'maxTotal'], 0) + timeLength;
+      let prevMaxDepart = get(this.maxDepart, [index - 1, 'maxTotal']) + prevTimeLength;
+      let difference = prevMaxDepart - (currentMaxDepart || 0);
+      let bottom = difference <= 0 ? prevMaxDepart * itemHeight : currentMaxDepart * itemHeight;
+      return bottom
+    },
     getFlightClass(f){
+      let adjustReduceFlights = get(this,'adjustReduceFlights', []);
       return classNames('flight', {
         // cancel: f.cancel,
         cancel: f.flightStatusText === '取消',
@@ -324,9 +440,9 @@ export default {
         adjustStatus: f.adjustStatus, // 调整
         reduceStatus: f.reduceStatus, // 调减
          // TODO 等待调整调减完成
-        // actualReduce: f.flightStatusText === '取消' && adjustReduceFlights.indexOf(parseInt(f.flightId)) > -1, // 实际调减
-        // planReduce: some(this.state.reduceFlights, (item) => item.flightId == f.flightId), // 计划调减
-        // planAdjust: some(this.state.adjustFlights, (item) => item.flightId == f.flightId), // 计划调整前
+        actualReduce: f.flightStatusText === '取消' && adjustReduceFlights.indexOf(parseInt(f.flightId)) > -1, // 实际调减
+        planReduce: some(this.reduceData.reduceFlights, (item) => item.flightId == f.flightId), // 计划调减
+        planAdjust: some(this.reduceData.adjustFlights, (item) => item.flightId == f.flightId), // 计划调整前
       });
     },
     updateDropdown(v, type){
@@ -441,7 +557,49 @@ export default {
   flex-direction: column;
   min-height: 100%;
   height: auto!important;
-
+  overflow: hidden;
+  .suggestDetailBox{
+    color: #fff;
+    bottom:10px;
+    position: absolute;
+    width: 100%;
+    opacity: 1;
+    background: #25395c;
+    border-radius: 5px;
+    box-shadow: 0px 2px 10px 0px rgba(0,0,0,0.50);
+    .detailItem{
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      border-bottom: 1px solid #1e2f46;
+      color: rgba(255,255,255,.6);
+      font-size: 14px;
+      padding: 4px 0;
+    }
+    .detailTime{
+      color: rgba(49,114,252,1);
+      font-size: 16px;
+    }
+    .dot{
+      width: 4px;
+      height: 4px;
+      background: rgba(49,114,252,1);
+      border-radius: 2px;
+      display: inline-block;
+      margin-right: 6px;
+    }
+  }
+  .triangle{
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-width: 10px 10px;
+    border-style: solid;
+    transform: rotate(180deg) translateX(50%);
+    border-color: transparent transparent #25395c;
+  }
   .statusHelp{
     position: absolute;
     top:20px;
