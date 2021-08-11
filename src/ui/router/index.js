@@ -66,7 +66,7 @@ export var routes = [
             },
             {
                 path: '/flightHistory', name: 'flightHistory', component: flightHistory,
-                title:'航班历史',icon:'hangbandongtai1',role:'flight'
+                title:'航班历史',icon:'hangbandongtai1',role:'flight', hideInMenu: true
             },
             {
                 path: '/poolMonitorWithRunway', name: 'poolMonitorWithRunway', component: poolMonitorWithRunway,

@@ -17,7 +17,7 @@ import {
 } from "lodash";
 import moment from "moment";
 import {flightDB} from "@/worker/lib/storage";
-import {addSerialNumber, calcDelayTime, filterRoleFlights} from "@/lib/helper/flight";
+import {addSerialNumber, calcDelayTime, checkWebsocketResponseDataFinish, filterRoleFlights} from "@/lib/helper/flight";
 import {getOperationDate} from '@/lib/helper/date'
 import Logger from "@/lib/logger";
 import {getListHeader} from "@/worker/lib/columns";
@@ -27,6 +27,7 @@ const log = new Logger('worker:flight');
 let DISPLAYNULL = '--'
 let columns = [];
 let todayTopFlights;
+let worker;
 let flightDay = 0;
 
 export const setFilterOption = (data) => {
@@ -128,12 +129,18 @@ export const refreshFlights = () => {
   // }
 };
 
+
 export const flightAdjustmentStart = (posWorker) => {
+  worker = posWorker;
   let flightStart = () => {
     let result = refreshFlights();
     result && posWorker.publish('Web', 'FlightByHours.Sync', result);
   };
 
+  posWorker.subscribe(`FlightsByHours.Ws.Sync`, () => {
+    let data = memoryStore.getItem('FlightByHours').adjustReduceFlights;
+    worker.publish('Web', 'FlightByHours.AdjustReduceFlights.Sync', data);
+  });
   posWorker.subscribe(`Flight.Connection.Sync`, flightStart);
   posWorker.subscribe(`Flight.Change.Sync`, flightStart);
   posWorker.subscribe(`flightsByHours.Filter`, (data) => {
@@ -151,6 +158,32 @@ export const flightAdjustmentStart = (posWorker) => {
     }
   });
 
+  posWorker.subscribe(`FlightsByHours.Decrease.SetReduce`, () => {
+    checkWebsocketResponseDataFinish().then(() => {
+      let data = memoryStore.getItem('AdverseCondition').reduceData;
+      let current = orderBy(data, (item) => parseInt(item.reduceInfo.reduceplanNo), ['desc'])[0] || {};
+      let adjustFlights = [];
+      let reduceFlights = [];
+      map(current.planDetail, (flights, airlineCode) => {
+        map(flights, (item) => {
+          let tempItem = { ...item };
+          tempItem.sendType = current.plan[airlineCode].sendType;
+          tempItem.status = current.reduceInfo.status;
+          item.updateScheduleTime && (tempItem.updateScheduleTimeHour = moment(item.updateScheduleTime).format('H'));
+          if (item.type === 'A') {
+            let f = flightDB.by('flightId', item.flightId);
+            let flightNo = f ? f.flightNo : '';
+            adjustFlights.push({ ...tempItem, flightNo });
+          } else if (item.type === 'R') {
+            reduceFlights.push(tempItem);
+          }
+        });
+      });
+      let adjustFlightsByHour = groupBy(adjustFlights, (item) => item.updateScheduleTimeHour);
+      posWorker.publish('Web', 'FlightsByHours.GetCurrentReduce.Response', { adjustFlightsByHour, currentReduce: current, adjustFlights, reduceFlights });
+    });
+  });
+
   flightStart()
 }
 
@@ -159,5 +192,7 @@ export const flightAdjustmentStop = (posWorker) => {
   posWorker.unsubscribe('Flight.Connection.Sync')
   posWorker.unsubscribe('flightsByHours.Filter')
   posWorker.unsubscribe('FlightsByHours.GetOthers')
+  posWorker.unsubscribe('FlightsByHours.Decrease.SetReduce')
+  posWorker.unsubscribe('FlightsByHours.Ws.Sync')
 
 }

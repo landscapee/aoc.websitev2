@@ -48,7 +48,7 @@ const getStatistics = (flights) => {
 
 let queryFlight = () => {
 	checkWebsocketResponseDataFinish().then(() => {
-        let query = [];
+		let query = [];
 		map(Options.backEndFilter, (item) => {
 			if (item[Object.keys(item)[0]] && JSON.stringify(item[Object.keys(item)[0]]) !== '{}') {
 				query.push(item);
@@ -60,11 +60,13 @@ let queryFlight = () => {
 		// Options.airlineCode && query.push({ airlineCode: Options.airlineCode });
 		// console.log('Options:', Options);
 		// console.log('query:', query);
+		let dbFlight = flightDB.find({ $and: query, cancel: false });
+		let flightsNoMovement = filterFlightsByRole(dbFlight, rolePath);
 		Options.movement && query.push({ movement: Options.movement });
-		let dbFlight = flightDB.find({ $and: query });
-		let flights = filterFlightsByRole(dbFlight, rolePath);
-		// flights = flow([proFlightFields, addSerialNumber])(flights);
-		let statistics = getStatistics(flights);
+		let flights = filterFlightsByRole(flightDB.find({ $and: query, cancel: false }), rolePath);
+		flights = flow([proFlightFields, addSerialNumber])(flights);
+		// proFlightFields(flights);
+		let statistics = getStatistics(flightsNoMovement);
 		worker.publish('Web', 'AdjustReduction.QueryFlight.Response', { flights, statistics });
 	});
 };

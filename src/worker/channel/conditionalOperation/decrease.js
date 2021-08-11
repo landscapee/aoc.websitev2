@@ -57,7 +57,7 @@ let subAdverseWSEvent = () => {
 			});
 			memoryStore.setItem('AdverseCondition', { reduceData: hasSetData });
 			worker.publish('Web', 'AdverseCondition.Decrease.SetReduce', hasSetData);
-			worker.publish('Web', 'FlightsByHours.Decrease.SetReduce', hasSetData);
+			worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce', hasSetData);
 		}
 	};
     

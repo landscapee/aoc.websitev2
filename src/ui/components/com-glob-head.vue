@@ -295,7 +295,7 @@ export default {
                 codeObj[list.code] = 1
             })
             map(route, (k, l) => {
-                if (codeObj[k.role]) {
+                if (codeObj[k.role] && !k.hideInMenu) {
                     this.navList.push(k)
                 }
             })
