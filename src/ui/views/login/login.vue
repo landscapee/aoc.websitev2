@@ -25,11 +25,11 @@
                     </el-form-item>
                     <el-button :loading="loading" class="loginBtn" @click.native.prevent="handleLogin($event)">{{$t('message.login')}} →</el-button>
                 </el-form>
-                <div class="languageBox">
-                    <el-select v-model="language" size="mini">
-                        <el-option v-for="item in languageLists" :key="item.value" :label="item.name" :value="item.value"></el-option>
-                    </el-select>
-                </div>
+<!--                <div class="languageBox">-->
+<!--                    <el-select v-model="language" size="mini">-->
+<!--                        <el-option v-for="item in languageLists" :key="item.value" :label="item.name" :value="item.value"></el-option>-->
+<!--                    </el-select>-->
+<!--                </div>-->
             </el-row>
         </div>
         <el-dialog :visible.sync="changePasswordShow" class="nodeDialog passwordNodeDialog" :show-close="false" center width="600px" :append-to-body="true" @close="changePasswordClose">
