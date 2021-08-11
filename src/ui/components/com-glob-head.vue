@@ -178,7 +178,7 @@ export default {
             this.$confirm(this.$t('message.sureLogout'), this.$t('message.prompt'), {
                 type: 'warning',
             }).then(() => {
-                    this.$router.push('/')
+                    // this.$router.push('/')
                 postal.publish({
                     channel: 'Web',
                     topic: 'Login.Out',
