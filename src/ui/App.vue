@@ -32,8 +32,8 @@
         },
         mounted() {
 
-            postalStore.sub('Web', 'Login.Out', () => {
-                this.clearUserInfo()
+            postalStore.sub('Web', 'Login.Out', (data) => {
+                this.clearUserInfo(data)
             });
             postalStore.sub('Web', 'Time.Sync', (time) => {
                 // console.log(2,time);
@@ -57,15 +57,15 @@
                 await this.$nextTick()
                 this.isRouterShow = true
             },
-            clearUserInfo() {
+            clearUserInfo(data) {
                 clearCookie()
                 localStorage.clear()
                 sessionStorage.clear()
                 localStorage.removeItem('User');
                 clearInterval(this.checkTokenTimer)
                 console.log(this.$route.path, 222, this.checkTokenTimer);
-
-                if (this.$route.path !== '/' && this.$route.path !== '/login') {
+                // data==true 表示由路由直接访问登录
+                if (!data) {
                     this.$router.push('/')
                 }
 
@@ -89,7 +89,6 @@
             loginFail(user) {
                 this.$request.post('login', `/logout?userId=${user.id}`, null, false).then((res) => {
                     this.clearUserInfo()
-
                 })
             },
             checkToken(user) {

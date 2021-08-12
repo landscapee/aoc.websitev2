@@ -33,6 +33,7 @@ router.beforeEach((to, from, next) => {
         token&& postal.publish({
             channel: 'Web',
             topic: 'Login.Out',
+            data:true,
         });
     }else{
         if(hasIfm){
