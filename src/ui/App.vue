@@ -1,6 +1,13 @@
 <template>
 	<div style="width:100%;height:100%;" id="app">
 		<router-view v-if="isRouterShow"/>
+		<el-dialog class="appDialog" title="" :close-on-click-modal="false" center
+				   :visible.sync="dialogFormVisible"
+				   :before-close="close">
+			<div class="appDialogDiv"><i class="el-icon-warning"></i> 账号已在其他地方登陆</div>
+			<el-button @click="close" type="primary" size="mini">确定</el-button>
+		</el-dialog>
+
 	</div>
 </template>
 <script>
@@ -15,6 +22,7 @@
     export default {
         data() {
             return {
+                dialogFormVisible: false,
                 isRouterShow: true,
                 handleTimer: null,
                 outrTimer: null,
@@ -42,7 +50,7 @@
             postalStore.sub('Web', 'LoginSuccessCheckToken', (user) => {
 
                 this.checkTokenTimer = window.setInterval(() => {
-                    console.log(555,this.checkTokenTimer);
+                    console.log(555, this.checkTokenTimer);
                     this.checkToken(user)
                 }, 10 * 1000)
             });
@@ -51,6 +59,9 @@
             })
         },
         methods: {
+            close() {
+                this.dialogFormVisible = false
+            },
             async reload() {
 
                 this.isRouterShow = false
@@ -89,13 +100,14 @@
             loginFail(user) {
                 this.$request.post('login', `/logout?userId=${user.id}`, null, false).then((res) => {
                     this.clearUserInfo()
+                    this.dialogFormVisible = true
                 })
             },
             checkToken(user) {
                 this.$request.post('login', `/authorizeIsLogin?userId=${user.id}&auth=${user.auth}`, null, false).then((res) => {
                     if (res.data !== true || res.responseCode !== 1000) {
                         this.loginFail(user);
-                        this.$message.warning('账号已在其他地方登录')
+                        // this.$message.warning('账号已在其他地方登录')
                     }
                 }).catch(() => {
                 })
@@ -109,4 +121,26 @@
 </script>
 <style lang="scss">
 	@import './styles/App.scss';
+
+	.appDialog {
+		.el-dialog {
+			width: 450px !important;
+			.el-dialog__body {
+				text-align: center;
+ 				 .el-button {
+					margin-top: 30px;
+				}
+			}
+		}
+	}
+
+	.appDialogDiv {
+		text-align: center;
+		color: #fff;
+		i {
+			/*background: #fff;*/
+			color: rgb(255, 165, 0);
+			/*border-radius: 100%;*/
+		}
+	}
 </style>
