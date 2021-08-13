@@ -215,7 +215,7 @@
 			},
             sendToken() {
                 const iframe = document.getElementById('iframe');
-                const token =getUserSerializ().token;
+                const token =getUserSerializ()?.token;
                  iframe.contentWindow.postMessage({source: 'ACDM', token: token,}, `*`,);
             },
             close() {
