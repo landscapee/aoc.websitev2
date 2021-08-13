@@ -77,7 +77,7 @@
 			</div>
 			<div class="bottom">
 				<iframe @load="sendToken" id="iframe"
-						:src="`${iframeIp}/#/flight_milepost?showTree=true&flightId=${item.flightId}&type=${data.flightMilestoneType}`"
+						:src="url"
 						frameborder="0"></iframe>
 			</div>
 		</el-dialog>
@@ -100,6 +100,7 @@
                 'tf': 'http://10.33.64.1:6076', // 天府机场
             };
             return {
+                url:'',
                 iframeIp: ipObj[PROGRAM],
                 VIPImg,
                 data: {},
@@ -165,6 +166,7 @@
             }
         },
         computed: {
+
             getValue() {
                 return (opt) => {
                     let s = this.data[opt.key]
@@ -201,6 +203,7 @@
             }
         },
         methods: {
+
             aircraftNoClick(opt){
 				if(!opt.click){
 				    return false
@@ -238,15 +241,16 @@
             getData(obj) {
                 this.$request.post('flight', 'Flight/getFlightDetail/v2', obj, true).then((res) => {
                     if (res.code == 200 && res?.data) {
-
                         this.data =  res.data
                         this.flightAD = [this.data.flightA, this.data.flightD]
                         console.log(this.data, this.item);
+                        this.url= `${this.iframeIp}/#/flight_milepost?showTree=true&flightId=${this.item.flightId}&type=${this.data.flightMilestoneType}`
                     }
                 })
             },
         },
-		mounted(){
+		created(){
+			// this.getUrl()
          }
 
 
