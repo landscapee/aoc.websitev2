@@ -76,9 +76,7 @@
 				</div>
 			</div>
 			<div class="bottom">
-				<iframe @load="sendToken" id="iframe"
-						:src="url"
-						frameborder="0"></iframe>
+				<iframe @load="sendToken" id="iframe" :src="url" frameborder="0"></iframe>
 			</div>
 		</el-dialog>
 	</div>

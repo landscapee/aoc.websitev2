@@ -24,6 +24,9 @@ const subWSEvent = () => {
 
         client.sub('/Flight/number/Ofpeople', (data) => {
             worker.publish('Web', 'page.delayNew.data', {data: data.AOC_TODAY_PERSON_NUM, key: 'passengerSts'})
+        })  ;
+        client.sub('/Flight/Home/Operation', (data) => {
+            worker.publish('Web', 'page.delayNewLeft.data', {data: data, key: 'boardingSts'})
         })
 
 

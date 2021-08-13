@@ -57,7 +57,7 @@
 			<template v-else-if="opt.deal=='delay0'">
 				<div class="  rightItem">
 					<div class="svgBox">
-						<icon-svg iconClass="响应"></icon-svg>
+						<icon-svg iconClass="xiangying"></icon-svg>
 						<span class="thunder">{{warnInfo.levelCn && warnInfo.levelCn + '响应'}}</span>
 					</div>
 					<div class="right">
@@ -189,6 +189,7 @@
             },
             getData() {
                 return (key) => {
+                    // console.log(33333 , this,get(this, key, '--'),key);
                     return get(this, key, '--')
                 }
             }
@@ -207,12 +208,16 @@
         },
         created() {
             // this.setting  props
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.runningNew.Start',
+            });
             this.pageObj = pageSettingObj[this.setting]
         },
         mounted() {
             postalStore.sub('emergencyEventNode', ({data, key}) => {
                 this[key] = data
-                // console.log(key, data);
+                console.log(key, data);
             });
             postalStore.sub('push.top.Data', ({data, key}) => {
                 this[key] = data
@@ -224,6 +229,10 @@
             });
         },
         beforeDestroy() {
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.runningNew.Stop',
+            })
             postalStore.unsubAll()
         },
     }
