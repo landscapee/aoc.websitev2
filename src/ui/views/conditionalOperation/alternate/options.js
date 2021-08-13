@@ -95,12 +95,14 @@ export function barOptions(xData, yData, unit, grid, title, legend, barWidth, co
             {
                 type: 'category',
                 data: xData,
-                name: '等待航班机位',
+                name: '等待航班\n\n机位',
                 nameLocation: 'end',
                 nameTextStyle: {
                     fontSize: 12,
+                    verticalAlign:'end',
                     color: '#7286AC',
-                    padding: [-500, 0, 0, -50],
+                    padding: [8, 0, 0, -22],
+                    // padding: [-500, 0, 0, -50],
                 },
                 axisTick: {
                     show: false, // 是否显示坐标轴轴线

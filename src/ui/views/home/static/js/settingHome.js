@@ -1292,6 +1292,7 @@ export const settings = {
 					title: {
 						text: '',
 					},
+					visible:false,
 					minPadding: 0,
 					maxPadding: 0,
 					max: 100,

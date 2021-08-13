@@ -257,22 +257,24 @@
         mounted() {
             postalStore.sub('push.delayNew.data', ({data, key}) => {
                 let myData = data
-                if (key == 'suggestPlan') {//航班调整调减
-                     myData = this.formatSuggestForEdit(data) || []
-                }else if(key=='runDecisionTable'){//恢复阶段运行决策
+                if(key=='runDecisionTable'){//恢复阶段运行决策
                     this.tabArr=[]
 					map(data,(k,l)=>{
                         console.log(l);
                         l==='11'? this.tabArr.unshift(l):this.tabArr.push(l)
 					})
 				}
-                console.log(11,data,key);
-                this[key] = myData;
+                 this[key] = myData;
+            });
+            postalStore.sub('AdverseCondition.Decrease.SetReduce', (data) => {
+
+                console.log(11,data);
+                this.suggestPlan = data?.length&&this.formatSuggestForEdit(data) || [];
             });
 
             postal.publish({
                 channel: 'Worker',
-                topic: 'get.delayNew.data',
+                topic: 'Decrease.GetCurrentReduce',
                 data: '2',
             });
         }

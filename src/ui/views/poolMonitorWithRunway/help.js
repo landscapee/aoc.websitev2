@@ -247,7 +247,7 @@ export const setting = {
         },
         {
             key: 'displayCOBT',
-            type: 'simple', width: '30px', label: 'COBT',
+            type: 'simple', width: '60px', label: '放行标准起飞时间',
         },
         {
             key: 'displayCTOT',
@@ -273,7 +273,7 @@ export const setting = {
         },
         {
             key: 'displayCOBT',
-            type: 'simple', width: '30px', label: 'COBT',
+            type: 'simple', width: '70px', label: '放行标准起飞时间',
         },
         {
             key: 'displayCTOT',

@@ -5,8 +5,7 @@
                 <div class="homeNumber2Title">
                     <div class="title alib">{{layerName}}<span class="alir">{{getTitleSpan}}</span></div>
                     <div class="blankDiv fo">
-                        <el-date-picker v-show="timeShow" v-model="timeData" type="datetimerange" range-separator="至" size="mini" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
-                        <!-- {{this.today + ' 00:00:00'}} - {{this.today + ' 23:59:59'}} -->
+                        <el-date-picker v-show="timeShow" v-model="timeData" @change="getNumerTabledata" type="datetimerange" range-separator="至" size="mini" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss"></el-date-picker>
                     </div>
                 </div>
             </template>
@@ -36,6 +35,9 @@ export default {
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    click: ({ row }) => {
+                        this.$FlightDetais.open({ flightId: row.flightId }, true)
+                    },
                 },
                 {
                     key: 'aircraftNo',
@@ -66,6 +68,9 @@ export default {
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    click: ({ row }) => {
+                        this.$FlightDetais.open({ flightId: row.flightId }, true)
+                    },
                 },
                 {
                     key: 'aircraftNo',
@@ -88,11 +93,12 @@ export default {
                     },
                 },
             ],
+            toolTip: '',
+            toolKey: '',
         }
     },
     mounted() {
         postalStore.sub('Home.ToolTip.Return', ({ data, getTitleSpan }) => {
-            console.log(data, getTitleSpan)
             this.dialogShow = true
             this.layerName = '延误航班'
             this.timeShow = false
@@ -123,14 +129,20 @@ export default {
             this.tableData = []
             this.columnConfig = []
             this.getTitleSpan = ''
+            this.toolTip = toolTip
+            this.toolKey = key
             this.timeData = [this.today + ' 00:00:00', this.today + ' 23:59:59']
+
+            this.getNumerTabledata()
+        },
+        getNumerTabledata() {
             this.$request
                 .post(
                     'situation',
-                    `runningState/${toolTip}`,
+                    `runningState/${this.toolTip}`,
                     {
-                        startTime: this.today + ' 00:00:00',
-                        endTime: this.today + ' 23:59:59',
+                        startTime: this.timeData[0],
+                        endTime: this.timeData[1],
                     },
                     true
                 )
@@ -139,10 +151,10 @@ export default {
                     this.dialogShow = true
                     this.tableData = res.data.detail || []
                     this.stat = res.data.stat || {}
-                    this.loadColumnConfig(key)
+                    this.loadColumnConfig()
                 })
         },
-        loadColumnConfig(key) {
+        loadColumnConfig() {
             this.columnConfig = [
                 { key: 'ind', label: '序号', type: 'index', width: '50px' },
                 {
@@ -153,7 +165,7 @@ export default {
                     },
                 },
             ]
-            switch (key) {
+            switch (this.toolKey) {
                 case 'flightReturn':
                     this.columnConfig = _.concat(this.columnConfig, [
                         {

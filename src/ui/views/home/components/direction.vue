@@ -120,6 +120,9 @@ export default {
                 {
                     key: 'flightNo',
                     label: '航班号',
+                    click: ({ row }) => {
+                        this.$FlightDetais.open({ flightId: row.flightId }, true)
+                    },
                 },
                 {
                     key: 'scheduleTime',
