@@ -93,7 +93,7 @@ export default {
         })
         //运行
         postalStore.sub('flight.FlightStatistic', (data) => {
-            console.log('运行', data)
+            // console.log('运行', data)
             this.flight_FlightStatistic = data
         })
         //走廊口方向放行率
@@ -180,15 +180,6 @@ export default {
                         }
                     }
                 }
-            })
-            console.log({
-                number: this.numbersArr,
-                number2: this.numbers2Arr,
-                month: this.monthData,
-                chart: this.chartData,
-                dataRows: this.dataRowsArr,
-                rate: this.rateData,
-                direction: this.directionData,
             })
         },
         setSettingcfg(key) {

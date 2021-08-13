@@ -149,6 +149,9 @@ export const flightDecrease_columnConfig = [
 		key: 'flightNo',
 		label: '航班号',
 		width: '80px',
+		click: ({ row },that) => {
+            that.$FlightDetais.open({ flightId: row.flightId }, true)
+        },
 	},
 	{
 		key: '',
@@ -192,6 +195,9 @@ export const sureDecrease_columnConfig2 =[
 		key: 'flightNo',
 		label: '航班号',
 		width: '80px',
+		click: ({ row },that) => {
+            that.$FlightDetais.open({ flightId: row.flightId }, true)
+        },
 	},
 	{
 		key: '',
@@ -222,6 +228,9 @@ export const sureDecrease_columnConfig1 =[
 		key: 'flightNo',
 		label: '航班号',
 		width: '80px',
+		click: ({ row },that) => {
+            that.$FlightDetais.open({ flightId: row.flightId }, true)
+        },
 	},
 	{
 		key: '',

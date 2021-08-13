@@ -91,6 +91,7 @@ export default {
                         flight.level = arr.type == 'R' ? 'reduce' : 'exchange'
                     }
                 })
+                console.log(flights)
                 this.flights = flights
                 this.statistics = statistics
             }

@@ -53,7 +53,6 @@ export default {
     mounted() {},
     watch: {
         flight_delay_backStatus: function (val) {
-            console.log(val)
             let nextHour = this.$moment().add(1, 'h').hours()
             this.onehoursNum = val.prediction[nextHour]
             if (this.select === 1 && !this.loading) {
@@ -119,8 +118,6 @@ export default {
                         // this.backlogChartClick(data)
                         this.chartClick(data, isExecuteAble, isToday)
                     }
-                    console.log(data, isExecuteAble)
-                    // this.backlogChartClick(data)
                 }
             )
 
@@ -165,7 +162,6 @@ export default {
                     true
                 )
                 .then((res) => {
-                    console.log(res)
                     postalStore.pub('Web', 'Home.Chart2.Return', {
                         data: res.data || [],
                         getTitleSpan: `进/离:${movement == 'A' ? '进港' : '离港'} 时间:${time}时`,

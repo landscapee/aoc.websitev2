@@ -67,6 +67,7 @@ let queryFlight = () => {
 		flights = flow([proFlightFields, addSerialNumber])(flights);
 		// proFlightFields(flights);
 		let statistics = getStatistics(flightsNoMovement);
+		console.log(flights)
 		worker.publish('Web', 'AdjustReduction.QueryFlight.Response', { flights, statistics });
 	});
 };

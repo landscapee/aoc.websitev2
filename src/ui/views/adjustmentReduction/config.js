@@ -5,6 +5,9 @@ export const flightDecreaseListsColumnConfig = [
         key: 'flightNo',
         label: '航班号',
         width: '70px',
+        click: ({ row },that) => {
+            that.$FlightDetais.open({ flightId: row.flightId }, true)
+        },
     },
     {
         key: 'airlineCnName',
@@ -144,6 +147,9 @@ export const reduceFlightListssColumnConfig1 = [
         key: 'flightNo',
         label: '航班号',
         width: '80px',
+        click: ({ row },that) => {
+            that.$FlightDetais.open({ flightId: row.flightId }, true)
+        },
     },
     {
         key: '',
@@ -199,6 +205,9 @@ export const reduceFlightListssColumnConfig2 = [
         key: 'flightNo',
         label: '航班号',
         width: '80px',
+        click: ({ row },that) => {
+            that.$FlightDetais.open({ flightId: row.flightId }, true)
+        },
     },
     {
         key: '',

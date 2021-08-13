@@ -1,5 +1,6 @@
 import {get, map} from "lodash";
-import {formatDate} from "@/lib/helper/date";
+import { formatDate } from "@/lib/helper/date";
+import { calcDelayTime} from "@/lib/helper/flight";
 // flight/ proFlightField 使用
 
 const DISPLAYNULL = '--'
