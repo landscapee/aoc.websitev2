@@ -22,15 +22,18 @@ router.beforeEach((to, from, next) => {
             channel: 'worker.aoc',
             topic: 'socket_close',
         });
-        postal.publish({
-            channel: 'Web',
-            topic: 'Login.Out',
-        });
+
         postal.publish({
             channel: 'worker.aoc',
             topic: 'clear_lockjs',
 		});
         next()
+
+        token&& postal.publish({
+            channel: 'Web',
+            topic: 'Login.Out',
+            data:true,
+        });
     }else{
         if(hasIfm){
             next()

@@ -10,6 +10,7 @@
 
     import PostalStore from "./lib/postalStore";
     import {clearCookie} from "./lib/localStorageTemp";
+
     let postalStore = new PostalStore();
     export default {
         data() {
@@ -31,17 +32,19 @@
         },
         mounted() {
 
-            postalStore.sub('Web', 'Login.Out', () => {
-                this.clearUserInfo()
+            postalStore.sub('Web', 'Login.Out', (data) => {
+                this.clearUserInfo(data)
             });
             postalStore.sub('Web', 'Time.Sync', (time) => {
                 // console.log(2,time);
-                memoryStore.setItem('global', {now:time});
+                memoryStore.setItem('global', {now: time});
             });
             postalStore.sub('Web', 'LoginSuccessCheckToken', (user) => {
+
                 this.checkTokenTimer = window.setInterval(() => {
+                    console.log(555,this.checkTokenTimer);
                     this.checkToken(user)
-                }, 10  * 1000)
+                }, 10 * 1000)
             });
             postalStore.sub('Web', 'Global.Alert', (opts) => {
                 Vue.prototype.$alert(...opts)
@@ -54,19 +57,19 @@
                 await this.$nextTick()
                 this.isRouterShow = true
             },
-			clearUserInfo(){
+            clearUserInfo(data) {
                 clearCookie()
-                 localStorage.clear()
+                localStorage.clear()
                 sessionStorage.clear()
                 localStorage.removeItem('User');
                 clearInterval(this.checkTokenTimer)
-                console.log(this.$route.path,222,this.checkTokenTimer	);
-                this.$nextTick(()=>{
-                    if(this.$route.path!=='/'&&this.$route.path!=='/login'){
-                        this.$router.push('/')
-                    }
-				})
-			},
+                console.log(this.$route.path, 222, this.checkTokenTimer);
+                // data==true 表示由路由直接访问登录
+                if (!data) {
+                    this.$router.push('/')
+                }
+
+            },
             autoEsc() {
                 if (this.outrTimer) {
                     clearTimeout(this.outrTimer)
@@ -86,7 +89,6 @@
             loginFail(user) {
                 this.$request.post('login', `/logout?userId=${user.id}`, null, false).then((res) => {
                     this.clearUserInfo()
-
                 })
             },
             checkToken(user) {
@@ -95,13 +97,14 @@
                         this.loginFail(user);
                         this.$message.warning('账号已在其他地方登录')
                     }
-                }).catch(()=>{})
+                }).catch(() => {
+                })
             },
         },
-        beforeDestroy(){
+        beforeDestroy() {
             postalStore.unsubAll()
             clearInterval(this.checkTokenTimer)
-		}
+        }
     }
 </script>
 <style lang="scss">
