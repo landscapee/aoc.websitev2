@@ -296,6 +296,37 @@ export default {
         this.$message({type: 'error', message: '格式错误！'});
         return;
       }
+      let field = item.key;
+      let compareValue, isStart;
+      switch (field){
+        case 'displayActualStartTime':
+          compareValue = scope.row['displayActualEndTime'];
+          isStart = true;break;
+        case 'displayEstimateStartTime':
+          compareValue = scope.row['displayEstimateEndTime'];
+          isStart = true; break;
+        case 'displayActualEndTime':
+          compareValue = scope.row['displayActualStartTime'];break
+        case 'displayEstimateEndTime':
+          compareValue = scope.row['displayEstimateStartTime'];break
+      }
+      compareValue = compareValue === '--' ? '' : compareValue
+      compareValue = compareValue.split(':').join('')
+      if (compareValue){
+        if (isStart){
+          if (value > compareValue){
+            this.$message({type: 'error', message: '开始时间不能晚于结束时间!'})
+            return;
+          }
+        }else {
+          if (value < compareValue){
+            this.$message({type: 'error', message: '结束时间不能早于开始时间!'})
+            return;
+          }
+        }
+      }
+
+
       value = moment(now).set('hour',value.substr(0,2)).set('minute',value.substr(2,2)).startOf('minute').valueOf()
       const row = scope.row;
       this.$request.post('adverse',`deice/deiceAction?flightId=${row.flightId}`, [{key: item.referenceTo, value: value}]).then(res => {
