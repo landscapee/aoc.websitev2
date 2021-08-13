@@ -42,14 +42,16 @@ export default {
             ]
         },
         toPage(nav) {
+            let url
             if(nav.isOther){
-                let url ='http://'+location.hostname+':'+location.port+'/kpi/#'+nav.path
+                  url ='http://'+location.hostname+':'+location.port+'/kpi/#'+nav.path
                 // let url ='http://173.101.1.30:6075' +'/kpi/#'+nav.path
-                window.open(url,'_self')
+                // window.open(url)
             }else{
-                this.$router.push(nav.path)
-
+                // this.$router.push(nav.path)
+                url ='http://'+location.hostname+':'+location.port+'/#'+nav.path
             }
+            window.open(url)
         },
     },
 }
