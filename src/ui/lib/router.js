@@ -18,7 +18,6 @@ router.beforeEach((to, from, next) => {
         loginFlag=0
 
  		store.commit("resetStore",null)
-
 		postal.publish({
             channel: 'worker.aoc',
             topic: 'socket_close',

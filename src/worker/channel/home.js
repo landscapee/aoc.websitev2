@@ -1,17 +1,4 @@
 import {memoryStore} from '../lib/memoryStore'
-import {
-  flight_home,
-  flight_monthClearance,
-  flight_lastestAta,
-  flight_lastestAtd,
-  flight_FlightStatistic,
-  flight_delay_backStatus,
-  flight_direction,
-  flight_traffic,
-  flight_estimateCtotRelease,
-  flight_runwayTraffic,
-  flight_runwayModels
-} from "../manage/home";
 import Logger from "../../lib/logger";
 import { forEach,map,extend} from 'lodash';
 import SocketWrapper from "../lib/socketWrapper";
@@ -38,53 +25,51 @@ export const checkClient = (clientField) => {
   });
 };
 
-
-
 const subWSEvent = () => {
   let homeClient = clientObj.homeClient
   //总数据
   homeClient.sub('/Flight/Home/Operation', (data) => {
-    flight_home(worker,data)
+    worker.publish('Web','flight.home',data)
   })
   // 月度放行正常率目标
   homeClient.sub('/Flight/monthClearance/stat', (data) => {
-    flight_monthClearance(worker,data)
+    worker.publish('Web','flight.monthClearance',data)
   });
   // 最近实际落地航班
   homeClient.sub('/Flight/lastestAta', (data) => {
-    flight_lastestAta(worker,data)
+    worker.publish('Web','flight.lastestAta',data)
   });
   // 最近实际起飞航班
   homeClient.sub('/Flight/lastestAtd', (data) => {
-    flight_lastestAtd(worker,data)
+    worker.publish('Web','flight.lastestAtd',data)
   });
   //走廊口方向放行率
-	homeClient.sub('/Flight/direction', (data) => {
-		flight_direction(worker,data)
+  homeClient.sub('/Flight/direction', (data) => {
+    worker.publish('Web','flight.direction',data)
   });
   //流量信息
   homeClient.sub('/Flight/traffic', (data) => {
-    flight_traffic(worker,data)
+    worker.publish('Web','flight.traffic',data)
   });
   //下小时预计放行
   homeClient.sub('/Flight/estimateCtotRelease', (data) => {
-    flight_estimateCtotRelease(worker,data)
+     worker.publish('Web','flight.estimateCtotRelease',data)
   });
   //综合速率
   homeClient.sub('/Flight/runwayTraffic', (data) => {
-    flight_runwayTraffic(worker,data)
+     worker.publish('Web','flight.runwayTraffic',data)
 	});
   //跑道
   homeClient.sub('/Flight/runwayModels', (data) => {
-    flight_runwayModels(worker,data)
+    worker.publish('Web','flight.runwayModels',data)
 	});
   //运行
   homeClient.sub('/Flight/Flight/FlightStatistic', (data) => {
-    flight_FlightStatistic(worker,data)
+    worker.publish('Web','flight.FlightStatistic',data)
   });
   //积压
   homeClient.sub('/Flight/delay/backStatus', (data) => {
-		console.log('积压',data)
+    worker.publish('Web','flight.delay.backStatus',data)
 	});
 };
 
@@ -104,7 +89,7 @@ const delays_subWSEvent = () => {
   let delaysClient = clientObj.delaysClient
   //积压
   delaysClient.sub('/Flight/delay/backStatus', (data) => {
-    flight_delay_backStatus(worker, data)
+    worker.publish('Web','flight.delay.backStatus',data)
   });
 };
 
@@ -119,8 +104,6 @@ export const init = (worker_) => {
       subWSEvent();
     });
   });
-  
-  
 
 
   worker.subscribe('Delays.Network.Connected', (c) => {
