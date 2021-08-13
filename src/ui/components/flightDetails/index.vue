@@ -61,6 +61,7 @@
                                     <div class="banyuan banyuan2"></div>
                                 </div>
 
+<<<<<<< HEAD
                             </div>
                             <div class="contentBottomList " v-for="(shareOpt,shareIndex) in getShareData(index)" :key="shareIndex">
                                 <div class="ListItem" v-for="(shareOptC,shareIndexC) in shareOpt" :key="shareIndexC+'C'">
@@ -79,6 +80,30 @@
             </div>
         </el-dialog>
     </div>
+=======
+							</div>
+							<div class="contentBottomList " v-for="(shareOpt,shareIndex) in getShareData(index)"
+								 :key="shareIndex">
+								<div class="ListItem" v-for="(shareOptC,shareIndexC) in shareOpt"
+									 :key="shareIndexC+'C'">
+									<div>
+										{{shareOptC.time?getTime(opt[shareOptC.key]):(opt[shareOptC.key]||shareOptC.defaultValue||'--')}}{{shareOptC.text}}
+									</div>
+									<div>{{shareOptC.name}}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom">
+				<iframe @load="sendToken" id="iframe"
+						:src="url"
+						frameborder="0"></iframe>
+			</div>
+		</el-dialog>
+	</div>
+>>>>>>> a29338be7cdb92692d72d6c4101894a826b8b502
 </template>
 <script>
 import VIPImg from '../../assets/img/VIP.svg'
@@ -87,6 +112,7 @@ import { flightStateColor } from './help'
 import AircraftNoPage from './aircraftNoPage'
 import { getUserSerializ } from '../../lib/localStorageTemp'
 
+<<<<<<< HEAD
 export default {
     name: 'warning',
     components: { AircraftNoPage },
@@ -119,6 +145,43 @@ export default {
                     { name: '航站楼', key: 'terminal' },
                     { name: '乘机人数', key: 'passenger', defaultValue: '0' },
                     { name: '飞行时长', key: 'flyingTime' },
+=======
+    export default {
+        name: "warning",
+		components:{AircraftNoPage},
+        data() {
+            let ipObj = {
+                'test': 'http://173.101.1.30:6068', // 双流测试
+                 'dev': 'http://173.101.1.30:6068', // 开发
+                'tf': 'http://10.33.64.1:6076', // 天府机场
+            };
+            return {
+                url:'',
+                iframeIp: ipObj[PROGRAM],
+                VIPImg,
+                data: {},
+                showAircraftNoPage:false,
+                aircraftNoData:[],
+                flightAD: {},
+                shareListA: [
+                    [
+                        {name: '前方计划', key: 'preOrNxtPlanTime', time: true},
+                        {name: '前方实际', key: 'preOrNxtActualTime', time: true},
+                        {name: '计划到达', key: 'sta', time: true},
+                        {name: '预计到达', key: 'eta', time: true},
+                        {name: '实际到达', key: 'ata', time: true},
+                        {name: '可变滑行', key: 'vtt',},
+
+                    ],
+                    [
+                        {name: '停靠机位', key: 'seat',},
+                        {name: '行李转盘', key: 'carousel',},
+                        {name: '落地跑道', key: 'runway',},
+                        {name: '航站楼', key: 'terminal',},
+                        {name: '乘机人数', key: 'passenger',defaultValue:'0'},
+                        {name: '飞行时长', key: 'flyingTime',},
+                    ],
+>>>>>>> a29338be7cdb92692d72d6c4101894a826b8b502
                 ],
             ],
             shareListD: [
@@ -170,11 +233,38 @@ export default {
                 return s + (opt.t || '')
             }
         },
+<<<<<<< HEAD
         getShareData() {
             return (index) => {
                 let data = this.shareListA
                 if (index == 1) {
                     data = this.shareListD
+=======
+        computed: {
+
+            getValue() {
+                return (opt) => {
+                    let s = this.data[opt.key]
+                    if (s !== 0) {
+                        s = s || '--'
+                    }
+                    return s + (opt.t || '')
+                }
+            },
+            getShareData() {
+                return (index) => {
+                    let data = this.shareListA
+                    if (index == 1) {
+                        data = this.shareListD
+                    }
+                    return data
+                }
+            },
+            getTime() {
+                return (time) => {
+                    let t = time ? moment(time).format('HH:mm') : '--'
+                    return t
+>>>>>>> a29338be7cdb92692d72d6c4101894a826b8b502
                 }
                 return data
             }
@@ -196,6 +286,7 @@ export default {
                 }
             }
         },
+<<<<<<< HEAD
     },
     methods: {
         aircraftNoClick(opt) {
@@ -213,10 +304,56 @@ export default {
                     if (res.code == 200 && res?.data) {
                         this.aircraftNoData = res.data
                         console.log(this.aircraftNoData)
+=======
+        methods: {
+
+            aircraftNoClick(opt){
+				if(!opt.click){
+				    return false
+				}
+                this.$request.post('flight', 'Flight/getTodayAircraftInfo', {aircraftNo:this.data[opt.key]}, true).then((res) => {
+                    if (res.code == 200 && res?.data) {
+                        this.aircraftNoData = res.data
+                         console.log(this.aircraftNoData);
+                    }
+                })
+				this.showAircraftNoPage=!this.showAircraftNoPage
+			},
+            sendToken() {
+                const iframe = document.getElementById('iframe');
+                const token =getUserSerializ()?.token;
+                 iframe.contentWindow.postMessage({source: 'ACDM', token: token,}, `*`,);
+            },
+            close() {
+                this.resolve();
+                this.dialogFormVisible = false
+            },
+            open(item) {
+                this.item = item
+                this.dialogFormVisible = true
+                this.getData({flightId: item.flightId})
+
+                return new Promise((resolve, reject) => {
+                    this.resolve = resolve
+                    this.reject = reject
+                })
+
+
+
+            },
+            getData(obj) {
+                this.$request.post('flight', 'Flight/getFlightDetail/v2', obj, true).then((res) => {
+                    if (res.code == 200 && res?.data) {
+                        this.data =  res.data
+                        this.flightAD = [this.data.flightA, this.data.flightD]
+                        console.log(this.data, this.item);
+                        this.url= `${this.iframeIp}/#/flight_milepost?showTree=true&flightId=${this.item.flightId}&type=${this.data.flightMilestoneType}`
+>>>>>>> a29338be7cdb92692d72d6c4101894a826b8b502
                     }
                 })
             this.showAircraftNoPage = !this.showAircraftNoPage
         },
+<<<<<<< HEAD
         sendToken() {
             const iframe = document.getElementById('iframe')
             const token = getUserSerializ()?.token
@@ -230,6 +367,12 @@ export default {
             this.item = item
             this.dialogFormVisible = true
             this.getData({ flightId: item.flightId })
+=======
+		created(){
+			// this.getUrl()
+         }
+
+>>>>>>> a29338be7cdb92692d72d6c4101894a826b8b502
 
             return new Promise((resolve, reject) => {
                 this.resolve = resolve
