@@ -157,6 +157,8 @@
                 console.log(this.activeName);
             },
             reset(){
+                this.runDecisionTable={}
+                this.tabArr=[]
                 this.form.useAge={}
 			},
             diretionChange(){
