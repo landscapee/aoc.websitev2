@@ -16,15 +16,20 @@ export const updateListHeader = (columns) => {
   localStorage.setItem('personalColumns', JSON.stringify(newColumns));
   postal.publish({
     channel: 'Web',
-    topic: 'Flight.UpdateHeader',
+    topic: 'Flight.GetHeader.Res',
     data: columns,
   });
   postal.publish({
     channel: 'Worker',
-    topic: 'Flight.UpdateHeader',
+    topic: 'Flight.GetHeader.Res',
     data: JSON.parse(JSON.stringify(columns)),
   });
-  myFlightHeader = combineHeader(columns);
+  postal.publish({
+    channel: 'Worker',
+    topic: 'Flight.UpdateColumn',
+    data: newColumns,
+  });
+  // myFlightHeader = combineHeader(columns);
 };
 export const reSetHeader = () => {
   localStorage.removeItem('personalColumns');

@@ -13,10 +13,11 @@
 <script>
     import postal from 'postal';
     import PostalStore from "../../lib/postalStore";
-    import {getListHeader} from "@/ui/views/flight/components/handleColumn";
     import _, {map, pick} from 'lodash';
     import ColumnsDefine from './columnDefine'
     import {mapGetters, mapState} from "vuex";
+    import {memoryStore} from "@/worker/lib/memoryStore";
+    import {getListHeader} from "@/worker/lib/columns";
     let postalStore = new PostalStore();
     let itemH = 36;
   export default {
@@ -41,7 +42,7 @@
         import(/*webpackChunkName:"TOBTTooltip"*/ './components/TOBTTooltip'),
     },
     beforeMount() {
-      this.setColumns(getListHeader())
+      // this.setColumns(getListHeader())
     },
     mounted() {
       // let globalHead = document.getElementById('com_glob_head');
@@ -50,7 +51,14 @@
         this.flights = data.flights;
         this.statistics = data.statistics
       })
+      postalStore.sub('Flight.GetHeader.Res', (newColumns) => {
+        memoryStore.setItem('global', {flightHeader: newColumns});
+        this.setColumns(getListHeader())
+      });
       let header = getListHeader();
+      this.setColumns(header)
+      console.log('header::', header)
+      console.log('header::', header)
       postal.publish({
         channel: 'Worker',
         topic: 'Page.Flight.Start',

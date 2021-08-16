@@ -1,6 +1,6 @@
 import {flightDB, processFlight, saveToFlightDB} from "../lib/storage";
 import {memoryStore} from "../lib/memoryStore";
-import { isString} from 'lodash';
+import { isString, get} from 'lodash';
 import {saveToFlightHisDB} from "@/worker/lib/storageHis";
 export const flightHttp = (worker,httpRequest) => {
   const getTodayFLight = () => {
@@ -12,7 +12,21 @@ export const flightHttp = (worker,httpRequest) => {
     }).catch()
   }
 
-  getTodayFLight()
+  const getColumns = () => {
+    let user = memoryStore.getItem('global').user;
+    let userId = get(user, 'id', '');
+    httpRequest.get('flight', `getDynamicConfig?userId=${userId}`).then(response => {
+      let data = response.data;
+      if (JSON.stringify(data) !== '[]') {
+        let c = JSON.parse(data[0].config);
+        worker.publish('Worker', 'Flight.GetHeader.Res', c.options)
+        worker.publish('Web', 'Flight.GetHeader.Res', c.options)
+      }
+    }).catch()
+  }
+
+  getTodayFLight();
+  getColumns()
 
   worker.subscribe('Test',()=>{
     httpRequest.get('situation','runningState/delayCode').then(res=>{
@@ -56,6 +70,14 @@ export const flightHttp = (worker,httpRequest) => {
           worker.publish('Worker', 'Flight.Change.Sync');
         });
       }
+    });
+  })
+
+  worker.subscribe('Flight.UpdateColumn', (options) => {
+    let user = memoryStore.getItem('global').user;
+    let userId = user ? user.id : ''
+    httpRequest.post('flight', `saveDynamicConfig?userId=${userId}`, {options: options}).then(res => {
+      //
     });
   })
 

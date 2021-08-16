@@ -64,10 +64,12 @@ postal.subscribe({
     channel: 'Worker',
     topic: 'init',
     callback: (data) => {
+        console.log(data)
         setGlobal({
             now: data.now,
             clientId: data.clientId,
-            token:data.user.token
+            token:data.user.token,
+            user: data.user
         }, data.user)
 
         let posWorker = myPostal('Worker');
@@ -101,7 +103,8 @@ postal.subscribe({
                 //登录成功token,服务器时间
                 setGlobal({
                     token: user.token,
-                    now: user.now
+                    now: user.now,
+                    user: user
                 },user)
             }
         })

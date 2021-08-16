@@ -34,9 +34,10 @@
 
 <script>
 import draggable from "vuedraggable";
-import {getListHeader, reSetHeader, updateListHeader} from "@/ui/views/flight/components/handleColumn";
+import { reSetHeader, updateListHeader} from "@/ui/views/flight/components/handleColumn";
 import {keyBy, map} from "lodash";
 import {allField} from "@/lib/flightAllFields";
+import {getListHeader} from "@/worker/lib/columns";
 export default {
   name: "fieldSetting",
   components: {draggable},
