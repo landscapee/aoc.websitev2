@@ -37,7 +37,8 @@ export default {
     document.addEventListener('click', this._handleClick);
     document.addEventListener('scroll', this._handleScroll);
   },
-  destroyed() {
+  beforeDestroy() {
+    postalStore.unsubAll()
     document.removeEventListener('click', this._handleClick);
     document.removeEventListener('scroll', this._handleScroll);
   },
