@@ -69,10 +69,10 @@
 </template>
 
 <script>
+import { calcPercent } from '@/lib/helper/utility'
 import Highcharts from 'highcharts/highstock'
 import highchartsMore from 'highcharts/highcharts-more'
 import solidgauge from 'highcharts/modules/solid-gauge'
-import { calcPercent } from '@/lib/helper/utility'
 highchartsMore(Highcharts)
 solidgauge(Highcharts)
 import PostalStore from '@ui_lib/postalStore'
@@ -229,8 +229,11 @@ export default {
             this['rate' + num] = arr
             let options = _.cloneDeep(this.options[percent].options)
             let series = this.options.takeOffPercent.options.series(arr)
+
             // series[0].data[0].color = this.getPercentColor(arr)
             options.series = series
+
+            console.log(options, arr)
             this.loading = true
             this.chart = Highcharts.chart(box, options)
         },

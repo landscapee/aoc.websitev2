@@ -1,6 +1,6 @@
 
 export const flightDecreaseListsColumnConfig = [
-    { key: 'ind', label: '序号', type: 'index', width: '50px' },
+    { key: 'flightIndex', label: '序号', type: 'index', width: '50px' },
     {
         key: 'flightNo',
         label: '航班号',
@@ -53,22 +53,9 @@ export const flightDecreaseListsColumnConfig = [
         },
     },
     {
-        key: 'type',
+        key: 'milestoneStatusCn',
         label: '空地里程碑',
         width: '90px',
-        display: ({ row }) => {
-            let milestoneStatusCn = _.get(row, 'milestoneStatusCn', '--')
-            let milestoneStatusType = _.get(row, 'milestoneStatusType')
-            let color = '#fff'
-            if (milestoneStatusType === 'elec') {
-                // 电子进程单
-                color = '#f0f'
-            } else if (milestoneStatusType === 'guarantee') {
-                // 地面保障
-                color = '#0041ff'
-            }
-            return `<span style="color:${color};">${milestoneStatusCn}</span>`
-        },
     },
     {
         key: '',
@@ -87,7 +74,7 @@ export const flightDecreaseListsColumnConfig = [
         },
     },
     {
-        key: '',
+        key: 'actions',
         type: 'operate',
         label: '操作',
         width: '60px',

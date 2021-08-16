@@ -66,7 +66,7 @@
 								<div class="ListItem" v-for="(shareOptC,shareIndexC) in shareOpt"
 									 :key="shareIndexC+'C'">
 									<div>
-										{{shareOptC.time?getTime(opt[shareOptC.key]):(opt[shareOptC.key]||'--')}}{{shareOptC.text}}
+										{{shareOptC.time?getTime(opt[shareOptC.key]):(opt[shareOptC.key]||shareOptC.defaultValue||'--')}}{{shareOptC.text}}
 									</div>
 									<div>{{shareOptC.name}}</div>
 								</div>
@@ -76,9 +76,7 @@
 				</div>
 			</div>
 			<div class="bottom">
-				<iframe @load="sendToken" id="iframe"
-						:src="`${iframeIp}/#/flight_milepost?showTree=true&flightId=${item.flightId}&type=${data.flightMilestoneType}`"
-						frameborder="0"></iframe>
+				<iframe @load="sendToken" id="iframe" :src="url" frameborder="0"></iframe>
 			</div>
 		</el-dialog>
 	</div>
@@ -100,6 +98,7 @@
                 'tf': 'http://10.33.64.1:6076', // 天府机场
             };
             return {
+                url:'',
                 iframeIp: ipObj[PROGRAM],
                 VIPImg,
                 data: {},
@@ -121,7 +120,7 @@
                         {name: '行李转盘', key: 'carousel',},
                         {name: '落地跑道', key: 'runway',},
                         {name: '航站楼', key: 'terminal',},
-                        {name: '乘机人数', key: 'passenger',},
+                        {name: '乘机人数', key: 'passenger',defaultValue:'0'},
                         {name: '飞行时长', key: 'flyingTime',},
                     ],
                 ],
@@ -165,6 +164,7 @@
             }
         },
         computed: {
+
             getValue() {
                 return (opt) => {
                     let s = this.data[opt.key]
@@ -201,13 +201,14 @@
             }
         },
         methods: {
+
             aircraftNoClick(opt){
 				if(!opt.click){
 				    return false
 				}
                 this.$request.post('flight', 'Flight/getTodayAircraftInfo', {aircraftNo:this.data[opt.key]}, true).then((res) => {
                     if (res.code == 200 && res?.data) {
-                        this.aircraftNoData = JSON.parse(res.data)
+                        this.aircraftNoData = res.data
                          console.log(this.aircraftNoData);
                     }
                 })
@@ -215,9 +216,8 @@
 			},
             sendToken() {
                 const iframe = document.getElementById('iframe');
-                const token =getUserSerializ.token;
-
-                iframe.contentWindow.postMessage({source: 'ACDM', token: token,}, `*`,);
+                const token =getUserSerializ()?.token;
+                 iframe.contentWindow.postMessage({source: 'ACDM', token: token,}, `*`,);
             },
             close() {
                 this.resolve();
@@ -239,15 +239,16 @@
             getData(obj) {
                 this.$request.post('flight', 'Flight/getFlightDetail/v2', obj, true).then((res) => {
                     if (res.code == 200 && res?.data) {
-
                         this.data =  res.data
                         this.flightAD = [this.data.flightA, this.data.flightD]
                         console.log(this.data, this.item);
+                        this.url= `${this.iframeIp}/#/flight_milepost?showTree=true&flightId=${this.item.flightId}&type=${this.data.flightMilestoneType}`
                     }
                 })
             },
         },
-		mounted(){
+		created(){
+			// this.getUrl()
          }
 
 
@@ -360,8 +361,7 @@
 						width: 115px;
 						height: 30px;
 						background: #28b457;
-						/*line-height: 30px;*/
-						border-radius: 12px 0px 12px 0px;
+ 						border-radius: 12px 0px 12px 0px;
 						span {
 							font-size: 18px;
 						}
@@ -545,7 +545,7 @@
 			}
 			.contentTop_left {
 				span:first-child {
-					background: #28b457;
+					background: #009af9!important;
 				}
 			}
 		}
