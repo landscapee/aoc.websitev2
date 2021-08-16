@@ -1,7 +1,7 @@
 <template>
 	<div class="middleRight">
 		<div class="middleRightItem" :class="opt.key=='actionWaitingkey'?'item3':''" v-for="opt in pageObj" :key="opt.key+opt.keyC+opt.yName">
-			<Item ref="item" :data="opt" @handleClick="handleClick" :optionsEC="getOptions(opt)" :key="opt.key+opt.keyC+opt.yName">
+			<Item :isclick="opt.isclick" ref="item" :data="opt" @handleClick="handleClick" :optionsEC="getOptions(opt)" :key="opt.key+opt.keyC+opt.yName">
 				<div :slot="opt.slot">
 					总数：{{getTotal(opt)}}
 					<el-select filterable @change="getActionWaiting" v-if="opt.key=='actionWaitingkey'" v-model="flightValue" size="mini">
@@ -34,7 +34,7 @@
                 flightDelay: {},
                 actionWaitingkey: {},
                 pageObj: [
-                    {name: '旅客统计', key: "passengerSts", keyC: 'AD_checkInCounters', options: optionsPie,},
+                    {name: '旅客统计',isclick:'false', key: "passengerSts", keyC: 'AD_checkInCounters', options: optionsPie,},
                     {
                         name: '实时延误航班统计',
                         key: "flightDelay",
