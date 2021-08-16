@@ -31,23 +31,16 @@ const subWSEvent = () => {
 
 
 };
-// const AdverseClientEvent = () => {
-//     let client = clientObj.AdverseClient;
-//
-//         client.sub('/adverse-condition/wd/data/all', (resData, body) => {
-//             if (body.code === 200) {
-//                 // 1常态化 2: 大面积延误
-//                 let type = {
-//                     type: resData.type === '0' ? '1' : resData.type,
-//                 };
-//                 type.type = notFixType ? resData.type : type.type; // 不修复type
-//                 memoryStore.setItem('AdverseCondition', { currentDelayType: type.type });
-//                 setReduce(worker,memoryStore)
-//             }
-//          })
-//
-//
-// };
+const AdverseClientEvent = () => {
+    let client = clientObj.AdverseClient;
+
+        client.sub('/adverse-condition/delay/warnInfo', (data) => {
+            worker.publish('Web', 'push.top.Data', {data: data, key: 'warnInfo'})
+
+         })
+
+
+};
 
 export const init = (worker_, httpRequest_) => {
     worker = worker_;
@@ -55,9 +48,9 @@ export const init = (worker_, httpRequest_) => {
     worker.subscribe('Situation.Network.Connected', (c) => {
         clientObj.delayNewClient = new SocketWrapper(c);
     });
-    // worker.subscribe('Adverse.Network.Connected', (c) => {
-    //     clientObj.AdverseClient = new SocketWrapper(c);
-    // });
+    worker.subscribe('Adverse.Network.Connected', (c) => {
+        clientObj.AdverseClient = new SocketWrapper(c);
+    });
 
     // worker.subscribe('get.delayNew.data', (type) => {
     //      let data = memoryStore.getItem('AdverseCondition')?.reduceData
@@ -88,10 +81,10 @@ export const init = (worker_, httpRequest_) => {
             subWSEvent();
             console.log('delayNew连接成功')
         });
-        // checkClient('AdverseClient').then(() => {
-        //     AdverseClientEvent();
-        //     console.log('Adverse连接成功')
-        // });
+        checkClient('AdverseClient').then(() => {
+            AdverseClientEvent();
+            console.log('Adverse连接成功')
+        });
     });
 
     worker.subscribe('Page.delayNew.Stop', () => {

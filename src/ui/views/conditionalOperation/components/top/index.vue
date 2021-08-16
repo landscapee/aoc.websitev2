@@ -63,16 +63,18 @@
 					<div class="right">
 						<div class="timeText">
 							<div class="first">
-								<span>{{tranTime( weatherWarnInfo.publishTime,'HH:mm')}}</span>
-								({{tranTime( weatherWarnInfo.publishTime,'DD')}})
+								<span>{{tranTime( warnInfo.startTime,'HH:mm')}}</span>
+								({{tranTime( warnInfo.startTime,'DD')}})
 							</div>
-							<div class="second">预警发布时间</div>
+							<div class="second">发布时间</div>
 						</div>
 						<div class="shuxian"></div>
 						<div class="timeText">
-							<div class="first"><span>{{tranTime( weatherWarnInfo.expectStartTime,'HH:mm')+'~'+tranTime( weatherWarnInfo.expectEndTime,'HH:mm')}}</span>
+							<div class="first">
+								<span>{{tranTime( warnInfo.endTime,'HH:mm')}}</span>
+								({{tranTime( warnInfo.endTime,'DD')}})
 							</div>
-							<div class="second">影响时间段</div>
+							<div class="second">结束时间</div>
 						</div>
 					</div>
 
@@ -150,7 +152,7 @@
                 indicator: {},//   航班指标
                 flightDelay: {},// 实时延误航班 数量
                 weatherWarnInfo: {},// 新气象灾害
-                warnInfo: {},// 大面积延误
+                warnInfo: {},// 大面积延误 警告
                 emergencyCfg: [
                     {key: 'ready', icon: zbjd},
                     {key: 'doing', icon: ssjd},

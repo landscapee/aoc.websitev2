@@ -608,10 +608,22 @@
 					border-bottom: $border !important;
 					border-right: 0 !important;
 					background: #36445a !important;
+					label{
+						font-size: 12px!important;
+					}
 				}
 				td {
 					border-right: 0 !important;
 					border-bottom: $border !important;
+					font-size: 12px!important;
+					span{
+						font-size: 13px!important;
+					}
+					.flightTypeBox{
+						span{
+							font-family: FjallaOne;
+						}
+					}
 					.flightType {
 						padding: 1px;
 						border: 1px solid #ffffff;

@@ -269,7 +269,7 @@ export const setting = {
         },
         {
             key: 'flightNo',
-            type: 'slot', width: '40px', label: '航班号',
+            type: 'slot', width: '50px', label: '航班号',
         },
         {
             key: 'displayCOBT',
@@ -285,7 +285,7 @@ export const setting = {
         },
         {
             key: 'requestedHandle',
-            type: 'slot', width: '30px', label: '操作',
+            type: 'slot', width: '40px', label: '操作',
 
 
         },
