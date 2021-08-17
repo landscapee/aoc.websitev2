@@ -727,8 +727,7 @@ export const getFlightByIds = (oFlights) => {
 	let flights = map(oFlights, (item) => {
 		let isItemObj = isObject(item);
 		let f = flightDB.by('flightId', isItemObj ? item.flightId : item);
-		let flight = { ...f };
-		return extend(flight, item);
+		return f?extend({ ...f }, item):item
 	});
 	return flow([addSerialNumber])(flights);
 };
