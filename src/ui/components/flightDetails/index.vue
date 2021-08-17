@@ -76,9 +76,7 @@
 				</div>
 			</div>
 			<div class="bottom">
-				<iframe @load="sendToken" id="iframe"
-						:src="url"
-						frameborder="0"></iframe>
+				<iframe @load="sendToken" id="iframe" :src="url" frameborder="0"></iframe>
 			</div>
 		</el-dialog>
 	</div>
@@ -297,7 +295,7 @@
 	}
 
 	.middle {
-		margin: 40px 0 20px 0;
+		margin: 20px 0 20px 0;
 		display: flex;
 		justify-content: left;
 		.divBox {
@@ -557,8 +555,10 @@
 	.bottom {
 		border-radius: 5px;
 		width: 100%;
-		height: 470px;
+		height: 490px;
+		overflow-y: hidden;
 		iframe {
+			overflow-y: hidden;
 			width: 100%;
 			height: 100%;
 		}

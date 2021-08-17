@@ -25,6 +25,9 @@
                 type:Object,
 				default:{},
 			},
+			isclick:{
+                type:String,
+			},
             optionsEC:{
                 type:Object,
 				default:{},
@@ -64,7 +67,7 @@
 			this.setOptions()
 			window.addEventListener('resize',this.resizeEcharts)
 			this.resizeEcharts()
-            this.echartsInstance.on('click', (params) => {
+           this.isclick!=='false'&& this.echartsInstance.on('click', (params) => {
                 this.$emit('handleClick',this.data.key,params)
              });
         },

@@ -17,6 +17,8 @@
 </template>
 
 <script>
+     import PostalStore from "@ui_lib/postalStore";
+    let postalStore = new PostalStore();
     import Runway from '../../../components/runway'
     import MDRSWarning from '../../../components/MDRSWarning'
 
@@ -32,8 +34,7 @@
                     {name: '推出滑行', icon: 'tchx', key: 'launchTaxiing'},
                 ],
                 boardingSts: {
-                    boardingFlight: 222,
-					boardingNotCloseDoor: 222,
+
 				},//登机统计
             }
         },
@@ -48,6 +49,12 @@
         methods: {},
         created() {
         },
+		mounted(){
+            postalStore.sub('page.delayNewLeft.data', ({data}) => {
+				this.boardingSts=data
+                console.log(data,1111);
+            });
+		},
     }
 </script>
 

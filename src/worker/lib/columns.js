@@ -5,21 +5,24 @@
  * referenceTo:'scheduleTime',表示关联到某个列，如果是排序则用参考列排序
  */
 
-import { get, map, each, extend, pick, keyBy } from 'lodash';
+import {get, map, each, extend, pick, keyBy, filter} from 'lodash';
 import Logger from 'lib/logger';
 import {memoryStore} from "@/worker/lib/memoryStore";
-import {filedConvert} from "@/lib/flightAllFields";
+import {allField, filedConvert} from "@/lib/flightAllFields";
 
 const log = new Logger('columns:Define');
 
 export const getListHeader = () => {
 	let myFlightHeader = memoryStore.getItem('global').flightHeader
+	myFlightHeader = filter(myFlightHeader, (item) => allField[item.key]); // 过滤掉本地有 代码中已经删除的列
 	// return myFlightHeader
-	return map(myFlightHeader, (h) => {
+	let header = map(myFlightHeader, (h) => {
+		h = extend({}, h, get(allField, [h.key]));
 		if (filedConvert[h.key]) {
 			return extend({}, filedConvert[h.key], h);
 		} else {
 			return h;
 		}
 	});
+	return header
 };
