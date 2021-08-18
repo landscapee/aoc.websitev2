@@ -197,10 +197,10 @@
             </div>
           </div>
 <!--          最大放行架次的横线 -->
-          <div class="position-absolute" :style="{ width: pxtorem('80') + 'rem', bottom: currentMaxDepart(index) * fixPx(23.2) + 'px', height: '1px', backgroundColor: 'rgba(233,54,112,.5)' }" />
+          <div class="position-absolute" :style="{ width: pxtorem('80') + 'rem', bottom: currentMaxDepart(index) * fixPx(23.0) + 'px', height: '1px', backgroundColor: 'rgba(233,54,112,.5)' }" />
 
           <div class="position-relative">
-            <div class="position-absolute" :style="{ width: '1px', bottom: bottom(index) + 'px', height: Math.abs(difference(index)) * fixPx(23.2) + 'px', backgroundColor: 'rgba(233,54,112,.5)' }" />
+            <div class="position-absolute" :style="{ width: '1px', bottom: bottom(index) + 'px', height: Math.abs(difference(index)) * fixPx(23.0) + 'px', backgroundColor: 'rgba(233,54,112,.5)' }" />
           </div>
 
           <div v-if="suggestData[index] && showSuggest" :key="'suggest' + index" class="position-relative">
@@ -220,7 +220,7 @@
       <div class="time d-flex mx-2">
         <div class="flex-auto text-center fo" v-for="(item, index) in 24">
           {{ ('0' + index).slice(-2) + ':00' }}
-          <small style="color: #00b9ee" class="ms-b">{{ (flights[item] || []).length || 0 }}</small>
+          <small style="color: #00b9ee" class="ms-b">{{ (flights[index] || []).length || 0 }}</small>
         </div>
       </div>
     </div>

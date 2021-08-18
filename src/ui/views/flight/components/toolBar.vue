@@ -31,7 +31,7 @@
               <el-option label="登机口" value="displayGate"></el-option>
               <el-option label="航线" value="displayRouter"></el-option>
             </el-select>
-            <el-button @click="searchValue = ''" v-if="searchValue" slot="append" icon="el-icon-circle-close"></el-button>
+            <el-button @click="searchValue = ''; onSearchFlight()" v-if="searchValue" slot="append" icon="el-icon-circle-close"></el-button>
             <el-button v-else slot="append" icon="el-icon-search"></el-button>
           </el-input>
         </div>
