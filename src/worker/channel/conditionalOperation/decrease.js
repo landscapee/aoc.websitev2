@@ -26,14 +26,21 @@ export const checkClient = (clientField) => {
 
 let getReduceFlights = (reduceFlight) => {
 	checkWebsocketResponseDataFinish().then(() => {
-    let flightsWithAirline = mapValues(reduceFlight, (item) => flow([addSerialNumber])(getFlightByIds(item)));
+		let flightsWithAirline = mapValues(reduceFlight, (item) => flow([addSerialNumber])(getFlightByIds(item)));
+		_.map(flightsWithAirline, (item, key) => {
+
+			let arrs = item.filter(flight => {
+				return flight.flightNo
+			})
+			flightsWithAirline[key] =arrs
+
+		})
 		worker.publish('Web', 'Decrease.GetReduceFlights.Response', flightsWithAirline);
 	});
 };
 
 
 let getFlight = (query) => {
-
     checkWebsocketResponseDataFinish().then(() => {
         let flights = flightDB.find({ $and: query });
         flights = flow([filterRoleFlights])(flights);
