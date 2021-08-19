@@ -46,7 +46,7 @@
 						</template>
 						<template slot="cancel" slot-scope="{row,index}">
 							<!--<div>取消关注</div>-->
-							<span @click="delWaring(row) "  class="quxiao">
+							<span @click="delWaring(row) "  class="  quxiao1">
 							<icon-svg  iconClass="shanchu"  ></icon-svg>
 						</span>
 						</template>
@@ -155,7 +155,7 @@
                 let length=Object.keys(data[0]||{}).length
 
                 length&&this.$set(this.pageListObj.batchConcern,'data',data)
-                // this.allCheckWarn.batchConcern=[]
+                // this.allCheckWarn.batchConcern=[]flight/batchConcern/del
              });
             //提前落地池
             postalStore.sub( 'advanceArrive',(data)=>{
@@ -252,7 +252,7 @@
                 this.$confirm(`是否确认取消关注航班${row.flightNo}？`, '提示', {
                     type: 'warning',
                 }).then(() => {
-                    this.$request.post('situation', 'flight/batchConcern', {flightids: row.flightId},true).then((res)=>{
+                    this.$request.post('situation', 'flight/batchConcern/del/'+row.flightId, null,true).then((res)=>{
                         if(res.code!=200||!res.data){
                             this.$message.warning(res.message)
                             return
@@ -361,6 +361,11 @@
 		 padding: 3px 11px ;
 		 background: #2e67f6;
 		 border-radius: 3px;
+	 }
+	 .quxiao1{
+		 border-radius: 3px;
+		 padding: 3px ;
+		 background: #3f485b;
 	 }
 	 .infoquxiao{
 		 background: rgba(46, 103, 246, 0.66);
