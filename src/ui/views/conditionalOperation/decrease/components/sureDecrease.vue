@@ -172,7 +172,6 @@ export default {
                     })
                 })
             }
-
             allReduceFlight.map((flight) => {
                 this.reduceFlightObj[flight.type].push(flight)
             })
