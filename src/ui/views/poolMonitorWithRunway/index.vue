@@ -183,6 +183,7 @@
     import {setting} from './help';
     import PostalStore from "../../lib/postalStore";
     import moment from "moment"
+    import { memoryStore } from '@/worker/lib/memoryStore'
 
     let postalStore = new PostalStore();
     import AdvTable from "@/ui/components/advTable.vue";
@@ -487,9 +488,8 @@
             let obj1=data&&JSON.parse( data)
             this.poolMonitorShow=obj1||obj
             localStorage.setItem('poolMonitorShow',JSON.stringify(this.poolMonitorShow))
-
-            this.nowTime = new Date()
-            let time = (60 - this.nowTime.getSeconds()) * 1000
+			this.nowTime = new Date(memoryStore.getItem('global').now)
+            let time = (60 - this.nowTime.getSeconds()) * 1000 - this.nowTime.getMilliseconds()
             setTimeout(() => {
                 this.nowTime = new Date(this.nowTime.getTime() + time)
                 this.timerInterval = setInterval(() => {

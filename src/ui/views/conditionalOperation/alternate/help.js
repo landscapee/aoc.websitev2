@@ -118,10 +118,10 @@ export const exigencyConfig=[
         key: 'waitTime',
         type: 'simple',label: '已等待时间',
     },
-    {
-        key: 'dropOffFlag',
-        type: 'simple',label: '已下客',
-    },
+    // {
+    //     key: 'dropOffFlag',
+    //     type: 'simple',label: '已下客',
+    // },
     {
         key: 'dropOffNum',
         type: 'simple',label: '下客人数',

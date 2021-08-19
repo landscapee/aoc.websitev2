@@ -107,22 +107,23 @@ export default {
             this.$refs['form'].clearValidate()
         },
         open(row) {
-            let cancelTimeLong
-            let dropOffTimeLong = new Date().getTime()
+            let cancelTimeLong=null
+            let dropOffTimeLong = null
             if (row.dropOffTime) {
                 dropOffTimeLong = new Date(row.dropOffTime).getTime()
             }
             if (row.cancelTime) {
                 cancelTimeLong = new Date(row.cancelTime).getTime()
-            }
-            ;(this.form = {
+            };
+            (this.form = {
                 securityCheck: row.securityCheck || 0,
                 dropOffFlag: row.dropOffFlag || 0,
                 dropOffNum: row.dropOffNum,
                 dropOffTimeLong,
                 flightId: row.flightId,
                 cancelTimeLong,
-            }),
+            });
+
                 (this.dialogFormVisible = true)
             this.title = row.flightNo
         },
