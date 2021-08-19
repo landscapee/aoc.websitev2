@@ -11,6 +11,7 @@ const log = new Logger('worker:flight');
 let DISPLAYNULL = '--'
 let columns = [];
 let todayTopFlights;
+let isCurrentHistory;
 /**
  * 通过 begin ,end 日期 和 searchKey导入航班
  * @returns {*}
@@ -205,7 +206,7 @@ const sortFlights = (cacheFlights) => {
   let isDisplayTodayFlights = (get(Options, 'day') || 'Today') == 'Today';
   let sortKey = get(Options, 'sort.key') || (isDisplayTodayFlights ? 'position' : 'scheduleTime');
   let sortOrder = get(Options, 'sort.order') || 'asc';
-  let flights = orderBy(cacheFlights, [sortKey], [sortOrder]);
+  let flights = isCurrentHistory ? cacheFlights : orderBy(cacheFlights, [sortKey], [sortOrder]);
   flights = orderBy(flights, 'setTop', 'desc');
   return flights;
 };
@@ -398,7 +399,9 @@ export const flightHistoryStart = (posWorker, myHeader) => {
   };
   // channel.publish('Web', 'Flight.UpdateHeader', getListHeader());
   posWorker.subscribe(`Flight.GetHistory.Response`, flightStart);
+  isCurrentHistory = true;
 };
 export const flightHistoryStop = (posWorker) => {
+  isCurrentHistory = false
   posWorker.unsubscribe(`Flight.GetHistory.Response`);
 };

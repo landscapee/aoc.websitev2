@@ -324,10 +324,10 @@ export const allField = {
 	contrlPoint: { text: '流控点' },
 	fix: { text: '走廊口' },
 	contrlStatus: { text: '是否流控' },
-	displayFirstLuggageEstimateArriveTime: { text: '首件行李预计到达时间', width: 160 },
+	displayFirstLuggageEstimateArriveTime: { text: '首件行李预计到达时间', width: 160, search: { type: 'time' }  },
 	estimateBordingLength: { text: '预计登机时长(分钟)', width: '150px' },
-	displayEstimateGuaranteeCompleteTime: { text: '预计保障完成时间', width: '140px' },
-	displayFirstLuggageActualArriveTime: { text: '首件行李实际到达时间', width: '160px' },
+	displayEstimateGuaranteeCompleteTime: { text: '预计保障完成时间', width: '140px', search: { type: 'time' } },
+	displayFirstLuggageActualArriveTime: { text: '首件行李实际到达时间', width: '160px', search: { type: 'time' } },
 	actualBordingLength: { text: '实际登机时长(分钟)', width: '140px' },
 	actualRoute: { text: '航路' },
 	planRoute: { text: '计划航路' },
@@ -367,10 +367,10 @@ export const allField = {
 	// expectRunWay: { text: '计划使用跑道', width: 120 }, // 预加油
 	milestoneStatusCn: { text: '空地里程碑', width: 120 }, //
 	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role:'edit-qualification', width: 180 }, //
-	displayDSGT: { text: '放行标准保障时间', width: 140 },
-	displayTSGT: { text: '起飞标准保障时间', width: 140 },
-	displayDSTT: { text: '放行标准起飞时间', width: 140 },
-	displayTSTT: { text: '起飞标准起飞时间', width: 140 },
+	displayDSGT: { text: '放行标准保障时间', width: 140, search: { type: 'time' }  },
+	displayTSGT: { text: '起飞标准保障时间', width: 140, search: { type: 'time' }  },
+	displayDSTT: { text: '放行标准起飞时间', width: 140, search: { type: 'time' }  },
+	displayTSTT: { text: '起飞标准起飞时间', width: 140, search: { type: 'time' }  },
 	overStationMinTime: { text: '最小过站时间(分钟)', width: 150 },
 	overStationScheduleTime: { text: ' 计划过站时间(分钟)', width: 150 },
 	isDelay: { text: '是否延误', search: { type: 'select', options: { true: '是', false: '否' } } },

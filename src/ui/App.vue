@@ -17,6 +17,7 @@
 
     import PostalStore from "./lib/postalStore";
     import {clearCookie} from "./lib/localStorageTemp";
+    import {getListHeader} from "@/worker/lib/columns";
 
     let postalStore = new PostalStore();
     export default {
@@ -56,7 +57,11 @@
             });
             postalStore.sub('Web', 'Global.Alert', (opts) => {
                 Vue.prototype.$alert(...opts)
-            })
+            });
+
+          postalStore.sub('Flight.GetHeader.Res', (newColumns) => {
+            memoryStore.setItem('global', {flightHeader: newColumns});
+          });
         },
         methods: {
             close() {

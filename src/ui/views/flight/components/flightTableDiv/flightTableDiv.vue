@@ -1,14 +1,14 @@
 <template>
   <div class="flightTableDiv">
     <div class="lock" id="lock" :style="{width: lockWidth + 'rem'}">
-      <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="lockColumns"></flightHeader>
+      <flightHeader :activeKey.sync="activeKey" :isHistory="isHistory" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="lockColumns"></flightHeader>
       <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId"  :data="data" :columns="lockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
     </div>
 
 
     <div class="unlockBox" :style="{width: unLockBoxWidth + 'rem', left: lockWidth + 'rem', height: isHistory ? 'auto' : flightHeight + 'rem'}">
         <div :style="{width: unLockWidth + 'rem'}">
-          <flightHeader :activeKey.sync="activeKey" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="unLockColumns" ></flightHeader>
+          <flightHeader :activeKey.sync="activeKey" :isHistory="isHistory" :order.sync="order" :changeLockStatus="changeLockStatus" :columns="unLockColumns" ></flightHeader>
           <flightRow :checkFlightId="checkFlightId" :hoverId.sync="hoverId" :clickId.sync="clickId" :data="data" :columns="unLockColumns"><slot slot-scope="scope" :row="scope.row" :item="scope.item"></slot></flightRow>
         </div>
     </div>
