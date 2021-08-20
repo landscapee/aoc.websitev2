@@ -21,7 +21,7 @@ export const filedConvert = {
 	'ata-atd': {
 		convert: (data) => {
 			let movement = get(data, 'movement');
-			return movement === 'D' ? get(data, 'displayATD', DISPLAYNULL) : get(data, 'displayATA', DISPLAYNULL);
+			return movement === 'D' ? get(data, 'displayATDWithDate', DISPLAYNULL) : get(data, 'displayATAWithDate', DISPLAYNULL);
 		},
 	},
 	'eta-ctotSort': {
@@ -278,8 +278,8 @@ export const allField = {
 	passengerService: { text: '旅客服务' },
 	assignmentAgent: { text: '签派代理' },
 	serviceAgent: { text: '地服代理', full: '勤务代理' },
-	preOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', reference: true },
-	preOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', reference: true },
+	// preOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', reference: true, search: { type: 'time' } },
+	// preOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', reference: true, search: { type: 'time' } },
 	displayPreOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', sort: true, referenceTo: 'preOrNxtPlanTime', search: { type: 'time' } },
 	displayPreOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', sort: true, referenceTo: 'preOrNxtActualTime', search: { type: 'time' } },
 	terminal: { text: '航站楼', search: { type: 'select', options: ['T1', 'T2'] } },
@@ -390,13 +390,13 @@ export const allField = {
 	delayMainReason: {
 		text: '延误主原因',
 		width: 200,
-		referenceTo: 'delayMainReasonCn',
+		referenceTo: ['delayMainReason','delayMainReasonCn'],
 		search: { type: 'select', remoteOptionField: 'delayMainReason' },
 	},
 	delaySubReason: {
 		text: '延误子原因',
 		width: 200,
-		referenceTo: 'delaySubReasonCn',
+		referenceTo: ['delaySubReason','delaySubReasonCn'],
 		remoteOptionField: 'delaySubReason',
 		search: { type: 'select', remoteOptionField: 'delaySubReason' },
 	},
@@ -426,7 +426,7 @@ export const defaultColumns = [
 	{ key: 'displayPreOrNxtPlanTime' }, //前后站计划时间
 	{ key: 'displayPreOrNxtActualTime' }, //前后站实际时间
 	{ key: 'eta-ctot' }, //预计时间
-	{ key: 'displayStandardTakeOffTime' }, //标准起飞时间
+	// { key: 'displayStandardTakeOffTime' }, //标准起飞时间
 	{ key: 'elecFlightStatus' }, //电子进程单状态
 	{ key: 'movement' }, //进/离
 	{ key: 'displayRunway' }, //跑道

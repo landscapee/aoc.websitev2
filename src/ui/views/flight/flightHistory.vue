@@ -55,12 +55,13 @@
 <script>
 import moment from "moment";
 import {memoryStore} from "@/worker/lib/memoryStore";
-import _, {compact, extend, filter} from "lodash";
+import _, {cloneDeep, compact, extend, filter, toUpper} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
 import {getListHeader} from "@/ui/views/flight/components/handleColumn";
 import {map} from "lodash";
 import flightTable from "@/ui/views/flight/components/flightTable/flightTable";
 import ColumnsDefine from "@/ui/views/flight/columnDefine";
+import ColumnDefineHistory from "@/ui/views/flight/columnDefineHistory";
 import {sortAble} from "@/ui/views/flight/historyConfig";
 import axios from "axios";
 
@@ -74,9 +75,9 @@ let tabBarOptions = [
   { name: '备降', key: 'alternate', option: { alternate: true } },
   { name: '取消', key: 'cancel', option: { cancel: true } },
   // { name: '关注', key: 'concern', option: { concern: true } },
-  { name: '备降外场', key: 'isAlternateLandingFlight', option: { isAlternateLandingFlight: true } },
-  { name: '客运', key: 'isPassagerFlight', option: { isPassagerFlight: true } },
-  { name: '始发', key: 'originated', option: { originated: true } },
+  { name: '备降外场', key: 'isAlternateLandingFlight', option: { alternateLanding: true } },
+  { name: '客运', key: 'isPassagerFlight', option: { passenger: true } },
+  { name: '始发', key: 'originated', option: { original: true } },
   // { name: '可执行积压', key: 'isExecutableFlight', option: { isExecutableFlight: true } },
 ];
 let opt, tempAdvance, term, sort, date, search;
@@ -199,13 +200,16 @@ export default {
 
     postalStore.sub('Flight.GetHistory.Response', data => {
       this.total = data.total
+      data.flights = map(data.flights, (item, index) => ({...item, flightIndex : (this.pageIndex -1) * this.pageSize + index + 1}) )
       this.flightData = data
     })
     this.setColumns(header)
     this.sendFilterOpt()
     // 同步搜索信息
     postalStore.sub('Web', 'FlightHeaderSearch.Sync', data => {
-      this.sendFilterOpt(data)
+      tempAdvance = data;
+      this.pageIndex = 1
+      this.sendFilterOpt()
     })
     // 同步排序信息
     postalStore.sub('Web', 'SendFilterOpt', sort => {
@@ -247,7 +251,7 @@ export default {
         data: msg,
         responseType: 'arraybuffer',
       }).then(res => {
-        let blob = new Blob([res.data], { type: 'type: "application/vnd.ms-excel"' });
+        let blob = new Blob([res], { type: 'type: "application/vnd.ms-excel"' });
         let objectUrl = URL.createObjectURL(blob);
         let a = document.createElement('a');
         document.body.appendChild(a);
@@ -268,6 +272,7 @@ export default {
     tabClick(option){
       let sel = _.find(this.tabBarOptions, item => item.name === option.label)
       this.opt = sel.option;
+      this.pageIndex = 1;
       this.sendFilterOpt()
     },
     searchInputChange(v){
@@ -277,8 +282,9 @@ export default {
       this.timer = setTimeout(() => {
         this.search = {
           filed: 'all',
-          value: v,
+          value: toUpper(v),
         };
+        this.pageIndex = 1
         this.sendFilterOpt()
       },400);
 
@@ -286,11 +292,14 @@ export default {
     setColumns: function (Columns) {
       let newColumns = _.map(Columns, (h) => {
         h.sort = sortAble.indexOf(h.key) > -1
+        let header = _.cloneDeep(h);
         if (ColumnsDefine[h.key]) {
-          return _.extend({}, h, ColumnsDefine[h.key]);
-        } else {
-          return h;
+          header = _.extend({}, h, ColumnsDefine[h.key]);
         }
+        if (ColumnDefineHistory[h.key]) {
+          header = _.extend({}, h, ColumnDefineHistory[h.key]);
+        }
+        return header;
       });
       newColumns = filter(newColumns, item => !item.hidInHistory)
       this.columns = newColumns;
@@ -306,11 +315,11 @@ export default {
     timeChange(v){
       let s = moment(v[0]).format('x')
       let e = moment(v[1]).format('x')
-      this.date = { startTime: s, endTime: e, pageIndex: 1 };
+      this.date = { startTime: s, endTime: e };
+      this.pageIndex = 1
       this.sendFilterOpt()
     },
-    sendFilterOpt(advance) {
-      tempAdvance = advance;
+    sendFilterOpt() {
       // if (!sort) {
       //   defaultSortFun();
       // }
@@ -325,7 +334,7 @@ export default {
       this.date && extend(msg, this.date);
       this.search && extend(msg, this.search);
       this.sort && extend(msg, {orderKey: this.sort.key, order: this.sort.order});
-      advance && extend(msg, {advanceSearch: advance});
+      tempAdvance && extend(msg, {advanceSearch: tempAdvance});
       postalStore.pub('Worker', 'Flight.GetHistory', msg);
     }
   }
@@ -335,6 +344,9 @@ export default {
 <style lang="scss" scoped>
   .flightHistory{
     position: fixed!important;
+    ::v-deep .unlockBox{
+      height: 8.2rem!important;
+    }
   }
   ::v-deep .paginationHistory{
     position: fixed;

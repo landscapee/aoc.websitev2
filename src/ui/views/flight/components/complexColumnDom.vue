@@ -67,7 +67,7 @@
           变更为: <span class="weightFont">{{ displayTimeDate(item.newTime) }}</span>
         </span>
     </div>
-    <span slot="reference">{{ scope.row.displayCTOT }}</span>
+    <span slot="reference">{{ scope.row.displayCOBT }}</span>
   </el-popover>
 
   <permissionSwitch v-else-if="item.key === 'displayTOBT'" slot-scope="scope" role="edit-TOBT">
