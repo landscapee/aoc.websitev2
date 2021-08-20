@@ -10,6 +10,7 @@
 import * as echarts from 'echarts'
 import { barOptions } from './options'
 import { map } from 'lodash'
+import {debounce} from '@/ui/lib/common.js'
 
 export default {
     name: 'echarts',
@@ -76,6 +77,9 @@ export default {
         setOptions(options) {
             this.echartsInstance.setOption(options)
         },
+        resizeEcharts(){
+           this.echartsInstance.resize()
+        }
     },
     created() {},
     mounted() {
@@ -84,9 +88,12 @@ export default {
         if (this.options) {
             this.setOptions(this.options)
         }
+        window.addEventListener("resize",this.resizeEcharts)
+
     },
     beforeDestroy() {
         this.echartsInstance.dispose()
+        window.removeEventListener('resize',this.resizeEcharts)
     },
 }
 </script>

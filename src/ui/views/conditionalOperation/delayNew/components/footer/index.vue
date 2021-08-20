@@ -9,7 +9,7 @@
 					航班调整调减
 				</div>
 				<div class="tableBox">
-					<ele-table :columnConfig=" tableConfig" :table-data="suggestPlan">
+					<ele-table :columnConfig=" tableConfig" :table-data="getPlanData">
 
 					</ele-table>
 				</div>
@@ -114,6 +114,7 @@
                 tableConfig: columns,
                 suggestPlan: [],//航班调整调减
                  runDecisionTable:{},//恢复阶段运行决策
+                currentType:null,// 调整调减类型
                 rules: {
                     name: [
                         { required: true, message: '请输入', trigger: 'blur' },
@@ -123,7 +124,10 @@
             }
         },
 		computed:{
-            getTableData(){
+            getPlanData(){
+              return this.currentType&&this.suggestPlan
+			},
+			getTableData(){
               return this.runDecisionTable[this.activeName]
 			},
 			isObjectK(){
@@ -241,19 +245,17 @@
                     };
                 });
             },
+            getCurrentDelayType() {
+                this.$request.get('adverse', 'adjust/getCurrentDelayType').then((res) => {
+                    this.currentType = res.data.type==2
+                    console.log(this.currentType);
+
+                })
+            },
 
         },
         created() {
-			// this.form={
-            //     direction: "north",
-            //     endTime: 1628265600000,
-            //     startTime: 1628092800000,
-            //     useAge: {
-            //         '01': 2,
-            //         '02': 2,
-            //         '11': 1,
-			// 	},
-			// }
+            this.getCurrentDelayType()
         }
         ,
         mounted() {
@@ -268,10 +270,10 @@
 				}
                  this[key] = myData;
             });
-            postalStore.sub('AdverseCondition.Decrease.SetReduce', (data) => {
-
+            //
+            postalStore.sub('FlightsByHours.GetCurrentReduce.Response', (data) => {
                 console.log(11,data);
-                this.suggestPlan = data?.length&&this.formatSuggestForEdit(data) || [];
+                this.suggestPlan =this.formatSuggestForEdit(data.currentReduce) || [];
             });
 
             postal.publish({
@@ -279,6 +281,14 @@
                 topic: 'Decrease.GetCurrentReduce',
                 data: '2',
             });
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Adverse.Network.Connected',
+             });
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.FlightAdjustment.Start',
+             });
         }
         ,
         beforeDestroy() {
