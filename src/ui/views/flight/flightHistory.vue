@@ -32,6 +32,8 @@
         <el-input @input="searchInputChange" placeholder="航班号|机位|机尾号|登机口|航线" v-model="searchValue" class="input-with-search">
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
+        <el-button @click="toggleAdvance" title="高级搜索" type="info" size="mini"><i class="iconfont icon-gaojisousuo"/></el-button>
+        <el-button @click="exportExel"  title="导出当前结果" type="info" size="mini"><i class="iconfont icon-daochuexcel"/></el-button>
         <router-link to="/flight" class="back"><el-button size="mini" type="primary">返回</el-button></router-link>
       </div>
     </div>
@@ -44,7 +46,7 @@
           background
           :page-size="pageSize"
           layout="prev, pager, next"
-          :total="1000">
+          :total="total">
       </el-pagination>
     </div>
   </div>
@@ -53,12 +55,14 @@
 <script>
 import moment from "moment";
 import {memoryStore} from "@/worker/lib/memoryStore";
-import _, {extend} from "lodash";
+import _, {compact, extend, filter} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
 import {getListHeader} from "@/ui/views/flight/components/handleColumn";
 import {map} from "lodash";
 import flightTable from "@/ui/views/flight/components/flightTable/flightTable";
 import ColumnsDefine from "@/ui/views/flight/columnDefine";
+import {sortAble} from "@/ui/views/flight/historyConfig";
+import axios from "axios";
 
 let postalStore = new PostalStore();
 
@@ -75,7 +79,7 @@ let tabBarOptions = [
   { name: '始发', key: 'originated', option: { originated: true } },
   // { name: '可执行积压', key: 'isExecutableFlight', option: { isExecutableFlight: true } },
 ];
-let opt, defaultSortFun, term, sort, date, search;
+let opt, tempAdvance, term, sort, date, search;
 export default {
   name: "flightHistory",
   components: {flightTable},
@@ -87,23 +91,24 @@ export default {
       activeTab: 'total',
       tabBarOptions,
       searchValue: '',
-      time:[moment(now).subtract(1, 'd').format(), moment(now).format()],
-      pageSize: 22,
+      time:[moment(now).subtract(2, 'd').format(), moment(now).subtract(1, 'd').format()],
+      pageSize: 21,
       pageIndex: 1,
       flightData: {},
       columns: [],
+      total: 1,
       pickerOptions: {
         shortcuts: [
-          {
-          text: '昨天',
-          onClick(picker) {
-            _this.timetext = '昨天';
-            _this.timetextFlag = true;
-            let start = moment(now).subtract(1,'d').startOf('day').format()
-            let end = moment(now).startOf('d').format()
-            picker.$emit('pick', [start, end]);
-          }
-        },
+        //   {
+        //   text: '昨天',
+        //   onClick(picker) {
+        //     _this.timetext = '昨天';
+        //     _this.timetextFlag = true;
+        //     let start = moment(now).subtract(1,'d').startOf('day').format()
+        //     let end = moment(now).startOf('d').format()
+        //     picker.$emit('pick', [start, end]);
+        //   }
+        // },
           {
           text: '前天',
           onClick(picker) {
@@ -112,14 +117,14 @@ export default {
             picker.$emit('pick', [start, end]);
           }
         },
-          {
-            text: '运营日昨天',
-            onClick(picker) {
-              let start = moment(now).subtract(1,'d').startOf('day').set('hour', 4).format()
-              let end = moment(now).startOf('day').set('hour', 4).format()
-              picker.$emit('pick', [start, end]);
-            }
-          },
+          // {
+          //   text: '运营日昨天',
+          //   onClick(picker) {
+          //     let start = moment(now).subtract(1,'d').startOf('day').set('hour', 4).format()
+          //     let end = moment(now).startOf('day').set('hour', 4).format()
+          //     picker.$emit('pick', [start, end]);
+          //   }
+          // },
           {
             text: '运营日前天',
             onClick(picker) {
@@ -179,18 +184,83 @@ export default {
     let header = getListHeader();
     let headerArray = map(header, item => {return _.pick(item, ['text' , 'key', 'reference', 'referenceTo'])})
     postalStore.pub('Page.FlightHistory.Start', headerArray);
+    // 获取运营状态options
+    this.$request.get('flight', 'Flight/status').then(res => {
+      if (res.code === 200){
+        this.$store.commit('flight/updateFlightRemoteOptions', {statusOptions: res.data})
+      }
+
+    })
+
+    postalStore.sub('Flight.GetHeader.Res', (newColumns) => {
+      memoryStore.setItem('global', {flightHeader: newColumns});
+      this.setColumns(getListHeader())
+    });
+
     postalStore.sub('Flight.GetHistory.Response', data => {
-      console.log(data)
+      this.total = data.total
       this.flightData = data
     })
     this.setColumns(header)
     this.sendFilterOpt()
+    // 同步搜索信息
+    postalStore.sub('Web', 'FlightHeaderSearch.Sync', data => {
+      this.sendFilterOpt(data)
+    })
+    // 同步排序信息
+    postalStore.sub('Web', 'SendFilterOpt', sort => {
+      this.sort = sort?.sort
+      this.sendFilterOpt()
+    })
   },
+
   beforeDestroy() {
+    this.$store.commit('flight/toggleShowAdvance', false)
     postalStore.pub('Page.FlightHistory.Stop', '');
     postalStore.unsubAll()
   },
   methods: {
+    exportExel(){
+      let flightHeaders = map(this.columns || [], (h) => {
+        if (!h.hidInHistory) return { headerName: h.text, headerKey: h.key };
+      });
+
+      let http = window.httpConfig.flight
+      let headers = { 'Content-Type': 'application/json', responseType: 'arraybuffer' };
+      let msg = {
+        // pageIndex: this.pageIndex,
+        // pageSize: this.pageSize,
+        startTime: moment(this.time[0]).format('x'),
+        endTime: moment(this.time[1]).format('x'),
+        headers: compact(flightHeaders),
+      };
+      this.opt && extend(msg, this.opt);
+      term && extend(msg, term);
+      this.date && extend(msg, this.date);
+      this.search && extend(msg, this.search);
+      this.sort && extend(msg, {orderKey: this.sort.key, order: this.sort.order});
+      tempAdvance && extend(msg, {advanceSearch: tempAdvance});
+      axios({
+        method: 'post',
+        headers,
+        url: `http://${http.host}:${http.port}/${http.path}/Flight/search/exportHistory`,
+        data: msg,
+        responseType: 'arraybuffer',
+      }).then(res => {
+        let blob = new Blob([res.data], { type: 'type: "application/vnd.ms-excel"' });
+        let objectUrl = URL.createObjectURL(blob);
+        let a = document.createElement('a');
+        document.body.appendChild(a);
+        a.style = 'display: none';
+        a.href = objectUrl;
+        a.download = '航班历史' + moment(memoryStore.getItem('global').now).format('YYYYMMDDHHmm') + '.xls';
+        a.click();
+        document.body.removeChild(a);
+      })
+    },
+    toggleAdvance(){
+      this.$store.commit('flight/toggleShowAdvance', !this.$store.state.flight.showAdvance)
+    },
     pageChange(v){
       this.pageIndex = v;
       this.sendFilterOpt()
@@ -209,19 +279,20 @@ export default {
           filed: 'all',
           value: v,
         };
-        console.log(this.search)
         this.sendFilterOpt()
       },400);
 
     },
     setColumns: function (Columns) {
       let newColumns = _.map(Columns, (h) => {
+        h.sort = sortAble.indexOf(h.key) > -1
         if (ColumnsDefine[h.key]) {
           return _.extend({}, h, ColumnsDefine[h.key]);
         } else {
           return h;
         }
       });
+      newColumns = filter(newColumns, item => !item.hidInHistory)
       this.columns = newColumns;
       this.calcColumnWidth()
     },
@@ -238,7 +309,8 @@ export default {
       this.date = { startTime: s, endTime: e, pageIndex: 1 };
       this.sendFilterOpt()
     },
-    sendFilterOpt(sort) {
+    sendFilterOpt(advance) {
+      tempAdvance = advance;
       // if (!sort) {
       //   defaultSortFun();
       // }
@@ -252,7 +324,8 @@ export default {
       term && extend(msg, term);
       this.date && extend(msg, this.date);
       this.search && extend(msg, this.search);
-      sort && extend(msg, sort);
+      this.sort && extend(msg, {orderKey: this.sort.key, order: this.sort.order});
+      advance && extend(msg, {advanceSearch: advance});
       postalStore.pub('Worker', 'Flight.GetHistory', msg);
     }
   }
@@ -318,8 +391,23 @@ export default {
     }
     ::v-deep .rightTool{
       display: flex;
+      align-items: center;
+      .el-button{
+        height: 30px;
+        padding: 0 5px;
+        border: 0.01rem solid #37455c !important;
+      }
+      .input-with-search{
+        line-height: 30px;
+        height: 30px;
+         .el-input__inner{
+          height: 30px;
+          line-height: 30px;
+        }
+      }
+
       .el-date-editor.el-range-editor{
-        height: 36px;
+        height: 32px;
       }
       .el-input__icon, .el-range-input, .el-input__icon, .el-range-separator{
         height: 30px!important;
@@ -359,6 +447,7 @@ export default {
     }
     .back{
       margin-right: 20px;
+      margin-left: 10px;
       display: flex;
       align-items: center;
     }

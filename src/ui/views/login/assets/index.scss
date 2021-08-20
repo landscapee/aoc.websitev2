@@ -86,8 +86,8 @@ $dark_gray: #889aa4;
 	}
 
 	.loginPanle {
-		width: 880px;
-		height: 460px;
+		width: 840px;
+		height: 420px;
 		display: flex;
 		position: relative;
 
@@ -111,7 +111,7 @@ $dark_gray: #889aa4;
 			border-radius: 10px 0 0 10px;
 			width: 50%;
 			height: 100%;
-			background-image: linear-gradient(to bottom, rgba(208, 224, 248, 1), rgba(208, 224, 248, 0.9));
+			background: hsla(0,0%,100%,.8);
 			display: flex;
 			justify-content: center;
 			align-items: center;
@@ -125,7 +125,7 @@ $dark_gray: #889aa4;
 			border-radius: 0 0px 10px 0;
 			width: 50%;
 			height: 100%;
-			background-image: linear-gradient(to bottom, RGBA(216, 229, 248, 1), RGBA(216, 229, 248, 0.9));
+			background: hsla(0,0%,100%,.4);
 			display: flex;
 			justify-content: center;
 

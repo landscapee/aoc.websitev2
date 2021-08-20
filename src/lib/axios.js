@@ -4,7 +4,7 @@ import axios from "axios";
 import router from '../ui/router'
 import store from '../ui/store'
 import postal from 'postal';
-import {cloneDeep, includes, isString} from 'lodash';
+import {cloneDeep, includes, isArrayBuffer, isString} from 'lodash';
 import {memoryStore} from "@/worker/lib/memoryStore";
 // let hasIfm = self!=top//是否被镶嵌
 axios.interceptors.request.use(
@@ -49,6 +49,10 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response=>{
+
+    if (isArrayBuffer(response.data)){
+      return response.data
+    }
     // if(response.data.date){
     //   store.commit('setServerTime',new Date(response.data.date))
     // }
@@ -71,18 +75,15 @@ axios.interceptors.response.use(
         })
         // })
       }else{
-        postal.publish({
-          channel:'Web',
-          topic:'Global.Alert',
-          data: [response.data.responseMessage||response.data.message||response.data.msg||response.config.url+'接口错误', '提示', {
-            type: 'error',
-            center: true
-          }]
-        })
-        // Vue.prototype.$alert(response.data.responseMessage||response.data.message||response.data.msg||response.config.url+'接口错误', '提示', {
-        //   type: 'error',
-        //   center: true
+        // postal.publish({
+        //   channel:'Web',
+        //   topic:'Global.Alert',
+        //   data: [response.data.responseMessage||response.data.message||response.data.msg||response.config.url+'接口错误', '提示', {
+        //     type: 'error',
+        //     center: true
+        //   }]
         // })
+
       }
     }
   },

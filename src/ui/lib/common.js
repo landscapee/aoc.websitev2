@@ -1,5 +1,5 @@
 import postal from 'postal'
-import {isObject, isString, has, isFunction} from 'lodash';
+import {isObject, isString, has, isFunction, some} from 'lodash';
  import {Message} from 'element-ui';
 import {getUserSerializ} from './localStorageTemp'
 /**
@@ -128,3 +128,30 @@ export const sizeStr = (str) => {
         return false;
     }
 }
+
+export const getQueryNum = (value) => {
+    const testCfg = [
+        { query: 'gt', reg: new RegExp(/^>\d+$/) },
+        { query: 'ge', reg: new RegExp(/^>=\d+$/) },
+        { query: 'lt', reg: new RegExp(/^<\d+$/) },
+        { query: 'lte', reg: new RegExp(/^<=\d+$/) },
+        { query: 'eq', reg: new RegExp(/^\d+$/) },
+        // { query: 'between', reg: new RegExp(/^(20|21|22|23|[0-1]\d)[0-5]\d-(20|21|22|23|[0-1]\d)[0-5]\d$/) },
+    ];
+    let query;
+    some(testCfg, (test) => {
+        let right = test.reg.test(value);
+        if (right) {
+            query = test.query;
+        }
+        return right;
+    });
+    if (query) {
+        return {
+            query,
+            value: parseInt(value.match(/\d+/g)[0]),
+        };
+    } else {
+        return false;
+    }
+};

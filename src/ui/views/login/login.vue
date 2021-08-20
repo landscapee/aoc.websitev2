@@ -67,7 +67,7 @@
 <script>
 import userimg from './assets/img/login-username.png'
 import pwdimg from './assets/img/login-password.png'
-import bg from 'ui/assets/img/tianfu/bg.png'
+import bg from 'ui/assets/img/tianfu/loginBg2.jpg'
 import loginLogo from 'ui/assets/img/tianfu/login-logo.png'
 import './assets/index.scss'
 import { encryptedData } from '../../lib/des-coder.js'
