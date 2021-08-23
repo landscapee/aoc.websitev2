@@ -54,6 +54,7 @@ import {memoryStore} from "@/worker/lib/memoryStore";
 import moment from "moment";
 import {getQueryNum} from "@ui_lib/common";
 let postalStore = new PostalStore();
+let headSearchQueries = {}
 export default {
   name: "flightHeader",
   props: ['columns', 'changeLockStatus', 'activeKey', 'order', 'isHistory'],
@@ -67,7 +68,8 @@ export default {
       inputValue: '',
       selValue: {},
       day : moment(now).format('YYYY-MM-DD'),
-      yester2day
+      yester2day,
+      headSearchQueries: {}
     }
   },
   methods: {
@@ -119,7 +121,7 @@ export default {
       }
     },
     selChange(v, col){
-      console.log(v)
+      console.log(headSearchQueries)
       this.selValue['sel'+col.key] = v;
       let isRadio = get(col, 'search.radio');
       let inputName = col.referenceTo || col.key;
@@ -129,14 +131,14 @@ export default {
       let query = { $eq: inputValue };
       if (inputName == 'mark') {
         if (inputValue == 'all') {
-          this.headSearchQueries['markD'] && this.sendQuery('', 'markD', '');
-          this.headSearchQueries['markV'] && this.sendQuery('', 'markV', '');
+          headSearchQueries['markD'] && this.sendQuery('', 'markD', '');
+          headSearchQueries['markV'] && this.sendQuery('', 'markV', '');
         } else {
           inputName = inputValue;
           query = { $eq: '1' };
           let oinputName = inputName == 'markD' ? 'markV' : 'markD';
           this.sendQuery(inputValue, inputName, query);
-          this.headSearchQueries[oinputName] && this.sendQuery('', oinputName, '');
+          headSearchQueries[oinputName] && this.sendQuery('', oinputName, '');
         }
       } else if (inputName == 'flightStatusText') {
         query = { $regex: inputValue };
@@ -157,23 +159,23 @@ export default {
       let isBool = inputValue === true || inputValue === false;
       let query = { searchType: 'in', searchValue: inputValue, dataType: isBool ? 'bool' : 'str' };
       if (inputName == 'mark') {
-        this.headSearchQueries = this.headSearchQueries || {};
+        headSearchQueries = headSearchQueries || {};
         if (inputValue == '0') {
-          this.headSearchQueries['markD'] && this.sendQuery('', 'markD', '');
-          this.headSearchQueries['markV'] && this.sendQuery('', 'markV', '');
+          headSearchQueries['markD'] && this.sendQuery('', 'markD', '');
+          headSearchQueries['markV'] && this.sendQuery('', 'markV', '');
         } else {
           if (item.length > 0) {
             let searchValue = '';
             map(item, (itemValue) => {
               searchValue += itemValue.value;
             });
-            this.headSearchQueries[`mark`] = { searchValue, dataType: 'str', searchType: 'eq' };
+            headSearchQueries[`mark`] = { searchValue, dataType: 'str', searchType: 'eq' };
             this.sendQuery('', '', '');
           } else {
             this.sendQuery('', 'mark', '');
           }
-          delete this.headSearchQueries['markD'];
-          delete this.headSearchQueries['markV'];
+          delete headSearchQueries['markD'];
+          delete headSearchQueries['markV'];
         }
       } else {
         this.sendQuery(inputValue, inputName, query);
@@ -183,25 +185,25 @@ export default {
       this.sendQuery(value, key, { $regex: value });
     },
     sendQuery(inputValue, inputName, query) {
-      this.headSearchQueries = this.headSearchQueries || {};
+      headSearchQueries = headSearchQueries || {};
       if (inputValue !== '') {
         if (isArray(inputName)) {
-          this.headSearchQueries[inputName.join('-')] = query;
+          headSearchQueries[inputName.join('-')] = query;
         } else {
-          this.headSearchQueries[inputName] = query;
+          headSearchQueries[inputName] = query;
         }
       }
-      if ((inputValue === '' || inputValue === 'all') && this.headSearchQueries[inputName]) {
-        delete this.headSearchQueries[inputName];
+      if ((inputValue === '' || inputValue === 'all') && headSearchQueries[inputName]) {
+        delete headSearchQueries[inputName];
       }
       if (isArray(inputName)) {
-        if (inputValue === '' || (inputValue === 'all' && this.headSearchQueries[inputName.join('-')])) {
-          delete this.headSearchQueries[inputName.join('-')];
+        if (inputValue === '' || (inputValue === 'all' && headSearchQueries[inputName.join('-')])) {
+          delete headSearchQueries[inputName.join('-')];
         }
       }
-      // console.log(this.headSearchQueries)
+      // console.log(headSearchQueries)
       if (this.isHistory){
-        postalStore.pub('Web', 'FlightHeaderSearch.Sync', map(this.headSearchQueries, (v, key) => {
+        postalStore.pub('Web', 'FlightHeaderSearch.Sync', map(headSearchQueries, (v, key) => {
           if (isArray(v)) {
             return v.map((item) => {
               return { ...item, frontKey: key };
@@ -211,7 +213,7 @@ export default {
         }))
       }else {
         this.sendSort({
-          searchQueries:  map(this.headSearchQueries, (v, key) => {
+          searchQueries:  map(headSearchQueries, (v, key) => {
             if (key.indexOf('-') > -1) {
               return {
                 $or: map(key.split('-'), (keyName) => {
@@ -302,6 +304,7 @@ export default {
     },
   },
   mounted() {
+    headSearchQueries = {}
     postalStore.sub('Web', 'ClearSort', () => {
       this.$emit('update:activeKey', '')
       this.$emit('update:order', '')

@@ -169,5 +169,10 @@ export default {
     formatter: (item) => {
       return item.isDelay === true ? '是' : '否';
     }
+  },
+  cancel: {
+    formatter: (item) => {
+      return item.cancel === true ? '是' : item.cancel === false ? '否' : '--';
+    }
   }
 }

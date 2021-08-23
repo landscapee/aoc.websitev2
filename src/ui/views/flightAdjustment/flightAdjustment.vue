@@ -176,7 +176,8 @@
               <div v-if="suggestSquareData[index]" v-for="(item, index2) in Array.from({length: suggestSquareData[index]})" :key="'flightSuggest' + index + index2" class="flight flightSuggest" />
             </div>
           </div>
-          <div v-for="item in reduceData.adjustFlightsByHour[index]" :key="'suggest' + item.flightNo" :class="['flight', item.status == '1' ? 'actualAdjusted' : 'flightSuggest']">
+          <!-- 实际已调整航班 -->
+          <div v-if="get(reduceData, ['adjustFlightsByHour', index])" v-for="item in get(reduceData, ['adjustFlightsByHour', index])" :key="'suggest' + item.flightNo" :class="['flight', item.status == '1' ? 'actualAdjusted' : 'flightSuggest']">
             <div v-if="item.status == '1'" class="iconStart" />
             {{ item.flightNo }}
           </div>
@@ -293,7 +294,6 @@ export default {
   name: "flightByHour",
   data() {
     return {
-      get,
       statusHelp,
       gantan,
       eyes2,
@@ -383,7 +383,7 @@ export default {
     moment,
     pxtorem,
     fixPx,
-
+    get,
     currentMaxDepart(time){
       let flightsByTime = this.flights[time];
       let flightsByScheduleTime = groupBy(flightsByTime, (item) => displayTimeHour(item.scheduleTime));
@@ -1085,10 +1085,10 @@ export default {
     &:hover{ box-shadow: 0px 0px 5px #203149;}
   }
   .planAdjust{
-    border: 1px solid #f89401;
+    border: 1px solid #089690;
     //background: #203149;
-    color: #f89401;
-    &:hover{ box-shadow: 0px 0px 5px #f89401;}
+    color: #089690;
+    &:hover{ box-shadow: 0px 0px 5px #089690;}
   }
   .actualAdjust{
     border: 1px solid #492C00;
