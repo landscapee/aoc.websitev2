@@ -52,16 +52,15 @@ export const init = (worker_, httpRequest_) => {
         clientObj.AdverseClient = new SocketWrapper(c);
     });
 
-    worker.subscribe('get.delayNew.data', (type) => {
-        memoryStore.setItem('AdverseCondition', { currentDelayType: type });
-
-        ajax.get('adverse', 'adjust/getCurrentReduce?type=' + type, null,false).then((res) => {
-            memoryStore.setItem('AdverseCondition', { reduceData: res.data });
-            worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce',  res.data);
-
-        });
-
-    });
+    // worker.subscribe('get.delayNew.data', (type) => {
+    //     memoryStore.setItem('AdverseCondition', { currentDelayType: type });
+    //     ajax.get('adverse', 'adjust/getCurrentReduce?type=' + type, null,false).then((res) => {
+    //         memoryStore.setItem('AdverseCondition', { reduceData: res.data });
+    //         worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce',  res.data);
+    //
+    //     });
+    //
+    // });
     // 恢复阶段运行决策
     worker.subscribe('get.runDecisionTable.data', (obj) => {
         ajax.post('adverse', 'statistic/calFlightRunwayStatistic', obj,false).then((res) => {

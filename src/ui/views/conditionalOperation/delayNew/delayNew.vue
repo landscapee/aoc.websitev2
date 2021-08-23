@@ -42,11 +42,7 @@
             });
         },
         mounted() {
-            postal.publish({
-                channel: 'Worker',
-                topic: 'get.delayNew.data',
-                data:2,
-            })
+
         },
         beforeDestroy() {
             postal.publish({

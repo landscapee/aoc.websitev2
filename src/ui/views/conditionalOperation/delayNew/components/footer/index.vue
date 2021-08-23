@@ -280,7 +280,11 @@
                 topic: 'Decrease.GetCurrentReduce',
                 data: '2',
             });
-
+            // postal.publish({
+            //     channel: 'Worker',
+            //     topic: 'get.delayNew.data',
+            //     data:2,
+            // })
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.FlightAdjustment.Start',
