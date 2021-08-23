@@ -267,6 +267,7 @@
                         console.log(l);
                         l==='11'? this.tabArr.unshift(l):this.tabArr.push(l)
 					})
+					this.activeName=this.tabArr[0]
 				}
                  this[key] = myData;
             });
