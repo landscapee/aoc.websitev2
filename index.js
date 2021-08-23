@@ -30,7 +30,7 @@ Vue.prototype.$logger = Logger;
 
 import {servers,httpConfig} from "@/lib/interfaces"
 import FlightDetails from './src/ui/components/flightDetails/index.js'
-
+window.httpConfig = httpConfig
 //日期插件
 moment.locale('zh-cn')
 // let request = new HttpRequest(httpConfig);

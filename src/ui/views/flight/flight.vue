@@ -57,8 +57,6 @@
       });
       let header = getListHeader();
       this.setColumns(header)
-      console.log('header::', header)
-      console.log('header::', header)
       postal.publish({
         channel: 'Worker',
         topic: 'Page.Flight.Start',
@@ -99,6 +97,7 @@
         topic: 'Page.Flight.Stop',
         data: ''
       })
+      this.$store.commit('flight/toggleShowAdvance', false)
 
       postalStore.unsubAll()
     },

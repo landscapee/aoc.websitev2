@@ -9,6 +9,7 @@ import {memoryStore} from "../../lib/memoryStore";
 let worker;
 let clientObj = {}
 let ajax;
+let adverseClient;
 
 /*
 * 检查服务是否在线
@@ -47,9 +48,6 @@ let getFlight = (query) => {
 };
 
 let subAdverseWSEvent = () => {
-    let adverseClient = clientObj.adverseClient;
-    
-
     let changeReduceData = (data) => {
 		let oData = memoryStore.getItem('AdverseCondition').reduceData;
 		let reduceId = data.reduceId;
@@ -111,7 +109,8 @@ export const init = (worker_,httpRequest) => {
 
     //头部信息获取
     worker.subscribe('Adverse.Network.Connected', (c) => {
-		clientObj.adverseClient = new SocketWrapper(c);
+    	adverseClient = c
+			clientObj.adverseClient = new SocketWrapper(c);
 	});
     checkClient('adverseClient').then(() => {
         subAdverseWSEvent();

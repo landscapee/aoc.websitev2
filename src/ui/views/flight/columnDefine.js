@@ -140,7 +140,7 @@ export default {
       let c = isSeatConflict && isSeatConflict !== '--' && isSeatConflict.length > 0;
       let classname = classNames({ 'd-block bg-red text-white': c });
       return (
-        `<span class="${classname}" title="${isSeatConflict}">
+        `<span class="${classname}" title="${isSeatConflict && isSeatConflict !== '--' ? isSeatConflict : ''}">
 					${seat}
 				</span>`
       );
@@ -168,6 +168,11 @@ export default {
   isDelay: {
     formatter: (item) => {
       return item.isDelay === true ? '是' : '否';
+    }
+  },
+  cancel: {
+    formatter: (item) => {
+      return item.cancel === true ? '是' : item.cancel === false ? '否' : '--';
     }
   }
 }

@@ -114,6 +114,7 @@
                 tableConfig: columns,
                 suggestPlan: [],//航班调整调减
                  runDecisionTable:{},//恢复阶段运行决策
+                // currentType:null,// 调整调减类型
                 rules: {
                     name: [
                         { required: true, message: '请输入', trigger: 'blur' },
@@ -123,7 +124,10 @@
             }
         },
 		computed:{
-            getTableData(){
+            // getPlanData(){
+            //   return (this.currentType&&this.suggestPlan)||[]
+			// },
+			getTableData(){
               return this.runDecisionTable[this.activeName]
 			},
 			isObjectK(){
@@ -241,21 +245,18 @@
                     };
                 });
             },
+            // getCurrentDelayType() {
+            //     this.$request.get('adverse', 'adjust/getCurrentDelayType').then((res) => {
+            //         this.currentType = res.data.type==2
+            //         console.log(res.data.type,this.currentType);
+			//
+            //     })
+            // },
 
         },
         created() {
-			// this.form={
-            //     direction: "north",
-            //     endTime: 1628265600000,
-            //     startTime: 1628092800000,
-            //     useAge: {
-            //         '01': 2,
-            //         '02': 2,
-            //         '11': 1,
-			// 	},
-			// }
-        }
-        ,
+            // this.getCurrentDelayType()
+        },
         mounted() {
             postalStore.sub('push.delayNew.data', ({data, key}) => {
                 let myData = data
@@ -265,20 +266,25 @@
                         console.log(l);
                         l==='11'? this.tabArr.unshift(l):this.tabArr.push(l)
 					})
+					this.activeName=this.tabArr[0]
 				}
                  this[key] = myData;
             });
-            postalStore.sub('AdverseCondition.Decrease.SetReduce', (data) => {
-
-                console.log(11,data);
-                this.suggestPlan = data?.length&&this.formatSuggestForEdit(data) || [];
-            });
+            //
+            postalStore.sub('FlightsByHours.GetCurrentReduce.Response', (data) => {
+                 this.suggestPlan =this.formatSuggestForEdit(data.currentReduce) || [];
+             });
 
             postal.publish({
                 channel: 'Worker',
                 topic: 'Decrease.GetCurrentReduce',
                 data: '2',
             });
+
+            postal.publish({
+                channel: 'Worker',
+                topic: 'Page.FlightAdjustment.Start',
+             });
         }
         ,
         beforeDestroy() {

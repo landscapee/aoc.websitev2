@@ -67,7 +67,7 @@
           变更为: <span class="weightFont">{{ displayTimeDate(item.newTime) }}</span>
         </span>
     </div>
-    <span slot="reference">{{ scope.row.displayCTOT }}</span>
+    <span slot="reference">{{ scope.row.displayCOBT }}</span>
   </el-popover>
 
   <permissionSwitch v-else-if="item.key === 'displayTOBT'" slot-scope="scope" role="edit-TOBT">
@@ -163,7 +163,7 @@
 
   <permissionSwitch v-else-if="item.renderType === 'radio'" :noRoleDes="(scope.row[item.key] === '--' || !scope.row[item.key]) ? '否' : '是' " slot-scope="scope" :role="item.role">
     <template>
-      <span v-if="isHistory">{{scope.row[item.key] == '1' ? '是' : '否'}}</span>
+      <span v-if="isHistory">{{scope.row[item.key] == '1' ? '是' : scope.row[item.key] == '0' ? '否' : '--'}}</span>
       <el-popconfirm
           v-else
           :title="`是否确认${scope.row[item.key] == '1' ? '取消' : '设置'}航班${scope.row.flightNo}为${item.text}`"
@@ -182,7 +182,7 @@
   <div slot-scope="scope" v-else-if="item.formatter" v-html="item.formatter(scope.row)">
   </div>
   <div v-else slot-scope="scope">
-    <div>
+    <div :title="scope.row[item.key] || ''">
       {{scope.row[item.key] || ''}}
     </div>
   </div>
@@ -422,6 +422,8 @@ export default {
         if (res.code === 200){
           this.$message({message:'播放成功!',type: 'success'})
         }
+      }).finally(res => {
+        console.log(res)
       })
     },
     classNames: classNames,

@@ -151,8 +151,8 @@
             handleMouseWheel(e) {
                 e.preventDefault();
                 this.activeStatus = true;
-                this.moveThumb(e.deltaX*0.4, e.deltaY*0.4)
-                // this.dynamicDisplayTable();
+                this.moveThumb(e.deltaX*0.2, e.deltaY*0.2)
+                 // this.dynamicDisplayTable();
                 if(this.activeTimer) {
                     clearTimeout(this.activeTimer);
                 }

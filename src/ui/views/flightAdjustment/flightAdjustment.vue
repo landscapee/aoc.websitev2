@@ -176,7 +176,8 @@
               <div v-if="suggestSquareData[index]" v-for="(item, index2) in Array.from({length: suggestSquareData[index]})" :key="'flightSuggest' + index + index2" class="flight flightSuggest" />
             </div>
           </div>
-          <div v-for="item in reduceData.adjustFlightsByHour[index]" :key="'suggest' + item.flightNo" :class="['flight', item.status == '1' ? 'actualAdjusted' : 'flightSuggest']">
+          <!-- 实际已调整航班 -->
+          <div v-if="get(reduceData, ['adjustFlightsByHour', index])" v-for="item in get(reduceData, ['adjustFlightsByHour', index])" :key="'suggest' + item.flightNo" :class="['flight', item.status == '1' ? 'actualAdjusted' : 'flightSuggest']">
             <div v-if="item.status == '1'" class="iconStart" />
             {{ item.flightNo }}
           </div>
@@ -197,10 +198,10 @@
             </div>
           </div>
 <!--          最大放行架次的横线 -->
-          <div class="position-absolute" :style="{ width: pxtorem('80') + 'rem', bottom: currentMaxDepart(index) * fixPx(23.2) + 'px', height: '1px', backgroundColor: 'rgba(233,54,112,.5)' }" />
+          <div class="position-absolute" :style="{ width: pxtorem('80') + 'rem', bottom: currentMaxDepart(index) * fixPx(23.0) + 'px', height: '1px', backgroundColor: 'rgba(233,54,112,.5)' }" />
 
           <div class="position-relative">
-            <div class="position-absolute" :style="{ width: '1px', bottom: bottom(index) + 'px', height: Math.abs(difference(index)) * fixPx(23.2) + 'px', backgroundColor: 'rgba(233,54,112,.5)' }" />
+            <div class="position-absolute" :style="{ width: '1px', bottom: bottom(index) + 'px', height: Math.abs(difference(index)) * fixPx(23.0) + 'px', backgroundColor: 'rgba(233,54,112,.5)' }" />
           </div>
 
           <div v-if="suggestData[index] && showSuggest" :key="'suggest' + index" class="position-relative">
@@ -220,7 +221,7 @@
       <div class="time d-flex mx-2">
         <div class="flex-auto text-center fo" v-for="(item, index) in 24">
           {{ ('0' + index).slice(-2) + ':00' }}
-          <small style="color: #00b9ee" class="ms-b">{{ (flights[item] || []).length || 0 }}</small>
+          <small style="color: #00b9ee" class="ms-b">{{ (flights[index] || []).length || 0 }}</small>
         </div>
       </div>
     </div>
@@ -293,7 +294,6 @@ export default {
   name: "flightByHour",
   data() {
     return {
-      get,
       statusHelp,
       gantan,
       eyes2,
@@ -383,7 +383,7 @@ export default {
     moment,
     pxtorem,
     fixPx,
-
+    get,
     currentMaxDepart(time){
       let flightsByTime = this.flights[time];
       let flightsByScheduleTime = groupBy(flightsByTime, (item) => displayTimeHour(item.scheduleTime));
@@ -1085,10 +1085,10 @@ export default {
     &:hover{ box-shadow: 0px 0px 5px #203149;}
   }
   .planAdjust{
-    border: 1px solid #f89401;
+    border: 1px solid #089690;
     //background: #203149;
-    color: #f89401;
-    &:hover{ box-shadow: 0px 0px 5px #f89401;}
+    color: #089690;
+    &:hover{ box-shadow: 0px 0px 5px #089690;}
   }
   .actualAdjust{
     border: 1px solid #492C00;

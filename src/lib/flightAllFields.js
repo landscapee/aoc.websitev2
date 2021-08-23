@@ -21,7 +21,7 @@ export const filedConvert = {
 	'ata-atd': {
 		convert: (data) => {
 			let movement = get(data, 'movement');
-			return movement === 'D' ? get(data, 'displayATD', DISPLAYNULL) : get(data, 'displayATA', DISPLAYNULL);
+			return movement === 'D' ? get(data, 'displayATDWithDate', DISPLAYNULL) : get(data, 'displayATAWithDate', DISPLAYNULL);
 		},
 	},
 	'eta-ctotSort': {
@@ -191,7 +191,7 @@ export const filedConvert = {
 //reference 数据排序参考列，不需要显示，不需要配置
 //unConfigurable 不可配置列，不可搜索
 //full 字段说明，显示为dom title
-//search 搜索配置，搜索框类型
+//search 搜索配置，搜索框类型 {radio: true 是radio的必须加上这个 高级搜索需要}
 //remoteOptionField 搜索配置，从远程获取的筛选项
 //renderType 渲染类型
 export const allField = {
@@ -278,8 +278,8 @@ export const allField = {
 	passengerService: { text: '旅客服务' },
 	assignmentAgent: { text: '签派代理' },
 	serviceAgent: { text: '地服代理', full: '勤务代理' },
-	preOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', reference: true },
-	preOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', reference: true },
+	// preOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', reference: true, search: { type: 'time' } },
+	// preOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', reference: true, search: { type: 'time' } },
 	displayPreOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', sort: true, referenceTo: 'preOrNxtPlanTime', search: { type: 'time' } },
 	displayPreOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', sort: true, referenceTo: 'preOrNxtActualTime', search: { type: 'time' } },
 	terminal: { text: '航站楼', search: { type: 'select', options: ['T1', 'T2'] } },
@@ -304,7 +304,7 @@ export const allField = {
 	// flightExtStatusText: { text: '外部状态', full: '航班外部状态', search: { type: 'text' } },
 	returnCode: { text: '返航代码' },
 	alternate: { text: '是否备降' },
-	cancel: { text: '是否取消' },
+	cancel: { text: '是否取消', search: { type: 'select', options: { true: '是', false: '否' } } },
 	homewardVoyage: { text: '返航' },
 	passengerHandling: { text: '旅客装卸' },
 	maintanceAgent: { text: '维护代理', full: '航班维护代理' },
@@ -324,10 +324,10 @@ export const allField = {
 	contrlPoint: { text: '流控点' },
 	fix: { text: '走廊口' },
 	contrlStatus: { text: '是否流控' },
-	displayFirstLuggageEstimateArriveTime: { text: '首件行李预计到达时间', width: 160 },
+	displayFirstLuggageEstimateArriveTime: { text: '首件行李预计到达时间', width: 160, search: { type: 'time' }  },
 	estimateBordingLength: { text: '预计登机时长(分钟)', width: '150px' },
-	displayEstimateGuaranteeCompleteTime: { text: '预计保障完成时间', width: '140px' },
-	displayFirstLuggageActualArriveTime: { text: '首件行李实际到达时间', width: '160px' },
+	displayEstimateGuaranteeCompleteTime: { text: '预计保障完成时间', width: '140px', search: { type: 'time' } },
+	displayFirstLuggageActualArriveTime: { text: '首件行李实际到达时间', width: '160px', search: { type: 'time' } },
 	actualBordingLength: { text: '实际登机时长(分钟)', width: '140px' },
 	actualRoute: { text: '航路' },
 	planRoute: { text: '计划航路' },
@@ -367,14 +367,15 @@ export const allField = {
 	// expectRunWay: { text: '计划使用跑道', width: 120 }, // 预加油
 	milestoneStatusCn: { text: '空地里程碑', width: 120 }, //
 	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role:'edit-qualification', width: 180 }, //
-	displayDSGT: { text: '放行标准保障时间', width: 140 },
-	displayTSGT: { text: '起飞标准保障时间', width: 140 },
-	displayDSTT: { text: '放行标准起飞时间', width: 140 },
-	displayTSTT: { text: '起飞标准起飞时间', width: 140 },
+	displayDSGT: { text: '放行标准保障时间', width: 140, search: { type: 'time' }  },
+	displayTSGT: { text: '起飞标准保障时间', width: 140, search: { type: 'time' }  },
+	displayDSTT: { text: '放行标准起飞时间', width: 140, search: { type: 'time' }  },
+	displayTSTT: { text: '起飞标准起飞时间', width: 140, search: { type: 'time' }  },
 	overStationMinTime: { text: '最小过站时间(分钟)', width: 150 },
 	overStationScheduleTime: { text: ' 计划过站时间(分钟)', width: 150 },
 	isDelay: { text: '是否延误', search: { type: 'select', options: { true: '是', false: '否' } } },
 	delayBasis: { text: '延误依据', search: { type: 'text' }, auto: true },
+	delayType: { text: '延误类型', search: { type: 'text' }, width: 160 },
 	airportDesc: { text: '运控延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason' },
 	airlineDesc: { text: '航司延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason-airline' },
 	// abnormalCategory: {
@@ -390,13 +391,13 @@ export const allField = {
 	delayMainReason: {
 		text: '延误主原因',
 		width: 200,
-		referenceTo: 'delayMainReasonCn',
+		referenceTo: ['delayMainReason','delayMainReasonCn'],
 		search: { type: 'select', remoteOptionField: 'delayMainReason' },
 	},
 	delaySubReason: {
 		text: '延误子原因',
 		width: 200,
-		referenceTo: 'delaySubReasonCn',
+		referenceTo: ['delaySubReason','delaySubReasonCn'],
 		remoteOptionField: 'delaySubReason',
 		search: { type: 'select', remoteOptionField: 'delaySubReason' },
 	},
@@ -426,7 +427,7 @@ export const defaultColumns = [
 	{ key: 'displayPreOrNxtPlanTime' }, //前后站计划时间
 	{ key: 'displayPreOrNxtActualTime' }, //前后站实际时间
 	{ key: 'eta-ctot' }, //预计时间
-	{ key: 'displayStandardTakeOffTime' }, //标准起飞时间
+	// { key: 'displayStandardTakeOffTime' }, //标准起飞时间
 	{ key: 'elecFlightStatus' }, //电子进程单状态
 	{ key: 'movement' }, //进/离
 	{ key: 'displayRunway' }, //跑道

@@ -14,6 +14,9 @@ export default {
     }
   },
   methods:{
+    console(){
+      console.log(1111)
+    },
     onBlur(e) {
       const testCfg = [{ query: '$gt', reg: new RegExp(/^>(20|21|22|23|[0-1]\d)[0-5]\d$/) }, { query: '$gte', reg: new RegExp(/^>=(20|21|22|23|[0-1]\d)[0-5]\d$/) }, { query: '$lt', reg: new RegExp(/^<(20|21|22|23|[0-1]\d)[0-5]\d$/) }, { query: '$lte', reg: new RegExp(/^<=(20|21|22|23|[0-1]\d)[0-5]\d$/) }, { query: '$eq', reg: new RegExp(/^(20|21|22|23|[0-1]\d)[0-5]\d$/) }, { query: '$between', reg: new RegExp(/^(20|21|22|23|[0-1]\d)[0-5]\d-(20|21|22|23|[0-1]\d)[0-5]\d$/) }];
       

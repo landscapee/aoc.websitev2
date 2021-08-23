@@ -1,6 +1,6 @@
 
 import {alternateConfigStop,alternateConfigStart} from "../../manage/conditionalOperation/alternate";
- import { mapKeys,map, extend,forEach} from 'lodash';
+ import { mapKeys,map, extend,forEach,orderBy} from 'lodash';
 import SocketWrapper from "../../lib/socketWrapper";
  let clientObj = {};
  let   worker, client, ajax;
@@ -61,8 +61,9 @@ const subWSEvent = () => {
             if(key=='alternateLanding'||key=='exigencyDropOffArea'||key=='tempSeat'){
                 myDate=map(myDate,(k,l)=>{
                     let f = flightDB.by('flightId', k.flightId);
-                   return extend(f,k)
+                    return extend(f,k)
                 })
+                myDate=orderBy(myDate, ['actualTime', 'eta', 'ctot'], ['asc']);
 
             }
 

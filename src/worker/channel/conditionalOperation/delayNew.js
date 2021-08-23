@@ -52,25 +52,29 @@ export const init = (worker_, httpRequest_) => {
         clientObj.AdverseClient = new SocketWrapper(c);
     });
 
-    // worker.subscribe('get.delayNew.data', (type) => {
-    //      let data = memoryStore.getItem('AdverseCondition')?.reduceData
-    //     if(!data){
-    //         ajax.get('adverse', 'adjust/getCurrentReduce?type=' + type, null,false).then((resData) => {
-    //             memoryStore.setItem('AdverseCondition', { reduceData: resData.data });
-    //             setReduce(worker,memoryStore)
-    //         });
-    //     }else{
-    //         setReduce(worker,memoryStore)
-    //     }
-    //
-    // });
+    worker.subscribe('get.delayNew.data', (type) => {
+        memoryStore.setItem('AdverseCondition', { currentDelayType: data });
+
+        // let data = memoryStore.getItem('AdverseCondition')?.reduceData
+        // if(!data){
+        //
+        // }else{
+        //     setReduce(worker,memoryStore)
+        // }
+        ajax.get('adverse', 'adjust/getCurrentReduce?type=' + type, null,false).then((res) => {
+            memoryStore.setItem('AdverseCondition', { reduceData: res.data });
+            // setReduce(worker,memoryStore)
+            worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce',  res.data);
+
+        });
+
+    });
     // 恢复阶段运行决策
     worker.subscribe('get.runDecisionTable.data', (obj) => {
         ajax.post('adverse', 'statistic/calFlightRunwayStatistic', obj,false).then((res) => {
             if(res.code==200){
                 let data=transRunDecisionTable(res.data.data)
                 worker.publish('Web', 'push.delayNew.data', {data: data, key: 'runDecisionTable'})
-
             }
         });
 

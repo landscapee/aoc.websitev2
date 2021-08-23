@@ -14,7 +14,7 @@
       </div>
       <div v-if="showAdvance" class="searchWrapper">
         <div v-if="get(c,'search.type') === 'select'" class="search">
-          <el-select @change="(v)=>selChange(v, c)" v-model="selValue['sel'+c.key]">
+          <el-select @change="(v)=>isHistory ? selChangeHis(v, c.key) : selChange(v, c)" v-model="selValue['sel'+c.key]">
             <el-option
                 :key="item.value + c.key"
                 v-for="item in getSearchOptions(c)"
@@ -33,10 +33,10 @@
         </div>
 
         <div v-else-if="get(c,'search.type') === 'time'" class="search">
-          <timeInput :day="day" :onChange="(v) => timeChange(v, c.referenceTo || c.key)"></timeInput>
+          <timeInput :day="isHistory ? yester2day : day" :onChange="(v) => isHistory ? timeChangeHis(v, c.key) : timeChange(v, c.referenceTo || c.key)"></timeInput>
         </div>
         <div v-else-if="!get(c,'unConfigurable')" class="search">
-          <input @input="inputChange($event, c)"></input>
+          <input @input="isHistory ? inputChangeHis($event, c) : inputChange($event, c)"></input>
         </div>
       </div>
     </div>
@@ -48,21 +48,28 @@
 import {pxtorem} from "@ui_lib/viewSize";
 import classNames from 'classnames';
 import PostalStore from "@/ui/lib/postalStore";
-import {get, isArray, isObject, map, toUpper} from 'lodash';
+import {get, isArray, isObject, map, mapKeys, mapValues, toUpper} from 'lodash';
 import timeInput from "@/ui/views/flight/components/timeInput";
 import {memoryStore} from "@/worker/lib/memoryStore";
 import moment from "moment";
+import {getQueryNum} from "@ui_lib/common";
 let postalStore = new PostalStore();
+let headSearchQueries = {}
 export default {
   name: "flightHeader",
-  props: ['columns', 'changeLockStatus', 'activeKey', 'order'],
+  props: ['columns', 'changeLockStatus', 'activeKey', 'order', 'isHistory'],
   components: {timeInput},
   data(){
     let now = memoryStore.getItem('global').now
+    let yester2day = moment(now)
+        .subtract(2, 'days')
+        .startOf('day').format('YYYY-MM-DD');
     return{
       inputValue: '',
       selValue: {},
-      day : moment(now).format('YYYY-MM-DD')
+      day : moment(now).format('YYYY-MM-DD'),
+      yester2day,
+      headSearchQueries: {}
     }
   },
   methods: {
@@ -81,11 +88,40 @@ export default {
         self.searchTimer = false;
       }, 800);
     },
+    inputChangeHis(e, col) {
+      let inputValue = e.target.value;
+      let inputName = col.referenceTo || col.key;
+      if (this.searchTimer) {
+        clearTimeout(this.searchTimer);
+      }
+      this.searchTimer = setTimeout(() => {
+        const queryMatch = getQueryNum(inputValue); // 对 > < = 的处理
+        const searchType = queryMatch ? queryMatch.query : inputValue.indexOf(';') > -1 ? 'in' : 'like';
+        const searchValue = queryMatch ? queryMatch.value : toUpper(inputValue);
+        this.sendQuery(inputValue, inputName, { searchType, searchValue, dataType: 'str' });
+        this.searchTimer = false;
+      }, 500);
+    },
     timeChange(v, inputName){
       this.sendQuery(v, inputName, v);
     },
+
+    timeChangeHis(v, inputName){
+      if (v){
+        let key0 = Object.keys(v)[0];
+        let time = v[key0];
+        time = moment
+        let searchType = Object.keys(v)[0].replace('$', '')
+        this.sendQuery(v, inputName, {dataType: "date",
+          frontKey: inputName,
+          searchType,
+          searchValue: v[key0]});
+      }else {
+        this.sendQuery('', inputName, '');
+      }
+    },
     selChange(v, col){
-      console.log(v)
+      console.log(headSearchQueries)
       this.selValue['sel'+col.key] = v;
       let isRadio = get(col, 'search.radio');
       let inputName = col.referenceTo || col.key;
@@ -95,14 +131,14 @@ export default {
       let query = { $eq: inputValue };
       if (inputName == 'mark') {
         if (inputValue == 'all') {
-          this.headSearchQueries['markD'] && this.sendQuery('', 'markD', '');
-          this.headSearchQueries['markV'] && this.sendQuery('', 'markV', '');
+          headSearchQueries['markD'] && this.sendQuery('', 'markD', '');
+          headSearchQueries['markV'] && this.sendQuery('', 'markV', '');
         } else {
           inputName = inputValue;
           query = { $eq: '1' };
           let oinputName = inputName == 'markD' ? 'markV' : 'markD';
           this.sendQuery(inputValue, inputName, query);
-          this.headSearchQueries[oinputName] && this.sendQuery('', oinputName, '');
+          headSearchQueries[oinputName] && this.sendQuery('', oinputName, '');
         }
       } else if (inputName == 'flightStatusText') {
         query = { $regex: inputValue };
@@ -115,40 +151,82 @@ export default {
         this.sendQuery(inputValue, inputName, query);
       }
     },
+
+    selChangeHis(item, inputName) {
+      let self = this;
+      let inputValue = isObject(item) ? item.value : item;
+      inputValue = inputValue === 'true' ? 1 : inputValue === 'false' ? 0 : inputValue;
+      let isBool = inputValue === true || inputValue === false;
+      let query = { searchType: 'in', searchValue: inputValue, dataType: isBool ? 'bool' : 'str' };
+      if (inputName == 'mark') {
+        headSearchQueries = headSearchQueries || {};
+        if (inputValue == '0') {
+          headSearchQueries['markD'] && this.sendQuery('', 'markD', '');
+          headSearchQueries['markV'] && this.sendQuery('', 'markV', '');
+        } else {
+          if (item.length > 0) {
+            let searchValue = '';
+            map(item, (itemValue) => {
+              searchValue += itemValue.value;
+            });
+            headSearchQueries[`mark`] = { searchValue, dataType: 'str', searchType: 'eq' };
+            this.sendQuery('', '', '');
+          } else {
+            this.sendQuery('', 'mark', '');
+          }
+          delete headSearchQueries['markD'];
+          delete headSearchQueries['markV'];
+        }
+      } else {
+        this.sendQuery(inputValue, inputName, query);
+      }
+    },
     onCascadeSearch(value, key) {
       this.sendQuery(value, key, { $regex: value });
     },
     sendQuery(inputValue, inputName, query) {
-      this.headSearchQueries = this.headSearchQueries || {};
+      headSearchQueries = headSearchQueries || {};
       if (inputValue !== '') {
         if (isArray(inputName)) {
-          this.headSearchQueries[inputName.join('-')] = query;
+          headSearchQueries[inputName.join('-')] = query;
         } else {
-          this.headSearchQueries[inputName] = query;
+          headSearchQueries[inputName] = query;
         }
       }
-      if ((inputValue === '' || inputValue === 'all') && this.headSearchQueries[inputName]) {
-        delete this.headSearchQueries[inputName];
+      if ((inputValue === '' || inputValue === 'all') && headSearchQueries[inputName]) {
+        delete headSearchQueries[inputName];
       }
       if (isArray(inputName)) {
-        if (inputValue === '' || (inputValue === 'all' && this.headSearchQueries[inputName.join('-')])) {
-          delete this.headSearchQueries[inputName.join('-')];
+        if (inputValue === '' || (inputValue === 'all' && headSearchQueries[inputName.join('-')])) {
+          delete headSearchQueries[inputName.join('-')];
         }
       }
-      // console.log(this.headSearchQueries)
-      this.sendSort({
-        searchQueries: map(this.headSearchQueries, (v, key) => {
-          if (key.indexOf('-') > -1) {
-            return {
-              $or: map(key.split('-'), (keyName) => {
-                return { [keyName]: v };
-              }),
-            };
-          } else {
-            return { [key]: v };
+      // console.log(headSearchQueries)
+      if (this.isHistory){
+        postalStore.pub('Web', 'FlightHeaderSearch.Sync', map(headSearchQueries, (v, key) => {
+          if (isArray(v)) {
+            return v.map((item) => {
+              return { ...item, frontKey: key };
+            });
           }
-        }),
-      });
+          return { ...v, frontKey: key };
+        }))
+      }else {
+        this.sendSort({
+          searchQueries:  map(headSearchQueries, (v, key) => {
+            if (key.indexOf('-') > -1) {
+              return {
+                $or: map(key.split('-'), (keyName) => {
+                  return { [keyName]: v };
+                }),
+              };
+            } else {
+              return { [key]: v };
+            }
+          }),
+        });
+      }
+
     },
 
     sendSort(opts){
@@ -226,6 +304,7 @@ export default {
     },
   },
   mounted() {
+    headSearchQueries = {}
     postalStore.sub('Web', 'ClearSort', () => {
       this.$emit('update:activeKey', '')
       this.$emit('update:order', '')

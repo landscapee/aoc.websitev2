@@ -4,7 +4,7 @@ import axios from "axios";
 import router from '../ui/router'
 import store from '../ui/store'
 import postal from 'postal';
-import {cloneDeep, includes, isString} from 'lodash';
+import {cloneDeep, includes, isArrayBuffer, isString} from 'lodash';
 import {memoryStore} from "@/worker/lib/memoryStore";
 // let hasIfm = self!=top//是否被镶嵌
 axios.interceptors.request.use(
@@ -49,6 +49,10 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response=>{
+
+    if (isArrayBuffer(response.data)){
+      return response.data
+    }
     // if(response.data.date){
     //   store.commit('setServerTime',new Date(response.data.date))
     // }
@@ -79,10 +83,7 @@ axios.interceptors.response.use(
             center: true
           }]
         })
-        // Vue.prototype.$alert(response.data.responseMessage||response.data.message||response.data.msg||response.config.url+'接口错误', '提示', {
-        //   type: 'error',
-        //   center: true
-        // })
+
       }
     }
   },
@@ -127,6 +128,9 @@ export default class HttpRequest {
         data: isFormData ? qs.stringify(params) : params,
       }).then(response => {
         let sBody = cloneDeep(response);
+        if (!sBody){
+          return
+        }
         if (sBody.responseData && isString(sBody.responseData)){
           sBody.responseData = JSON.parse(sBody.responseData)
         }
@@ -135,7 +139,8 @@ export default class HttpRequest {
         }
         resolve( sBody )
       }).catch(err => {
-        reject( err )
+        console.log(err)
+        // reject( err )
       })
     })
   }
