@@ -53,17 +53,10 @@ export const init = (worker_, httpRequest_) => {
     });
 
     worker.subscribe('get.delayNew.data', (type) => {
-        memoryStore.setItem('AdverseCondition', { currentDelayType: data });
+        memoryStore.setItem('AdverseCondition', { currentDelayType: type });
 
-        // let data = memoryStore.getItem('AdverseCondition')?.reduceData
-        // if(!data){
-        //
-        // }else{
-        //     setReduce(worker,memoryStore)
-        // }
         ajax.get('adverse', 'adjust/getCurrentReduce?type=' + type, null,false).then((res) => {
             memoryStore.setItem('AdverseCondition', { reduceData: res.data });
-            // setReduce(worker,memoryStore)
             worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce',  res.data);
 
         });
