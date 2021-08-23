@@ -375,6 +375,7 @@ export const allField = {
 	overStationScheduleTime: { text: ' 计划过站时间(分钟)', width: 150 },
 	isDelay: { text: '是否延误', search: { type: 'select', options: { true: '是', false: '否' } } },
 	delayBasis: { text: '延误依据', search: { type: 'text' }, auto: true },
+	delayType: { text: '延误类型', search: { type: 'text' }, width: 160 },
 	airportDesc: { text: '运控延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason' },
 	airlineDesc: { text: '航司延误备注', search: { type: 'text' }, width: 120, role: 'edit-delay-reason-airline' },
 	// abnormalCategory: {
