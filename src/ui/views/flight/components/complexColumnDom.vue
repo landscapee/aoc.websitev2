@@ -182,7 +182,7 @@
   <div slot-scope="scope" v-else-if="item.formatter" v-html="item.formatter(scope.row)">
   </div>
   <div v-else slot-scope="scope">
-    <div>
+    <div :title="scope.row[item.key] || ''">
       {{scope.row[item.key] || ''}}
     </div>
   </div>
@@ -422,6 +422,8 @@ export default {
         if (res.code === 200){
           this.$message({message:'播放成功!',type: 'success'})
         }
+      }).finally(res => {
+        console.log(res)
       })
     },
     classNames: classNames,

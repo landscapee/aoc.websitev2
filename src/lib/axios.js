@@ -75,14 +75,14 @@ axios.interceptors.response.use(
         })
         // })
       }else{
-        // postal.publish({
-        //   channel:'Web',
-        //   topic:'Global.Alert',
-        //   data: [response.data.responseMessage||response.data.message||response.data.msg||response.config.url+'接口错误', '提示', {
-        //     type: 'error',
-        //     center: true
-        //   }]
-        // })
+        postal.publish({
+          channel:'Web',
+          topic:'Global.Alert',
+          data: [response.data.responseMessage||response.data.message||response.data.msg||response.config.url+'接口错误', '提示', {
+            type: 'error',
+            center: true
+          }]
+        })
 
       }
     }
@@ -128,6 +128,9 @@ export default class HttpRequest {
         data: isFormData ? qs.stringify(params) : params,
       }).then(response => {
         let sBody = cloneDeep(response);
+        if (!sBody){
+          return
+        }
         if (sBody.responseData && isString(sBody.responseData)){
           sBody.responseData = JSON.parse(sBody.responseData)
         }
@@ -136,7 +139,8 @@ export default class HttpRequest {
         }
         resolve( sBody )
       }).catch(err => {
-        reject( err )
+        console.log(err)
+        // reject( err )
       })
     })
   }

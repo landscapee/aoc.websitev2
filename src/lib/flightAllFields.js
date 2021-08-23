@@ -191,7 +191,7 @@ export const filedConvert = {
 //reference 数据排序参考列，不需要显示，不需要配置
 //unConfigurable 不可配置列，不可搜索
 //full 字段说明，显示为dom title
-//search 搜索配置，搜索框类型
+//search 搜索配置，搜索框类型 {radio: true 是radio的必须加上这个 高级搜索需要}
 //remoteOptionField 搜索配置，从远程获取的筛选项
 //renderType 渲染类型
 export const allField = {
@@ -304,7 +304,7 @@ export const allField = {
 	// flightExtStatusText: { text: '外部状态', full: '航班外部状态', search: { type: 'text' } },
 	returnCode: { text: '返航代码' },
 	alternate: { text: '是否备降' },
-	cancel: { text: '是否取消' },
+	cancel: { text: '是否取消', search: { type: 'select', options: { true: '是', false: '否' } } },
 	homewardVoyage: { text: '返航' },
 	passengerHandling: { text: '旅客装卸' },
 	maintanceAgent: { text: '维护代理', full: '航班维护代理' },
