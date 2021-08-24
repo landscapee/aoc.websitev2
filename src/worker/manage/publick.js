@@ -15,7 +15,7 @@ let serverTime=null
      postal.publish({
          channel: 'Web',
          topic: 'Time.Sync.page',
-         data: t,
+         data: time,
      });
 
       // index.js
