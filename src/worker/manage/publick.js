@@ -2,7 +2,7 @@ import moment from 'moment'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
 let serverTime=null
- export const parseTime = (data,num) => {
+ export const parseTime = (data,posWorker) => {
      let HHMMTime = data.responseData;
      let PCNow = new Date().getTime();
      let time = moment(HHMMTime).valueOf();
@@ -11,7 +11,14 @@ let serverTime=null
 
      PCOffsetTime = time - PCNow;
      serverTime = time;
-      // app 页面
+        // 页面初始化 接入服务器时间 刷新 触发更新
+     postal.publish({
+         channel: 'Web',
+         topic: 'Time.Sync.page',
+         data: t,
+     });
+
+      // index.js
      let pushApp=(t)=>{
          postal.publish({
              channel: 'Web',
@@ -22,11 +29,14 @@ let serverTime=null
      pushApp(time)
      memoryStore.setItem('global', {now:time});
      setInterval(() => {
+         console.log(666);
          let PCNow = new Date().getTime();
          let timeNew = PCNow + PCOffsetTime;
          pushApp(timeNew)
          memoryStore.setItem('global', {now:timeNew});
-     }, 3000);
+     }, 600);
+     // posWorker.subscribe('', (data) => {
+     // })
  } ;
 export const publicktart = (posWorker) => {
     // posWorker.subscribe('Resource.Change.Sync', (data) => {

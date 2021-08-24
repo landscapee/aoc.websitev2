@@ -23,6 +23,8 @@ import Logger from "@/lib/logger";
 
 import   {v4 as uuidv4} from "uuid";
 import {getUser} from './src/ui/lib/localStorageTemp'
+import PostalStore from "./src/ui/lib/postalStore";
+let postalStore = new PostalStore();
 Vue.prototype.$uuid = uuidv4;
 Vue.prototype.$logger = Logger;
 
@@ -63,7 +65,10 @@ Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 
 }
 
-
+postalStore.sub('Web', 'Time.Sync', (time) => {
+    console.log(2,time);
+    memoryStore.setItem('global', {now: time});
+});
 
 new Vue({
     el: '#app',

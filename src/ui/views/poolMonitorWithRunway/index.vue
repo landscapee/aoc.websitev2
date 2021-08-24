@@ -352,7 +352,7 @@
             getTime() {
                 return (opt) => {
                     let num = Math.floor(this.runwayTime / 2) - this.moveNum;
-                    let time = new Date(this.nowTime.getTime() + (opt - num) * 60 * 1000);
+                    let time = new Date((this.nowTime||new Date()).getTime() + (opt - num) * 60 * 1000);
                     return moment(time).format('HH:mm')
                 }
             },
@@ -473,6 +473,20 @@
             getCol(cols, key) {
                 this.pageListObj[key].tableConfig = [...cols]
             },
+			initTime(data){
+                this.nowTime = new Date(data||memoryStore.getItem('global').now)
+                console.log(212,memoryStore.getItem('global').now);
+                let time = (60 - this.nowTime.getSeconds()) * 1000 - this.nowTime.getMilliseconds()
+                setTimeout(() => {
+                    this.nowTime = new Date(this.nowTime.getTime() + time)
+                    this.timerInterval = setInterval(() => {
+                        let num = Math.floor(this.runwayTime / 2) - 1 - this.moveNum
+                        if (this.runwayTime > num && num > 0) {
+                            this.nowTime = new Date(this.nowTime.getTime() + 1000 * 60)
+                        }
+                    }, 1000 * 60)
+                }, time)
+			}
 
         },
         created() {
@@ -488,17 +502,7 @@
             let obj1=data&&JSON.parse( data)
             this.poolMonitorShow=obj1||obj
             localStorage.setItem('poolMonitorShow',JSON.stringify(this.poolMonitorShow))
-			this.nowTime = new Date(memoryStore.getItem('global').now)
-            let time = (60 - this.nowTime.getSeconds()) * 1000 - this.nowTime.getMilliseconds()
-            setTimeout(() => {
-                this.nowTime = new Date(this.nowTime.getTime() + time)
-                this.timerInterval = setInterval(() => {
-                    let num = Math.floor(this.runwayTime / 2) - 1 - this.moveNum
-                    if (this.runwayTime > num && num > 0) {
-                        this.nowTime = new Date(this.nowTime.getTime() + 1000 * 60)
-                    }
-                }, 1000 * 60)
-            }, time)
+            this.initTime()
             map(this.pageListObj, (k, l) => {
                 let arr = setting[l]
                 if (k.columns) {
@@ -533,8 +537,10 @@
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
 
             postalStore.sub('runwayModels', (data) => {
-                // console.log(22);
                 this.runway = data;
+            });
+            postalStore.sub('Time.Sync', (data) => {
+                this.initTime(data)
             })
 
             postalStore.sub('poolMonitorWithRunway.table', (data) => {
@@ -970,7 +976,7 @@
 						text-align: center;
 						border-bottom: $border;
 						position: relative;
-						z-index: 10;
+						z-index: 9;
 					}
 					.tabledivItem {
 						width: 50% !important;
@@ -998,7 +1004,9 @@
 					justify-content: space-between;
 					::v-deep .el-select {
 						width: 120px;
+						/*height: 30px!important;*/
 						.el-input__inner {
+							height: 30px!important;
 							background: rgba(0, 124, 215, 0.55) !important;
 							border: 1px solid rgba(255, 255, 255, 0.45) !important;
 							color: #ffffff;
