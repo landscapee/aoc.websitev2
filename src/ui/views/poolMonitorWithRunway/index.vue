@@ -780,11 +780,11 @@
 					background: #36445a;
 				}
 				.zhezhao {
-					z-index: 100;
+					z-index: 8;
 					width: 0px;
 					background: #17212f;
 					box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.50);
-					border-right: 1px dashed #ffffff;
+					border-right: 1px dashed #2c569e;
 				}
 				.zhezhaoWarn {
 					background: #301933;
@@ -908,7 +908,7 @@
 			}
 			.time {
 				position: relative;
-				z-index: 300;
+				z-index: 9;
 				width: 100%;
 				display: flex;
 				justify-content: left;
@@ -926,10 +926,15 @@
 				}
 				.timespan {
 					height: 5px;
-					border: 1px solid #279dff;
+					border:  solid #279dff;
 					display: inline-block;
 					width: 62px;
-					border-top: 0;
+					border-width:   0 1px 1px 0;
+				}
+				.itemtime1:first-child{
+					.timespan{
+						border-left-width: 1px;
+					}
 				}
 			}
 			.time1 {
