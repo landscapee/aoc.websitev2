@@ -63,12 +63,10 @@ let subAdverseWSEvent = () => {
 			worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce', hasSetData);
 		}
 	};
-    
     // 轮次信息ws链接
 	adverseClient.sub('/adverse-condition/wd/data/plan', (data) => {
 		changeReduceData(data);
 	});
-
 	// 轮次信息ws链接
 	adverseClient.sub('/adverse-condition/wd/data/planAndPlanDetail', (data) => {
 		changeReduceData(data);
@@ -77,29 +75,23 @@ let subAdverseWSEvent = () => {
 	adverseClient.sub('/adverse-condition/wd/data/reduceInfo', (data) => {
 		changeReduceData(data);
 	});
-
 	// 全部轮次信息ws链接
 	adverseClient.sub('/adverse-condition/wd/data/all', (data) => {
 		console.log(data)
 		let currentDelayType = memoryStore.getItem('AdverseCondition').currentDelayType;
-		// if (data.type == currentDelayType) {
-		// 	if (data.reduceInfo.reduceplanNo == 1) {
-		// 		memoryStore.setItem('AdverseCondition', { reduceData: [data] });
-		// 		changeReduceData(data);
-		// 		return;
-		// 	}
-		// 	let oData = memoryStore.getItem('AdverseCondition').reduceData;
-		// 	oData.push(data);
-		// 	memoryStore.setItem(oData);
-		// 	changeReduceData(data);
-		// }
+		if (data.type == currentDelayType) {
+			if (data.reduceInfo.reduceplanNo == 1) {
+				memoryStore.setItem('AdverseCondition', { reduceData: [data] });
+				changeReduceData(data);
+				return;
+			}
+			let oData = memoryStore.getItem('AdverseCondition').reduceData;
+			oData.push(data);
+			memoryStore.setItem(oData);
+			changeReduceData(data);
+		}
 	});
 };
-
-
-
-
-
 export const init = (worker_,httpRequest) => {
     worker = worker_;
 	ajax = httpRequest
