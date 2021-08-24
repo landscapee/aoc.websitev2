@@ -478,6 +478,7 @@
                 let time = (60 - this.nowTime.getSeconds()) * 1000 - this.nowTime.getMilliseconds()
                 setTimeout(() => {
                     this.nowTime = new Date(this.nowTime.getTime() + time)
+                    clearInterval( this.timerInterval)
                     this.timerInterval = setInterval(() => {
                         let num = Math.floor(this.runwayTime / 2) - 1 - this.moveNum
                         if (this.runwayTime > num && num > 0) {
@@ -539,7 +540,7 @@
                 this.runway = data;
             });
             postalStore.sub('Time.Sync.page', (data) => {
-                console.log(555);
+                console.log(555,new Date(data));
                 this.initTime(data)
             })
 

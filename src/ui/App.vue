@@ -54,7 +54,6 @@
             postalStore.sub('Web', 'LoginSuccessCheckToken', (user) => {
 
                 this.checkTokenTimer = window.setInterval(() => {
-                    console.log(555, this.checkTokenTimer);
                     this.checkToken(user)
                 }, 10 * 1000)
             });
