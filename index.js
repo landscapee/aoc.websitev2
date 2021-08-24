@@ -66,7 +66,6 @@ Vue.prototype.sysEdition = window.webConfig.sysEdition//系统版本
 }
 
 postalStore.sub('Web', 'Time.Sync', (time) => {
-    console.log(2,time);
     memoryStore.setItem('global', {now: time});
 });
 

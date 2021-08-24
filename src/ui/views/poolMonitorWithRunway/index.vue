@@ -475,7 +475,6 @@
             },
 			initTime(data){
                 this.nowTime = new Date(data||memoryStore.getItem('global').now)
-                console.log(212,memoryStore.getItem('global').now);
                 let time = (60 - this.nowTime.getSeconds()) * 1000 - this.nowTime.getMilliseconds()
                 setTimeout(() => {
                     this.nowTime = new Date(this.nowTime.getTime() + time)
@@ -539,7 +538,8 @@
             postalStore.sub('runwayModels', (data) => {
                 this.runway = data;
             });
-            postalStore.sub('Time.Sync', (data) => {
+            postalStore.sub('Time.Sync.page', (data) => {
+                console.log(555);
                 this.initTime(data)
             })
 

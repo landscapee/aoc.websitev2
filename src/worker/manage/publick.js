@@ -2,12 +2,13 @@ import moment from 'moment'
 import postal from 'postal';
 import {memoryStore} from "../lib/memoryStore";
 let serverTime=null
+let serverTimer=null
  export const parseTime = (data,posWorker) => {
      let HHMMTime = data.responseData;
      let PCNow = new Date().getTime();
      let time = moment(HHMMTime).valueOf();
         let PCOffsetTime
-
+      clearInterval(serverTimer)
 
      PCOffsetTime = time - PCNow;
      serverTime = time;
@@ -28,8 +29,7 @@ let serverTime=null
      }
      pushApp(time)
      memoryStore.setItem('global', {now:time});
-     setInterval(() => {
-         console.log(666);
+     serverTimer=setInterval(() => {
          let PCNow = new Date().getTime();
          let timeNew = PCNow + PCOffsetTime;
          pushApp(timeNew)
