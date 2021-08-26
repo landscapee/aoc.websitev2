@@ -64,6 +64,7 @@ module.exports = {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 include: [resolve('src'), resolve('static'), path.resolve(__dirname, indexJs)],
+                exclude: /node_modules/
             },
             {
                 test: /\.svg$/,

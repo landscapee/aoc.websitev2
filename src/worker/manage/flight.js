@@ -1,5 +1,20 @@
 import {memoryStore} from '../lib/memoryStore';
-import {concat, every, extend, filter, flow, get, head, isArray, last, map, merge, orderBy, toUpper} from "lodash";
+import {
+  concat,
+  every,
+  extend,
+  filter,
+  find,
+  flow,
+  get,
+  head,
+  isArray,
+  last,
+  map,
+  merge,
+  orderBy,
+  toUpper
+} from "lodash";
 import moment from "moment";
 import {flightDB} from "@/worker/lib/storage";
 import {addSerialNumber, calcDelayTime, filterRoleFlights} from "@/lib/helper/flight";
@@ -389,7 +404,7 @@ export const flightStop = (posWorker) => {
 
 export const flightHistoryStart = (posWorker, myHeader) => {
   // ui线程传过来的header 先存进内存
-  memoryStore.setItem('global',{flightHeader: myHeader})
+  // memoryStore.setItem('global',{flightHeader: myHeader})
   columns = getListHeader();
   // posWorker.publish('Web', 'Flight.UpdateHeader', columns);
   let flightStart = (data) => {

@@ -184,7 +184,7 @@ export default {
   mounted() {
     let header = getListHeader();
     let headerArray = map(header, item => {return _.pick(item, ['text' , 'key', 'reference', 'referenceTo'])})
-    postalStore.pub('Page.FlightHistory.Start', headerArray);
+    postalStore.pub('Page.FlightHistory.Start', '');
     // 获取运营状态options
     this.$request.get('flight', 'Flight/status').then(res => {
       if (res.code === 200){
@@ -290,6 +290,7 @@ export default {
 
     },
     setColumns: function (Columns) {
+      console.log(Columns.filter(item => item.key === 'delayType'))
       let newColumns = _.map(Columns, (h) => {
         h.sort = sortAble.indexOf(h.key) > -1
         let header = _.cloneDeep(h);

@@ -92,7 +92,7 @@
     <el-select
         v-else
         clearable
-        :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
+        :disabled="scope.row.isDelay !== '是' || !hasRole('edit-delay-category', false)"
         :value="scope.row.delayMainReason"
         @change="(v) => delayChange({delayMainReason: v, delaySubReason: null}, scope.row)">
       <el-option
@@ -113,7 +113,7 @@
     <el-select
         v-else
         clearable
-        :disabled="scope.row.isDelay !== true || !hasRole('edit-delay-category', false)"
+        :disabled="scope.row.isDelay !== '是' || !hasRole('edit-delay-category', false)"
         :value="scope.row.delayMainReason && scope.row.delayMainReason !== '--' ? scope.row.delaySubReason : '--'"
         @change="(v) => delayChange({delaySubReason: v}, scope.row)">
       <el-option
