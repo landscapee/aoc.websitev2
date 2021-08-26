@@ -331,7 +331,8 @@ export const flightStart = (posWorker, myHeader) => {
   // 这里从内存里面取出来 加上了convert的header
   columns = getListHeader();
   posWorker.publish('Flight.GetHeader.Res', columns)
-  memoryStore.setItem('global',{now: moment().valueOf()})
+  // memoryStore.setItem('global',{now: moment().valueOf()})
+  Options = { day: 'Today', all: true };
   let flightStart = (data) => {
     let result = refreshFlights(data);
     result.flights && posWorker.publish('Web', 'Flight.Sync', result);
@@ -365,7 +366,6 @@ export const flightStart = (posWorker, myHeader) => {
 
   //手动置顶
   posWorker.subscribe('Flight.Personal.SetTop', (data) => {
-    console.log(data)
     setFlightTop(data);
     flightStart(true);
   });
@@ -394,7 +394,6 @@ export const flightHistoryStart = (posWorker, myHeader) => {
   // posWorker.publish('Web', 'Flight.UpdateHeader', columns);
   let flightStart = (data) => {
     let result = refreshFlights(data);
-    console.log(result)
     posWorker.publish('Web', 'Flight.GetHistory.Response', result);
   };
   // channel.publish('Web', 'Flight.UpdateHeader', getListHeader());
