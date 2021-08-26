@@ -9,7 +9,7 @@
 					航班调整调减
 				</div>
 				<div class="tableBox">
-					<ele-table :columnConfig=" tableConfig" :table-data="getPlanData">
+					<ele-table :columnConfig=" tableConfig" :table-data="suggestPlan">
 
 					</ele-table>
 				</div>
@@ -114,7 +114,7 @@
                 tableConfig: columns,
                 suggestPlan: [],//航班调整调减
                  runDecisionTable:{},//恢复阶段运行决策
-                currentType:null,// 调整调减类型
+                // currentType:null,// 调整调减类型
                 rules: {
                     name: [
                         { required: true, message: '请输入', trigger: 'blur' },
@@ -124,9 +124,9 @@
             }
         },
 		computed:{
-            getPlanData(){
-              return this.currentType&&this.suggestPlan
-			},
+            // getPlanData(){
+            //   return (this.currentType&&this.suggestPlan)||[]
+			// },
 			getTableData(){
               return this.runDecisionTable[this.activeName]
 			},
@@ -245,19 +245,18 @@
                     };
                 });
             },
-            getCurrentDelayType() {
-                this.$request.get('adverse', 'adjust/getCurrentDelayType').then((res) => {
-                    this.currentType = res.data.type==2
-                    console.log(this.currentType);
-
-                })
-            },
+            // getCurrentDelayType() {
+            //     this.$request.get('adverse', 'adjust/getCurrentDelayType').then((res) => {
+            //         this.currentType = res.data.type==2
+            //         console.log(res.data.type,this.currentType);
+			//
+            //     })
+            // },
 
         },
         created() {
-            this.getCurrentDelayType()
-        }
-        ,
+            // this.getCurrentDelayType()
+        },
         mounted() {
             postalStore.sub('push.delayNew.data', ({data, key}) => {
                 let myData = data
@@ -273,19 +272,19 @@
             });
             //
             postalStore.sub('FlightsByHours.GetCurrentReduce.Response', (data) => {
-                console.log(11,data);
-                this.suggestPlan =this.formatSuggestForEdit(data.currentReduce) || [];
-            });
+                 this.suggestPlan =this.formatSuggestForEdit(data.currentReduce) || [];
+             });
 
             postal.publish({
                 channel: 'Worker',
                 topic: 'Decrease.GetCurrentReduce',
                 data: '2',
             });
-            postal.publish({
-                channel: 'Worker',
-                topic: 'Adverse.Network.Connected',
-             });
+            // postal.publish({
+            //     channel: 'Worker',
+            //     topic: 'get.delayNew.data',
+            //     data:2,
+            // })
             postal.publish({
                 channel: 'Worker',
                 topic: 'Page.FlightAdjustment.Start',

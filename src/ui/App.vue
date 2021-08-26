@@ -39,19 +39,21 @@
             clearTimeout(this.handleTimer)
             clearTimeout(this.outrTimer)
         },
+		created(){
+
+		},
         mounted() {
 
             postalStore.sub('Web', 'Login.Out', (data) => {
                 this.clearUserInfo(data)
             });
-            postalStore.sub('Web', 'Time.Sync', (time) => {
-                // console.log(2,time);
-                memoryStore.setItem('global', {now: time});
-            });
+            // postalStore.sub('Web', 'Time.Sync', (time) => {
+            //     console.log(2,time);
+            //     memoryStore.setItem('global', {now: time});
+            // });
             postalStore.sub('Web', 'LoginSuccessCheckToken', (user) => {
 
                 this.checkTokenTimer = window.setInterval(() => {
-                    console.log(555, this.checkTokenTimer);
                     this.checkToken(user)
                 }, 10 * 1000)
             });

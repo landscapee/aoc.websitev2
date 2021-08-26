@@ -53,15 +53,12 @@ export const init = (worker_, httpRequest_) => {
     });
 
     // worker.subscribe('get.delayNew.data', (type) => {
-    //      let data = memoryStore.getItem('AdverseCondition')?.reduceData
-    //     if(!data){
-    //         ajax.get('adverse', 'adjust/getCurrentReduce?type=' + type, null,false).then((resData) => {
-    //             memoryStore.setItem('AdverseCondition', { reduceData: resData.data });
-    //             setReduce(worker,memoryStore)
-    //         });
-    //     }else{
-    //         setReduce(worker,memoryStore)
-    //     }
+    //     memoryStore.setItem('AdverseCondition', { currentDelayType: type });
+    //     ajax.get('adverse', 'adjust/getCurrentReduce?type=' + type, null,false).then((res) => {
+    //         memoryStore.setItem('AdverseCondition', { reduceData: res.data });
+    //         worker.publish('Worker', 'FlightsByHours.Decrease.SetReduce',  res.data);
+    //
+    //     });
     //
     // });
     // 恢复阶段运行决策
@@ -70,7 +67,6 @@ export const init = (worker_, httpRequest_) => {
             if(res.code==200){
                 let data=transRunDecisionTable(res.data.data)
                 worker.publish('Web', 'push.delayNew.data', {data: data, key: 'runDecisionTable'})
-
             }
         });
 
