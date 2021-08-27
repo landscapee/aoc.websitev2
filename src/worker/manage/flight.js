@@ -413,9 +413,14 @@ export const flightHistoryStart = (posWorker, myHeader) => {
   };
   // channel.publish('Web', 'Flight.UpdateHeader', getListHeader());
   posWorker.subscribe(`Flight.GetHistory.Response`, flightStart);
+  posWorker.subscribe('Flight.GetHeader.Res', (newColumns) => {
+    memoryStore.setItem('global', {flightHeader: newColumns});
+    columns = getListHeader();
+  });
   isCurrentHistory = true;
 };
 export const flightHistoryStop = (posWorker) => {
   isCurrentHistory = false
   posWorker.unsubscribe(`Flight.GetHistory.Response`);
+  posWorker.unsubscribe(`Flight.GetHeader.Res`);
 };

@@ -57,7 +57,7 @@ import moment from "moment";
 import {memoryStore} from "@/worker/lib/memoryStore";
 import _, {cloneDeep, compact, extend, filter, toUpper} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
-import {getListHeader} from "@/ui/views/flight/components/handleColumn";
+import {getListHeader} from "@/worker/lib/columns";
 import {map} from "lodash";
 import flightTable from "@/ui/views/flight/components/flightTable/flightTable";
 import ColumnsDefine from "@/ui/views/flight/columnDefine";
