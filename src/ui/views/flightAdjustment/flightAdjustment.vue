@@ -415,7 +415,7 @@ export default {
       let timeLength = Object.keys(flightsByScheduleTime).length || 0; // 时间块的长度
       let prevTimeLength = Object.keys(prevFlightsByScheduleTime || {}).length || 0; // 时间块的长度
       // 计算最大放行架次指示线
-      let itemHeight = fixPx(23.2);
+      let itemHeight = fixPx(23);
       let currentMaxDepart = get(this.maxDepart, [index, 'maxTotal'], 0) + timeLength;
       let prevMaxDepart = get(this.maxDepart, [index - 1, 'maxTotal']) + prevTimeLength;
       let difference = prevMaxDepart - (currentMaxDepart || 0);

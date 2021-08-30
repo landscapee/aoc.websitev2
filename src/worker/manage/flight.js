@@ -1,5 +1,20 @@
 import {memoryStore} from '../lib/memoryStore';
-import {concat, every, extend, filter, flow, get, head, isArray, last, map, merge, orderBy, toUpper} from "lodash";
+import {
+  concat,
+  every,
+  extend,
+  filter,
+  find,
+  flow,
+  get,
+  head,
+  isArray,
+  last,
+  map,
+  merge,
+  orderBy,
+  toUpper
+} from "lodash";
 import moment from "moment";
 import {flightDB} from "@/worker/lib/storage";
 import {addSerialNumber, calcDelayTime, filterRoleFlights} from "@/lib/helper/flight";
@@ -331,7 +346,8 @@ export const flightStart = (posWorker, myHeader) => {
   // 这里从内存里面取出来 加上了convert的header
   columns = getListHeader();
   posWorker.publish('Flight.GetHeader.Res', columns)
-  memoryStore.setItem('global',{now: moment().valueOf()})
+  // memoryStore.setItem('global',{now: moment().valueOf()})
+  Options = { day: 'Today', all: true };
   let flightStart = (data) => {
     let result = refreshFlights(data);
     result.flights && posWorker.publish('Web', 'Flight.Sync', result);
@@ -365,7 +381,6 @@ export const flightStart = (posWorker, myHeader) => {
 
   //手动置顶
   posWorker.subscribe('Flight.Personal.SetTop', (data) => {
-    console.log(data)
     setFlightTop(data);
     flightStart(true);
   });
@@ -389,19 +404,23 @@ export const flightStop = (posWorker) => {
 
 export const flightHistoryStart = (posWorker, myHeader) => {
   // ui线程传过来的header 先存进内存
-  memoryStore.setItem('global',{flightHeader: myHeader})
+  // memoryStore.setItem('global',{flightHeader: myHeader})
   columns = getListHeader();
   // posWorker.publish('Web', 'Flight.UpdateHeader', columns);
   let flightStart = (data) => {
     let result = refreshFlights(data);
-    console.log(result)
     posWorker.publish('Web', 'Flight.GetHistory.Response', result);
   };
   // channel.publish('Web', 'Flight.UpdateHeader', getListHeader());
   posWorker.subscribe(`Flight.GetHistory.Response`, flightStart);
+  posWorker.subscribe('Flight.GetHeader.Res', (newColumns) => {
+    memoryStore.setItem('global', {flightHeader: newColumns});
+    columns = getListHeader();
+  });
   isCurrentHistory = true;
 };
 export const flightHistoryStop = (posWorker) => {
   isCurrentHistory = false
   posWorker.unsubscribe(`Flight.GetHistory.Response`);
+  posWorker.unsubscribe(`Flight.GetHeader.Res`);
 };

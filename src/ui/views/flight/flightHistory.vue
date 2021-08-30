@@ -57,7 +57,7 @@ import moment from "moment";
 import {memoryStore} from "@/worker/lib/memoryStore";
 import _, {cloneDeep, compact, extend, filter, toUpper} from "lodash";
 import PostalStore from "@/ui/lib/postalStore";
-import {getListHeader} from "@/ui/views/flight/components/handleColumn";
+import {getListHeader} from "@/worker/lib/columns";
 import {map} from "lodash";
 import flightTable from "@/ui/views/flight/components/flightTable/flightTable";
 import ColumnsDefine from "@/ui/views/flight/columnDefine";
@@ -184,7 +184,7 @@ export default {
   mounted() {
     let header = getListHeader();
     let headerArray = map(header, item => {return _.pick(item, ['text' , 'key', 'reference', 'referenceTo'])})
-    postalStore.pub('Page.FlightHistory.Start', headerArray);
+    postalStore.pub('Page.FlightHistory.Start', '');
     // 获取运营状态options
     this.$request.get('flight', 'Flight/status').then(res => {
       if (res.code === 200){
@@ -290,6 +290,7 @@ export default {
 
     },
     setColumns: function (Columns) {
+      console.log(Columns.filter(item => item.key === 'delayType'))
       let newColumns = _.map(Columns, (h) => {
         h.sort = sortAble.indexOf(h.key) > -1
         let header = _.cloneDeep(h);

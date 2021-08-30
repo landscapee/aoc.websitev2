@@ -19,6 +19,8 @@ export const flightHttp = (worker,httpRequest) => {
       let data = response.data;
       if (JSON.stringify(data) !== '[]') {
         let c = JSON.parse(data[0].config);
+        // 如果用户从登录界面跳转 会导致 flight还没订阅消息 就执行了发布 所以这里直接存
+        memoryStore.setItem('global', {flightHeader: c.options});
         worker.publish('Worker', 'Flight.GetHeader.Res', c.options)
         worker.publish('Web', 'Flight.GetHeader.Res', c.options)
       }

@@ -184,6 +184,12 @@ export const filedConvert = {
 			return time;
 		},
 	},
+	isDelay: {
+		convert: (data) => {
+			let isDelay = get(data, 'isDelay');
+			return isDelay === true ? '是' : '否';
+		},
+	},
 };
 //lock 是否锁定   可配
 //sort 是否可以排序 不可配
