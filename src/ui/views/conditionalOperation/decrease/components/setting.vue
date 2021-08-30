@@ -73,7 +73,6 @@
             <div class="table">
                 <div class="tableBox">
                     <ele-table :columnConfig="columnConfig" :tableData="tableData"></ele-table>
-
                 </div>
 
                 <div class="buttonBox">

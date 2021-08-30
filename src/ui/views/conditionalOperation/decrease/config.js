@@ -10,43 +10,37 @@ export const setting_columnConfig = [
 	{
 		key: 'total',
 		label: '总数',
-		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'CA',
 		label: '国航',
-		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: '3U',
 		label: '川航',
-		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'MU',
 		label: '东航',
-		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'CZ',
 		label: '南航',
-		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: 'EU',
 		label: '成航',
-		width: '60px',
 		nullValue: '-',
 	},
 	{
 		key: '8L',
 		label: '祥鹏',
-		width: '60px',
+		
 		nullValue: '-',
 	}
 ]
