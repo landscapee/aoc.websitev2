@@ -21,7 +21,6 @@
                     <div v-show="unreadCount>0">{{unreadCount}}</div>
                 </div>
             </div>
-
             <div>
                 <el-dropdown @command="userHandleCommand" trigger="click">
                     <span class="el-dropdown-link sansB pointer flexSC">
@@ -391,7 +390,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 10;
+    z-index: 999;
     position: fixed;
     .nav_middle,
     .logo_left {
