@@ -44,7 +44,7 @@ module.exports = smp.wrap(merge(common, {
     // 压缩js
     // new UglifyjsWebpackPlugin(),
     // 版权声明，添加到打包输出后的js代码之前
-    new webpack.BannerPlugin('Qin Xiao'),
+    // new webpack.BannerPlugin('Qin Xiao'),
     // 打包前清除打包目录下的文件，但不删除打包目录
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin(
