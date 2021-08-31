@@ -140,7 +140,7 @@
 
 										<span v-if="row[xietiaoObj[opt.key]]==0">
 											<span class="xietiaoC1 cursor" @click="xietiao(row,opt.key) " :title="row.descript"
-												  v-if="criticalAble(row.roleCode,opt.key)">协调</span>
+												  v-if="!criticalAble(row.roleCode,opt.key)">协调</span>
 
 											<span v-else>--</span>
 
@@ -283,14 +283,16 @@
         computed: {
             criticalAble() {
                 return(itemRole,key)=>{
-                    let isZhs = !this.$hasRole('zhihuishi', false);
+
+                    let isZhs = this.$hasRole('zhihuishi', false);
                     let isItemZhs = itemRole === 'zhihuishi';
                     let obj = {
-                        fastEnter: 'edit-overstation-request-coordination',
-                        critical: 'edit-delay-request',
+                        // fastEnter: 'edit-overstation-request-coordination',
+                        fastEnter: 'edit-overstation-coordination',
+                        critical: 'edit-delay-coordination',
+                        // critical: 'edit-delay-request',
                     }
-                    return (isZhs !== isItemZhs) &&this.$hasRole(obj[key], false);
-
+                    return !(isZhs !== isItemZhs) ||!this.$hasRole(obj[key], false);
                 }
                },
             getFlightDatas() {

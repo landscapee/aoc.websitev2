@@ -7,7 +7,7 @@
                     <slot :name="col.slot"></slot>
                 </template>
 
-                <el-table-column v-else :key="idx" :label="col.label" :width="col.width" :align="col.align?col.align:'center'">
+                <el-table-column v-else :key="idx" :label="col.label" :width="col.width" min-width="10%" :align="col.align?col.align:'center'">
                     <template slot-scope="scope" slot="header">
                         <div v-if="col.displayHeader">
                             <span v-html="col.displayHeader(scope)"></span>

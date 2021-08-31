@@ -77,7 +77,6 @@ let subAdverseWSEvent = () => {
 	});
 	// 全部轮次信息ws链接
 	adverseClient.sub('/adverse-condition/wd/data/all', (data) => {
-		console.log(data)
 		let currentDelayType = memoryStore.getItem('AdverseCondition').currentDelayType;
 		if (data.type == currentDelayType) {
 			if (data.reduceInfo.reduceplanNo == 1) {
