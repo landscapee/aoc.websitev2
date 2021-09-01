@@ -43,7 +43,6 @@
 
 		},
         mounted() {
-
             postalStore.sub('Web', 'Login.Out', (data) => {
                 this.clearUserInfo(data)
             });

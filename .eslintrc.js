@@ -18,7 +18,8 @@ module.exports = {
         'module':true,
         '__dirname':true,
         'webConfig':true,
-        'DEBUG': true
+        'DEBUG': true,
+        'BUILD_ENVIROMENT': true,
     },
       /**
        * 每个规则有【3】个错误级别。
