@@ -156,6 +156,8 @@ export default {
             loading: false,
             rate1: {},
             rate2: {},
+            chart1: null,
+            chart2: null,
         }
     },
     created() {},
@@ -211,6 +213,7 @@ export default {
                 })
             })
             this.$nextTick(() => {
+                this.loading = true
                 this.loadTakeOff(arrs, 2, 'takeOffPercent', 'takeOffBox', 1)
                 this.loadTakeOff(arrs, 3, 'originatedDeparturePercent', 'originatedBox', 2)
             })
@@ -225,17 +228,17 @@ export default {
         },
         loadTakeOff(arrs, rateType, percent, box, num) {
             let arr = _.find(arrs, { rateType })
-
             this['rate' + num] = arr
             let options = _.cloneDeep(this.options[percent].options)
             let series = this.options.takeOffPercent.options.series(arr)
-
-            // series[0].data[0].color = this.getPercentColor(arr)
             options.series = series
-
-            console.log(options, arr)
-            this.loading = true
-            this.chart = Highcharts.chart(box, options)
+            if (this['chart' + num]) {
+                this['chart' + num].update({
+                    series: series,
+                })
+            } else {
+                this['chart' + num] = Highcharts.chart(box, options)
+            }
         },
         getFlightHandle(data) {
             if (this.timeSelect != 4 || data.rateType == 8) {
