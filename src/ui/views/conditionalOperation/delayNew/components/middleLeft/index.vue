@@ -4,7 +4,7 @@
 			<div class="flightStatusItem" v-for="opt in pageObj" :key="opt.key">
 				<icon-svg :iconClass="opt.icon"></icon-svg>
 				<div class="rightContent">
-					<div class="first fo">{{getData(opt.key)}} <span>架次</span></div>
+					<div class="first fo">{{getData(opt.key)}} <sub> <span>架次</span></sub> </div>
 					<div class="second">{{opt.name}}</div>
 				</div>
 			</div>
@@ -79,7 +79,10 @@
 				align-items: center;
 				border-bottom: 1px #111926 solid;
 				.rightContent {
-					line-height: 20px;
+					height: 43px;
+					 display: flex;
+					flex-direction: column;
+					justify-content: space-between;
 				}
 				svg {
 					width: 46px;
@@ -89,11 +92,15 @@
 				.first {
 					font-size: 22px;
 					span {
-						font-size: 12px;
-						color: rgba(255, 255, 255, 0.51);
+						font-size: 14px;
+						/*color: rgba(255, 255, 255, 0.51);*/
+						color: #666;
 					}
 				}
 				.second {
+					/*margin-top: 5px;*/
+					/*vertical-align: bottom;*/
+					line-height: 12px;
 					color: rgba(255, 255, 255, 0.62);
 				}
 			}

@@ -107,7 +107,7 @@
 						</el-select>
 					</div>
 					<div>
-						<i v-if="!notSeting(opt)" @click="openSetting(opt)" class="el-icon-setting"></i>
+						<i v-if="!notSeting(opt)" @click="openSetting(opt)" class="iconfont icon-zidingyi"></i>
 						<span @click="bangzhu(opt) " style="color:#fff">
 							<icon-svg iconClass="bangzhu"></icon-svg>
 						</span>
@@ -662,6 +662,7 @@
 		& > * {
 			box-sizing: border-box;
 		}
+		/*background: #0ACFFE;*/
 		height: calc(100vh - 40px);
 		overflow: hidden;
 		padding: 5px 12px 0px 12px;
@@ -669,7 +670,7 @@
 			cursor: pointer;
 			color: #fff;
 			position: fixed;
-			z-index: 10000;
+			z-index: 9;
 			right: -50px;
 			top: calc(45vh + 7px);;
 			background: linear-gradient(90deg, #4b8efd 0, #3fb3ff 100%);
@@ -757,17 +758,14 @@
 		}
 		.bottomTable, .toprunway {
 			position: relative;
-			height: calc(55vh - 32px);
-			/*height: 600px;*/
-
 		}
 		.toprunway {
 			margin-top: 5px;
-			height: 410px;
-			/*height: calc(45vh - 60px);*/
+			height: calc(40% - 8px);
+			/*border:1px solid red;*/
 			position: relative;
 			.runway {
-				height: 115px;
+				height:calc(33.33333% - 6px);
 				border-top: 1px #279dff solid;
 				position: relative;
 				& > div {
@@ -782,6 +780,7 @@
 					width: 24px;
 					text-align: center;
 					background: #36445a;
+					font-family: FjallaOne;
 				}
 				.zhezhao {
 					z-index: 8;
@@ -955,31 +954,32 @@
 
 		}
 		.bottomTable {
-			/*background: red;*/
+			/*background: blue;*/
+
 			color: #fff;
 			width: 100%;
 			overflow-x: auto;
 			white-space: nowrap;
 			margin-top: 12px;
-			height: calc(55vh - 60px);
+			height: calc(60% - 38px);
 			.bottomItem {
 				display: inline-block;
 				height:100%;
-				padding: 5px;
+				padding: 5px 6px;
 				width: 20% !important;
 				vertical-align: top;
 				.tablediv {
 					margin-top: -1px;
 					position: relative;
 					width: 100%;
-					height: calc(100% - 40px);
+					height: calc(100% - 35px);
 				}
 				.tabledivWC {
 					border: $border;
 					border-top: 0;
 				}
 				.twotablediv {
-					height: calc(100% - 40px);
+					height: calc(100% - 35px);
 					.T_title {
 						width: 100%;
 						height: 37px;
@@ -1010,24 +1010,31 @@
 					height: 37px;
 					line-height: 37px;
 					border-radius: 6px 6px 0 0;
-					/*background: #234479;*/
 					display: flex;
 					padding: 0 15px;
 					justify-content: space-between;
 					::v-deep .el-select {
 						width: 120px;
-						/*height: 30px!important;*/
 						.el-input__inner {
-							height: 30px!important;
+							height: 26px!important;
 							background: rgba(0, 124, 215, 0.55) !important;
-							border: 1px solid rgba(255, 255, 255, 0.45) !important;
+							border: 1px solid rgba(255, 255, 255, 1) !important;
 							color: #ffffff;
 						}
 					}
+					i{
+						font-size: 14px;
+					}
 				}
 			}
+			.bottomItem:first-child{
+				padding-left: 0;
+			}
+			.bottomItem:last-child{
+				padding-right: 0;
+			}
 			.bottomItemTwoTable {
-				width: 40% !important;
+				width: calc(40% + 5px) !important;
 			}
 		}
 	}

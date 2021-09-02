@@ -2,7 +2,7 @@
 	<div class="tabItem">
 		<div class="title" :style="{background:data.bg}">
 			<div class="left">
- 				<span class="test" :style="{color:data.color}" >{{data.name}}</span>
+ 				<span class="test" :style="{color:data.color}" >{{data.name}}({{tableData.data.length}})</span>
 			</div>
 			<div class="right">{{tableData.percentage}} %</div>
 		</div>
