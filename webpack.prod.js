@@ -11,6 +11,7 @@ const common = require('./webpack.common.js');
 const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const argv = require('yargs').argv;
 // 引入压缩插件
 const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack');
@@ -44,12 +45,13 @@ module.exports = smp.wrap(merge(common, {
     // 压缩js
     // new UglifyjsWebpackPlugin(),
     // 版权声明，添加到打包输出后的js代码之前
-    new webpack.BannerPlugin('Qin Xiao'),
+    // new webpack.BannerPlugin('Qin Xiao'),
     // 打包前清除打包目录下的文件，但不删除打包目录
     new CleanWebpackPlugin(),
     new webpack.DefinePlugin(
       {
-        'DEBUG': JSON.stringify(false)
+        'BUILD_ENVIROMENT': JSON.stringify(argv.Program),
+        'DEBUG': JSON.stringify(false),
       }),
   ],
   module: {

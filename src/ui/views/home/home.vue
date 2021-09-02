@@ -197,7 +197,7 @@ export default {
     display: flex;
     padding: 7.5px;
     .home_left {
-        width: calc(100% - 265px);
+        width: calc(100% - 260px);
         height: 100%;
         position: relative;
         & > div {
@@ -205,7 +205,7 @@ export default {
         }
     }
     .home_right {
-        width: 265px;
+        width: 260px;
     }
     .numberBox {
         position: absolute;

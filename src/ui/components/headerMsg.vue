@@ -6,9 +6,7 @@
         </div>
         <ul class="hearMsgBox" v-show="listShow" infinite-scroll-distance="300px" v-infinite-scroll="load" style="overflow:auto">
             <li v-for="(item,idx) in msgList" :key="idx" class="infinite-list-item">
-                <div class="left" :class="item.isUnRead?'unread':''">
-
-                </div>
+                <div class="left" :class="item.isUnRead?'unread':''"></div>
                 <div class="right">
                     <div>
                         {{ item.messageContent }}
@@ -110,7 +108,7 @@ export default {
     }
     .hearMsgBox {
         position: fixed;
-        z-index: 10;
+        z-index: 99;
         top: 40px;
         right: 10px;
         height: calc(100% - 40px);

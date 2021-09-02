@@ -13,21 +13,15 @@
             </li>
         </ul>
         <div class="user_right">
-            <!-- <div class="dateBox">
-                <i class="el-icon-date" style="color:#fff;"></i>
-                <span class="fo">{{$moment().format('YYYY-MM-DD')}}</span>
-            </div>
-            <div class="timeBox">
-                <i class="el-icon-time" style="color:#fff;"></i>
-                <span class="fo">{{$moment().format('HH:mm:ss')}}</span>
-            </div> -->
-            <!-- <div class="msgBox">
-                <i class="iconfont icon-xiaoxi"></i>
-                <div>12</div>
-            </div> -->
-            <header-msg />
+            <!-- <header-msg ref="" :unreadList="unreadList" /> -->
+            <!-- @click="headrMsgHandle" -->
             <div>
-                <!-- <icon-svg :iconClass="'yonghu'" :iconColor="'#fff'"></icon-svg> -->
+                <div class="msgBox" @click="headrMsgHandle">
+                    <i class="iconfont icon-xiaoxi"></i>
+                    <div v-show="unreadCount>0">{{unreadCount}}</div>
+                </div>
+            </div>
+            <div>
                 <el-dropdown @command="userHandleCommand" trigger="click">
                     <span class="el-dropdown-link sansB pointer flexSC">
                         {{getUserMsg&&getUserMsg.name?getUserMsg.name:''}}<i class="el-icon-arrow-down el-icon--right"></i>
@@ -41,12 +35,8 @@
                 <i class="el-icon-switch-button" style="color:#fff;"></i>
             </div>
         </div>
-        <el-dialog :visible.sync="changePasswordShow" class="nodeDialog passwordNodeDialog" :show-close="false" center width="500px" :append-to-body="true" @close="changePasswordClose">
-            <template slot="title">
-                <div class="blankDiv"></div>
-                <div class="el-dialog_header_step">{{$t('message.changePassword')}}</div>
-                <div class="blankDiv"><i class="el-icon-circle-close" @click="changePasswordShow = false"></i></div>
-            </template>
+        <el-dialog title="修改密码" :visible.sync="changePasswordShow" class="nodeDialog passwordNodeDialog" center width="500px" :append-to-body="true" @close="changePasswordClose">
+
             <el-form :model="passwordObj" label-width="100px" :rules="rules" ref="configPassword" :label-position="lagnuage=='zh'?'right':'top'">
                 <el-form-item :label="$t('message.oldPassword')" prop="oldPwd">
                     <el-input v-model="passwordObj.oldPwd" :placeholder="$t('message.nowPassword')" :type="oldPwdShow?'password':'text'">
@@ -65,11 +55,25 @@
                     </el-input>
                 </el-form-item>
             </el-form>
-            <div class="dialog-footer">
-                <el-button @click="changePasswordShow = false">{{$t('message.cancel')}}</el-button>
-                <el-button type="primary" @click="changePassword">{{$t('message.submit')}}</el-button>
+            <!-- [data-v-5c8f1824] .el-dialog .el-dialog__body .el-form-item__label -->
+            <div class="footer">
+                <!-- <el-button @click="changePasswordShow = false">{{$t('message.cancel')}}</el-button>
+                <el-button type="primary" @click="changePassword">{{$t('message.submit')}}</el-button> -->
+                <span @click="changePasswordShow = false">{{$t('message.cancel')}}</span>
+                <span @click="changePassword">{{$t('message.submit')}}</span>
             </div>
         </el-dialog>
+        <ul class="hearMsgBox" v-show="listShow" infinite-scroll-distance="300px" v-infinite-scroll="load" style="overflow:auto">
+            <li v-for="(item,idx) in msgList" :key="idx" class="infinite-list-item">
+                <div class="left" :class="item.isUnRead?'unread':''"></div>
+                <div class="right">
+                    <div>
+                        {{ item.messageContent }}
+                    </div>
+                    <span>{{$moment(item.createTime).format('YYYY-MM-DD HH:mm')}}</span>
+                </div>
+            </li>
+        </ul>
     </div>
 </template>
 <script>
@@ -78,14 +82,14 @@ import { encryptedData } from '../lib/des-coder.js'
 import { routes } from '../router/index'
 let url = require('../assets/img/' + sysEdition + '/logoTitle.png')
 import { map } from 'lodash'
-import postal from 'postal';
+import postal from 'postal'
 
-import HeaderMsg from './headerMsg.vue'
+// import HeaderMsg from './headerMsg.vue'
+
+import PostalStore from '@/ui/lib/postalStore'
+let postalStore = new PostalStore()
 
 export default {
-    components: {
-        'header-msg': HeaderMsg,
-    },
     data() {
         var validateName = (rule, value, callback) => {
             if (value === '' || value === null || value === undefined) {
@@ -151,6 +155,13 @@ export default {
             lagnuage: 'zh',
             dropLists: [],
             path: '',
+
+            current: 1,
+            size: 20,
+            msgList: [],
+            unreadCount: 0,
+            listShow: false,
+            unreadList: [],
         }
     },
     props: ['seatFalg', 'planConfig', 'activeUserStatus'],
@@ -172,18 +183,58 @@ export default {
         this.path = this.$route.name
         this.getNavList()
         this.lagnuage = localStorage.lang || 'zh'
+
+        postalStore.sub('Web', 'Public.GetMsg.Sync', (data) => {
+            data.isUnRead = true
+            this.unreadList.unshift({ ...data, isUnRead: true })
+            this.unreadCount = this.unreadList.length
+            if (this.listShow) {
+                this.msgList.unshift(data)
+            }
+        })
+        postalStore.pub('Worker', 'Network.Connected.Adverse', '')
     },
     methods: {
+        getData() {
+            this.$request
+                .get('adverse', 'message/list?current=' + this.current + '&size=20')
+                .then((res) => {
+                    res.data.records.map((list) => {
+                        let unread = _.find(this.unreadList, { id: list.id })
+                        if (unread) {
+                            list.isUnRead = true
+                        }
+                    })
+                    this.msgList = _.concat(this.msgList, res.data.records)
+                })
+        },
+        headrMsgHandle() {
+            this.msgList = []
+            this.current = 1
+            this.listShow = !this.listShow
+            if (!this.listShow) {
+                this.unreadCount = 0
+                this.unreadList = []
+            } else {
+                this.getData()
+            }
+        },
+        load() {
+            this.current++
+            this.getData()
+        },
         outLogin() {
             this.$confirm(this.$t('message.sureLogout'), this.$t('message.prompt'), {
                 type: 'warning',
-            }).then(() => {
+            })
+                .then(() => {
                     // this.$router.push('/')
-                postal.publish({
-                    channel: 'Web',
-                    topic: 'Login.Out',
-                });
-                }).catch(() => {})
+                    postal.publish({
+                        channel: 'Web',
+                        topic: 'Login.Out',
+                    })
+                })
+                .catch(() => {})
         },
         userHandleCommand(command) {
             if (command == 'password') {
@@ -333,13 +384,13 @@ export default {
 
 <style lang="scss" scoped>
 #com_glob_head {
-    height: 36px;
+    height: 40px;
     width: 100%;
     background: linear-gradient(90deg, #183d71 0%, #0172cf 100%);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    z-index: 10;
+    z-index: 999;
     position: fixed;
     .nav_middle,
     .logo_left {
@@ -348,8 +399,71 @@ export default {
             font-family: MicrosoftYaHei-Bold !important;
         }
     }
+    .msgBox {
+        height: 24px;
+        width: 24px;
+        border-radius: 14px;
+        background: #005aa5;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        i {
+            color: #fff;
+            font-size: 12px;
+        }
+        div {
+            position: absolute;
+            top: -3px;
+            right: -8px;
+            background: red;
+            padding: 1px 2px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 12px;
+        }
+    }
+    .hearMsgBox {
+        position: fixed;
+        z-index: 999;
+        top: 40px;
+        right: 4px;
+        height: calc(100% - 44px);
+        width: 400px;
+        padding: 15px;
+        background: #25395c;
+        box-shadow: 0 10px 10px 0 rgb(0 0 0 / 50%);
+        li {
+            display: flex;
+            color: #fff;
+            padding: 10px 0 15px;
+            border-bottom: 1px solid #192c46;
+            .left {
+                width: 4px;
+                height: 4px;
+
+                border-radius: 4px;
+                margin: 8px 10px 0 0;
+            }
+            .left.unread {
+                background: red;
+            }
+            .right {
+                display: flex;
+                flex-direction: column;
+                div {
+                    font-size: 16px;
+                }
+                span {
+                    margin-top: 15px;
+                    color: hsla(0, 0%, 100%, 0.3);
+                }
+            }
+        }
+    }
     .logo_left {
-        height: 36px;
+        height: 40px;
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -367,7 +481,7 @@ export default {
             background-position: center left;
         }
         span {
-            font-size: 16px;
+            font-size: 18px;
             margin-left: 15px;
         }
     }
@@ -380,7 +494,7 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 34px;
+            height: 38px;
             cursor: pointer;
 
             div {
@@ -403,7 +517,8 @@ export default {
             }
         }
         li.active {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(61, 132, 255, 1) 100%);
+            background: linear-gradient(180deg, transparent 0, rgba(61, 132, 255, 0.5) 100%);
+            border-bottom: 1px solid #49a1ff;
         }
     }
     .user_right {
@@ -412,7 +527,7 @@ export default {
 
         & > div {
             margin: 0 12px;
-            height: 36px;
+            height: 40px;
             display: flex;
             justify-content: flex-start;
             align-items: center;
@@ -437,8 +552,8 @@ export default {
 
         .logoutBox,
         .setBox {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             background: rgba(14, 52, 113, 1);
             opacity: 0.6;
             cursor: pointer;

@@ -82,7 +82,7 @@ export default {
         .top {
             display: flex;
             justify-content: space-between;
-            padding: 5px 10px 0;
+            padding: 3px 10px 0;
             .pre {
                 color: #fff;
                 font-size: 12px;
@@ -114,7 +114,7 @@ export default {
             .right {
                 svg,
                 use {
-                    font-size: 50px;
+                    font-size: 48px;
                 }
             }
         }

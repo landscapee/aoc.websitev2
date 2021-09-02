@@ -9,6 +9,7 @@
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 const webpack = require('webpack');
+const {argv} = require("yargs");
 
 
 module.exports = merge(common, {
@@ -35,11 +36,13 @@ module.exports = merge(common, {
           }]
     },
     plugins: [
+      new webpack.DefinePlugin(
+        {
+          'DEBUG': JSON.stringify(true),
+          'BUILD_ENVIROMENT': JSON.stringify(argv.Program),
+        }),
         // 热更新插件
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.DefinePlugin(
-          {
-            'DEBUG': JSON.stringify(true)
-          }),
+
     ]
 })
