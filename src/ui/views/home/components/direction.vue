@@ -38,12 +38,18 @@
                                 <div style="width:8000px;height:100%;">
                                     <ul :class="'dataBox'+index+'_1'">
                                         <li v-for="list in item.citys" :key="list.cityCode" @click="cityHandle(list)">
-                                            <div>{{list.cityName}}<span>{{list.count}}</span></div>
+                                            <div>
+                                                <span class="textSpan">{{list.cityName}}</span>
+                                                <span class="countSpan">{{list.count}}</span>
+                                            </div>
                                         </li>
                                     </ul>
                                     <ul :class="'dataBox'+index+'_2'" style="display:none;">
                                         <li v-for="list in item.citys" :key="list.cityCode" @click="cityHandle(list)">
-                                            <div>{{list.cityName}}<span>{{list.count}}</span></div>
+                                            <div>
+                                                <span class="textSpan">{{list.cityName}}</span>
+                                                <span class="countSpan">{{list.count}}</span>
+                                            </div>
                                         </li>
                                     </ul>
                                 </div>
@@ -398,10 +404,12 @@ export default {
             width: calc(100% - 250px);
             height: 100%;
             border-right: 2px dashed rgba(179, 189, 220, 0.2);
+
             .chartBox {
                 height: calc(100% - 280px);
                 padding: 15px 15px 0;
                 overflow: hidden;
+                position: relative;
 
                 .title {
                     position: absolute;
@@ -425,11 +433,14 @@ export default {
                 #direction_chart_box {
                     height: 100%;
                     width: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                 }
             }
             .bottomBox {
                 height: 280px;
-                padding: 0 15px;
+                padding: 15px 15px 15px 5px;
                 .title {
                     display: flex;
                     justify-content: space-between;
@@ -467,22 +478,25 @@ export default {
                 }
                 .content {
                     .li_content {
-                        height: 40px;
+                        height: 35px;
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
+                        margin-bottom: 2px;
                         .nameBox {
-                            width: 140px;
+                            width: 160px;
                             display: flex;
                             justify-content: space-between;
                             align-items: center;
                             cursor: pointer;
+                            padding: 0 10px;
                         }
                         .dataBox {
                             width: calc(100% - 160px);
                             overflow: hidden;
                             height: 100%;
                             position: relative;
+                            background: #202e4a;
                         }
                         ul {
                             height: 100%;
@@ -497,14 +511,26 @@ export default {
                                 cursor: pointer;
                                 div {
                                     height: 100%;
-                                    background: rgba(42, 58, 95, 0.6);
                                     display: flex;
                                     align-items: center;
-                                    justify-content: center;
                                     color: #fff;
                                     padding: 10px;
-                                    span {
-                                        margin-left: 10px;
+                                    width: 125px;
+
+                                    // span {
+                                    //     margin-left: 10px;
+                                    // }
+
+                                    .textSpan {
+                                        display: inline-block;
+                                        width: 100px;
+                                        overflow: hidden;
+                                        white-space: nowrap;
+                                        text-overflow: ellipsis;
+                                    }
+                                    .countSpan {
+                                        display: inline-block;
+                                        width: 25px;
                                     }
                                 }
                             }

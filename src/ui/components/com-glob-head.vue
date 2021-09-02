@@ -384,7 +384,7 @@ export default {
 
 <style lang="scss" scoped>
 #com_glob_head {
-    height: 36px;
+    height: 40px;
     width: 100%;
     background: linear-gradient(90deg, #183d71 0%, #0172cf 100%);
     display: flex;
@@ -463,7 +463,7 @@ export default {
         }
     }
     .logo_left {
-        height: 36px;
+        height: 40px;
         display: flex;
         justify-content: space-around;
         align-items: center;
@@ -481,7 +481,7 @@ export default {
             background-position: center left;
         }
         span {
-            font-size: 16px;
+            font-size: 18px;
             margin-left: 15px;
         }
     }
@@ -494,7 +494,7 @@ export default {
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 34px;
+            height: 38px;
             cursor: pointer;
 
             div {
@@ -517,7 +517,8 @@ export default {
             }
         }
         li.active {
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(61, 132, 255, 1) 100%);
+            background: linear-gradient(180deg, transparent 0, rgba(61, 132, 255, 0.5) 100%);
+            border-bottom: 1px solid #49a1ff;
         }
     }
     .user_right {
@@ -526,7 +527,7 @@ export default {
 
         & > div {
             margin: 0 12px;
-            height: 36px;
+            height: 40px;
             display: flex;
             justify-content: flex-start;
             align-items: center;
@@ -551,8 +552,8 @@ export default {
 
         .logoutBox,
         .setBox {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             background: rgba(14, 52, 113, 1);
             opacity: 0.6;
             cursor: pointer;

@@ -28,7 +28,7 @@
                     <div id="takeOffBox" class="chartBox" @click="getFlightHandle(rate1)"></div>
                     <div class="center" @click="getFlightHandle(rate1)">
                         <div class="top fo">
-                            {{getPercent(rate1)}}%
+                            {{getPercent(rate1)}}<span class="fo">%</span>
                         </div>
                         <div class=" line"></div>
                         <div class="bottom fo">
@@ -46,7 +46,7 @@
                     <div id="originatedBox" class="chartBox" @click="getFlightHandle(rate2)"></div>
                     <div class="center" @click="getFlightHandle(rate2)">
                         <div class="top fo">
-                            {{getPercent(rate2)}}%
+                            {{getPercent(rate2)}}<span class="fo">%</span>
                         </div>
                         <div class="line"></div>
                         <div class="bottom fo">
@@ -164,9 +164,9 @@ export default {
 
     watch: {
         rate_data: function (val) {
-            if (!this.loading) {
-                this.loadRate()
-            }
+            // if (!this.loading) {
+            this.loadRate()
+            // }
         },
     },
     methods: {
@@ -213,7 +213,7 @@ export default {
                 })
             })
             this.$nextTick(() => {
-                this.loading = true
+                // this.loading = true
                 this.loadTakeOff(arrs, 2, 'takeOffPercent', 'takeOffBox', 1)
                 this.loadTakeOff(arrs, 3, 'originatedDeparturePercent', 'originatedBox', 2)
             })
@@ -280,13 +280,13 @@ export default {
                 line-height: 30px;
                 text-align: center;
                 color: #fff;
-                margin: 10px 0 0;
+                margin: 20px 0 0;
             }
             .content {
                 padding: 10px;
                 flex: 1;
                 width: 100%;
-                height: calc(100% - 30px);
+                height: calc(100% - 40px);
                 position: relative;
                 display: flex;
                 align-items: center;
@@ -338,8 +338,11 @@ export default {
                         margin: 5px 0;
                     }
                     .top {
-                        font-size: 26px;
-                        color: #fff;
+                        font-size: 24px;
+                        color: #177ddc;
+                        span {
+                            font-size: 16px;
+                        }
                     }
                     .bottom {
                         color: #477bff;
@@ -397,5 +400,8 @@ export default {
 <style>
 .rateBox .el-progress-bar__outer {
     background-color: #2a3440;
+}
+.el-progress-bar__outer {
+    height: 2px !important;
 }
 </style>
