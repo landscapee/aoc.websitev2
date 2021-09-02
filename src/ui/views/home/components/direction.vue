@@ -174,7 +174,7 @@ export default {
                 originalInMorning: '早高峰',
                 takeOffNormal: '放行',
             },
-            loadMaping: false,
+            chart: null,
             nowShow: true,
             activeData: {
                 1: {},
@@ -297,8 +297,7 @@ export default {
         },
         loadMap() {
             let series = this.options.map.options.series(this.flight_direction.key[this.select])
-            if (!this.loadMaping) {
-                this.loadMaping = true
+            if (!this.chart) {
                 let options = _.cloneDeep(this.options.map.options)
                 options.series = series
                 options.plotOptions.series.marker.lineColor = '#397DFF'
