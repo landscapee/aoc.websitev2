@@ -100,7 +100,7 @@
 				<div class="itemTitle"
 					 :style="'background-image:url('+opt.bg+') ;background-repeat:no-repeat;background-size:100% 100%;'">
 					<div>
-						{{opt.name}}（{{getLength(opt)}}）
+						{{opt.name}}({{getLength(opt)}})
 						<el-select v-if="opt.select" v-model="delayFlights" placeholder="请选择" size="mini">
 							<el-option v-for="item in delayFlightsOptions" :key="item.value" :label="item.label"
 									   :value="item.value"></el-option>
@@ -162,8 +162,9 @@
 				<div class="tablediv tabledivWC" v-else>
 					<AdvTable :tab-data="getData(opt)" :columnConfig="opt.tableConfig">
 						<template slot="flightNo" slot-scope="{row,index}">
-							<!--<div>航班号</div>-->
-							<span class="cursor" @click="toDetails(row)">{{row.flightNo}}</span>
+							<div class="flightTypeBox">
+								<span class="cursor" @click="toDetails(row)">{{row.flightNo}}</span>
+							</div>
 						</template>
 					</AdvTable>
 				</div>
@@ -221,7 +222,7 @@
                 },
                 pageListObj: {
                     delayFlights2: {
-                        name: '已延误池',
+                        name: '延误航班池',
                         key: 'delayFlights2', select: true,
                         bg: ksgzc, data: [], show: true, tableConfig: []
                     },
@@ -663,7 +664,7 @@
 		}
 		height: calc(100vh - 40px);
 		overflow: hidden;
-		padding: 15px 15px 0px 15px;
+		padding: 5px 12px 0px 12px;
 		.positionDropdown {
 			cursor: pointer;
 			color: #fff;
@@ -762,11 +763,11 @@
 		}
 		.toprunway {
 			margin-top: 5px;
-			/*height: 395px;*/
-			height: calc(45vh - 60px);
+			height: 410px;
+			/*height: calc(45vh - 60px);*/
 			position: relative;
 			.runway {
-				height: 110px;
+				height: 115px;
 				border-top: 1px #279dff solid;
 				position: relative;
 				& > div {
@@ -954,13 +955,16 @@
 
 		}
 		.bottomTable {
+			/*background: red;*/
 			color: #fff;
 			width: 100%;
 			overflow-x: auto;
 			white-space: nowrap;
+			margin-top: 12px;
+			height: calc(55vh - 60px);
 			.bottomItem {
 				display: inline-block;
-				height: calc(55vh - 40px);
+				height:100%;
 				padding: 5px;
 				width: 20% !important;
 				vertical-align: top;
