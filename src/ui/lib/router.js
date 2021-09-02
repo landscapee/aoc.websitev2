@@ -14,9 +14,7 @@ router.beforeEach((to, from, next) => {
     let token=getUserSerializ()?.token
 
     if(to.path=="login"||to.path=="/"){//登陆页清空信息
-
         loginFlag=0
-
  		store.commit("resetStore",null)
 		postal.publish({
             channel: 'worker.aoc',
