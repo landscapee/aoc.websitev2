@@ -458,7 +458,9 @@
 								height: 30px;
 								line-height: 30px;
 								color: #fff!important;
+
 								&>span{
+									padding: 0 12px!important;
 									font-weight: 500;
 								}
 								.font12{
@@ -480,6 +482,7 @@
 								height: 1px;
 								background-color: rgba(5, 102, 255, 0.15);
 							}
+
 						}
 					}
 				}

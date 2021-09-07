@@ -94,7 +94,7 @@ export default {
 
 <style scoped lang='scss'>
 .top_flight {
-    padding: 7px;
+    padding: 8px;
     height: calc(100% - 275px);
     .box_content {
         padding: 5px 15px 0;

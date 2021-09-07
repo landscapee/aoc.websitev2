@@ -53,7 +53,10 @@ export const setting = {
 
             key: 'aircraftNo',
             width: '50px', label: '机号',
-            type: 'simple'
+            type: 'simple',
+            display:(row)=>{
+                return ` <span class="fo">${row.aircraftNo||'--'}</span>`
+            }
         },
         {
 
@@ -82,7 +85,10 @@ export const setting = {
         {
             key: 'movement',
             width: '50px', label: '进/离',
-            type: 'simple'
+            type: 'simple',
+            display:(row)=>{
+                return ` <span class="fo">${row.movement||'--'}</span>`
+            }
         },
         {
             key: 'displayScheduleTime',
@@ -153,7 +159,10 @@ export const setting = {
         {
             key: 'movement',
             width: '50px', label: '进/离',
-            type: 'simple'
+            type: 'simple',
+            display:(row)=>{
+                return ` <span class="fo">${row.movement||'--'}</span>`
+            }
         },
         {
             key: 'ata-atd',
@@ -184,7 +193,10 @@ export const setting = {
         {
             key: 'movement',
             width: '50px', label: '进/离',
-            type: 'simple'
+            type: 'simple',
+            display:(row)=>{
+                return ` <span class="fo">${row.movement||'--'}</span>`
+            }
         },
         {
             key: 'displayScheduleTime',
@@ -263,7 +275,10 @@ export const setting = {
             width: '80px', label: '关客舱门时间',
             type: 'simple',
             display:(row)=>{
-                return row.closeDoorTime?moment(row.closeDoorTime).format('HH:mm'):'--'
+                return  `<span class="fo">
+                            ${row.closeDoorTime?moment(row.closeDoorTime).format('HH:mm'):'--'}
+                        </span>`
+
             }
         },{
             key: 'displayRouter',

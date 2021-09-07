@@ -121,7 +121,7 @@ export default {
 
 <style scoped lang='scss'>
 .runway {
-    padding: 7px;
+    padding: 8px;
     .box_content {
         padding: 5px 15px 0;
         overflow: hidden;

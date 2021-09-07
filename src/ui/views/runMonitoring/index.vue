@@ -14,14 +14,17 @@
 					<div @click="resetPageList" class="resetPage">重置</div>
 				</el-dropdown-menu>
 			</el-dropdown>
-			<div class="itemMonitor" v-if="runMonitorShow[opt.key]" v-for="(opt,index) in pageList" :key="index">
+			<div  class="itemMonitor" :class="  index>2?' itemMonitor1':'' " v-if="runMonitorShow[opt.key]" v-for="(opt,index) in pageList" :key="index">
 				<div class="itemTitle">
 					<div>{{opt.name}}（{{(opt.data||[]).length}}）</div>
 					<div >
-						<span v-if="isWarning(opt)" @click="openWaring(opt) " :class="{infoSvg:!getMoreWarnLength(opt.key)}">
-							<icon-svg  iconClass="warning" ></icon-svg>
+
+						<span v-if="isWarning(opt)" @click="openWaring(opt) " :class="{infoIcon:!getMoreWarnLength(opt.key)}">
+							<!--<icon-svg  iconClass="warning" ></icon-svg>-->
+							<i class="iconfont icon-warning"></i>
+
 						</span>
- 						<i @click="openSetting(opt)" class="el-icon-setting"></i>
+ 						<i @click="openSetting(opt)" class="iconfont icon-zidingyi"></i>
 						<icon-svg @click.native="openBangzhu(opt)" v-if="!opt.bangzhu" iconClass="bangzhu" ></icon-svg>
 					</div>
 
@@ -30,7 +33,7 @@
 					<AdvTable :tab-data="opt.data" @rowClassExtend="rowClassExtend(...arguments,opt)" :columnConfig="opt.tableConfig" >
  						<template slot="flightNo" slot-scope="{row,index}">
 							<!--<div>航班号</div>-->
-							 <span class="cursor" @click="toDetails(row)">{{row.flightNo}}</span>
+							 <span class="cursor fo" @click="toDetails(row)">{{row.flightNo}}</span>
 						</template>
 						<template slot="batchSet" slot-scope="{row,index}">
 							<!--<div>批量预警</div>-->
@@ -386,26 +389,29 @@
 			cursor: pointer;
 			color:#fff;
 			position: absolute;
-			right:20px;
+			right:30px;
 			top:2px;
 			background: linear-gradient(90deg,#4b8efd 0,#3fb3ff 100%);
 			box-shadow: 0 0 0.25rem #4b4b4b;
-			padding: 5px 6px;
+			padding: 3px 6px;
+			font-size: 12px;
 			.el-icon-setting{
 				margin-right:5px;
 			}
 
 		}
 		.listMonitor {
-			padding: 15px;
+			height: calc(100vh - 40px);
+			padding: 11px;
+			padding-right: 0;
 			color: #fff;
 			display: flex;
 			justify-content: left;
 			flex-wrap: wrap;
 			.itemMonitor {
-				height: calc(50vh - 39px);
+				height: calc(50% - 2px);
  				width: 33.333333%!important;
-				padding: 5px;
+				padding: 0px 11px 11px 0 ;
 				.tablediv{
 					margin-top: -1px;
 					position: relative;
@@ -424,8 +430,26 @@
 					display: flex;
 					padding: 0 15px;
 					justify-content: space-between;
+					.icon-zidingyi{
+						font-size: 13px;
+						margin: 0 2px;
+					}
+					.infoIcon{
+
+						.icon-warning{
+							color: #6c757d !important;
+							cursor: not-allowed;
+						}
+					}
+					.icon-warning{
+						font-size: 15px!important;
+					}
+
 
 				}
+			}
+			.itemMonitor1{
+				padding-bottom:0;
 			}
 		}
 	}

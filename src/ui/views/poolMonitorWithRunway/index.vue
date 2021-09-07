@@ -100,14 +100,14 @@
 				<div class="itemTitle"
 					 :style="'background-image:url('+opt.bg+') ;background-repeat:no-repeat;background-size:100% 100%;'">
 					<div>
-						{{opt.name}}（{{getLength(opt)}}）
+						{{opt.name}}({{getLength(opt)}})
 						<el-select v-if="opt.select" v-model="delayFlights" placeholder="请选择" size="mini">
 							<el-option v-for="item in delayFlightsOptions" :key="item.value" :label="item.label"
 									   :value="item.value"></el-option>
 						</el-select>
 					</div>
 					<div>
-						<i v-if="!notSeting(opt)" @click="openSetting(opt)" class="el-icon-setting"></i>
+						<i v-if="!notSeting(opt)" @click="openSetting(opt)" class="iconfont icon-zidingyi"></i>
 						<span @click="bangzhu(opt) " style="color:#fff">
 							<icon-svg iconClass="bangzhu"></icon-svg>
 						</span>
@@ -162,8 +162,9 @@
 				<div class="tablediv tabledivWC" v-else>
 					<AdvTable :tab-data="getData(opt)" :columnConfig="opt.tableConfig">
 						<template slot="flightNo" slot-scope="{row,index}">
-							<!--<div>航班号</div>-->
-							<span class="cursor" @click="toDetails(row)">{{row.flightNo}}</span>
+							<div class="flightTypeBox">
+								<span class="cursor" @click="toDetails(row)">{{row.flightNo}}</span>
+							</div>
 						</template>
 					</AdvTable>
 				</div>
@@ -221,7 +222,7 @@
                 },
                 pageListObj: {
                     delayFlights2: {
-                        name: '已延误池',
+                        name: '延误航班池',
                         key: 'delayFlights2', select: true,
                         bg: ksgzc, data: [], show: true, tableConfig: []
                     },
@@ -661,14 +662,15 @@
 		& > * {
 			box-sizing: border-box;
 		}
+		/*background: #0ACFFE;*/
 		height: calc(100vh - 40px);
 		overflow: hidden;
-		padding: 15px 15px 0px 15px;
+		padding: 5px 12px 0px 12px;
 		.positionDropdown {
 			cursor: pointer;
 			color: #fff;
 			position: fixed;
-			z-index: 10000;
+			z-index: 9;
 			right: -50px;
 			top: calc(45vh + 7px);;
 			background: linear-gradient(90deg, #4b8efd 0, #3fb3ff 100%);
@@ -756,17 +758,14 @@
 		}
 		.bottomTable, .toprunway {
 			position: relative;
-			height: calc(55vh - 32px);
-			/*height: 600px;*/
-
 		}
 		.toprunway {
 			margin-top: 5px;
-			/*height: 395px;*/
-			height: calc(45vh - 60px);
+			height: calc(40% - 8px);
+			/*border:1px solid red;*/
 			position: relative;
 			.runway {
-				height: 110px;
+				height:calc(33.33333% - 6px);
 				border-top: 1px #279dff solid;
 				position: relative;
 				& > div {
@@ -781,6 +780,7 @@
 					width: 24px;
 					text-align: center;
 					background: #36445a;
+					font-family: FjallaOne;
 				}
 				.zhezhao {
 					z-index: 8;
@@ -954,28 +954,32 @@
 
 		}
 		.bottomTable {
+			/*background: blue;*/
+
 			color: #fff;
 			width: 100%;
 			overflow-x: auto;
 			white-space: nowrap;
+			margin-top: 12px;
+			height: calc(60% - 38px);
 			.bottomItem {
 				display: inline-block;
-				height: calc(55vh - 40px);
-				padding: 5px;
+				height:100%;
+				padding: 5px 6px;
 				width: 20% !important;
 				vertical-align: top;
 				.tablediv {
 					margin-top: -1px;
 					position: relative;
 					width: 100%;
-					height: calc(100% - 40px);
+					height: calc(100% - 35px);
 				}
 				.tabledivWC {
 					border: $border;
 					border-top: 0;
 				}
 				.twotablediv {
-					height: calc(100% - 40px);
+					height: calc(100% - 35px);
 					.T_title {
 						width: 100%;
 						height: 37px;
@@ -1006,24 +1010,31 @@
 					height: 37px;
 					line-height: 37px;
 					border-radius: 6px 6px 0 0;
-					/*background: #234479;*/
 					display: flex;
 					padding: 0 15px;
 					justify-content: space-between;
 					::v-deep .el-select {
 						width: 120px;
-						/*height: 30px!important;*/
 						.el-input__inner {
-							height: 30px!important;
+							height: 26px!important;
 							background: rgba(0, 124, 215, 0.55) !important;
-							border: 1px solid rgba(255, 255, 255, 0.45) !important;
+							border: 1px solid rgba(255, 255, 255, 1) !important;
 							color: #ffffff;
 						}
 					}
+					i{
+						font-size: 14px;
+					}
 				}
 			}
+			.bottomItem:first-child{
+				padding-left: 0;
+			}
+			.bottomItem:last-child{
+				padding-right: 0;
+			}
 			.bottomItemTwoTable {
-				width: 40% !important;
+				width: calc(40% + 5px) !important;
 			}
 		}
 	}
