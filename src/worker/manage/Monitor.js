@@ -53,6 +53,8 @@ export const transRunwayData = (worker, time) => {
     let runwayObj = {}
     let monitorQueue = memoryStore.getItem('Pools').monitorQueue
     let runwayModels = memoryStore.getItem('Pools').runwayModels
+    let noRunWay=[[],[],[]]
+    // let noRunWay={delay:[],normal:[]}
     if (monitorQueue && runwayModels) {
         if (time) {
             let arr = [time.startTime, time.startTime + 30 * 60 * 1000]
@@ -70,8 +72,10 @@ export const transRunwayData = (worker, time) => {
         let arr= orderByFn([...monitorQueue.delay,...monitorQueue.normal])
         let zIndex = 1000 //设置层级 时间越小 层级越高
         map(arr,(k,l)=>{
-            zIndex--
-            k.zIndex=zIndex
+            if(k.runway){
+                zIndex--
+                k.zIndex=zIndex
+            }
         })
         map(runwayModels, (k, l) => {
             // delayLen: 0, normalLen: 0,
@@ -82,13 +86,19 @@ export const transRunwayData = (worker, time) => {
             duo_one[obj[k.runway]] = k.runway
         })
         // 分类
-
         let classifyFn = (data, key) => {
             // let len = key + 'Len'
             let checkObj = {}
+            // A进港 D离港
+            let mapNoRunWay={delay:2,D:1,A:0}
              map(data, (k, l) => {
                // 过滤 未匹配 跑到
                 if(!duo_one[k.runway]){
+                    // 处理无跑到数据
+                    if(!k.runway){
+                        let s=key=='delay'?'delay':k.movement
+                        noRunWay[mapNoRunWay[s]].push(k)
+                    }
                     return
                 }
                 // 转换跑到
@@ -101,7 +111,6 @@ export const transRunwayData = (worker, time) => {
                  } else {
                     // runwayObj[paodao][key]=[[{},{}],[[{}]]
                     // runwayObj[paodao][key] 表示同一个跑到的 delay 或 normal a[index]表示同一 时分 段的数据 合
-
                     //记录 同一个跑到 不同 shifen 的大数组下标
                     checkObj[paodao] = checkObj[paodao] || {}
                     checkObj[paodao][shifen] = {len: runwayObj[paodao][key].length}
@@ -116,17 +125,20 @@ export const transRunwayData = (worker, time) => {
 
         classifyFn(monitorQueue.normal, 'normal')
         classifyFn(monitorQueue.delay, 'delay')
-        let endObj = []
+        let runway = []
         let usage = null
         map(runwayModels, (k, l) => {
             if (k.usage == 3) {
                 usage = runwayObj[k.runway]
             } else {
-                endObj.push(runwayObj[k.runway])
+                runway.push(runwayObj[k.runway])
             }
         })
-        usage && endObj.push(usage)
-        worker.publish('Web', 'runwayModels', endObj)
+        usage && runway.push(usage)
+        map(noRunWay,(k,l)=>{
+            noRunWay[l]= orderByFn(k)
+        })
+        worker.publish('Web', 'runwayModels', {runway,noRunWay})
 
     }
 }
