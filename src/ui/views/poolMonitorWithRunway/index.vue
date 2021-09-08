@@ -87,8 +87,8 @@
 						<template v-for=" (item,index) in opt">
 							<!--key==0 进港表示正常航班 key==1 离港  key==2表示延误航班-->
 							<div  :class="'flightBox flightBox'+key+' ' " :key="opt+index">
-								<div class="norunwaytime"><span v-if="key==2">{{item.movement}}</span>{{tranTime(item)}}</div>
-								<div :class="'flightNo ' + item.movement">{{item.flightNo}}</div>
+								<div class="norunwaytime "><span v-if="key==2">{{item.movement}}</span><span>{{tranTime(item)}}</span></div>
+								<div :class="'  flightNo ' + item.movement"><span class="fo">{{item.flightNo}}</span></div>
 							</div>
 						</template>
 					</template>
@@ -994,12 +994,15 @@
 				right: 15px;
 				z-index: 11;
 				.flightBox{
-					font-family: FjallaOne;
 					margin:  5px;
 					.flightNo{
+
 						box-sizing: border-box;
-						padding: 1px 2px;
+						padding: 2px 4px;
 						border-radius: 2px;
+						span{
+							font-size: 13px;
+						}
 					}
 					.flightNo.D{
 						background: #2e67f6;
@@ -1008,16 +1011,21 @@
 						background: #009f23;
 					}
 					.norunwaytime{
-						/*item-align:center;*/
+						font-size: 13px;
 						text-align: center;
+						span{
+							font-family: FjallaOne;
+							font-size: 13px;
+						}
 					}
 				}
 				.flightBox2{
 					.flightNo{
 						background: #ffe5e5!important;
-						border: 1px #daafaf solid;
-						color: #222222;
-						padding: 0 1px;
+						/*border: 1px #daafaf solid;*/
+						span{
+							color: #4a4a4a;
+						}
 					}
 				}
 			}
