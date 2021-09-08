@@ -157,14 +157,14 @@ export const filedConvert = {
 			return [formatDate(preETD, 'HHmm'), formatDate(preATD, 'HHmm')];
 		},
 	},
-	counters: {
-		convert: (data) => {
-			let counters = map(get(data, 'counters', []), function(item) {
-				return item.counterId;
-			});
-			return counters.length > 0 ? counters.join(',') : DISPLAYNULL;
-		},
-	},
+	// counters: {
+	// 	convert: (data) => {
+	// 		let counters = map(get(data, 'counters', []), function(item) {
+	// 			return item.counterId;
+	// 		});
+	// 		return counters.length > 0 ? counters.join(',') : DISPLAYNULL;
+	// 	},
+	// },
 	airlineCnName: {
 		convert: (data) => {
 			return get(data, 'airlineCnName', DISPLAYNULL);
@@ -258,7 +258,7 @@ export const allField = {
 	// 'eta-etd': { text: '优利预计' },
 	flightStatusText: { text: '运营状态', search: { type: 'select', remoteOptionField: 'statusOptions' } },
 	displayPreATDOrETD: { text: '前站起飞' },
-	counters: { text: '值机柜台' },
+	// counters: { text: '值机柜台' },
 	displayCarousels: { text: '转盘' },
 	airlineCnName: { text: '航空公司', width: 200,  search: { type: 'text' } },
 	cobt: { text: 'COBT', reference: true },
