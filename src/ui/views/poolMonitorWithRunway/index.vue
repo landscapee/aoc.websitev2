@@ -81,8 +81,22 @@
 					</div>
 				</div>
 			</div>
+			<div class="norunwayWidth">
+				<div class="norunway">
+					<template v-for=" (opt,key) in noRunWay">
+						<template v-for=" (item,index) in opt">
+							<!--key==0 进港表示正常航班 key==1 离港  key==2表示延误航班-->
+							<div  :class="'flightBox flightBox'+key+' ' " :key="opt+index">
+								<div class="norunwaytime "><span v-if="key==2">{{item.movement}}</span><span>{{tranTime(item)}}</span></div>
+								<div :class="'  flightNo ' + item.movement"><span class="fo">{{item.flightNo}}</span></div>
+							</div>
+						</template>
+					</template>
+				</div>
+			</div>
 			<div class="itemBox">
 				<div class="time time1" ref="time">
+
 					<div class="itemtime1" v-for="opt in runwayTime" :key="opt">
 						<div class="timespan"></div>
 					</div>
@@ -210,6 +224,7 @@
                 timerInterval: null,
                 nowTime: null,
                 runway: [{}, {}, {}],
+                noRunWay:[],
                 runwayTime: 1,
                 setting,
                 jg: true,
@@ -382,6 +397,12 @@
                     return data
                 }
             },
+			tranTime(){
+                return (item )=>{
+                    let time=item.eta || item.ctot
+                    return moment(time).format('HH:mm')
+				}
+			}
 
         },
         methods: {
@@ -539,8 +560,11 @@
             // 始发航班池 initialFlights2; 长期延误池 alwaysDelay;起飞保障池 departureGuarantee
             // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
 
-            postalStore.sub('runwayModels', (data) => {
-                this.runway = data;
+            postalStore.sub('runwayModels', ({runway,noRunWay}) => {
+                this.runway = runway;
+                this.noRunWay = noRunWay;
+                console.log('noRunWay',noRunWay);
+
             });
             postalStore.sub('Time.Sync.page', (data) => {
                 console.log(555,new Date(data));
@@ -670,7 +694,7 @@
 			cursor: pointer;
 			color: #fff;
 			position: fixed;
-			z-index: 9;
+			z-index: 299;
 			right: -50px;
 			top: calc(45vh + 7px);;
 			background: linear-gradient(90deg, #4b8efd 0, #3fb3ff 100%);
@@ -778,10 +802,12 @@
 					color: #fff;
 				}
 				.title {
-					line-height: 110px;
+					/*line-height: 100%;*/
+					display: flex;
+					align-items: center;
+					justify-content: center;
 					left: 0px;
 					width: 24px;
-					text-align: center;
 					background: #36445a;
 					font-family: FjallaOne;
 				}
@@ -953,6 +979,55 @@
 				overflow: hidden;
 				background: #152c4a;
 				padding-left: 24px;
+			}
+			.norunwayWidth{
+				position: relative;
+				width: calc(100% - 10px);
+				margin-left: 20px;
+			}
+			.norunway{
+				position: absolute;
+				display: flex;
+				flex-wrap: wrap;
+				color: #fff;
+				bottom: 5px;
+				right: 15px;
+				z-index: 11;
+				.flightBox{
+					margin:  5px;
+					.flightNo{
+
+						box-sizing: border-box;
+						padding: 2px 4px;
+						border-radius: 2px;
+						span{
+							font-size: 13px;
+						}
+					}
+					.flightNo.D{
+						background: #2e67f6;
+					}
+					.flightNo.A{
+						background: #009f23;
+					}
+					.norunwaytime{
+						font-size: 13px;
+						text-align: center;
+						span{
+							font-family: FjallaOne;
+							font-size: 13px;
+						}
+					}
+				}
+				.flightBox2{
+					.flightNo{
+						background: #ffe5e5!important;
+						/*border: 1px #daafaf solid;*/
+						span{
+							color: #4a4a4a;
+						}
+					}
+				}
 			}
 
 		}
