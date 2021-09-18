@@ -27,7 +27,7 @@
 								<span class="fo">{{opt.elecFlightStatus||'--'}}</span>
 								<span><icon-svg iconClass="riqi2"></icon-svg>{{opt.operationDate||''}}</span>
 							</div>
-							<div :style="getStatusStyle(opt)" class="flightStatus">{{opt.flightExtStatusText||'--'}}
+							<div :style="getStatusStyle(opt)" class="flightStatus"> {{opt.flightExtStatusText||'--'}}
 							</div>
 						</div>
 						<div class="contentMiddle">
@@ -399,13 +399,16 @@
 					position: absolute;
 					border: 2px solid #ffffff;
 					border-radius: 13px;
-					width: 80px;
+					min-width: 80px;
 					height: 20px;
 					display: flex;
 					justify-content: center;
 					align-items: center;
 					left: 50%;
 					top: 15px;
+					overflow: hidden;
+					text-overflow:ellipsis;
+					white-space: nowrap;
 					transform: translateX(-50%);
 				}
 			}
