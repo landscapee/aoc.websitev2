@@ -784,19 +784,33 @@ export const setDefaultDelay = (flight) => {
 export const getFlightDelayWarn = (flight) => {
 	/*
 		* Ctot - 放行标准起飞时间 < -10M 绿色
-			ctot - 放行标准起飞时间 > 10M 红色
+			放行标准起飞时间-ctot > 10M 红色
 			有ctot和放行标准起飞的其他 : 黄色
 		* */
+
+	/**
+	 1、CTOT＞标准起飞时间＋10分钟，红色
+	 2、10分钟＞CTOT－标准起飞时间≥0，橙色
+	 3、10分钟≥标准起飞时间－CTOT＞0，黄色
+	 4、标准起飞时间－CTOT＞10分钟，绿色
+	 * */
 	let { ctot, dstt } = flight;
 	let tenMin = 10 * 60 * 1000;
+
 	if (dstt && ctot) {
-		if (ctot - dstt < -tenMin) {
+		if (dstt - ctot > tenMin) {
+			// = dstt - ctot > tenMin
 			return 'departWarnGreen';
 		}
-		if (ctot - dstt > tenMin) {
+		if (ctot > dstt + tenMin) {
 			return 'departWarnRed';
 		}
-		return 'departWarnYellow';
+		let diff = ctot - dstt;
+		if (tenMin >= dstt - ctot && dstt - ctot > 0) {
+			return 'departWarnYellow';
+		} else {
+			return 'departWarnOrange';
+		}
 	} else {
 		return false;
 	}

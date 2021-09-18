@@ -137,6 +137,8 @@
     <span v-else>--</span>
   </permissionSwitch>
 
+  <el-radio v-else-if="item.key === 'coordinateStatus'" slot-scope="scope" @click.native.prevent="showCoordinate(scope.row.flightId)" :value="scope.row[item.key]" :label="1"></el-radio>
+
   <span v-else-if="item.key === 'showVideo'" class="cursor text-blue" @click="playVideo(scope.row)">
     播放
   </span>
@@ -434,8 +436,12 @@ export default {
         warnTextGreen: departWarn === 'departWarnGreen',
         warnTextRed: departWarn === 'departWarnRed',
         warnTextYellow: departWarn === 'departWarnYellow',
+        warnTextOrange: departWarn === 'departWarnOrange',
       });
       return cClass
+    },
+    showCoordinate: function (flightId){
+      postalStore.pub('Web', 'Coordinate.Show', flightId)
     }
   },
   computed: {

@@ -44,6 +44,7 @@ export default {
         departWarnGreen: departWarn === 'departWarnGreen',
         departWarnRed: departWarn === 'departWarnRed',
         departWarnYellow: departWarn === 'departWarnYellow',
+        departWarnOrange: departWarn === 'departWarnOrange',
         checkedFlight: this.checkFlightId.indexOf(flightId) > -1
       })
     },

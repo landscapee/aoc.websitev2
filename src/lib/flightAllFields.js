@@ -370,6 +370,7 @@ export const allField = {
 	showVideo: { text: '播放视频', search: false, unConfigurable: true },
 	preDeicing: { text: '预除冰', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role: 'edit-pre-deice' }, // 预除冰
 	preRefueling: { text: '预加油', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role: 'edit-pre-fuel' }, // 预加油
+	coordinateStatus: { text: '是否协调', search: { type: 'select', options: [{ value: 1, label: '是' }, { value: 0, label: '否' }], radio: true , role: 'edit-coordinate-status'} }, // 是否协调
 	// expectRunWay: { text: '计划使用跑道', width: 120 }, // 预加油
 	milestoneStatusCn: { text: '空地里程碑', width: 120 }, //
 	qualificationStatus: { text: '航空公司二类资质录入', search: { type: 'select', options: [{ value: '1', label: '是' }, { value: '0', label: '否' }], radio: true }, renderType: 'radio', role:'edit-qualification', width: 180 }, //

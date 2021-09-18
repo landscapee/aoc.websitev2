@@ -36,6 +36,7 @@
             <complex-column :isHistory="isHistory" :inputField.sync="inputField" slot-scope="scope" :item="scope.item" :scope="scope"/>
           </flightTableDiv>
           <contextMenu :clickItem="contextClick"></contextMenu>
+          <coordinateModal/>
         </div>
       </div>
 
@@ -77,6 +78,8 @@ export default {
         import(/*webpackChunkName:"complex-column"*/ '../complexColumnDom'),
     'flightTableDiv': () =>
         import(/*webpackChunkName:"flightTableDiv"*/ '../flightTableDiv/flightTableDiv'),
+    'coordinateModal': () =>
+        import(/*webpackChunkName:"flightTableDiv"*/ '../coordinateModal'),
   },
   data(){
     return{
@@ -85,6 +88,7 @@ export default {
       //   direction: '王小虎',
       //   flightIndex: index
       // })),
+      coordinateModal: false, // 协调的模态框
       inputField:'', // 正在编辑的字段
       isScrolling: false, // 是否在滚动
       offSetY: 0,
