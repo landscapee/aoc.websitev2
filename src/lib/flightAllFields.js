@@ -255,6 +255,8 @@ export const allField = {
 	mixEta: { text: 'mixEta', reference: true },
 	displayMixEtaWithDate: { text: '预达', sort: true, referenceTo: 'mixEta' },
 	displayETI: { text: '预位', sort: true, referenceTo: 'eti' },
+	displayCloseDoorTime: { text: '关客舱门时间', search: { type: 'time' }, width: 120 },
+	displayCargoCloseDoorTime: { text: '关货舱门时间', search: { type: 'time' }, width: 120 },
 	// 'eta-etd': { text: '优利预计' },
 	flightStatusText: { text: '运营状态', search: { type: 'select', remoteOptionField: 'statusOptions' } },
 	displayPreATDOrETD: { text: '前站起飞' },
@@ -284,7 +286,7 @@ export const allField = {
 	passengerService: { text: '旅客服务' },
 	assignmentAgent: { text: '签派代理' },
 	serviceAgent: { text: '地服代理', full: '勤务代理' },
-	// preOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', reference: true, search: { type: 'time' } },
+	// preOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', reference: true },
 	// preOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', reference: true, search: { type: 'time' } },
 	displayPreOrNxtPlanTime: { text: '前后站计划', full: '前后站计划时间', sort: true, referenceTo: 'preOrNxtPlanTime', search: { type: 'time' } },
 	displayPreOrNxtActualTime: { text: '前后站实际', full: '前后站实际时间', sort: true, referenceTo: 'preOrNxtActualTime', search: { type: 'time' } },
@@ -337,6 +339,7 @@ export const allField = {
 	actualBordingLength: { text: '实际登机时长(分钟)', width: '140px' },
 	actualRoute: { text: '航路' },
 	planRoute: { text: '计划航路' },
+	fplRoute: { text: '航路点', search: { type: 'text' } },
 
 	// ATOTout: { text: '外站实际起飞' },
 	// FIRT: { text: '本场雷达更新' },
@@ -470,6 +473,9 @@ export const defaultColumns = [
 	{ key: 'actualBordingLength', width: 140 }, //实际登机时长
 	{ key: 'qualificationStatus' },
 	{ key: 'milestoneStatusCn' },
+	{ key: 'displayCargoCloseDoorTime' },
+	{ key: 'displayCloseDoorTime' },
+	{ key: 'fplRoute' }, // 航路点
 	{ key: 'displayDSGT' },
 	{ key: 'displayTSTT' },
 	{ key: 'displayDSTT' },

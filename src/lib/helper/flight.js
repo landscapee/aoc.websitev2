@@ -117,6 +117,7 @@ export const addDisplayField = (flight) => {
 			'actualEndTime',
 			'estimateStartTime',
 			'estimateEndTime',
+			'cargoCloseDoorTime',
 		],
 		(fieldKey) => {
 			if (has(flight, fieldKey)) {

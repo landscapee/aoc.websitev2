@@ -169,5 +169,17 @@ export default {
     formatter: (item) => {
       return item.cancel === true ? '是' : item.cancel === false ? '否' : '--';
     }
-  }
+  },
+
+  fplRoute: {
+    formatter: (data) => {
+      return `<div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>${data.fplRoute}</div>`;
+    },
+  },
+
+  planRoute: {
+    formatter: (data) => {
+      return `<div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>${data.planRoute}</div>`;
+    },
+  },
 }
