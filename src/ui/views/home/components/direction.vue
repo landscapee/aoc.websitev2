@@ -31,8 +31,8 @@
 
                             <div class="nameBox" :style="{color:getPercentColor(item)}" @click="citysHandle(item)">
                                 <span>{{item.displayHallway}}方向</span>
-                                <span>{{item.delay}}</span>
-                                <span class="fo">{{getPercent(item)}}%</span>
+                                <span style="flex:1;text-align:center;">{{item.delay}}</span>
+                                <span class="fo" style="width:.5rem;display:inline-block;text-align:right;">{{getPercent(item)}}%</span>
                             </div>
                             <div class="dataBox" :class="'dataBox'+index">
                                 <div style="width:8000px;height:100%;">
@@ -364,7 +364,7 @@ export default {
                         obj.scrollTop++
                     }
                 }
-            }, 40)
+            }, 60)
             obj.onmouseover = () => {
                 clearInterval(this['marqueeVar' + idx])
                 this['marqueeVar' + idx] = null
@@ -386,7 +386,7 @@ export default {
                             obj.scrollTop++
                         }
                     }
-                }, 40)
+                }, 60)
             }
         },
     },

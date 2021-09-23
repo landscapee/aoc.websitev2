@@ -1,28 +1,28 @@
-import deepEqual from 'deep-equal';
+// import deepEqual from 'deep-equal';
 import { map, groupBy } from 'lodash';
 import Logger from '@/lib/logger';
 import postal from 'postal';
 import moment from 'moment';
 const log = new Logger('helper:utility');
 
-export const objEqual = (oldValue, newValue) => {
-	if (!oldValue && !newValue) {
-		return false;
-	}
-	if (!oldValue && newValue) {
-		return false;
-	}
-	if (oldValue && !newValue) {
-		return false;
-	}
-	let result = null;
+// export const objEqual = (oldValue, newValue) => {
+// 	if (!oldValue && !newValue) {
+// 		return false;
+// 	}
+// 	if (!oldValue && newValue) {
+// 		return false;
+// 	}
+// 	if (oldValue && !newValue) {
+// 		return false;
+// 	}
+// 	let result = null;
 
-	log.verbose('begin JSON.stringify equal tow object');
-	result = deepEqual(oldValue, newValue);
-	log.verbose(`end JSON.stringify equal tow object ${result}`);
+// 	log.verbose('begin JSON.stringify equal tow object');
+// 	result = deepEqual(oldValue, newValue);
+// 	log.verbose(`end JSON.stringify equal tow object ${result}`);
 
-	return result;
-};
+// 	return result;
+// };
 
 export const parseJSON = (data) => {
 	try {
