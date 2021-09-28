@@ -54,7 +54,7 @@ const subRetainWs = () => {
   }, 1000);
 
   client.sub('/Flight/atc', (data) => {
-    saveToFlightDB([data], '/Flight/atc').then(() => {
+    saveToFlightDB(data, '/Flight/atc').then(() => {
       worker.publish('Flight.Change.Sync', '');
     });
   });

@@ -87,6 +87,13 @@ export default {
                 this.$store.commit('flight/updateFlightRemoteOptions', { statusOptions: res.data })
             }
         })
+
+      // 获取航班类型options
+        this.$request.get('flight', 'Flight/type').then((res) => {
+            if (res.code === 200) {
+                this.$store.commit('flight/updateFlightRemoteOptions', { statusType: res.data })
+            }
+        })
     },
     beforeDestroy() {
         // let globalHead = document.getElementById('com_glob_head');

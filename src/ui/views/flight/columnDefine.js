@@ -173,13 +173,13 @@ export default {
 
   fplRoute: {
     formatter: (data) => {
-      return `<div style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>${data.fplRoute}</div>`;
+      return `<div style="overflow: hidden; white-space: nowrap">${data.fplRoute}</div>`;
     },
   },
 
   planRoute: {
     formatter: (data) => {
-      return `<div style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>${data.planRoute}</div>`;
+      return `<div title="${data.planRoute}" style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">${data.planRoute}</div>`;
     },
   },
 }

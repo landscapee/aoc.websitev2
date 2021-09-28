@@ -293,7 +293,7 @@ export const allField = {
 	terminal: { text: '航站楼', search: { type: 'select', options: ['T1', 'T2'] } },
 	lastModifier: { text: 'TOBT最后修改人', full: 'TOBT最后修改人', width: 140 },
 	maintenance: { text: '放行机务' },
-	flightType: { text: '航班类型', search: { type: 'select', options: ['正班', '客加班', '货加班', '备降', '试飞', '包机', '测试', '补班', '普客加班', '货班', '公务', '调机', '货包', '返航'] } },
+	flightType: { text: '航班类型', search: { type: 'select', remoteOptionField: 'statusType' } },
 	airlineCode: { text: '航空公司代码', width: 140 },
 	takeOffDelay: { text: '放行延误' },
 	// displayEti: { text: '预计入位' },
