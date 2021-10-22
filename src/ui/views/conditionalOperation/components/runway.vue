@@ -116,6 +116,7 @@
             border: 1px solid rgba(100,159,255,.5);
             position: relative;
             .runwayRightTop {
+                height: 28px;
                 flex: 0 1 auto;
                 color: #649fff;
                 width: calc(100% + 2px);

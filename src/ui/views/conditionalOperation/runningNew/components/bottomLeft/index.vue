@@ -77,7 +77,7 @@ import Bangzhu from './bangzhu'
         mounted() {
 
             postalStore.sub('runwayStandard', ({data, key}) => {
-                // this.tableData = data;
+                this.tableData = data;
              });
         },
         beforeDestroy() {
