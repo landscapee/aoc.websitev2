@@ -583,21 +583,21 @@ export default {
         // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
         let time = (new Date()).getTime()
 
-        this.runway = [
-            {runway: '01', data: [[{}]]},
-            {
-                runway: '02', data: [[
-                    {eta: time, movement: 'A', flightId: 167860032, flightNo: 'CA4215',},
-                    // {eta: time,movement: 'A',flightId: 1678600321,flightNo: 'CA42151',},
-                    // {eta: time,movement: 'D',flightId: 16786003212,flightNo: 'CA421512',},
-                    {eta: time, movement: 'D', isDelay: true, flightId: 16786003213, flightNo: 'CA421513',},
-                ]]
-            },
-            {runway: '03', data: [[{}]]},
-
-        ];
+        // this.runway = [
+        //     {runway: '01', data: [[{}]]},
+        //     {
+        //         runway: '02', data: [[
+        //             {eta: time, movement: 'A', flightId: 167860032, flightNo: 'CA4215',},
+        //             // {eta: time,movement: 'A',flightId: 1678600321,flightNo: 'CA42151',},
+        //             // {eta: time,movement: 'D',flightId: 16786003212,flightNo: 'CA421512',},
+        //             {eta: time, movement: 'D', isDelay: true, flightId: 16786003213, flightNo: 'CA421513',},
+        //         ]]
+        //     },
+        //     {runway: '03', data: [[{}]]},
+        //
+        // ];
         postalStore.sub('runwayModels', ({runway, noRunWay}) => {
-            // this.runway = runway;
+            this.runway = runway;
 
 
             this.noRunWay = noRunWay;
