@@ -34,34 +34,37 @@
                 <div class="title">{{ opt.runway }}</div>
                 <div :class="`zhezhao ${opt.usage==3?'zhezhaoWarn':''}`" :style="zhezhaoWidth"></div>
                 <div :class="`flights ${opt.usage==3?'flightsWarn':''}`">
-                    <div v-if="isShowFlight(item[0].movement)" :class="'feiji fiji'+item[0].movement"
+                    <div :class="'feiji fiji'+item[0].movement"
                          :style="getLeft(item[0],index)"
-                         v-for="(item,index) in opt.data" :key="index+'qaz'">
-                        <div>
-                            <div class="status" :style="getFoldStyle(item,opt.runway)"
-                                 @click="unfoldFlightInfo(item[0],opt.runway)">
-							<span class="unfoldSpan" v-for="flightData in getFlightDatas(item,opt.runway)"
-                                  :key="flightData.flightNo+'q'">{{ flightData.elecFlightStatus || '未激活' }}</span>
-                                <span v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
+                         v-for="(item,index) in getRunwayData(opt.data)" :key="index+'qaz'">
+                        <div class="status" :style="getFoldStyle(item,opt.runway)"
+                             @click="unfoldFlightInfo(item[0],opt.runway)">
+							<span class="unfoldSpan"  :style="getTimeWidth" v-for="(flightData,flightDataL) in getFlightDatas(item,opt.runway)"
+                                  :key="flightData.flightNo+'q'">{{ flightData.elecFlightStatus || '未激活' }}
+                             <span v-if="getFlightDatas(item,opt.runway).length-1==flightDataL&&item.length!=1" :class="getUnfoldBtnClass(item[0],opt.runway)">
 								<icon-svg iconClass="paixu"></icon-svg>
 							</span>
-                            </div>
-                            <div class="flightNo" :style="getFoldStyle(item,opt.runway)"
-                                 @click="unfoldFlightInfo(item[0],opt.runway)">
-							<span class="unfoldSpan" :class="flightData.movement"
-                                  v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
-                                  :key="indexunfold+'w'">{{ flightData.flightNo }}</span>
-                                <span v-if="item.length>1" :class="getUnfoldBtnClass(item[0],opt.runway)">
-								<icon-svg iconClass="paixu"></icon-svg>
-							</span>
-                            </div>
-                            <div class="icon" :style="getFoldStyle(item,opt.runway)">
-                            <span :class="flightData.isDelay?'YC ZC':'ZC'"
-                                  v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
-                                  :key="indexunfold+'e'">
-                                <icon-svg iconClass="feiji3"></icon-svg>
                             </span>
-                            </div>
+
+                        </div>
+                        <div class="flightNo" :style="getFoldStyle(item,opt.runway,1)"
+                             @click="unfoldFlightInfo(item[0],opt.runway)">
+							<span class="unfoldSpan" :class="flightData.movement"
+                                  :style="getTimeWidth"
+                                  v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
+                                  :key="indexunfold+'w'">{{ flightData.flightNo }}
+                             <span v-if="getFlightDatas(item,opt.runway).length-1==indexunfold&&item.length!=1" :class="getUnfoldBtnClass(item[0],opt.runway)">
+								<icon-svg iconClass="paixu"></icon-svg>
+							</span>
+                            </span>
+                         </div>
+                        <div class="icon" :style="getFoldStyle(item,opt.runway)">
+                                 <span :class="flightData.isDelay?'YC ZC':'ZC'"
+                                       :style="getTimeWidth"
+                                       v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
+                                       :key="indexunfold+'e'">
+                                      <icon-svg iconClass="feiji3"></icon-svg>
+                                 </span>
                         </div>
 
                     </div>
@@ -86,13 +89,13 @@
             <div class="itemBox">
                 <div class="time time1" ref="time">
 
-                    <div class="itemtime1" v-for="opt in runwayTime" :key="opt">
-                        <div class="timespan"></div>
+                    <div class="itemtime1" v-for="opt in runwayTime+1" :key="opt">
+                        <div class="timespan" :style="getTimeWidth"></div>
                     </div>
                 </div>
                 <div class="time time2">
                     <div class="itemtime2" v-for="opt in runwayTime" :key="opt">
-                        <div class="title">{{ getTime(opt) }}</div>
+                        <div class="title" :style="getTimeWidth">{{ getTime(opt) }}</div>
                     </div>
                 </div>
             </div>
@@ -289,8 +292,8 @@ export default {
         }
     },
     computed: {
-        getTimeWidth(){
-          return this.timeItemWidth/100+'rem'
+        getTimeWidth() {
+            return `width:` + this.timeItemWidth / 100 + 'rem;'
         },
         criticalAble() {
             return (itemRole, key) => {
@@ -313,10 +316,11 @@ export default {
             }
         },
         getFoldStyle() {
-            return (item, runway) => {
+            return (item, runway, num) => {
                 let blo = this.isUnfold(item[0], runway)
+
                 return {
-                    width: blo ? item.length * this.timeItemWidth / 100 + 'rem' : `0.${this.timeItemWidth}rem`,
+                    width: blo ? item.length * this.timeItemWidth / 100 + 'rem' : `${this.timeItemWidth / 100}rem`,
                     filter: `brightness(${item[0].actualTime ? '65%' : '100%'})`
                 }
             }
@@ -325,6 +329,23 @@ export default {
             return (movement) => {
                 let blo = movement == 'A' && this.jg || (movement == 'D' && this.lg)
                 return blo
+            }
+        },
+        getRunwayData() {
+            return (opt) => {
+                let arr = []
+                opt.map((k, l) => {
+                    let arrC = k.filter((item) => {
+                        let blo = item.movement == 'A' && this.jg || (item.movement == 'D' && this.lg)
+                        console.log(blo, 1111);
+                        return blo
+                    })
+                    arrC.length&&arr.push(arrC)
+                    console.log('kkkk', arrC);
+                    return arrC.length
+                })
+                console.log('arr', arr);
+                return arr
             }
         },
         getUnfoldBtnClass() {
@@ -447,11 +468,13 @@ export default {
             this.$set(this.unfoldObj, time + '_' + runway, !this.isUnfold(item, runway))
         },
         getRunwayTime() {
-            let time = document.getElementsByClassName('time')[0]
-            let timeitem = document.getElementsByClassName('timespan')[0]
+            // let time = document.getElementsByClassName('time')[0]
+            // let timeitem = document.getElementsByClassName('timespan')[0]
             // let timewidth = parseInt(getComputedStyle(time)['width'])
             let timewidth = 1800
-            let timeItemWidth = parseInt(getComputedStyle(timeitem)['width'])
+            // let timeItemWidth = parseInt(getComputedStyle(timeitem)['width'])
+            let timeItemWidth = this.timeItemWidth
+            console.log('qqqq', timeItemWidth);
             return Math.ceil(timewidth / timeItemWidth)
         },
 
@@ -511,8 +534,8 @@ export default {
 
     },
     created() {
-        this.timeItemWidth=(document.body.clientHeight/1080*this.timeItemWidth).toFixed(2)
-        console.log(this.timeItemWidth,'qqqqaaaazzzz');
+        this.timeItemWidth = (document.body.clientHeight / 1080 * this.timeItemWidth).toFixed(2)
+        console.log(this.timeItemWidth, 'qqqqaaaazzzz');
         let obj = {
             delayFlights2: true,
             fastEnter: true,
@@ -558,9 +581,24 @@ export default {
         // 已延误池 delayFlights2; 快速过站池 fastEnter;临界延误池 critical
         // 始发航班池 initialFlights2; 长期延误池 alwaysDelay;起飞保障池 departureGuarantee
         // let arr=['delayFlights2','fastEnter','critical','initialFlights2','alwaysDelay', 'departureGuarantee']
+        let time = (new Date()).getTime()
 
+        this.runway = [
+            {runway: '01', data: [[{}]]},
+            {
+                runway: '02', data: [[
+                    {eta: time, movement: 'A', flightId: 167860032, flightNo: 'CA4215',},
+                    // {eta: time,movement: 'A',flightId: 1678600321,flightNo: 'CA42151',},
+                    // {eta: time,movement: 'D',flightId: 16786003212,flightNo: 'CA421512',},
+                    {eta: time, movement: 'D', isDelay: true, flightId: 16786003213, flightNo: 'CA421513',},
+                ]]
+            },
+            {runway: '03', data: [[{}]]},
+
+        ];
         postalStore.sub('runwayModels', ({runway, noRunWay}) => {
-            this.runway = runway;
+            // this.runway = runway;
+
 
             this.noRunWay = noRunWay;
             console.log('noRunWay', runway, noRunWay);
@@ -882,11 +920,11 @@ $border: 1px #565c67 solid;
                     }
 
                     .icon {
-                        width: 62px;
+                        //width: 62px;
                     }
 
                     .status, .flightNo {
-                        width: 63px;
+                        //width: 63px;
                         white-space: nowrap;
                         line-height: 14px;
 
@@ -912,6 +950,7 @@ $border: 1px #565c67 solid;
                         }
 
                         .unfoldBtn {
+                            line-height: 10px;
                             svg {
                                 transform: rotate(270deg);
                             }
@@ -919,23 +958,21 @@ $border: 1px #565c67 solid;
                     }
 
                     .flightNo {
-                        padding: 0;
-                        margin: 6px 0 12px 0;
-                        background: #2e67f6;
+                         padding: 0;
+                        margin: 6px 0 12px 1px;
                         border-radius: 2px;
-                        box-shadow: 0px 0px 10px 0px #2d50a6;
-
+                        //box-shadow: 0px 0px 10px 0px #2d50a6;
+                        .D{
+                            background: #2e67f6;
+                        }
                         .unfoldSpan {
                             display: inline-block;
                             padding: 4px 1px;
-                            width: 62px;
 
+                            //width: 62px;
                         }
-                        .foldBtn, .unfoldBtn {
-                            margin-left: -14px!important;
-                            //position: relative;
-                            //left: -10px;
-                        }
+
+
                     }
 
                     .status {
@@ -968,7 +1005,7 @@ $border: 1px #565c67 solid;
                     }
                 }
 
-                .fijiD {
+                .YC {
                     svg {
                         transform: rotate(-60deg);
                     }
@@ -977,7 +1014,7 @@ $border: 1px #565c67 solid;
                 .icon {
                     .ZC {
                         display: inline-block;
-                        width: 62px;
+                        //width: 62px;
                     }
 
                     .YC {
@@ -1025,7 +1062,8 @@ $border: 1px #565c67 solid;
 
             .itemtime2, .itemtime1 {
                 color: #fff;
-                width: 62px;
+                display: inline-block;
+                //width: 62px;
             }
 
             .itemtime2 {
@@ -1033,7 +1071,7 @@ $border: 1px #565c67 solid;
                 line-height: 20px;
 
                 div {
-                    width: 62px;
+                    //width: 62px;
                     text-align: center;
                 }
             }
@@ -1042,7 +1080,7 @@ $border: 1px #565c67 solid;
                 height: 5px;
                 border: solid #279dff;
                 display: inline-block;
-                width: 62px;
+                //width: 62px;
                 border-width: 0 1px 1px 0;
             }
 
