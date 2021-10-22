@@ -101,7 +101,6 @@ export default {
         .lineText {
             display: flex;
             align-items: center;
-            padding: 5px 0;
             .line {
                 height: 2px;
                 background: #b3bddc;
@@ -111,7 +110,7 @@ export default {
             .text {
                 color: #fff;
                 margin: 0 10px;
-                height: 36px;
+                height: 28px;
                 width: 36px;
                 font-size: 16px;
                 background-size: 100% 100%;
@@ -119,6 +118,10 @@ export default {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+            }
+            .text1 {
+                height: 32px;
+                width: 32px;
             }
 
             .rus {
@@ -132,7 +135,7 @@ export default {
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
-                height: 75px;
+                height: 65px;
                 div {
                     color: #fff;
                     font-size: 12px;
@@ -163,6 +166,9 @@ export default {
             .nobottom {
                 border-bottom: none;
             }
+        }
+        .trafficBox {
+            margin-top: 10px;
         }
         .trafficBox:nth-child(3) {
             .text {
