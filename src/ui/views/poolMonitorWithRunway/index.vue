@@ -289,6 +289,9 @@ export default {
         }
     },
     computed: {
+        getTimeWidth(){
+          return this.timeItemWidth/100+'rem'
+        },
         criticalAble() {
             return (itemRole, key) => {
 
@@ -508,6 +511,8 @@ export default {
 
     },
     created() {
+        this.timeItemWidth=(document.body.clientHeight/1080*this.timeItemWidth).toFixed(2)
+        console.log(this.timeItemWidth,'qqqqaaaazzzz');
         let obj = {
             delayFlights2: true,
             fastEnter: true,
@@ -556,6 +561,7 @@ export default {
 
         postalStore.sub('runwayModels', ({runway, noRunWay}) => {
             this.runway = runway;
+
             this.noRunWay = noRunWay;
             console.log('noRunWay', runway, noRunWay);
         });
