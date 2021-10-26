@@ -54,7 +54,6 @@ export const transRunwayData = (worker, time) => {
     let monitorQueue = memoryStore.getItem('Pools').monitorQueue
     let runwayModels = memoryStore.getItem('Pools').runwayModels
     let noRunWay = [[], [], []]
-    // let noRunWay={delay:[],normal:[]}
     if (monitorQueue && runwayModels) {
         if (time) {
             let arr = [time.startTime, time.startTime + 30 * 60 * 1000]
