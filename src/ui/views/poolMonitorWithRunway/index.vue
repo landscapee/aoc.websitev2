@@ -334,18 +334,15 @@ export default {
         getRunwayData() {
             return (opt) => {
                 let arr = []
-                opt.map((k, l) => {
+                 map(opt,(k, l) => {
                     let arrC = k.filter((item) => {
                         let blo = item.movement == 'A' && this.jg || (item.movement == 'D' && this.lg)
-                        console.log(blo, 1111);
-                        return blo
+                         return blo
                     })
                     arrC.length&&arr.push(arrC)
-                    console.log('kkkk', arrC);
-                    return arrC.length
+                     return arrC.length
                 })
-                console.log('arr', arr);
-                return arr
+                 return arr
             }
         },
         getUnfoldBtnClass() {
@@ -598,8 +595,6 @@ export default {
         // ];
         postalStore.sub('runwayModels', ({runway, noRunWay}) => {
             this.runway = runway;
-
-
             this.noRunWay = noRunWay;
             console.log('noRunWay', runway, noRunWay);
         });
