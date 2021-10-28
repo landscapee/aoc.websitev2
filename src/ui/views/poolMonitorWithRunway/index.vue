@@ -37,29 +37,33 @@
                     <div :class="'feiji fiji'+item[0].movement"
                          :style="getLeft(item[0],index)"
                          v-for="(item,index) in getRunwayData(opt.data)" :key="index+'qaz'">
-                        <div class="status" :style="getFoldStyle(item,opt.runway)"
+                        <div class="status"  :style="getFoldStyle(item,opt.runway)"
                              @click="unfoldFlightInfo(item[0],opt.runway)">
-							<span class="unfoldSpan"  :style="getTimeWidth" v-for="(flightData,flightDataL) in getFlightDatas(item,opt.runway)"
+							<span class="unfoldSpan" :style="getTimeWidth"
+                                  v-for="(flightData,flightDataL) in getFlightDatas(item,opt.runway)"
                                   :key="flightData.flightNo+'q'">{{ flightData.elecFlightStatus || '未激活' }}
-                             <span v-if="getFlightDatas(item,opt.runway).length-1==flightDataL&&item.length!=1" :class="getUnfoldBtnClass(item[0],opt.runway)">
+                             <span v-if="getFlightDatas(item,opt.runway).length-1==flightDataL&&item.length!=1"
+                                   :class="getUnfoldBtnClass(item[0],opt.runway)">
 								<icon-svg iconClass="paixu"></icon-svg>
 							</span>
                             </span>
 
                         </div>
-                        <div class="flightNo" :style="getFoldStyle(item,opt.runway,1)"
+                        <div class="flightNo"   :style="getFoldStyle(item,opt.runway,1)"
                              @click="unfoldFlightInfo(item[0],opt.runway)">
 							<span class="unfoldSpan" :class="flightData.movement"
                                   :style="getTimeWidth"
                                   v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
                                   :key="indexunfold+'w'">{{ flightData.flightNo }}
-                             <span v-if="getFlightDatas(item,opt.runway).length-1==indexunfold&&item.length!=1" :class="getUnfoldBtnClass(item[0],opt.runway)">
+                             <span v-if="getFlightDatas(item,opt.runway).length-1==indexunfold&&item.length!=1"
+                                   :class="getUnfoldBtnClass(item[0],opt.runway)">
 								<icon-svg iconClass="paixu"></icon-svg>
 							</span>
                             </span>
-                         </div>
+                        </div>
                         <div class="icon" :style="getFoldStyle(item,opt.runway)">
-                                 <span :class="flightData.isDelay?'YC ZC':'ZC'"
+                                 <span :class="flightData.isDelay?'YC ZC ' +flightData.movement:'ZC '+flightData.movement"
+
                                        :style="getTimeWidth"
                                        v-for="(flightData,indexunfold) in getFlightDatas(item,opt.runway)"
                                        :key="indexunfold+'e'">
@@ -334,15 +338,15 @@ export default {
         getRunwayData() {
             return (opt) => {
                 let arr = []
-                 map(opt,(k, l) => {
+                map(opt, (k, l) => {
                     let arrC = k.filter((item) => {
                         let blo = item.movement == 'A' && this.jg || (item.movement == 'D' && this.lg)
-                         return blo
+                        return blo
                     })
-                    arrC.length&&arr.push(arrC)
-                     return arrC.length
+                    arrC.length && arr.push(arrC)
+                    return arrC.length
                 })
-                 return arr
+                return arr
             }
         },
         getUnfoldBtnClass() {
@@ -584,11 +588,24 @@ export default {
         //     {runway: '01', data: [[{}]]},
         //     {
         //         runway: '02', data: [[
-        //             {eta: time, movement: 'A', flightId: 167860032, flightNo: 'CA4215',},
-        //             // {eta: time,movement: 'A',flightId: 1678600321,flightNo: 'CA42151',},
-        //             // {eta: time,movement: 'D',flightId: 16786003212,flightNo: 'CA421512',},
-        //             {eta: time, movement: 'D', isDelay: true, flightId: 16786003213, flightNo: 'CA421513',},
-        //         ]]
+        //             {eta: time, movement: 'A', flightId: 1678600321, flightNo: 'CA4215',},
+        //             {eta: time, movement: 'A',isDelay: true, flightId: 16786003212, flightNo: 'CA42151',},
+        //             {eta: time, movement: 'D', flightId: 167860032123, flightNo: 'CA421512',},
+        //             {eta: time, movement: 'D', isDelay: true, flightId: 167860032134, flightNo: 'CA421513',}
+        //         ],
+        //
+        //             [{eta: time + 240 * 1000, movement: 'D', flightId: 16786003212, flightNo: 'CA421512',}
+        //             ],
+        //             [{
+        //                 eta: time + 480 * 1000,
+        //                 movement: 'D',
+        //                 isDelay: true,
+        //                 flightId: 16786003213,
+        //                 flightNo: 'CA421513',
+        //             }
+        //             ],
+        //
+        //         ]
         //     },
         //     {runway: '03', data: [[{}]]},
         //
@@ -946,6 +963,7 @@ $border: 1px #565c67 solid;
 
                         .unfoldBtn {
                             line-height: 10px;
+
                             svg {
                                 transform: rotate(270deg);
                             }
@@ -953,13 +971,14 @@ $border: 1px #565c67 solid;
                     }
 
                     .flightNo {
-                         padding: 0;
+                        padding: 0;
                         margin: 6px 0 12px 1px;
                         border-radius: 2px;
                         //box-shadow: 0px 0px 10px 0px #2d50a6;
-                        .D{
+                        .D {
                             background: #2e67f6;
                         }
+
                         .unfoldSpan {
                             display: inline-block;
                             padding: 4px 1px;
@@ -989,7 +1008,9 @@ $border: 1px #565c67 solid;
                     .status {
                         border: 1px solid #3bab0b;
                     }
-
+                    .icon {
+                        color: #3bab0b;
+                    }
 
                 }
 
@@ -998,15 +1019,20 @@ $border: 1px #565c67 solid;
                     .unfoldSpan.A {
                         background: #3bab0b;
                     }
-                }
+                    .D{
 
-                .YC {
-                    svg {
-                        transform: rotate(-60deg);
                     }
                 }
 
+
+
                 .icon {
+                    .D{
+                        color: #2e67f6;
+                        svg {
+                            transform: rotate(-60deg);
+                        }
+                    }
                     .ZC {
                         display: inline-block;
                         //width: 62px;
@@ -1017,17 +1043,8 @@ $border: 1px #565c67 solid;
                     }
                 }
 
-                .fijiD {
-                    .icon {
-                        color: #2e67f6;
-                    }
-                }
 
-                .fijiA {
-                    .icon {
-                        color: #3bab0b;
-                    }
-                }
+
             }
 
         }
