@@ -9,7 +9,7 @@ FlightDetailsObj.install = function (Vue) {
     let FlightInstance
     let initInstance = (vm) => {
         FlightInstance = new FlightDetailsExtend()
-        let ele =FlightInstance?.$mount&& FlightInstance.$mount().$el
+        let ele =FlightInstance?.$mount&& FlightInstance.$mount().$el;
         document.body.appendChild(ele) //、把元素放入VM实例，VM实例销毁元素销毁，放入body需要手动销毁
         // document.body.appendChild(ele)
     }
